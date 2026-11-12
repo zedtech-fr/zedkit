@@ -118,17 +118,39 @@ test("public-repo visibility: missing, null, and public are exportable; only pri
   assert.equal(isExportableVisibility("team"), true);
   assert.equal(isExportableVisibility("private"), false);
   const gated = toPublicIndex(
-    parsedIndex([
-      issue({ number: 99, visibility: "private", title: "secret" }),
-      issue({ number: 98, visibility: "team", title: "unknown flag" }),
-      issue({ number: 97, title: "no flag" }),
-      issue({ number: 96, visibility: null, title: "null flag" }),
-      issue({ number: 95, visibility: "public", title: "marked public" }),
-    ]),
+    parsedIndex(
+      [
+        issue({ number: 99, visibility: "private", title: "secret" }),
+        issue({ number: 98, visibility: "team", title: "unknown flag" }),
+        issue({ number: 97, title: "no flag" }),
+        issue({ number: 96, visibility: null, title: "null flag" }),
+        issue({ number: 95, visibility: "public", title: "marked public" }),
+      ],
+      [
+        pr({
+          number: 50,
+          issueNumber: null,
+          runIds: ["run-50"],
+          visibility: "private",
+          entries: [entry({ id: "50-review", runId: "run-50" })],
+        }),
+        pr({
+          number: 51,
+          issueNumber: null,
+          runIds: ["run-51"],
+          visibility: "public",
+          entries: [entry({ id: "51-review", runId: "run-51" })],
+        }),
+      ],
+    ),
   );
   assert.deepEqual(
     gated.issues.map((row) => row.number),
     [98, 97, 96, 95],
+  );
+  assert.deepEqual(
+    gated.pullRequests.map((row) => row.number),
+    [51],
   );
 });
 
@@ -369,6 +391,17 @@ test("unlinked pull request without entries fails closed", () => {
     wrapper([], [{ number: 54, issueNumber: null, runIds: ["run-54-review"] }]),
   );
   assert.equal(parsed.ok, false);
+});
+
+test("linked PR entries stay on the PR row and are not merged into the issue", async () => {
+  const extra = entry({ id: "pr-only", runId: "run-pr-only", type: "review" });
+  const path = writeSnapshot([issue()], [pr({ entries: [extra] })]);
+  const port = createSnapshotReviewPort(path);
+  const issues = await port.listIssues();
+  assert.ok(!issues[0].entries.some((row) => row.id === "pr-only"));
+  assert.equal(await port.getRun(108, "run-pr-only"), null);
+  const prs = await port.listPullRequests();
+  assert.equal(prs[0].entries[0].id, "pr-only");
 });
 
 test("empty model strings are skipped", () => {
@@ -676,7 +709,23 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   }
   const bytes = statSync(snapshotPath).size;
   assert.ok(bytes < 200 * 1024);
+  const contract = readFileSync(join(reviewsRoot, "SNAPSHOT.md"), "utf8");
   assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
+  assert.match(contract, /`opened_pr_url`/);
+  assert.doesNotMatch(contract, /pr_url_opened/);
+  assert.match(contract, /index parser does not invent a title/);
+  assert.match(contract, /live mapper fallback/);
+  assert.match(
+    contract,
+    /Each `pullRequests\[\]` object:[\s\S]*`visibility` \| Optional\. Same rule as issue rows/,
+  );
+  assert.match(contract, /Exception: `verdict_json` is any object or null/);
+  assert.match(contract, /Index extras are dropped at parse/);
+  assert.match(contract, /Live extras fail closed/);
+  assert.match(contract, /do not rely on it for\s+unknown keys/);
+  assert.match(contract, /Plan, implement, and dry-run: engine model/);
+  assert.match(contract, /Required array \(may be empty\)/);
+  assert.match(contract, /not merged into the issue timeline/);
   const sitemap = await listIssueSitemapPaths();
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
@@ -1096,6 +1145,35 @@ test("live issue and live_url parse; unknown live run keys still fail", () => {
     parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, issue: "108" } })])).ok,
     false,
   );
+});
+
+test("opened_pr_url is accepted; pr_url_opened fails closed", () => {
+  const opened = "https://example.test/pr/71";
+  const accepted = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, opened_pr_url: opened } })]),
+  );
+  assert.equal(accepted.ok, true, accepted.ok ? "" : accepted.error.message);
+  assert.equal(accepted.value[0].run.opened_pr_url, opened);
+  assert.equal(
+    parsePublicReviewSnapshot(
+      liveWrapper([liveSample({ run: { ...liveSample().run, pr_url_opened: opened } })]),
+    ).ok,
+    false,
+  );
+});
+
+test("live mapper falls back to Issue #N when issue_title is empty; index parse requires title", () => {
+  const empty = liveRunsToIndex([
+    liveSample({ run: { ...liveSample().run, pr: 133, issue: 108, issue_title: "" } }),
+  ]);
+  assert.equal(empty.issues[0].title, "Issue #108");
+  const omittedTitle = { ...liveSample().run, pr: 133, issue: 108 };
+  delete omittedTitle.issue_title;
+  const omitted = liveRunsToIndex([liveSample({ run: omittedTitle })]);
+  assert.equal(omitted.issues[0].title, "Issue #108");
+  const rest = issue();
+  delete rest.title;
+  assert.equal(parsePublicReviewSnapshot(wrapper([rest])).ok, false);
 });
 
 test("private and unknown live visibility never survive the public gate", () => {

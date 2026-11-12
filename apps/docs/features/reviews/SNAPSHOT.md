@@ -43,11 +43,11 @@ Each `issues[]` object:
 | Field | Rule |
 | --- | --- |
 | `number` | Safe integer (GitHub issue number). |
-| `title` | String. Fall back to `Issue #N` when unknown. |
+| `title` | Required string. The index parser does not invent a title; `Issue #N` is the live mapper fallback when `issue_title` is empty. |
 | `state` | `open` or `closed`. |
 | `pullRequests` | Array of safe integers (linked PR numbers). Empty when none. |
 | `lastRunAt` | ISO-8601 string. |
-| `entries` | Timeline entries. Zero-entry issues are dropped by the public gate. |
+| `entries` | Required array (may be empty). Zero-entry issues are dropped by the public gate. |
 | `visibility` | Optional. Omit or `"public"`. Only the string `"private"` is dropped. Missing, `null`, and `"public"` stay. |
 
 ### Timeline entries
@@ -62,7 +62,7 @@ Each `entries[]` object (issue or unlinked PR):
 | `status` | `running` \| `completed` \| `failed`. |
 | `startedAt` | ISO-8601 string. |
 | `durationMs` | Finite number ≥ 0, or `null` (running). |
-| `models` | String array. Skip empty strings. Implement: engine model. Review: lens and second-pass models. Improve: improve model. |
+| `models` | String array. Skip empty strings. Plan, implement, and dry-run: engine model. Review: lens and second-pass models. Improve: improve model. |
 | `verdict` | `approve` \| `request-changes` \| `comment`, or `null`. |
 | `liveUrl` | HTTPS URL of the hosted live console, or `null`. Never a GitHub `review_url`. Never `token=` query, userinfo, `http:`, or a home path. The gate drops those. |
 
@@ -81,13 +81,14 @@ Each `pullRequests[]` object:
 | `number` | Safe integer (GitHub PR number). |
 | `issueNumber` | Safe integer, or `null` when unlinked. |
 | `runIds` | Array of path-safe run ids. |
-| `entries` | **Required when `issueNumber` is `null`.** Linked PRs may omit it (issue rows already carry the timeline). |
+| `entries` | **Required when `issueNumber` is `null`.** Linked PRs may omit it. If provided, they stay on that PR row (`listPullRequests`) and are not merged into the issue timeline; `getRun` uses the issue row. |
+| `visibility` | Optional. Same rule as issue rows: only `"private"` is dropped. |
 
 Unjoined review / improve / dry-run PRs stay in `pullRequests` with
 `issueNumber: null` and their runs. Never omit them.
 
 Join order for the exporter: implement metadata (`issue`, `pr_url`,
-`pr_url_opened`) first; then GitHub closing references / `Fixes #N`;
+`opened_pr_url`) first; then GitHub closing references / `Fixes #N`;
 remainder unlinked.
 
 ### Visibility (index)
@@ -102,14 +103,19 @@ page shape.
 
 Do not emit `token` files, `token_hash`, prompts, `final_text`, machine
 paths, home directories, Bearer/Basic secrets, or a `liveUrl` with
-`token=` / userinfo / `http:`. Extra secret-like keys are redacted; an
-unredacted home path or Bearer/Basic token fails the ingest gate
-closed.
+`token=` / userinfo / `http:`. Index extras are dropped at parse (never
+reach redaction). Live extras fail closed (`exactObject`, except
+`verdict_json` below). Redaction applies only to surviving secret-like
+keys and Bearer/Basic / home-path values — do not rely on it for
+unknown keys. An unredacted home path or Bearer/Basic token on a
+surviving field fails the ingest gate closed.
 
 ## Live-run shape (valid, not the public-page feed)
 
-Keys: `version`, `kind`, `reviews`. Extra keys on the wrapper or on a
-row fail closed (`exactObject`).
+Keys: `version`, `kind`, `reviews`. Extra keys on the wrapper, a row,
+or nested `run` / `items` / `decision` / `related` fail closed
+(`exactObject`). Exception: `verdict_json` is any object or null —
+extra keys there are accepted (`parseVerdict`).
 
 ```json
 { "version": 1, "kind": "public-live-runs", "reviews": [ /* hosted live rows */ ] }
