@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
+
+const homeHeroHeading = `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`;
+
 test("home explains the product without preview-only extra bands (#210)", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
@@ -8,7 +12,7 @@ test("home explains the product without preview-only extra bands (#210)", async 
   await expect(page.locator("[data-home-hero-category]")).toHaveText("Open source · MIT · by Zed Tech");
   await expect(
     page.getByRole("heading", {
-      name: "Code that's checked. Screens that match. From the agent you already use.",
+      name: homeHeroHeading,
       level: 1,
     }),
   ).toBeVisible();
@@ -30,7 +34,7 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero matches the mockup first screen: clause, pills, prompt, glass card, issues link (#118)", async ({
+test("home hero matches the mockup first screen: clause, pills, prompt, glass card (#118, #247)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -52,16 +56,10 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   await expect(page.getByRole("tab", { name: "UI", exact: true })).toBeVisible();
   await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toHaveAttribute("aria-selected", "true");
 
-  const issues = page.locator("[data-home-hero-actions] a");
-  await expect(issues).toHaveCount(1);
-  await expect(issues).toHaveAttribute("target", "_blank");
-  await expect(issues).toHaveAttribute("rel", "noopener noreferrer");
-  await expect(issues).toHaveAccessibleName(/opens in a new tab/i);
-  await expect(issues).toContainText("See a real issue, end to end");
-  const issuesHref = await issues.getAttribute("href");
-  expect(issuesHref).toMatch(/^\/issues(?:\/|$)/);
-  expect(issuesHref).not.toBe("/issues/0");
-  await expect(issues).not.toHaveAttribute("data-site-action");
+  await expect(page.locator("[data-home-hero-actions]")).toHaveCount(0);
+  await expect(page.locator("[data-hero-shapes]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link")).toHaveCount(0);
+  await expect(page.getByText("See a real issue, end to end")).toHaveCount(0);
 
   await expect(page.locator("[data-home-hero-sub]")).toContainText(
     "zedkit is a set of kits your coding agent installs itself.",
@@ -88,7 +86,7 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   );
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Code that's checked. Screens that match. From the agent you already use.",
+      name: homeHeroHeading,
       level: 1,
     }),
   ).toBeVisible();

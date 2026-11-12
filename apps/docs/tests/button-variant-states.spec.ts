@@ -28,8 +28,7 @@ async function isAccentFill(
 test("Link-variant button stays underline-only on hover (no accent block)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await page.locator("#use-cases").scrollIntoViewIfNeeded();
-  const link = page.locator("#use-cases").getByRole("link", { name: "Start without writing code" });
+  const link = page.locator("[data-home-hero-actions]").getByRole("link", { name: "See a real issue, end to end" });
   await expect(link).toBeVisible();
   await link.hover();
   expect(await isAccentFill(page, link)).toBe(false);

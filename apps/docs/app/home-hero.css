@@ -7,7 +7,7 @@
  * Motion, all off under `prefers-reduced-motion` and `data-motion="reduce"`:
  *   1. load: the lead rises block by block, then the glass stage enters;
  *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop; Pause sets animation-play-state;
- *   3. one decorative blob on the purple stage drifts (`zk-home-float`); never `[data-hero-shapes]`.
+ *   3. one decorative blob on the purple stage drifts (`zk-home-float`).
  * Reduced motion shows the final card, no Pause control, no displacement.
  */
 #home-page [data-home-hero] {
@@ -185,55 +185,12 @@
   bottom: -3.4rem;
 }
 
-/*
- * Colour behind the window. Only the Glass look has glass to refract it, so the other looks keep a plain page.
- * Three soft discs inside the hero band's own box (nothing grows, nothing scrolls); the blur is ink, not layout.
- * On lg and up the window is the right column, so the discs sit there; below it they follow the stacked layout.
- */
-#home-page [data-hero-shapes] {
-  z-index: -10;
-  display: none;
-}
-
 /* Guided cursor and the cards over the window. These stay put when motion is off. */
 #home-page [data-hero-cursor] {
   z-index: 30;
 }
 #home-page [data-hero-satellite] {
   z-index: 10;
-}
-
-:root[data-identity="glass"] #home-page [data-hero-shapes] {
-  display: block;
-}
-
-#home-page [data-hero-shapes] > span,
-#home-page [data-hero-panel-drift-blob] {
-  position: absolute;
-  border-radius: 9999px;
-  aspect-ratio: 1;
-  filter: blur(56px);
-}
-
-#home-page [data-hero-shapes] > [data-shape="1"] {
-  top: 4%;
-  right: 38%;
-  width: min(18rem, 70%);
-  background: hsl(var(--primary) / 0.45);
-}
-
-#home-page [data-hero-shapes] > [data-shape="2"] {
-  right: 2%;
-  bottom: 2%;
-  width: min(16rem, 66%);
-  background: hsl(var(--accent) / 0.6);
-}
-
-#home-page [data-hero-shapes] > [data-shape="3"] {
-  top: 36%;
-  left: 38%;
-  width: min(11rem, 40%);
-  background: hsl(var(--ring) / 0.35);
 }
 
 /*
@@ -249,6 +206,10 @@
 }
 
 #home-page [data-hero-panel-drift-blob] {
+  position: absolute;
+  border-radius: 9999px;
+  aspect-ratio: 1;
+  filter: blur(56px);
   top: 8%;
   right: 4%;
   width: min(14rem, 55%);
@@ -310,12 +271,6 @@
 #home-page [data-hero-run-stage] > [data-slot="surface"] {
   position: relative;
   z-index: 1;
-}
-
-@media (max-width: 47.999rem) {
-  #home-page [data-hero-shapes] > [data-shape="3"] {
-    display: none;
-  }
 }
 
 /* From lg to xl the window is narrow: the sidebar becomes a rail of icons. */

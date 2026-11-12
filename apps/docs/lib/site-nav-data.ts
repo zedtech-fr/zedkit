@@ -21,7 +21,8 @@ export function isCatalogPath(pathname: string): boolean {
 
 /**
  * Phone (and policy) chrome: which actions a path may mount.
- * GitHub is always mounted. Theme, version, and a site-nav disclosure are never on.
+ * GitHub is always mounted: desktop bar, and the phone site menu (not a second header row).
+ * Theme, version, and a site-nav disclosure are never on.
  * The page tree is in-flow below the header (DocsSidebar always mounts `#nd-sidebar`; DocsContainer omits inline gridTemplate so docs-shell-tokens.css can restack).
  * Foundations keeps search and has no page tree (sidebar off in the docs layout).
  */

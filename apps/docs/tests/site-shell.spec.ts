@@ -15,11 +15,7 @@ test.describe("site shell", () => {
     await expect(page.getByRole("button", { name: "Guides" })).toHaveCount(0);
   });
 
-  test("founder door: home looks link opens the honest no-code-first guide (#1078)", async ({ page }) => {
-    await page.goto("/", { waitUntil: "networkidle" });
-    await expect(
-      page.locator("[data-home-identity-looks]").getByRole("link", { name: "Start without writing code" }),
-    ).toHaveAttribute("href", "/docs/start-without-writing-code");
+  test("founder door: the honest no-code-first guide is still reachable (#1078)", async ({ page }) => {
     await page.goto("/docs/start-without-writing-code", { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Start without writing code" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "What zedkit is not" })).toBeVisible();

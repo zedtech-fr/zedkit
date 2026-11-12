@@ -74,13 +74,17 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
-  assert.match(hero, /HeroShapes/);
-  assert.match(hero, /publicIssueHref/);
+  assert.doesNotMatch(hero, /HeroShapes|data-hero-shapes|publicIssueHref|issuesHref/);
+  assert.doesNotMatch(firstScreen, /data-hero-shapes/);
   assert.match(lead, /\bTabs\b/);
   assert.match(lead, /TabsList/);
   assert.match(lead, /TabsTrigger/);
   assert.match(lead, /defaultValue="combined"|value=\{kit\}/);
-  assert.match(copy, /title: "Code that's checked\. Screens that match\."/);
+  assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
+  assert.match(
+    copy,
+    /subAi: "gives your coding agent a team\u2019s habits: a plan, a second pair of eyes, a definition of done\."/,
+  );
   assert.match(copy, /titleClause: "From the agent you already use\."/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
   assert.match(copy, /combined: "AI \+ UI"/);
@@ -101,15 +105,15 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
   assert.doesNotMatch(lead, /SetupEntryPrompt/);
-  assert.doesNotMatch(lead, /\/issues\/108/);
+  assert.doesNotMatch(lead, /\/issues/);
   assert.doesNotMatch(firstScreen, /data-site-action/);
   assert.doesNotMatch(lead, /heroActions\.setup|heroActions\.getStarted|heroActions\.browseCatalog|#ai-setup|#get-started|\/catalog/);
-  assert.match(lead, /OffPathLink/);
-  assert.match(lead, /heroActions\.seeARealIssue/);
+  assert.doesNotMatch(lead, /OffPathLink|heroActions\.seeARealIssue|data-home-hero-actions/);
   assert.equal((lead.match(/<HomeLink[\s>]/g) ?? []).length, 0);
-  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 1);
-  assert.match(copy, /seeARealIssue: "See a real issue, end to end"/);
-  assert.doesNotMatch(copy, /seeARealIssue: ".*→/);
+  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 0);
+  assert.doesNotMatch(copy, /seeARealIssue/);
+  assert.match(illustration, /data-hero-run-blob/);
+  assert.match(illustration, /data-hero-run-drift/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
@@ -545,6 +549,9 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   assert.match(facts, /IDENTITY_IDS = \["glass", "mist", "press", "maison"\]/);
   assert.match(copy, /title: "Every screen, the same product\."/);
   assert.match(copy, /tabsAriaLabel: "Looks"/);
+  assert.match(looks, /HomeIdentityLooksTabs/);
+  assert.doesNotMatch(looks, /HomeIdentityLooksLinks/);
+  assert.doesNotMatch(copy, /openEditor|seeInComponents|startWithoutCode/);
 });
 
 test("drawer demo save closes and toasts", () => {
@@ -572,11 +579,13 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.match(header, /siteHeaderChrome/);
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /aria-label=\{siteChromeCopy\.nav\.siteNavigation\}/);
-  assert.match(header, /flex-wrap/);
+  assert.match(header, /flex-nowrap/);
+  assert.doesNotMatch(header, /flex-wrap items-center/);
   assert.match(header, /min-h-phone-bar/);
   assert.match(header, /px-page-gutter/);
   assert.match(header, /ms-auto/);
-  assert.match(header, /SiteFullSearchTrigger/);
+  assert.match(header, /SiteSearchTrigger/);
+  assert.doesNotMatch(header, /SiteFullSearchTrigger/);
   assert.match(header, /HomeGitHubLink/);
   assert.doesNotMatch(header, /chrome\.github/);
   assert.match(header, /HomeGetStartedAction/);
@@ -591,6 +600,8 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
   assert.match(siteHeaders, /isHomePath/);
   assert.match(siteHeaders, /min-h-phone-bar/);
+  assert.match(siteHeaders, /flex-nowrap/);
+  assert.doesNotMatch(siteHeaders, /flex-wrap items-center/);
   assert.match(siteHeaders, /data-header-actions/);
   assert.match(actions, /#get-started/);
   assert.match(actions, /data-site-action/);
@@ -600,52 +611,53 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.doesNotMatch(actions, /target="_blank"/);
   assert.match(
     compact,
-    /#nd-mobile-nav\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*var\(--zk-site-header-height\)/,
+    /#nd-mobile-nav\s*\{[^}]*height:\s*var\(--zk-site-header-height\)/,
   );
   assert.match(
     compact,
     /#nd-nav,\s*\n#nd-nav > div,\s*\n#nd-nav nav\s*\{[^}]*height:\s*var\(--zk-site-header-height\)/,
   );
-  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
-  assert.match(compact, /\[data-header-actions\]/);
-  assert.match(compact, /width < 48rem/);
-  assert.match(compact, /--zk-docs-scroll-offset:\s*calc\(var\(--fd-docs-row-1, 0px\) \+ var\(--zk-site-header-height-wrapped\)\)/);
+  assert.doesNotMatch(compact, /--zk-site-header-height-wrapped/);
+  assert.doesNotMatch(compact, /flex-basis:\s*100%/);
+  assert.doesNotMatch(
+    compact,
+    /--zk-docs-scroll-offset:\s*calc\(var\(--fd-docs-row-1, 0px\) \+ var\(--zk-site-header-height-wrapped\)\)/,
+  );
   const globals = readFileSync(join(app, "app/globals.css"), "utf8");
   assert.match(globals, /#nd-sidebar\s*\{[^}]*background-color:\s*hsl\(var\(--sidebar\)/);
   assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
   assert.doesNotMatch(layout, /KitVersionLabel/);
 });
 
-test("phone header wrap is two rows: nowrap nav list, 24px labels, actions take the second row", () => {
+test("phone header is one compact row with a kit Drawer site menu", () => {
   const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
   assert.match(header, /id="nd-mobile-nav"/);
-  assert.match(header, /flex min-h-phone-bar flex-wrap items-center/);
-  assert.match(header, /<ul className="flex list-none items-center flush">/);
+  assert.match(header, /flex min-h-phone-bar flex-nowrap items-center/);
+  assert.match(header, /<Drawer direction="right" mobile="side" open=\{open\} onOpenChange=\{setOpen\}>/);
+  assert.match(header, /DrawerTrigger asChild/);
+  assert.match(header, /aria-expanded=\{open\}/);
+  assert.match(header, /siteChromeCopy\.nav\.menu/);
+  assert.match(header, /DrawerTitle/);
+  assert.match(header, /DrawerCloseButton/);
+  assert.match(header, /from "lucide-react"/);
+  assert.match(header, /<Menu aria-hidden="true"/);
+  assert.match(header, /DrawerBody[\s\S]*HomeGitHubLink/);
+  const actions = header.match(/data-header-actions[\s\S]*?<\/div>/)?.[0] ?? "";
+  assert.match(actions, /SiteSearchTrigger/);
+  assert.match(actions, /HomeGetStartedAction/);
+  assert.match(actions, /DrawerTrigger/);
+  assert.doesNotMatch(actions, /HomeGitHubLink/);
+  assert.doesNotMatch(header, /SiteNavDrawer|ThemeButton|KitVersionLabel/);
   assert.doesNotMatch(header, /<ul className="[^"]*flex-wrap/);
-  assert.match(
-    compact,
-    /#nd-mobile-nav nav a:not\(\[data-slot="button"\]\)\s*\{[^}]*min-width:\s*1\.5rem/,
-  );
   assert.doesNotMatch(
     compact,
     /#nd-mobile-nav nav a:not\(\[data-slot="button"\]\)\s*\{[^}]*padding-inline:/,
   );
-  assert.match(
-    compact,
-    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*flex-basis:\s*100%/,
-  );
-  assert.match(
-    compact,
-    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*justify-content:\s*flex-end/,
-  );
-  assert.match(
-    compact,
-    /@media \(width < 48rem\)[\s\S]*?#nd-mobile-nav \[data-header-actions\]\s*\{[^}]*flex-wrap:\s*nowrap/,
-  );
+  assert.doesNotMatch(compact, /#nd-mobile-nav \[data-header-actions\]/);
   assert.match(
     compact,
     /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-nav\[data-docs-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
   );
-  assert.match(compact, /--zk-site-header-height-wrapped:\s*7\.5rem/);
+  assert.doesNotMatch(compact, /--zk-site-header-height-wrapped/);
 });
