@@ -14,17 +14,30 @@ function stripComments(src) {
   return src.replace(/\/\*[\s\S]*?\*\//g, "");
 }
 
-function blockFrom(src, openBraceIndex) {
+function spanFrom(src, openIndex, openCh = "{", closeCh = "}") {
   let depth = 0;
-  for (let i = openBraceIndex; i < src.length; i += 1) {
+  for (let i = openIndex; i < src.length; i += 1) {
     const ch = src[i];
-    if (ch === "{") depth += 1;
-    else if (ch === "}") {
+    if (ch === openCh) depth += 1;
+    else if (ch === closeCh) {
       depth -= 1;
-      if (depth === 0) return { inner: src.slice(openBraceIndex + 1, i), end: i + 1 };
+      if (depth === 0) return { inner: src.slice(openIndex + 1, i), end: i + 1 };
     }
   }
-  throw new Error("unbalanced CSS braces");
+  throw new Error(`unbalanced ${openCh}${closeCh}`);
+}
+
+function blockFrom(src, openBraceIndex) {
+  return spanFrom(src, openBraceIndex);
+}
+
+function functionBody(src, name) {
+  const head = src.search(new RegExp(`function ${name}\\b`));
+  if (head < 0) throw new Error(`missing function ${name}`);
+  const paren = src.indexOf("(", head);
+  const afterParams = spanFrom(src, paren, "(", ")").end;
+  const open = src.indexOf("{", afterParams);
+  return blockFrom(src, open).inner;
 }
 
 function eachNoPreferenceBlock(src) {
@@ -38,35 +51,30 @@ function eachNoPreferenceBlock(src) {
   return blocks;
 }
 
-function withoutNoPreferenceMedia(src) {
-  const re = /@media\s*\(\s*prefers-reduced-motion\s*:\s*no-preference\s*\)\s*\{/g;
+function withoutBlock(src, re) {
+  const pattern = new RegExp(re.source, re.flags.includes("g") ? re.flags : `${re.flags}g`);
   let out = src;
-  let match = re.exec(out);
+  let match = pattern.exec(out);
   while (match) {
     const open = match.index + match[0].length - 1;
     const { end } = blockFrom(out, open);
     out = `${out.slice(0, match.index)}${out.slice(end)}`;
-    re.lastIndex = 0;
-    match = re.exec(out);
+    pattern.lastIndex = 0;
+    match = pattern.exec(out);
   }
   return out;
+}
+
+function withoutNoPreferenceMedia(src) {
+  return withoutBlock(src, /@media\s*\(\s*prefers-reduced-motion\s*:\s*no-preference\s*\)\s*\{/g);
 }
 
 function withoutDataMotionGate(src) {
-  const re = /:root:not\(\[data-motion="reduce"\]\)\s*\{/g;
-  let out = src;
-  let match = re.exec(out);
-  while (match) {
-    const open = match.index + match[0].length - 1;
-    const { end } = blockFrom(out, open);
-    out = `${out.slice(0, match.index)}${out.slice(end)}`;
-    re.lastIndex = 0;
-    match = re.exec(out);
-  }
-  return out;
+  return withoutBlock(src, /:root:not\(\[data-motion="reduce"\]\)\s*\{/g);
 }
 
-const ANIMATION_SHORTHAND = /(?:^|[{;}])\s*animation\s*:/;
+/** Shorthand and longhand. An ungated `transition:` or `animation-name:` must fail. */
+const MOTION_DECL = /(?:^|[{;}])\s*(?:animation(?:-[a-z]+)?|transition(?:-[a-z]+)?)\s*:/;
 
 test("useMotionOk reads the kit preference and is still false on the server", () => {
   const src = readApp("ui/home/use-motion-ok.ts");
@@ -83,13 +91,13 @@ test("home hero animation rules run only when motion is allowed", () => {
   assert.ok(allowed.length >= 1, "expected prefers-reduced-motion: no-preference blocks");
   for (const block of allowed) {
     assert.match(block, /:root:not\(\[data-motion="reduce"\]\)/);
-    assert.match(block, ANIMATION_SHORTHAND);
+    assert.match(block, MOTION_DECL);
     const ungated = withoutDataMotionGate(block);
-    assert.doesNotMatch(ungated, ANIMATION_SHORTHAND);
+    assert.doesNotMatch(ungated, MOTION_DECL);
     assert.doesNotMatch(block, /\[data-hero-shapes\]/);
   }
   const rest = withoutNoPreferenceMedia(css);
-  assert.doesNotMatch(rest, ANIMATION_SHORTHAND);
+  assert.doesNotMatch(rest, MOTION_DECL);
   assert.doesNotMatch(rest, /(?:^|[,{\s])(?:html|body)(?:\s|,|\{)[^{]*animation\s*:/);
 });
 
@@ -113,16 +121,18 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
 
 test("interior panel drift is decorative and does not wrap the window", () => {
   const preview = readApp("ui/home/home-hero-preview.tsx");
+  const drift = functionBody(preview, "HeroPanelDrift");
+  const stage = functionBody(preview, "HeroSpecimenStage");
   assert.match(
-    preview,
+    drift,
     /<span[^>]*aria-hidden="true"[^>]*data-hero-panel-drift/,
   );
-  assert.match(preview, /data-hero-panel-drift[\s\S]*?inert/);
-  assert.doesNotMatch(preview, /data-hero-panel-drift[\s\S]*?<(?:a|button|input)\b/);
-  const windowOpen = preview.search(/<HomeHeroApp[\s\S]*?\/>/);
-  const driftOpen = preview.indexOf("data-hero-panel-drift");
-  assert.ok(driftOpen >= 0 && windowOpen >= 0);
-  assert.ok(driftOpen < windowOpen, "drift sits behind the window, not around it");
+  assert.match(drift, /\binert\b/);
+  assert.doesNotMatch(drift, /<(?:a|button|input)\b/);
+  const driftUse = stage.indexOf("<HeroPanelDrift");
+  const childrenUse = stage.indexOf("{children}");
+  assert.ok(driftUse >= 0 && childrenUse >= 0);
+  assert.ok(driftUse < childrenUse, "drift sits behind the window, not around it");
   assert.equal(preview.includes("data-hero-shapes"), false);
 });
 
@@ -131,13 +141,16 @@ test("foundations motion copy states the live rule, not a later ticket", () => {
   assert.match(copy, /motion:\s*"Chrome uses named motions only\./);
   assert.match(copy, /does not invent durations/);
   assert.match(copy, /One hero entrance/);
-  assert.match(copy, /one pausable loop/);
+  assert.match(copy, /one pausable tour/);
+  assert.doesNotMatch(copy, /pausable loop/);
   assert.match(copy, /Reduced motion shows the final state/);
   assert.doesNotMatch(copy, /motion ticket/);
 });
 
 test("visual contract allows interior panel drift, not page-fill motion", () => {
   const contract = readApp("VISUAL-CONTRACT.md");
-  assert.match(contract, /interior panel/);
+  assert.match(contract, /interior panel blob/);
   assert.match(contract, /never on the page fill/);
+  assert.match(contract, /loops live on the decorative cards and one interior panel blob/);
+  assert.match(contract, /scroll-driven motion stays on the cards/);
 });

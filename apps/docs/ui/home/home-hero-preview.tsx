@@ -85,6 +85,7 @@ function HeroPanelDrift() {
   );
 }
 
+/** ThemeScope for the window, satellite cards, and interior drift. */
 function HeroSpecimenStage({
   look,
   dark,

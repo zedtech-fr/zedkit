@@ -182,7 +182,8 @@
   display: block;
 }
 
-#home-page [data-hero-shapes] > span {
+#home-page [data-hero-shapes] > span,
+#home-page [data-hero-panel-drift-blob] {
   position: absolute;
   border-radius: 9999px;
   aspect-ratio: 1;
@@ -223,14 +224,10 @@
 }
 
 #home-page [data-hero-panel-drift-blob] {
-  position: absolute;
   top: 8%;
   right: 4%;
   width: min(14rem, 55%);
-  border-radius: 9999px;
-  aspect-ratio: 1;
   background: hsl(var(--primary) / 0.35);
-  filter: blur(56px);
 }
 
 @media (max-width: 47.999rem) {
