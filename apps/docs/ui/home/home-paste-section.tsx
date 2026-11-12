@@ -13,7 +13,7 @@ const LANDS_IDS = Object.keys(homePasteCopy.lands) as Array<keyof typeof homePas
 
 const PASTE_KIT_BADGE = {
   ai: "border-transparent bg-primary-foreground text-primary shadow-none hover:bg-primary-foreground",
-  ui: "border-transparent bg-primary-foreground text-accent shadow-none hover:bg-primary-foreground",
+  ui: "border-transparent bg-primary-foreground text-accent-foreground shadow-none hover:bg-primary-foreground",
 } as const;
 
 function pasteFileNote(

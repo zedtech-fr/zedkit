@@ -33,6 +33,17 @@ const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
 /** `H S% L%` triplets, the format the color tokens use. */
 const HSL_TRIPLET = /^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%$/;
 
+type TokenFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  tokens: IdentityTokens;
+  tokenKey: string;
+  scheme: "light" | "dark";
+  onChange: (value: string) => void;
+  swatch?: boolean;
+};
+
 function TokenField({
   id,
   label,
@@ -42,16 +53,7 @@ function TokenField({
   scheme,
   onChange,
   swatch,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  tokens: IdentityTokens;
-  tokenKey: string;
-  scheme: "light" | "dark";
-  onChange: (value: string) => void;
-  swatch?: boolean;
-}) {
+}: TokenFieldProps) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
   const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;

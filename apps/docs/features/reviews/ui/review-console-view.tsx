@@ -23,7 +23,7 @@ import {
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { issuePath } from "../model/review-routes";
-import { ReviewConsoleAppearanceFrame } from "./appearance-panel";
+import { ReviewConsoleAppearanceFrame } from "./review-console-appearance";
 
 export function ReviewConsoleView({
   issueNumber,
@@ -39,7 +39,7 @@ export function ReviewConsoleView({
   copy: ReviewsCopy;
 }) {
   return (
-    <ReviewConsoleAppearanceFrame copy={copy}>
+    <ReviewConsoleAppearanceFrame>
       {(panel) => (
         <>
           <Stack gap="sm" className="shrink-0 surface-pad-sm">
