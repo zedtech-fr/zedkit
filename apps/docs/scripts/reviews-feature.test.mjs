@@ -19,7 +19,7 @@ import {
   listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
-import { latestStatus } from "../features/reviews/model/latest-status.ts";
+import { latestEntry, latestStatus } from "../features/reviews/model/latest-status.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
@@ -31,6 +31,8 @@ import {
   toPublicReviews,
 } from "../features/reviews/model/public-review.ts";
 import {
+  issuePath,
+  issueRunPath,
   linkedPrFallbackPath,
   linkedPrRunFallbackPath,
   listIssueParamsFrom,
@@ -45,6 +47,8 @@ import {
   redirectPathForPr,
   redirectPathForPrRun,
   RETIRED_REVIEW_PR_NUMBERS,
+  unlinkedPrPath,
+  unlinkedRunPath,
 } from "../features/reviews/model/review-routes.ts";
 import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
 const here = dirname(fileURLToPath(import.meta.url));
@@ -338,6 +342,57 @@ test("latest status uses the last entry; a review verdict wins", () => {
   assert.equal(latestStatus([]), null);
 });
 
+test("latestEntry returns null on empty entries", () => {
+  assert.equal(latestEntry([]), null);
+});
+
+test("latestEntry returns the later startedAt runId when they differ", () => {
+  const last = latestEntry([
+    entry({ runId: "run-early", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "later",
+      runId: "run-late",
+      type: "implement",
+      startedAt: "2026-11-10T17:00:00.000Z",
+    }),
+  ]);
+  assert.equal(last?.runId, "run-late");
+});
+
+test("latestEntry keeps the first entry when startedAt ties", () => {
+  const last = latestEntry([
+    entry({ id: "first", runId: "run-first", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "second",
+      runId: "run-second",
+      type: "implement",
+      startedAt: "2026-11-10T16:00:00.000Z",
+    }),
+  ]);
+  assert.equal(last?.id, "first");
+  assert.equal(last?.runId, "run-first");
+});
+
+test("latestEntry uses one runId when plan and implement share it", () => {
+  const last = latestEntry([
+    entry({ id: "plan", type: "plan", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "implement",
+      type: "implement",
+      startedAt: "2026-11-10T16:10:00.000Z",
+    }),
+  ]);
+  assert.equal(last?.runId, "run-108-impl");
+  assert.equal(last?.type, "implement");
+});
+
+test("issue and unlinked run paths format /issues/:n/runs/:id", () => {
+  assert.equal(issueRunPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(unlinkedRunPath(54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
+  assert.equal(issuePath(108), "/issues/108");
+  assert.equal(unlinkedPrPath(54), "/issues/pr/54");
+});
+
 function writeSnapshot(issues, pullRequests, extra = {}) {
   const dir = mkdtempSync(join(tmpdir(), "public-issues-"));
   const path = join(dir, "public-reviews.json");
@@ -618,6 +673,8 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
   assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
   assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
+  assert.equal(reviewsCopy.issue.timeline, "Timeline");
+  assert.equal("openUnlinked" in reviewsCopy.list, false);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Preview look/);
@@ -815,6 +872,18 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
   assert.doesNotMatch(list, /ReviewConsole/);
   assert.doesNotMatch(timeline, /ReviewConsole/);
+});
+
+test("list title href is the latest run; Timeline is the labelled secondary", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  assert.match(list, /latestEntry\(issue\.entries\)/);
+  assert.match(list, /last \? issueRunPath\(issue\.number, last\.runId\) : issuePath\(issue\.number\)/);
+  assert.match(list, /last \? unlinkedRunPath\(entry\.number, last\.runId\) : unlinkedPrPath\(entry\.number\)/);
+  assert.match(list, /unlinkedPrPath/);
+  assert.match(list, /copy\.issue\.timeline/);
+  assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
+  assert.doesNotMatch(list, /\/runs\/`/);
+  assert.doesNotMatch(list, /\/runs\/\$\{/);
 });
 
 test("verdict and status tones live in one shared module", () => {
