@@ -303,21 +303,20 @@ test("catalog filter chips use quiet fill not primary accent", async ({ page }) 
   expect(usesPrimaryBg).toBe(false);
 });
 
-test("home links to catalog with component families", async ({ page }) => {
+test("home links to catalog from the hero (#210)", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
+  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
   await expect(catalog).toBeVisible();
-  await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
-  const rows = page.locator("[data-home-component-families] [data-family-title]");
-  expect(await rows.count()).toBeGreaterThanOrEqual(4);
+  await expect(catalog).toHaveAttribute("href", "/catalog");
+  await expect(page.locator("#components, [data-home-component-families]")).toHaveCount(0);
 });
 
-test("catalog CTA keeps a decorative icon at phone width", async ({ page }) => {
+test("catalog CTA from the hero stays visible at phone width", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto("/", { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
+  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
   await catalog.scrollIntoViewIfNeeded();
-  await expect(catalog.locator("svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(catalog).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
@@ -334,8 +333,7 @@ test.describe("catalog CTA light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
-  await catalog.scrollIntoViewIfNeeded();
+      const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
       await catalog.scrollIntoViewIfNeeded();
       await expect(catalog).toBeVisible();
       await catalog.screenshot({ path: `test-results/home-catalog-cta-${mode}.png` });

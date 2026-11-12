@@ -4,7 +4,7 @@ import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { openHeroPage } from "./hero-helpers";
 
 /**
- * Home: hero Display row scopes the specimen; identities are linked from the secondary band.
+ * Home: hero Display row scopes the specimen; identities stay in the looks band.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -19,7 +19,7 @@ test("the hero keeps the page identity: nothing cycles, nothing is written", asy
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("the hero demo follows get started, before component families", async ({ page }) => {
+test("the hero demo follows get started", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   const order = await page.evaluate(() => {
@@ -34,11 +34,9 @@ test("the hero demo follows get started, before component families", async ({ pa
       h1BeforeDemo: precedes("#home-page h1", "#demo"),
       demo: top("#demo"),
       getStarted: top("#get-started"),
-      components: top("#components"),
     };
   });
   expect(order.h1BeforeDemo).toBe(true);
-  expect(order.getStarted).toBeLessThan(order.components);
   expect(order.demo).toBeLessThan(order.getStarted);
 });
 

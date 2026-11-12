@@ -1,6 +1,5 @@
 import { Section, Stack } from "@zedtech/zedkit-ui";
 import { HomeIdentityLooks } from "@/ui/home/home-identity-looks";
-import { HomeYoursScene } from "@/ui/home/home-yours-scene";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_SECTION_CONTENT_GAP,
@@ -31,7 +30,6 @@ export function HomeIdentitiesSection() {
     >
       <Stack id="use-cases" gap={HOME_SECTION_CONTENT_GAP} data-scroll-anchor="">
         <HomeIdentityLooks />
-        <HomeYoursScene />
       </Stack>
     </Section>
   );

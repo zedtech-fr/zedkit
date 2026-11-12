@@ -10,11 +10,8 @@ const SECTION_IDS = [
   "limits",
   "manifesto",
   "closing",
-  "components",
-  "entry-points",
 ];
 const MIN_SECTION_PADDING_PX = 32;
-const MIN_CARD_PADDING_PX = 16;
 
 test.describe("home layout rhythm (#387)", () => {
   for (const width of WIDTHS) {
@@ -69,20 +66,14 @@ test.describe("home layout rhythm (#387)", () => {
       const sections = sectionIds
         .map((id) => document.getElementById(id))
         .filter((el): el is HTMLElement => el !== null);
-      const familyRows = [...document.querySelectorAll("[data-home-component-families] > div > div")];
       return {
         sectionPads: sections.map((el) => padding(el)),
-        familyPads: familyRows.map((el) => padding(el)),
       };
     }, SECTION_IDS);
 
     expect(metrics.sectionPads.length).toBe(SECTION_IDS.length);
     for (const pad of metrics.sectionPads) {
       expect(pad).toBeGreaterThanOrEqual(MIN_SECTION_PADDING_PX);
-    }
-    expect(metrics.familyPads.length).toBeGreaterThan(0);
-    for (const pad of metrics.familyPads) {
-      expect(pad).toBeGreaterThanOrEqual(MIN_CARD_PADDING_PX);
     }
   });
 
@@ -92,7 +83,6 @@ test.describe("home layout rhythm (#387)", () => {
         const html = getComputedStyle(document.documentElement);
         const root = document.querySelector("[data-slot='section-scroll']");
         const identities = document.getElementById("identities");
-        const entry = document.getElementById("entry-points");
         const snap = (el: Element | null) => (el ? getComputedStyle(el).scrollSnapAlign : "");
         return {
           htmlType: html.scrollSnapType,
@@ -101,7 +91,6 @@ test.describe("home layout rhythm (#387)", () => {
           rootType: root ? getComputedStyle(root).scrollSnapType : "",
           identitiesAlign: snap(identities),
           identitiesSnap: identities?.getAttribute("data-snap"),
-          entryAlign: snap(entry),
         };
       });
 
@@ -116,7 +105,6 @@ test.describe("home layout rhythm (#387)", () => {
       expect(Number.parseFloat(metrics.htmlPaddingTop), `${width}`).toBeGreaterThanOrEqual(48);
       expect(metrics.identitiesSnap, `${width}`).toBe("none");
       expect(metrics.identitiesAlign, `${width}`).toBe("none");
-      expect(metrics.entryAlign, `${width}`).toMatch(/start/);
     }
   });
 });
@@ -131,11 +119,11 @@ test.describe("home bands (#1025)", () => {
         const r = el?.getBoundingClientRect();
         return r ? { left: r.left, right: r.right, width: r.width } : null;
       };
-      const section = document.getElementById("components");
+      const section = document.getElementById("same-idea");
       return {
         viewportWidth: document.documentElement.clientWidth,
         section: rect(section),
-        inner: rect(section?.querySelector(":scope > div")),
+        inner: rect(section?.querySelector("[data-slot='container']")),
         heading: rect(document.querySelector("#home-page h1")),
       };
     });
@@ -145,12 +133,13 @@ test.describe("home bands (#1025)", () => {
     expect(metrics.section!.right).toBeGreaterThanOrEqual(metrics.viewportWidth - 1);
 
     expect(metrics.inner).not.toBeNull();
-    expect(metrics.inner!.width).toBeGreaterThan(1200);
+    // Docs shell pins --zk-container-wide to 75rem (1200px); kit default is 90rem.
+    expect(metrics.inner!.width).toBeGreaterThanOrEqual(1200);
     expect(metrics.inner!.width).toBeLessThanOrEqual(1442);
     expect(Math.abs(metrics.inner!.left - (metrics.viewportWidth - metrics.inner!.right))).toBeLessThan(2);
 
     expect(metrics.heading).not.toBeNull();
-    expect(metrics.heading!.left).toBeLessThan((metrics.viewportWidth - 1440) / 2 + 48);
+    expect(metrics.heading!.left).toBeLessThan((metrics.viewportWidth - 1200) / 2 + 48);
   });
 });
 
