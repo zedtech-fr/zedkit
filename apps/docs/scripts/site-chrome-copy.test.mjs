@@ -38,7 +38,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal("theme" in siteChromeCopy, false);
   assert.equal("openNavigation" in siteChromeCopy.nav, false);
   assert.equal("openMenu" in siteChromeCopy.nav, false);
-  assert.equal("menu" in siteChromeCopy.nav, false);
+  assert.equal(siteChromeCopy.nav.menu, "Menu");
   assert.equal(siteChromeCopy.nav.siteNavigation, "Site navigation");
   assert.equal("guides" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.github, "GitHub");
@@ -97,6 +97,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
 
   assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
+  assert.match(header, /siteChromeCopy\.nav\.menu/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
   const searchTrigger = read("ui/site-chrome.tsx");
   assert.match(searchTrigger, /siteChromeCopy\.search\.triggerAriaLabel/);
@@ -143,7 +144,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);
   assert.doesNotMatch(header, /<p[\s>]/);
-  assert.doesNotMatch(header, /IconButton|DocsMenuButton/);
+  assert.match(header, /IconButton/);
+  assert.doesNotMatch(header, /DocsMenuButton/);
   assert.match(skip, /href="#main-content"/);
   assert.doesNotMatch(skip, /IconButton|<Button[\s>]/);
 });
