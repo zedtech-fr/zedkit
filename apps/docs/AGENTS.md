@@ -193,7 +193,7 @@ Read [VISUAL-CONTRACT.md](./VISUAL-CONTRACT.md) before changing home,
 chrome, previews or specimens (traps included). Type, motion,
 composition and elevation: [docs/design/signature.md](../../docs/design/signature.md)
 (named type roles and motions, not raw `font-size` or duration). Identity
-states: skill `use-signature`.
+states: proof `tests/identity-state-matrix.spec.ts`, skill `use-signature`.
 
 Scope: this docs site and its specimens. Exception: a specimen that
 must match a kit primitive's own look.

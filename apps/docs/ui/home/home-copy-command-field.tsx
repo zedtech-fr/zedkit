@@ -22,10 +22,12 @@ import { homeCopyCommandCopy } from "@/ui/home/i18n/home-copy-command-copy";
 export function HomeCopyCommandField({
   value,
   "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedBy,
   copyLabel,
 }: {
   value: string;
   "aria-label": string;
+  "aria-describedby"?: string;
   copyLabel: string;
 }) {
   const messages = useUiMessages();
@@ -61,6 +63,7 @@ export function HomeCopyCommandField({
         autoComplete="off"
         className="content-shrink font-mono"
         aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
       />
       <Button
         type="button"
