@@ -11,7 +11,7 @@ const factsSrc = readFileSync(join(app, "ui/home/home-identity-facts.ts"), "utf8
 const identityData = readFileSync(join(uiSrc, "identity/identity-data.ts"), "utf8");
 const identitiesCss = readFileSync(join(uiSrc, "identities.css"), "utf8");
 
-/** Home shows three looks only (`IDENTITY_IDS`); other kit identities stay off the home facts table. */
+/** Home shows four looks (`IDENTITY_IDS`); Tide and Volt stay off the home facts table. */
 const IDS_MATCH = factsSrc.match(/export const IDENTITY_IDS = \[([^\]]+)\]/);
 assert.ok(IDS_MATCH, "IDENTITY_IDS export missing");
 const SHIPPED = [...IDS_MATCH[1].matchAll(/"([a-z]+)"/g)].map((m) => m[1]);
@@ -52,15 +52,16 @@ function field(blockSrc, name) {
   return match?.[1];
 }
 
-test("home ships exactly the three looks in IDENTITY_IDS", () => {
-  assert.deepEqual(SHIPPED, ["mist", "press", "maison"]);
+test("home ships exactly the four looks in IDENTITY_IDS", () => {
+  assert.deepEqual(SHIPPED, ["glass", "mist", "press", "maison"]);
 });
 
-test("home look labels are Mist, Press, Maison; Glass is not a home look", () => {
+test("home look labels are Glass, Mist, Press, Maison", () => {
+  assert.equal(field(factsRecord("glass"), "label"), "Glass");
   assert.equal(field(factsRecord("mist"), "label"), "Mist");
   assert.equal(field(factsRecord("press"), "label"), "Press");
   assert.equal(field(factsRecord("maison"), "label"), "Maison");
-  assert.doesNotMatch(factsSrc, /glass/i);
+  assert.doesNotMatch(factsSrc, /tide|volt/i);
 });
 
 test("every home identity id has facts and identity-data", () => {
@@ -78,6 +79,7 @@ test("every home identity id has facts and identity-data", () => {
 test("home look CSS still defines spacing, radius, border and fonts", () => {
   const mistCss = identitiesCss.slice(identitiesCss.indexOf("Scoped mist resets the stock tokens."));
   const cssById = {
+    glass: block(readFileSync(join(uiSrc, "identities/glass.css"), "utf8"), '[data-identity="glass"]'),
     mist: block(mistCss, '[data-identity-scope][data-identity="mist"]'),
     press: block(readFileSync(join(uiSrc, "identities/press.css"), "utf8"), '[data-identity="press"]'),
     maison: block(readFileSync(join(uiSrc, "identities/maison.css"), "utf8"), '[data-identity="maison"]'),

@@ -1,34 +1,35 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Header } from "fumadocs-ui/layouts/home/slots/header";
 import { usePathname } from "next/navigation";
-import {
-  featuredPackageReleasesUrl,
-  featuredPackageVersion,
-} from "@/content/gallery";
 import { cn } from "@zedtech/zedkit-ui";
 import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
 import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
+import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
+import { isCatalogPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
-/**
- * Métier: public TypeScript kit documentation site.
- * Client personas: integrating developers who own the consuming app.
- * Customers: those same developers (this site is the product surface).
- * Customer personas: first visit on `/` — next action is Get started or Docs, not search or a version chip.
- * UI decisions: home header is brand + AI/UI/Docs/Catalog + GitHub text + Get started, because customer = first-visit integrator on `/`.
- */
-function HomeDesktopHeader() {
+function MarketingDesktopNav({
+  mark,
+  actions,
+}: {
+  mark: "home" | "catalog";
+  actions: ReactNode;
+}) {
   const pathname = usePathname();
   return (
-    <header id="nd-nav" data-home-header="" className="sticky pin-top z-header max-md:hidden">
+    <header
+      id="nd-nav"
+      {...(mark === "home" ? { "data-home-header": "" } : { "data-catalog-header": "" })}
+      className="sticky pin-top z-header max-md:hidden"
+    >
       <div>
         <nav
           aria-label={siteChromeCopy.nav.siteNavigation}
-          className="mx-auto flex w-full max-w-(--fd-layout-width) items-center gap-stack-lg px-page-gutter"
+          className="mx-auto flex w-full max-w-(--fd-layout-width) items-center px-page-gutter"
         >
           <DocsAppLink
             href="/"
@@ -37,7 +38,7 @@ function HomeDesktopHeader() {
           >
             <SiteBrand />
           </DocsAppLink>
-          <ul className="flex list-none items-center gap-stack-lg flush">
+          <ul className="flex list-none items-center flush">
             {sitePrimaryNavLinks().map((link) => {
               const active = isSiteNavLinkActive(pathname, link);
               return (
@@ -56,9 +57,8 @@ function HomeDesktopHeader() {
               );
             })}
           </ul>
-          <div className="ms-auto flex items-center gap-stack-md">
-            <HomeGitHubLink />
-            <HomeGetStartedAction />
+          <div data-header-actions="" className="ms-auto flex items-center">
+            {actions}
           </div>
         </nav>
       </div>
@@ -66,17 +66,60 @@ function HomeDesktopHeader() {
   );
 }
 
-/** Marketing header slot: phone header below md, stock desktop header from md up. Home `/` uses the mockup allowlist. */
+/**
+ * Métier: public TypeScript kit documentation site.
+ * Client personas: integrating developers who own the consuming app.
+ * Customers: those same developers (this site is the product surface).
+ * Customer personas: first visit on `/` — next action is Get started or Docs, not search or a version chip.
+ * UI decisions: home header is brand + AI/UI/Docs/Catalog + GitHub text + Get started, because customer = first-visit integrator on `/`.
+ */
+function HomeDesktopHeader() {
+  return (
+    <MarketingDesktopNav
+      mark="home"
+      actions={
+        <>
+          <HomeGitHubLink />
+          <HomeGetStartedAction />
+        </>
+      }
+    />
+  );
+}
+
+/**
+ * Customer personas: hunting a component on `/catalog`, often at 1440, hurried.
+ * UI decisions: catalog header is brand + primary nav + Search ⌘K + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started.
+ */
+function CatalogDesktopHeader() {
+  return (
+    <MarketingDesktopNav
+      mark="catalog"
+      actions={
+        <>
+          <SiteFullSearchTrigger />
+          <HomeGitHubLink />
+        </>
+      }
+    />
+  );
+}
+
+/** Marketing header slot: phone header below md. Home and Catalog use the mockup desktop chrome; other routes keep fumadocs Header. */
 export function MarketingSiteHeader() {
-  const home = isHomePath(usePathname());
+  const pathname = usePathname();
+  const home = isHomePath(pathname);
+  const catalog = isCatalogPath(pathname);
   return (
     <>
-      <MobileHeader
-        mode="home"
-        version={featuredPackageVersion}
-        releasesHref={featuredPackageReleasesUrl}
-      />
-      {home ? <HomeDesktopHeader /> : <Header className="max-md:hidden" />}
+      <MobileHeader mode="home" />
+      {home ? (
+        <HomeDesktopHeader />
+      ) : catalog ? (
+        <CatalogDesktopHeader />
+      ) : (
+        <Header className="max-md:hidden" />
+      )}
     </>
   );
 }
@@ -86,9 +129,7 @@ export function DocsSiteHeader() {
   return (
     <MobileHeader
       mode="docs"
-      version={featuredPackageVersion}
-      releasesHref={featuredPackageReleasesUrl}
-      className="sticky top-(--fd-docs-row-1) flex h-phone-bar items-center justify-between gap-stack-sm border-b px-control-tight backdrop-blur-sm [grid-area:header] md:hidden"
+      className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
     />
   );
 }

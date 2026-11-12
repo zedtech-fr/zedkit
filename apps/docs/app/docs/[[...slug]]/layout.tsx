@@ -1,32 +1,32 @@
 import type { ReactNode } from "react";
+import type { Root } from "fumadocs-core/page-tree";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { source } from "#source";
-import { featuredPackageReleasesUrl, featuredPackageVersion } from "@/content/gallery";
 import { SiteBrand } from "@/ui/site-brand";
 import { siteHeaderLinks } from "@/lib/site-header-links";
-import { KitVersionLabel } from "@/ui/kit-version-label";
+import { docsLayoutTree } from "@/lib/docs-layout-tree.mjs";
 import { docsChromeSlots } from "@/ui/site-chrome-slots";
 import { DocsSiteHeader } from "@/ui/site-headers";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const { slug } = await params;
   return (
     <DocsLayout
-      tree={source.pageTree}
+      tree={docsLayoutTree(source.pageTree, slug) as Root}
       nav={{
         title: <SiteBrand />,
         url: "/",
-        children: (
-          <KitVersionLabel
-            version={featuredPackageVersion}
-            releasesHref={featuredPackageReleasesUrl}
-            tone="shell"
-          />
-        ),
       }}
       githubUrl="https://github.com/zedtech-fr/zedkit"
       links={siteHeaderLinks()}
       searchToggle={{ enabled: true }}
-      themeSwitch={{ enabled: true }}
+      themeSwitch={{ enabled: false }}
       slots={{ ...docsChromeSlots, header: DocsSiteHeader }}
     >
       {children}

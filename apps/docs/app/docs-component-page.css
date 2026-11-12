@@ -13,6 +13,13 @@
 }
 
 [data-component-page] {
+  --zk-type-doc-h1-size: 2.5rem;
+  --zk-type-doc-h1-weight: 500;
+  --zk-type-doc-h1-leading: 1.12;
+  --zk-type-doc-h1-tracking: -0.03em;
+  --zk-type-h2-size: 1.375rem;
+  --zk-type-h2-weight: 500;
+  --zk-heading-tracking: -0.025em;
   --zk-preview-stage-from: 243 63% 24%;
   --zk-preview-stage-via: 243 70% 46%;
   --zk-preview-stage-to: 254 71% 58%;
@@ -31,6 +38,20 @@
     radial-gradient(circle at calc(100% + 3rem) -4rem, hsl(var(--zk-preview-stage-halo) / 0.12) 0 7rem, transparent 7.1rem),
     radial-gradient(ellipse 5.625rem 180% at 18% -40%, hsl(var(--zk-preview-stage-halo) / 0.1), transparent 70%),
     radial-gradient(circle at -2.5rem calc(100% + 4rem), hsl(var(--zk-preview-stage-orb) / 0.55) 0 5rem, transparent 5.1rem);
+}
+
+/* Beat Heading display/title utilities, which read --zk-type-h1-* / --zk-type-h2-*. */
+#nd-page [data-component-page] h1[data-slot="heading"] {
+  font-size: var(--zk-type-doc-h1-size);
+  font-weight: var(--zk-type-doc-h1-weight);
+  line-height: var(--zk-type-doc-h1-leading);
+  letter-spacing: var(--zk-type-doc-h1-tracking);
+}
+
+#nd-page [data-component-page] h2[data-slot="heading"] {
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  letter-spacing: var(--zk-heading-tracking, -0.025em);
 }
 
 @media (min-width: 48rem) {

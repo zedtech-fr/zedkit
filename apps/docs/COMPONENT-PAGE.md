@@ -9,7 +9,7 @@ hand-written props or export lists.
 
 | # | Section | Source |
 | --- | --- | --- |
-| 0 | Purpose (role), maturity including Stable, package, source/wraps | Generated props on `ComponentPage`. Catalog `MaturityBadge` still hides Stable; the page header does not. |
+| 0 | Breadcrumb (`UI /` job group), title (Short name), purpose (role), Stable, package, Source | Generated props on `ComponentPage`. Catalog `MaturityBadge` still hides Stable; the page header does not. Wraps is not in this meta row. |
 | 1 | Preview / Code | `ComponentPreview` / demo registry (look + dark, before usage). Primary Preview sits in the violet high-value stage; usage and Preview Code are dark wells. |
 | 2 | Who / Use / Avoid | Catalog guidance once, after the specimen |
 | 3 | Use it | Catalog `examples[]` |
