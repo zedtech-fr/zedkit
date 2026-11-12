@@ -51,3 +51,16 @@ test("Glass identity tokens stay on the kit sheet", () => {
   assert.match(glass, /--zk-bg-pattern:/);
   assert.match(glass, /--zk-font-display:\s*"Space Grotesk Variable"/);
 });
+
+test("docs shell pins yield for a custom identity so Classic edits can paint the site", () => {
+  const css = read("app/docs-shell-tokens.css");
+  assert.match(css, /html\[data-docs-shell\]:not\(\.dark\):not\(\[data-identity="custom"\]\) body/);
+  assert.match(css, /html\[data-docs-shell\]:not\(\.dark\):not\(\[data-identity="custom"\]\) \{/);
+  assert.match(css, /:root\[data-identity\]:not\(\[data-identity="custom"\]\) \{/);
+  assert.match(css, /html\[data-docs-shell\]\[data-identity="custom"\] body/);
+  assert.match(css, /background-image:\s*none/);
+  assert.match(css, /background-color:\s*hsl\(var\(--background\)\)/);
+  assert.doesNotMatch(css, /html\[data-docs-shell\]:not\(\.dark\) body \{/);
+  assert.doesNotMatch(css, /html\[data-docs-shell\]:not\(\.dark\) \{/);
+  assert.doesNotMatch(css, /:root\[data-identity\] \{/);
+});

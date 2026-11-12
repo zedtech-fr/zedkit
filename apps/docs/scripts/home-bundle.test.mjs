@@ -632,3 +632,43 @@ test("phone header is one compact row with a kit Drawer site menu", () => {
   );
   assert.doesNotMatch(compact, /--zk-site-header-height-wrapped/);
 });
+
+function walkTsx(dir, relBase = "") {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name === ".next" || entry.name === "out") continue;
+    const rel = relBase ? `${relBase}/${entry.name}` : entry.name;
+    const abs = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkTsx(abs, rel));
+    else if (entry.name.endsWith(".tsx")) out.push({ abs, rel });
+  }
+  return out;
+}
+
+test("docs home uses native document scroll; SectionScroll is not mounted (#262)", () => {
+  const view = readFileSync(join(app, "ui/home/home-view.tsx"), "utf8");
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  assert.doesNotMatch(view, /\bSectionScroll\b/);
+  assert.doesNotMatch(view, /data-slot=["']section-scroll["']/);
+  assert.match(
+    view,
+    /\{\.\.\.HOME_MARKETING_ROOT_PROPS\}[\s\S]*id=["']home-page["'][\s\S]*className=["']content-shrink["']/,
+  );
+
+  const importers = [];
+  for (const file of walkTsx(join(app, "ui/home"))) {
+    const src = readFileSync(file.abs, "utf8");
+    if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
+  }
+  assert.deepEqual(importers, []);
+
+  assert.doesNotMatch(compact, /#nd-home-layout/);
+  assert.match(
+    compact,
+    /#home-page section\[id\]\s*\{[^}]*scroll-margin-top:\s*calc\(var\(--zk-header-height\) \+ 1rem\)/,
+  );
+  assert.match(
+    compact,
+    /\[data-scroll-anchor\]\s*\{[^}]*scroll-margin-top:\s*max\(calc\(var\(--spacing\) \* 24\), calc\(var\(--zk-header-height\) \+ 1rem\)\)/,
+  );
+});

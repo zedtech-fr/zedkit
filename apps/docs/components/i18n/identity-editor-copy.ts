@@ -69,6 +69,8 @@ export const identityEditorCopy = {
     contrastHint:
       "Text needs 4.5:1 contrast on its background, accents and borders 3:1. Fix moves only that color to the nearest passing shade.",
     contrastOk: "Every checked color pair passes.",
+    contrastNeedFix: (n: number) =>
+      n === 1 ? "One color pair needs a fix." : `${n} color pairs need a fix.`,
   },
   fields: {
     groups: {
@@ -102,10 +104,10 @@ export const identityEditorCopy = {
       `${scheme} ${label} ${ratio}:1 (need ${min}:1)`,
     fix: (scheme: string, label: string) => `Fix ${scheme} ${label}`,
     hslFormat: "Enter a color as H S% L%, for example 220 14% 96%.",
+    invalidValue: "This value is not valid, so nothing was updated.",
   },
   panel: {
     hint: "Change spacing first, then watch the card. Preview dark changes the card only.",
-    applied: "Applied to the whole site.",
   },
   library: {
     heading: "Save and apply",
@@ -126,15 +128,12 @@ export const identityEditorCopy = {
       unavailable: "Saved looks cannot be read here: this browser is blocking storage.",
       corrupt: "Saved looks on this device could not be read, so none are listed. A copy was kept aside in this browser.",
     },
-    removeFromSite: "Remove from the whole site",
-    siteRestored: "This site is back to its own look.",
   },
   suggest: {
     noChanges: "No token changes.",
     diffRow: (path: string, from: string, to: string) => `${path}: ${from} → ${to}`,
     contrastPassed:
       "Contrast check passed (body, primary, and muted text 4.5:1; accent and border 3:1).",
-    applySite: "Also apply to the whole site",
     apply: "Apply",
     discard: "Discard",
     intro: "Describe a look, then Suggest. Review the list before Apply.",
@@ -155,12 +154,10 @@ export const identityEditorCopy = {
     previewDark: "Preview dark",
     undo: "Undo",
     reset: "Reset",
-    applySite: "Apply to the whole site",
     groups: {
       preview: "Choose and preview",
       keep: "Save and apply",
     },
-    applyHint: "Applying restyles this site in your browser only. The home demo keeps its own look.",
   },
 } as const;
 

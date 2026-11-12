@@ -46,6 +46,7 @@ describe("section scroll", () => {
     expect(css).toContain("scroll-behavior: smooth");
     expect(css).toContain("scroll-padding-top: var(--zk-header-height)");
     expect(css).toContain("scroll-snap-type: y proximity");
+    expect(css).toContain('html:has([data-slot="section-scroll"])');
     expect(css).not.toContain("mandatory");
     expect(css).toContain('data-snap="none"');
   });

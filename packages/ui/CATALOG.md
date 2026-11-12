@@ -144,7 +144,7 @@ cn("px-4", "px-2"); // "px-2" — last conflicting utility wins
 - When not to use: For gesture or layout animation (drag, shared-element transitions) — use a motion library instead.
 - See also: `Theme an admin app (dark/light included)`, `Group content in a card section`, `Reveal and react with motion on any element`
 - Examples: Entrance with stagger, Hover feedback, Staggered children
-- A11y: Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. Hover lift only applies on devices that hover, so it never sticks after a tap.
+- A11y: Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. The `:hover` lift only applies on devices that hover, so hover never sticks after a tap; `:focus-within` lift stays until blur. Put `hover-lift` on the bordered host (`Card`/`Surface`) — a borderless wrapper never paints the primary-tinted border. `hover-lift` uses the same lift, shadow and primary-tinted border on `:hover`, `:focus-visible` and `:focus-within`; reduced motion keeps the border and shadow and kills the translate.
 - Troubleshooting: Nothing animates — check the OS reduced-motion setting first. Content stays hidden — `data-reveal="pending"` and `data-stagger="pending"` hide content until your code sets them to `"in"`. Stagger has no delay — `stagger-*` delays an animation class (`animate-fade-up stagger-2`), not a transition. Parallax travel follows `--zk-motion-intensity` (default 1, `0` = no shift) times `--zk-motion-mobile` (`0.5` under 40rem); override on a subtree (`.hero { --zk-motion-intensity: 0.3 }`), not as an identity token. Derived amplitude is `min(calc(var(--zk-reveal-distance) * 8), var(--zk-parallax-max-shift, 120px))` (x-axis cap `12vw`). Sticky offset is `--zk-pin-top` (`calc(var(--zk-header-height) + 1rem)`).
 
 ```ts
@@ -155,7 +155,7 @@ import { Card } from "@zedtech/zedkit-ui";
 ```
 
 ```ts
-<Card className="hover-lift">Lifts on hover (devices that hover)</Card>
+<Card className="hover-lift">Lifts on hover and keyboard focus</Card>
 <Button className="hover-press">Presses down on click</Button>
 ```
 
@@ -178,10 +178,10 @@ import { Card } from "@zedtech/zedkit-ui";
 - Audience: Developers adding appear, scroll, press, longpress, hover or focus motion to any kit element.
 - Purpose: One typed attribute and wrapper API for identity-token motion, with a tiny SSR-safe runtime.
 - When to use: When a card, section or control should move on appear, scroll progress, press, longpress, hover or focus.
-- When not to use: For pinned scene crossfades use `ScrollScenes`. For section snap/smooth-scroll use `SectionScroll`. For first-paint class utilities see `Animate entrances and hover feedback with CSS utilities`. For section-shared parallax layers use `ParallaxSection` from `@zedtech/zedkit-ui/motion`.
+- When not to use: For pinned scene crossfades use `ScrollScenes`. For section snap/smooth-scroll use `SectionScroll` (styles `html` via `:has`; skip on a native-scrolling page). For first-paint class utilities see `Animate entrances and hover feedback with CSS utilities`. For section-shared parallax layers use `ParallaxSection` from `@zedtech/zedkit-ui/motion`.
 - See also: `Animate entrances and hover feedback with CSS utilities`, `Add depth with parallax layers`, `Pin a stage and change scene as the page scrolls`, `Stack content and group titled sections`
 - Examples: Attribute on a card, Wrapper with several triggers, Stagger children
-- A11y: `prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`.
+- A11y: `prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`. Stagger-pending children are `visibility: hidden` (out of the tab order) until `in`.
 - Troubleshooting: Nothing appears to move — mount `<AnimateObserver />` once near the app root (or call `observeAnimate()`), then check reduced motion and `data-motion` on `<html>`. Content stays visible without JS by design. Scroll parallax needs `animation-timeline: view()` or the runtime fallback. In-app reduce flashes on load — render `<MotionScript />` in `<head>` (same pattern as `IdentityScript`) so `data-motion="reduce"` is set before paint; `useMotionPreference()` is `"reduce"` on the server.
 
 ```ts
@@ -1672,14 +1672,15 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
-- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.
+- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap on html. Gaps are role-named only.
 - When to use: For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.
-- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.
-- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
-- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap and smooth scrolling apply only when `prefers-reduced-motion` is `no-preference`.
+- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`. Do not wrap a native-scrolling page: `SectionScroll` applies `scroll-behavior: smooth` and `scroll-snap-type: y proximity` to `html` via `:has`, only when `prefers-reduced-motion` is `no-preference`. For node-scoped scroll-linked effects use `ScrollScenes` or `ParallaxSection`.
+- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`, `Pin a stage and change scene as the page scrolls`, `Add depth with parallax layers`
+- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap (`scroll-snap-type: y proximity`) and smooth scrolling (`scroll-behavior: smooth`) apply to `html` via `:has([data-slot="section-scroll"])` only when `prefers-reduced-motion` is `no-preference`.
 
 ```ts
 import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
+// Page-wide: styles html. Skip on a native-scrolling page.
 <SectionScroll>
   <Section title="Team" description="Who can access.">
     <Stack direction="horizontal" gap="sm">...</Stack>

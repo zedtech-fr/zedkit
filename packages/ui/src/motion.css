@@ -152,25 +152,38 @@
   }
 }
 
-/* data-animate: appear (pending → in), then held / progress triggers. */
+/* data-animate: appear (pending → in), then held / progress triggers.
+ * Stagger children follow the host preset: fade-up rises (default), fade-down
+ * descends, fade-in / pop-in stay in place. visibility:hidden keeps pending
+ * children out of the tab order. */
 [data-animate="fade-up"][data-animate-state="pending"],
-[data-animate-appear="fade-up"][data-animate-state="pending"],
-[data-animate-stagger][data-animate-state="pending"] > * {
+[data-animate-appear="fade-up"][data-animate-state="pending"] {
   opacity: 0;
   translate: 0 var(--zk-reveal-distance, 0.75rem);
 }
+[data-animate-stagger][data-animate-state="pending"] > * {
+  opacity: 0;
+  translate: 0 var(--zk-reveal-distance, 0.75rem);
+  visibility: hidden;
+}
 [data-animate="fade-in"][data-animate-state="pending"],
-[data-animate-appear="fade-in"][data-animate-state="pending"] {
+[data-animate-appear="fade-in"][data-animate-state="pending"],
+[data-animate="fade-in"][data-animate-stagger][data-animate-state="pending"] > *,
+[data-animate-appear="fade-in"][data-animate-stagger][data-animate-state="pending"] > * {
   opacity: 0;
   translate: none;
 }
 [data-animate="fade-down"][data-animate-state="pending"],
-[data-animate-appear="fade-down"][data-animate-state="pending"] {
+[data-animate-appear="fade-down"][data-animate-state="pending"],
+[data-animate="fade-down"][data-animate-stagger][data-animate-state="pending"] > *,
+[data-animate-appear="fade-down"][data-animate-stagger][data-animate-state="pending"] > * {
   opacity: 0;
   translate: 0 calc(var(--zk-reveal-distance, 0.75rem) * -1);
 }
 [data-animate="pop-in"][data-animate-state="pending"],
-[data-animate-appear="pop-in"][data-animate-state="pending"] {
+[data-animate-appear="pop-in"][data-animate-state="pending"],
+[data-animate="pop-in"][data-animate-stagger][data-animate-state="pending"] > *,
+[data-animate-appear="pop-in"][data-animate-stagger][data-animate-state="pending"] > * {
   opacity: 0;
   translate: none;
   scale: 0.96;
@@ -180,6 +193,7 @@
   opacity: 1;
   translate: none;
   scale: none;
+  visibility: visible;
   transition-property: opacity, translate, scale;
   transition-duration: var(--zk-reveal-duration, 300ms);
   transition-timing-function: var(--zk-reveal-ease, cubic-bezier(0.22, 1, 0.36, 1));
@@ -310,13 +324,21 @@
 @utility hover-lift {
   transition:
     translate var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease),
-    box-shadow var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease);
+    box-shadow var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease),
+    border-color var(--zk-lift-duration, 200ms) var(--zk-lift-ease, ease);
   /* Literal :hover, so guard it like the hover variant: no stuck lift after a tap. */
   @media (hover: hover) {
     &:hover {
       translate: var(--zk-lift-translate, 0 -2px);
       box-shadow: var(--zk-lift-shadow, var(--shadow-md));
+      border-color: hsl(var(--primary) / 0.45);
     }
+  }
+  &:focus-visible,
+  &:focus-within {
+    translate: var(--zk-lift-translate, 0 -2px);
+    box-shadow: var(--zk-lift-shadow, var(--shadow-md));
+    border-color: hsl(var(--primary) / 0.45);
   }
   &:active {
     translate: none;
@@ -356,6 +378,7 @@
     opacity: 1 !important;
     translate: none !important;
     scale: none !important;
+    visibility: visible !important;
     animation: none !important;
     transition: none !important;
   }
@@ -373,6 +396,8 @@
     transition: none !important;
   }
   .hover-lift:hover,
+  .hover-lift:focus-visible,
+  .hover-lift:focus-within,
   .hover-press:active {
     translate: none !important;
   }
@@ -400,6 +425,7 @@
   opacity: 1 !important;
   translate: none !important;
   scale: none !important;
+  visibility: visible !important;
   animation: none !important;
   transition: none !important;
 }
@@ -408,6 +434,8 @@
   transition: none !important;
 }
 :root[data-motion="reduce"] .hover-lift:hover,
+:root[data-motion="reduce"] .hover-lift:focus-visible,
+:root[data-motion="reduce"] .hover-lift:focus-within,
 :root[data-motion="reduce"] .hover-press:active {
   translate: none !important;
 }

@@ -1,12 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const PAGE = "/features/identity-editor";
-/** The site's own light/dark switch (header), which is separate from the editor's Preview dark. */
-async function siteDark(page: Page) {
-  await page.getByRole("button", { name: /toggle theme/i }).first().click();
-  await expect(page.locator("html")).toHaveClass(/\bdark\b/);
-}
-
 
 async function spacingOnDraft(page: Page) {
   return page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
@@ -14,7 +8,13 @@ async function spacingOnDraft(page: Page) {
   );
 }
 
-test.describe("identity editor undo and apply confirmation", () => {
+async function draftBackground(page: Page) {
+  return page.locator('[data-slot="identity-editor-preview"]').evaluate((node) =>
+    getComputedStyle(node).getPropertyValue("--background").trim(),
+  );
+}
+
+test.describe("identity editor undo", () => {
   test("Undo restores the last draft after Reset", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await expect(page.getByRole("button", { name: "Undo" })).toBeDisabled();
@@ -26,7 +26,7 @@ test.describe("identity editor undo and apply confirmation", () => {
     await expect.poll(() => spacingOnDraft(page)).toBe("0.4rem");
   });
 
-  test("undo of a dark colour lets a later light edit rewrite it", async ({ page }) => {
+  test("undo of a dark colour lets a later light edit rewrite it on the draft", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
@@ -34,16 +34,11 @@ test.describe("identity editor undo and apply confirmation", () => {
     await page.getByRole("button", { name: "Undo" }).click();
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
     await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await siteDark(page);
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toMatch(/^0 0% 5(\.0)?%$/);
+    await page.getByRole("button", { name: "Preview dark", exact: true }).click();
+    await expect.poll(() => draftBackground(page)).toMatch(/^0 0% 5(\.0)?%$/);
   });
 
-  test("undo of a light edit keeps an earlier dark override", async ({ page }) => {
+  test("undo of a light edit keeps an earlier dark override on the draft", async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Preview dark", exact: true }).click();
@@ -52,19 +47,7 @@ test.describe("identity editor undo and apply confirmation", () => {
     await page.getByLabel("--background", { exact: true }).fill("0 0% 95%");
     await page.getByRole("button", { name: "Undo" }).click();
     await page.getByLabel("--background", { exact: true }).fill("0 0% 90%");
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await siteDark(page);
-    await expect
-      .poll(() =>
-        page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim()),
-      )
-      .toBe("120 40% 20%");
-  });
-
-  test("Apply to the whole site confirms on the page", async ({ page }) => {
-    await page.goto(PAGE, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
-    await expect(page.getByText("Applied to the whole site.", { exact: true })).toBeVisible();
-    await expect(page.getByRole("status").filter({ hasText: "Custom identity active" })).toBeVisible();
+    await page.getByRole("button", { name: "Preview dark", exact: true }).click();
+    await expect.poll(() => draftBackground(page)).toBe("120 40% 20%");
   });
 });

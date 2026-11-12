@@ -13,6 +13,8 @@ const EVIDENCE_FILES = [
   "issues-108-390.png",
   "issues-108-run-impl-1440.png",
   "issues-108-run-impl-390.png",
+  "issues-108-run-20261111T065452Z-bc07a1a9-1440.png",
+  "issues-108-run-20261111T065452Z-bc07a1a9-390.png",
   "issues-93-run-impl-1440.png",
   "issues-93-run-impl-390.png",
 ];

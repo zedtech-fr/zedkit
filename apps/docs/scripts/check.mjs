@@ -16,14 +16,13 @@
 //   8. the home gallery covers every UI need exactly once, with the
 //      manifest demo (or null);
 //   9. the gallery stats match the catalog counts;
-//  10. home scenarios resolve to catalog needs and current doc slugs;
-//  11. prose files match live pages, avoid generated section titles,
+//  10. prose files match live pages, avoid generated section titles,
 //      and their first section appears in the merged output;
-//  12. guide MDX files include the required `##` sections (`guideRequiredSections`);
-//  13. VISUAL-CONTRACT.md pins the two chrome-rule sentences; signature.md
+//  11. guide MDX files include the required `##` sections (`guideRequiredSections`);
+//  12. VISUAL-CONTRACT.md pins the two chrome-rule sentences; signature.md
 //      points at that owner; relative markdown links in those files resolve;
-//  14. foundations.mdx links VISUAL-CONTRACT.md and does not copy the owner table;
-//  15. ui/meta.json lists every published UI slug once under Fumadocs separators
+//  13. foundations.mdx links VISUAL-CONTRACT.md and does not copy the owner table;
+//  14. ui/meta.json lists every published UI slug once under Fumadocs separators
 //      (Actions / Forms / Overlays / Data and states / More); other package
 //      meta.json files stay a flat slug list with no nested paths.
 //
@@ -83,10 +82,7 @@ const {
   gallery,
   stats,
   uiPackage,
-  homeScenarios,
-  homeEntryPoints,
   catalogIndex,
-  homeCuratedGallery,
   maturityModule,
 } = generate(tmp);
 const livePageKeys = catalogPageKeys(catalog);
@@ -522,36 +518,6 @@ if (catalogIndex.length !== countPublishedCatalogNeeds(catalog)) {
     `catalog index holds ${catalogIndex.length} entries for ${countPublishedCatalogNeeds(catalog)} published catalog needs.`,
   );
 }
-if (homeCuratedGallery.length < 4 || homeCuratedGallery.length > 8) {
-  errors.push(`home-curated.json: expected 4–8 UI previews, got ${homeCuratedGallery.length}.`);
-}
-for (const card of homeCuratedGallery) {
-  if (!byNeed.has(card.need)) {
-    errors.push(`home-curated: "${card.need}" is not in the UI gallery.`);
-  }
-}
-
-const scenariosPath = join(APP, "content", "home-scenarios.ts");
-if (!existsSync(scenariosPath)) {
-  errors.push("content/home-scenarios.ts missing (run pnpm docs:generate).");
-} else {
-  const onDisk = readFileSync(scenariosPath, "utf8");
-  const expected = JSON.stringify(homeScenarios, null, 2);
-  if (!onDisk.includes(expected)) {
-    errors.push("content/home-scenarios.ts is stale (run pnpm docs:generate).");
-  }
-}
-
-const entryPointsPath = join(APP, "content", "home-entry-points.ts");
-if (!existsSync(entryPointsPath)) {
-  errors.push("content/home-entry-points.ts missing (run pnpm docs:generate).");
-} else {
-  const onDisk = readFileSync(entryPointsPath, "utf8");
-  const expected = JSON.stringify(homeEntryPoints, null, 2);
-  if (!onDisk.includes(expected)) {
-    errors.push("content/home-entry-points.ts is stale (run pnpm docs:generate).");
-  }
-}
 
 const maturityPath = join(APP, "content", "maturity-compatibility.ts");
 if (!existsSync(maturityPath)) {
@@ -755,11 +721,6 @@ if (errors.length > 0) {
             stdio: "inherit",
           });
           if (agentIcons.status !== 0) process.exitCode = 1;
-          const domainIcons = spawnSync("node", [join(HERE, "check-domain-icons.mjs")], {
-            cwd: APP,
-            stdio: "inherit",
-          });
-          if (domainIcons.status !== 0) process.exitCode = 1;
         }
       }
     }

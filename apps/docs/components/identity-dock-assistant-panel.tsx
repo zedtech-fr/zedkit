@@ -1,29 +1,31 @@
 "use client";
 
-import { Stack, type IdentityTokens } from "@zedtech/zedkit-ui";
+import { useEffect, useState } from "react";
+import { identityContrastWarnings, Stack, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { IdentityDockActionBar } from "@/components/identity-dock-action-bar";
 import { IdentityDockCustomize } from "@/components/identity-dock-customize";
 import { IdentityDockPanelToolbar } from "@/components/identity-dock-panel-toolbar";
-import { patchTokens } from "@/lib/identity-editor-patch";
-import { repairContrast } from "@/lib/identity-contrast-repair";
-import { applyWidgetSpecimenPreview } from "@/lib/identity-widget-specimen-preview";
+import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
+import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { docsSiteDefaultTokens } from "@/lib/docs-site-default-tokens";
+import { applyDocsSiteLook, resetDocsSiteLook } from "@/lib/docs-site-look";
 import { dispatchIdentityEditorDraftApply } from "@/lib/identity-editor-draft-apply";
+import { patchTokens } from "@/lib/identity-editor-patch";
 import { useIdentityAssistantStore } from "@/lib/identity-assistant-store";
-import { useDocsSiteIdentityApply } from "@/lib/use-docs-site-identity-apply";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 
-/** One field from the dock customize form: validate through the token schema, then repaint specimens. */
-function patchDockPreview(
-  previewTokens: IdentityTokens,
-  onPreviewTokens: (tokens: IdentityTokens) => void,
+/** One field from the dock customize form: validate through the token schema, then repaint the site. */
+function patchDockLook(
+  tokens: IdentityTokens,
+  onTokens: (tokens: IdentityTokens) => void,
   entries: readonly (readonly [string, string])[],
   palette?: "light" | "dark",
 ) {
-  const next = entries.reduce((acc, [key, value]) => patchTokens(acc, key, value, palette ?? "light", []), previewTokens);
-  if (next === previewTokens) return false;
-  onPreviewTokens(next);
-  applyWidgetSpecimenPreview(next);
+  const next = entries.reduce((acc, [key, value]) => patchTokens(acc, key, value, palette ?? "light", []), tokens);
+  if (next === tokens) return false;
+  onTokens(next);
+  applyDocsSiteLook(next);
   if (typeof window !== "undefined" && window.location.pathname === IDENTITY_EDITOR_HREF) {
     dispatchIdentityEditorDraftApply(next);
   }
@@ -32,36 +34,45 @@ function patchDockPreview(
 
 /**
  * The "Make it yours" drawer: a manual customize form (Classic by default, Expert behind its tab),
- * a colour checker, and footer CTAs. There is no AI conversation or text input here.
+ * a colour checker, and Reset. There is no AI conversation or text input here.
  */
 export function IdentityDockAssistantPanel({
-  previewTokens,
-  onPreviewTokens,
-  onResetPreview,
+  tokens,
+  onTokens,
 }: {
-  previewTokens: IdentityTokens;
-  onPreviewTokens: (tokens: IdentityTokens) => void;
-  onResetPreview: () => void;
+  tokens: IdentityTokens;
+  onTokens: (tokens: IdentityTokens) => void;
 }) {
   const { setExpanded } = useIdentityAssistantStore();
-  const site = useDocsSiteIdentityApply();
+  const [status, setStatus] = useState("");
+  const warningCount = identityContrastWarnings(tokens).length;
+
+  useEffect(() => {
+    const message =
+      warningCount === 0
+        ? identityEditorCopy.simple.contrastOk
+        : identityEditorCopy.simple.contrastNeedFix(warningCount);
+    const id = window.setTimeout(() => setStatus(message), 400);
+    return () => window.clearTimeout(id);
+  }, [warningCount]);
 
   return (
     <Stack className="pane-shrink flex-1 gap-flush overflow-hidden" data-slot="identity-dock-body">
       <IdentityDockPanelToolbar onClose={() => setExpanded(false)} />
       <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-start">
         <IdentityDockCustomize
-          tokens={previewTokens}
-          onPatchPreview={(key, value, palette) => patchDockPreview(previewTokens, onPreviewTokens, [[key, value]], palette)}
-          onPatchPreviewMany={(entries) => patchDockPreview(previewTokens, onPreviewTokens, entries)}
+          tokens={tokens}
+          onPatchPreview={(key, value, palette) => patchDockLook(tokens, onTokens, [[key, value]], palette)}
+          onPatchPreviewMany={(entries) => patchDockLook(tokens, onTokens, entries)}
         />
       </Stack>
       <IdentityDockActionBar
-        appliedSite={site.appliedSite}
-        onApplySite={() => site.applySite(repairContrast(previewTokens).tokens)}
-        onRemoveFromSite={site.removeFromSite}
-        onReset={onResetPreview}
-        onPreview={() => setExpanded(false)}
+        status={status}
+        onReset={() => {
+          resetDocsSiteLook();
+          onTokens(docsSiteDefaultTokens());
+          setStatus(identityDockCopy.statusRestored);
+        }}
       />
     </Stack>
   );
