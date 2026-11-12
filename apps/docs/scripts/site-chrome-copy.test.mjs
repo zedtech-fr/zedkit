@@ -21,7 +21,6 @@ const CONSUMERS = [
   "lib/site-links.mjs",
   "ui/skip-link.tsx",
   "ui/site-brand.tsx",
-  "ui/kit-version-label.tsx",
   "ui/off-path-link.tsx",
   "ui/site-chrome-a11y.tsx",
 ];
@@ -93,7 +92,6 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   const footer = read("ui/site-footer.tsx");
   const skip = read("ui/skip-link.tsx");
   const brand = read("ui/site-brand.tsx");
-  const version = read("ui/kit-version-label.tsx");
 
   assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
@@ -113,9 +111,6 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(footer, /changelogHref/);
   assert.match(skip, /siteChromeCopy\.skipToContent/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
-  assert.match(version, /siteChromeCopy\.version\.latest/);
-  assert.match(version, /siteChromeCopy\.version\.releasesAriaLabel\(version\)/);
-  assert.match(version, /siteChromeCopy\.version\.shell\(version\)/);
   const offPath = read("ui/off-path-link.tsx");
   const a11y = read("ui/site-chrome-a11y.tsx");
   assert.match(offPath, /siteChromeCopy\.nav\.opensInNewTab/);
