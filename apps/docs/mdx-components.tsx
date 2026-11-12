@@ -9,7 +9,6 @@ import { IdentityEditorPanel } from "@/components/identity-editor-panel";
 import { AiSetupPrompt } from "@/components/ai-setup-prompt";
 import { SetupEntryPrompt } from "@/components/setup-entry-prompt";
 import { AiSetupPageTitle } from "@/components/ai-setup-page-title";
-import { FoundationsHero } from "@/components/foundations-hero";
 import { MdxPre } from "@/components/mdx-pre";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -24,7 +23,6 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     AiSetupPrompt,
     SetupEntryPrompt,
     AiSetupPageTitle,
-    FoundationsHero,
     pre: MdxPre,
     table: DocsProseTable,
     ...components,

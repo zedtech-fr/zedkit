@@ -23,7 +23,6 @@ export const foundationsCopy = {
     text: "Text",
     indigo: "Indigo",
     violet: "Violet",
-    siteAction: "Site action",
     panelTitle: "Glass goes on a panel",
     panelBody: "Never on the white page. It needs color behind it to show.",
   },

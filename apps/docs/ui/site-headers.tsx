@@ -110,6 +110,9 @@ function CatalogDesktopHeader() {
 /**
  * Customer personas: reading `/docs/foundations` as a marketing-style guide, not a docs article.
  * UI decisions: home-style bar plus Search ⌘K; no version, theme, sidebar, or TOC.
+ * Search is on this bar because the 7-section guide has no in-page nav (#73); the quiet-glass mockup has zero search hits.
+ * Reuses mark="home" so the bar shares home chrome CSS (`data-home-header`); it is not the home route.
+ * Desktop Get started is the home-style bar; phone follows siteHeaderChrome (`getStarted: home` only).
  */
 function FoundationsDesktopHeader() {
   return (
@@ -153,7 +156,7 @@ export function DocsSiteHeader() {
     <>
       <MobileHeader
         mode="docs"
-        className="sticky top-(--fd-docs-row-1) flex min-h-phone-bar flex-wrap items-center border-b px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
+        className="sticky top-(--fd-docs-row-1) z-header flex min-h-phone-bar flex-wrap items-center border-b bg-background px-page-gutter backdrop-blur-sm [grid-area:header] md:hidden"
       />
       {foundations ? <FoundationsDesktopHeader /> : null}
     </>

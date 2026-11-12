@@ -18,6 +18,7 @@ export default async function Layout({
 }) {
   const { slug } = await params;
   const pathname = slug === undefined || slug.length === 0 ? "/docs" : `/docs/${slug.join("/")}`;
+  // Theme switch stays off on every docs route, including foundations: appearance follows the visitor (no light pin).
   return (
     <DocsLayout
       tree={docsLayoutTree(source.pageTree, slug) as Root}
