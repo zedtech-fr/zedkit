@@ -8,7 +8,7 @@ export function HomeView({
   uiGalleryStats: { components: number; livePreviews: number };
 }) {
   return (
-    <div id="home-page" className="content-shrink" {...HOME_MARKETING_ROOT_PROPS}>
+    <div {...HOME_MARKETING_ROOT_PROPS} id="home-page" className="content-shrink">
       <HomeHero />
       <HomeBelowHero uiGalleryStats={uiGalleryStats} />
     </div>

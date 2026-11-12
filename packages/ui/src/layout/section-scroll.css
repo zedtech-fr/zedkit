@@ -1,5 +1,5 @@
 /*
- * Section scroll: smooth paging and proximity snap. Opt in with
+ * Section scroll: smooth scrolling and proximity snap. Opt in with
  * `SectionScroll`. Page-wide: the `html:has` rule styles the document.
  * Not animation — motion lives in signature-motion / scroll-scenes.
  */

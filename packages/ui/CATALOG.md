@@ -178,7 +178,7 @@ import { Card } from "@zedtech/zedkit-ui";
 - Audience: Developers adding appear, scroll, press, longpress, hover or focus motion to any kit element.
 - Purpose: One typed attribute and wrapper API for identity-token motion, with a tiny SSR-safe runtime.
 - When to use: When a card, section or control should move on appear, scroll progress, press, longpress, hover or focus.
-- When not to use: For pinned scene crossfades use `ScrollScenes`. For section snap/smooth-scroll use `SectionScroll`. For first-paint class utilities see `Animate entrances and hover feedback with CSS utilities`. For section-shared parallax layers use `ParallaxSection` from `@zedtech/zedkit-ui/motion`.
+- When not to use: For pinned scene crossfades use `ScrollScenes`. For section snap/smooth-scroll use `SectionScroll` (styles `html` via `:has`; skip on a native-scrolling page). For first-paint class utilities see `Animate entrances and hover feedback with CSS utilities`. For section-shared parallax layers use `ParallaxSection` from `@zedtech/zedkit-ui/motion`.
 - See also: `Animate entrances and hover feedback with CSS utilities`, `Add depth with parallax layers`, `Pin a stage and change scene as the page scrolls`, `Stack content and group titled sections`
 - Examples: Attribute on a card, Wrapper with several triggers, Stagger children
 - A11y: `prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`.
@@ -1672,14 +1672,15 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
-- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.
+- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap on html. Gaps are role-named only.
 - When to use: For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.
-- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`. Do not wrap a native-scrolling page: `SectionScroll` applies `scroll-behavior: smooth` and `scroll-snap-type: y proximity` to `html` via `:has`. For node-scoped scroll-linked effects use `ScrollScenes` or `ParallaxSection`.
+- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`. Do not wrap a native-scrolling page: `SectionScroll` applies `scroll-behavior: smooth` and `scroll-snap-type: y proximity` to `html` via `:has`, only when `prefers-reduced-motion` is `no-preference`. For node-scoped scroll-linked effects use `ScrollScenes` or `ParallaxSection`.
 - See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`, `Pin a stage and change scene as the page scrolls`, `Add depth with parallax layers`
 - A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap (`scroll-snap-type: y proximity`) and smooth scrolling (`scroll-behavior: smooth`) apply to `html` via `:has([data-slot="section-scroll"])` only when `prefers-reduced-motion` is `no-preference`.
 
 ```ts
 import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
+// Page-wide: styles html. Skip on a native-scrolling page.
 <SectionScroll>
   <Section title="Team" description="Who can access.">
     <Stack direction="horizontal" gap="sm">...</Stack>

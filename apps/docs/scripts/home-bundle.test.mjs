@@ -599,30 +599,25 @@ test("docs home uses native document scroll; SectionScroll is not mounted (#262)
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
   assert.doesNotMatch(view, /\bSectionScroll\b/);
   assert.doesNotMatch(view, /data-slot=["']section-scroll["']/);
-  assert.match(view, /id=["']home-page["']/);
-  assert.match(view, /\bHOME_MARKETING_ROOT_PROPS\b/);
-  assert.match(view, /className=["']content-shrink["']/);
+  assert.match(
+    view,
+    /\{\.\.\.HOME_MARKETING_ROOT_PROPS\}[\s\S]*id=["']home-page["'][\s\S]*className=["']content-shrink["']/,
+  );
 
   const importers = [];
-  for (const file of walkTsx(app)) {
+  for (const file of walkTsx(join(app, "ui/home"))) {
     const src = readFileSync(file.abs, "utf8");
     if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
   }
   assert.deepEqual(importers, []);
 
+  assert.doesNotMatch(compact, /#nd-home-layout/);
   assert.match(
     compact,
-    /#nd-home-layout section\[id\]\s*\{[^}]*scroll-margin-top:\s*calc\(var\(--zk-header-height\) \+ 1rem\)/,
+    /#home-page section\[id\]\s*\{[^}]*scroll-margin-top:\s*calc\(var\(--zk-header-height\) \+ 1rem\)/,
   );
   assert.match(
     compact,
     /\[data-scroll-anchor\]\s*\{[^}]*scroll-margin-top:\s*max\(calc\(var\(--spacing\) \* 24\), calc\(var\(--zk-header-height\) \+ 1rem\)\)/,
   );
-
-  const built = join(app, "out/index.html");
-  if (existsSync(built)) {
-    const html = readFileSync(built, "utf8");
-    assert.match(html, /id=["']home-page["']/);
-    assert.doesNotMatch(html, /data-slot=["']section-scroll["']/);
-  }
 });

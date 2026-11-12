@@ -89,6 +89,7 @@ test.describe("home layout rhythm (#387)", () => {
           sectionScroll: document.querySelector("[data-slot='section-scroll']"),
           identitiesAlign: snap(identities),
           identitiesSnap: identities?.getAttribute("data-snap"),
+          identitiesMarginTop: identities ? getComputedStyle(identities).scrollMarginTop : "",
         };
       });
 
@@ -97,11 +98,12 @@ test.describe("home layout rhythm (#387)", () => {
       await page.goto("/", { waitUntil: "networkidle" });
       const metrics = await readSnap();
       const type = metrics.htmlType.replace(/\s+/g, " ").trim();
-      expect(type, `${width}`).toMatch(/^(none(\s+none)?)?$/);
+      expect(type, `${width}`).toMatch(/^none(\s+none)?$/);
       expect(metrics.htmlBehavior, `${width}`).toMatch(/^(auto|normal)$/);
       expect(metrics.sectionScroll, `${width}`).toBeNull();
       expect(metrics.identitiesSnap, `${width}`).toBe("none");
       expect(metrics.identitiesAlign, `${width}`).toBe("none");
+      expect(parseFloat(metrics.identitiesMarginTop), `${width}`).toBeGreaterThan(0);
     }
   });
 });
