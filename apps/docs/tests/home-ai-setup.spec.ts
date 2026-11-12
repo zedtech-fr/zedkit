@@ -51,7 +51,7 @@ test.describe("home paste band", () => {
     await expect(page.locator("[data-home-hero-lead] [data-setup-entry]")).toHaveCount(0);
     await expect(page.locator("[data-home-hero-prompt]").getByRole("button", { name: /Copy/ })).toHaveCount(1);
 
-    await page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt" }).click();
+    await page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt", exact: true }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_SETUP_MINI_PROMPT);
 
     await expect(paste.getByRole("link", { name: "Full install steps" })).toHaveAttribute(

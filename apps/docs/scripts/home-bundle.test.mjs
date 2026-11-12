@@ -245,7 +245,25 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.doesNotMatch(tokens, /#1B1764|#2B23C7|#4B3FD9|#3B1F8F|#5B34B5|#7C5CE6/);
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
-  assert.match(tokens, /\[data-home-manifesto-panel\]/);
+  assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]/);
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] \{[^}]*background-color:\s*hsl\(var\(--primary\)\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] \{[^}]*--foreground:\s*var\(--primary-foreground\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] \{[^}]*--ring:\s*var\(--primary-foreground\)/,
+  );
+  assert.doesNotMatch(tokens, /linear-gradient/);
+  const manifestoCss = tokens.match(/#home-page #manifesto\[data-slot="section"\] \{[^}]+\}/);
+  assert.ok(manifestoCss, "manifesto section fill rule");
+  assert.doesNotMatch(manifestoCss[0], /#[0-9A-Fa-f]{3,8}/);
+  assert.doesNotMatch(manifestoCss[0], /border-radius/);
+  assert.doesNotMatch(manifestoCss[0], /padding:/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
@@ -326,21 +344,50 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(limitsCopy, /Not every component is finished\./);
   assert.equal((limitsCopy.match(/title: "/g) ?? []).length, 4);
   assert.match(manifesto, /id="manifesto"/);
-  assert.match(manifesto, /data-home-manifesto-panel/);
+  assert.match(manifesto, /aria-labelledby="manifesto-heading"/);
+  assert.match(manifesto, /data-home-manifesto=/);
+  assert.doesNotMatch(manifesto, /data-home-manifesto-panel/);
+  assert.match(manifesto, /className="sr-only"/);
+  assert.match(manifesto, /<blockquote className="trim-margin not-italic" aria-describedby="manifesto-attribution">/);
+  assert.match(manifesto, /id="manifesto-attribution"/);
+  assert.match(manifesto, /from "@\/ui\/off-path-link"/);
+  assert.match(manifesto, /from "@\/lib\/site-links\.mjs"/);
+  assert.match(manifesto, /href=\{SITE_COMPANY_URL\}/);
+  assert.match(manifesto, /\{homeManifestoCopy\.readLink\}/);
+  assert.doesNotMatch(manifesto, /<OffPathLink[^>]*\btarget=/);
+  assert.doesNotMatch(manifesto, /<OffPathLink[^>]*\brel=/);
   assert.doesNotMatch(manifesto, /FeatureGrid|SetupEntryPrompt|SecretField|bg-primary/);
   assert.match(
     manifestoCopy,
-    /If nobody else can pick up what was built, that isn't expertise\. It's lock-in\./,
+    /\\u201cIf nobody else can pick up what was built, that isn't expertise\. It's lock-in\.\\u201d/,
   );
   assert.match(manifestoCopy, /From the Zed Tech manifesto/);
-  assert.doesNotMatch(manifestoCopy, /Read the manifesto/);
+  assert.match(manifestoCopy, /sectionLabel: "Manifesto"/);
+  assert.match(manifestoCopy, /readLink: "Read the manifesto"/);
+  assert.doesNotMatch(manifestoCopy, /→/);
+  assert.doesNotMatch(manifestoCopy, /https:\/\/zedtech\.fr/);
   assert.match(closing, /id="closing"/);
-  assert.match(closing, /homeClosingCopy\.actionHref/);
-  assert.doesNotMatch(closing, /SetupEntryPrompt|SecretField|data-setup-entry/);
+  assert.match(closing, /aria-labelledby="closing-heading"/);
+  assert.match(closing, /data-home-closing=/);
+  assert.match(closing, /SecretField/);
+  assert.match(closing, /\bmultiline\b/);
+  assert.match(closing, /w-full text-left/);
+  assert.match(closing, /MAP_SETUP_MINI_PROMPT/);
+  assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
+  assert.match(closing, /copyLabel=\{homeClosingCopy\.promptCopyLabel\}/);
+  assert.doesNotMatch(closing, /SetupEntryPrompt|data-setup-entry|homeClosingCopy\.actionHref/);
   assert.match(closingCopy, /Next time it says done, it will be\./);
   assert.match(closingCopy, /And it will look like the rest of your product\./);
-  assert.match(closingCopy, /action: "Setup"/);
-  assert.match(closingCopy, /actionHref: "#ai-setup"/);
+  assert.match(closingCopy, /promptAriaLabel: "Closing setup prompt"/);
+  assert.doesNotMatch(closingCopy, /promptAriaLabel: "Setup prompt"/);
+  assert.match(closingCopy, /promptCopyLabel: "Copy closing prompt"/);
+  assert.doesNotMatch(closingCopy, /promptCopyLabel: "Copy prompt"/);
+  const smoke = readFileSync(join(app, "tests/home.spec.ts"), "utf8");
+  assert.match(smoke, /getByRole\("textbox", \{ name: "Setup prompt", exact: true \}\)/);
+  assert.match(smoke, /getByRole\("button", \{ name: "Copy prompt", exact: true \}\)/);
+  assert.match(smoke, /getByRole\("button", \{ name: "Copy closing prompt", exact: true \}\)/);
+  assert.doesNotMatch(closingCopy, /action: "Setup"/);
+  assert.doesNotMatch(closingCopy, /actionHref: "#ai-setup"/);
 });
 
 test("same-idea lands counts match kit dirs, gallery components, and six identity sheets (#209)", () => {

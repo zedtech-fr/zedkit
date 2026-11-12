@@ -66,7 +66,15 @@ test("home hero offers Setup first with get started, catalog, and a discreet iss
   await expect(page.locator("[data-home-hero-sub]")).toHaveText(
     "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
   );
-  await expect(page.getByRole("textbox", { name: "Setup prompt" })).toBeVisible();
+  await expect(
+    page.locator("[data-home-hero-prompt]").getByRole("textbox", { name: "Setup prompt", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Setup prompt", exact: true })).toHaveCount(1);
+  await expect(
+    page.locator("[data-home-closing]").getByRole("textbox", { name: "Closing setup prompt", exact: true }),
+  ).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
   await expect(page.getByText("Name the kits you want, Nest included. The map knows the order.")).toBeVisible();
   await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
