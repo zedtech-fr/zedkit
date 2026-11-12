@@ -63,7 +63,7 @@
         "mdx-components.tsx",
         "scripts/**/*.mjs",
         "features/docs/ui/component-page.tsx",
-        "components/maturity-compatibility-view.tsx",
+        "features/docs/guides/maturity-and-compatibility/ui/maturity-compatibility-view.tsx",
         // Guide MDX imports these; knip does not follow .mdx.
         "features/docs/guides/foundations/ui/foundations-color.tsx",
         "features/docs/guides/foundations/ui/foundations-hero.tsx",

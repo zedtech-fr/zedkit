@@ -16,8 +16,14 @@ package `CATALOG.md`).
 Rules:
 
 - Docs-page views (`ComponentPage`, `ComponentPreview`, props, adoption,
-  wraps) live in `features/docs/`. `preview-viewport.tsx` stays in
-  `components/` because kit demos cannot import a feature.
+  wraps) live in `features/docs/`. Guide UI lives under
+  `features/docs/guides/<guide>/`. Stay out of the feature:
+  `preview-viewport.tsx` (kit demos cannot import a feature), `mdx-pre.tsx`
+  (generic fence wrapper; stay in `components/`), `maturity-badge.tsx`
+  (catalog + generated pages), `lib/maturity-status.ts` (shared badge
+  mapping), `components/i18n/adoption-copy.ts` (generated pages plus MDX).
+  MDX tags live under `features/docs/mdx/ui/` (kit/React views); their
+  docs-only copy lives under `features/docs/i18n/`.
 
 ## Mental model
 
@@ -40,7 +46,7 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   today's in-flight lots still live under `ui/home/**` and
   `ui/docs-main-content.tsx`.
 - Used by two or more routes of one domain: `features/<domain>/` (current:
-  reviews, note-list). Ports/adapters/model only where there is I/O.
+  reviews, note-list, docs). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
   is dissolving; do not add a fifth home there. Directory globs in
@@ -54,6 +60,10 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
 - One-way imports: `app → features → components/ui → lib`. A feature does
   not import another feature or app (compose in the route and pass props).
   A `_<name>` folder is imported only from its own route subtree.
+  `prose/guides/` may import `features/docs` (docs-domain guides composing
+  docs-feature UI). `mdx-components.tsx` may import `features/docs` MDX
+  blocks only. Do not import other features from prose or from
+  `mdx-components.tsx`.
   Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features.
 - Kit previews stay in `components/demos/` (the placement checker skips
   dead and single-owner there). Unit tests live beside their module,

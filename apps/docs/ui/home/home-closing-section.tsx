@@ -23,7 +23,7 @@ export function HomeClosingSection() {
   return (
     <Section
       bleed
-      spacing="md"
+      spacing="lg"
       containerWidth="wide"
       id="closing"
       aria-labelledby="closing-heading"

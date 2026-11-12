@@ -39,6 +39,7 @@ export type Cell = {
 // @public
 export function checkDrift(projectRoot: string, source: string, options?: {
     allowFast?: boolean;
+    kit?: string;
 }): Issue[];
 
 // @public (undocumented)
@@ -220,6 +221,7 @@ export type SyncOptions = {
     prune?: boolean;
     noPrune?: boolean;
     allowFast?: boolean;
+    kit?: string;
 };
 
 // @public @deprecated (undocumented)

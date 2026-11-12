@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
 import {
   DEFAULT_NEEDS,
-  KIT_HEADERS,
+  kitHeaders,
   readAgentHeader,
   readSidecar,
   type AgentHeader,
@@ -272,8 +272,8 @@ export function resolveRoute(
  * `<agentsDir>/tokenomics.md` merged over them. An invalid project file is an
  * error (the same problems `validate` reports), never a silent fallback.
  */
-export function loadPolicy(agentsDir: string): Result<Tokenomics> {
-  const defaults = loadDefaults();
+export function loadPolicy(agentsDir: string, kit?: string): Result<Tokenomics> {
+  const defaults = loadDefaults(kit);
   if (!defaults.ok) return err(defaults.error);
   const file = join(agentsDir, "tokenomics.md");
   if (!existsSync(file)) return ok(defaults.value);
@@ -303,6 +303,7 @@ export function loadPolicy(agentsDir: string): Result<Tokenomics> {
 export function loadAgent(
   agentsDir: string,
   name: string,
+  kit?: string,
 ): Result<{ name: string; header: AgentHeader; note?: string }> {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name))
     return err(new Error(`invalid agent name "${name}"`));
@@ -321,15 +322,16 @@ export function loadAgent(
   });
   const identityFile = join(agentsDir, "agents", `${identity}.md`);
   const entry = identity === name ? sidecar.value[name] : sidecar.value[name] ?? sidecar.value[identity];
+  const table = kitHeaders(kit);
   if (
     !existsSync(file) &&
     !existsSync(identityFile) &&
     entry === undefined &&
-    KIT_HEADERS[name] === undefined &&
-    KIT_HEADERS[identity] === undefined
+    table[name] === undefined &&
+    table[identity] === undefined
   )
     return err(new Error(`unknown agent "${name}" (no ${file})`));
-  const read = readAgentHeader(identity, entry);
+  const read = readAgentHeader(identity, entry, kit);
   return ok({
     name,
     header: read.header,

@@ -11,13 +11,10 @@ export const REQUIRED_GLOBS = [
   "ui/docs-main-content.tsx",
 ];
 
-// Current cross-feature debt (guides still import feature-local UI). Shrink-only.
-export const REQUIRED_EDGES = [
-  { from: "prose/guides/foundations.mdx", to: "features/docs/guides/foundations/ui/foundations-color.tsx" },
-  { from: "prose/guides/foundations.mdx", to: "features/docs/guides/foundations/ui/foundations-hero.tsx" },
-  { from: "prose/guides/foundations.mdx", to: "features/docs/guides/foundations/ui/foundations-type.tsx" },
-  { from: "prose/guides/zedkit-and-shadcn.mdx", to: "features/docs/guides/zedkit-and-shadcn/ui/zedkit-shadcn-faq.tsx" },
-];
+// No remaining required cross-feature edges. prose/guides → features/docs and
+// mdx-components.tsx → features/docs are allowed (docs-domain UI); other
+// features stay banned.
+export const REQUIRED_EDGES = [];
 
 const GRAPH_DIRS = ["app", "features", "components", "lib", "ui"];
 const SOURCE_EXT = new Set([".ts", ".tsx", ".mjs", ".js", ".jsx", ".mdx"]);
@@ -168,6 +165,10 @@ function currentViolations(graph) {
     if (!feat) continue;
     const fromFeat = featureOf(from);
     if (fromFeat === feat || from.startsWith("app/") || from === SHARED_OWNER) continue;
+    // Docs-guide MDX and getMDXComponents composing docs-feature UI are the
+    // documented L7/L8a/L8b rules, not debt. Do not widen to other features.
+    if (from.startsWith("prose/guides/") && feat === "docs") continue;
+    if (from === "mdx-components.tsx" && feat === "docs") continue;
     if (fromFeat !== feat) {
       violations.push({ kind: "cross-feature", from, to, file: from });
     }

@@ -119,6 +119,71 @@ describe("checkPlacement fixtures", () => {
     ]);
   });
 
+  it("passes a docs feature imported from prose/guides MDX", () => {
+    const result = checkPlacement(
+      {
+        files: [
+          "prose/guides/maturity-and-compatibility.mdx",
+          "features/docs/guides/maturity-and-compatibility/ui/view.tsx",
+        ],
+        edges: [
+          {
+            from: "prose/guides/maturity-and-compatibility.mdx",
+            to: "features/docs/guides/maturity-and-compatibility/ui/view.tsx",
+          },
+        ],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+  });
+
+  it("fails a reviews feature imported from prose/guides MDX", () => {
+    const result = checkPlacement(
+      {
+        files: ["prose/guides/x.mdx", "features/reviews/ui/view.tsx"],
+        edges: [{ from: "prose/guides/x.mdx", to: "features/reviews/ui/view.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(ids(result.newViolations), [
+      "cross-feature:prose/guides/x.mdx->features/reviews/ui/view.tsx",
+    ]);
+  });
+
+  it("passes a docs feature imported from mdx-components.tsx", () => {
+    const result = checkPlacement(
+      {
+        files: ["mdx-components.tsx", "features/docs/mdx/ui/agent-name.tsx"],
+        edges: [{ from: "mdx-components.tsx", to: "features/docs/mdx/ui/agent-name.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+  });
+
+  it("fails a reviews feature imported from mdx-components.tsx", () => {
+    const result = checkPlacement(
+      {
+        files: ["mdx-components.tsx", "features/reviews/ui/view.tsx"],
+        edges: [{ from: "mdx-components.tsx", to: "features/reviews/ui/view.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(ids(result.newViolations), [
+      "cross-feature:mdx-components.tsx->features/reviews/ui/view.tsx",
+    ]);
+  });
+
+  it("does not treat prose/guides → features/docs as required debt", () => {
+    assert.equal(
+      REQUIRED_EDGES.filter(
+        (edge) => edge.from.startsWith("prose/guides/") && edge.to.startsWith("features/docs/"),
+      ).length,
+      0,
+    );
+  });
+
   it("passes a feature imported only by a route file", () => {
     const result = checkPlacement(
       {
@@ -218,6 +283,44 @@ describe("live docs tree", () => {
       "See apps/docs/AGENTS.md File placement; baseline apps/docs/scripts/module-placement.baseline.json. Move the file; never extend the baseline.";
     assert.deepEqual(ids(result.newViolations), [], `new: ${ids(result.newViolations).join("\n")}\n${hint}`);
     assert.deepEqual(ids(result.stale), [], `stale: ${ids(result.stale).join("\n")}\n${hint}`);
+  });
+
+  it("imports MDX tags from features/docs and keeps MdxPre in components", () => {
+    const mdx = readFileSync(join(docsRoot, "mdx-components.tsx"), "utf8");
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/agent-name"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/docs-area-label"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/docs-prose-table"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/docs-kit-name-list"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/ai-setup-prompt"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/setup-entry-prompt"/);
+    assert.match(mdx, /from "@\/features\/docs\/mdx\/ui\/ai-setup-page-title"/);
+    assert.match(mdx, /from "@\/components\/mdx-pre"/);
+    assert.doesNotMatch(mdx, /from "@\/components\/(?:agent-name|docs-area-label|docs-prose-table|docs-kit-name-list|ai-setup-prompt|setup-entry-prompt|ai-setup-page-title)"/);
+  });
+
+  it("imports the maturity guide view from features/docs", () => {
+    const mdx = readFileSync(join(docsRoot, "prose/guides/maturity-and-compatibility.mdx"), "utf8");
+    assert.match(
+      mdx,
+      /from "@\/features\/docs\/guides\/maturity-and-compatibility\/ui\/maturity-compatibility-view"/,
+    );
+    assert.doesNotMatch(mdx, /from "@\/components\/maturity-compatibility-view"/);
+  });
+
+  it("imports use-package-manager from features/docs", () => {
+    const blocks = readFileSync(join(docsRoot, "features/docs/ui/adoption-blocks.tsx"), "utf8");
+    const panel = readFileSync(join(docsRoot, "features/docs/ui/adoption-panel.tsx"), "utf8");
+    assert.match(blocks, /from "\.\.\/use-package-manager"/);
+    assert.match(panel, /from "\.\.\/use-package-manager"/);
+    assert.doesNotMatch(blocks, /from "@\/lib\/use-package-manager"/);
+    assert.doesNotMatch(panel, /from "@\/lib\/use-package-manager"/);
+  });
+
+  it("keeps the fumadocs package-manager storage key on the docs-feature hook", () => {
+    const hook = readFileSync(join(docsRoot, "features/docs/use-package-manager.ts"), "utf8");
+    assert.match(hook, /createStoredChoice\("package-manager"/);
+    assert.match(hook, /from "@\/lib\/use-stored-choice"/);
+    assert.match(hook, /from "@\/lib\/package-manager-commands"/);
   });
 });
 

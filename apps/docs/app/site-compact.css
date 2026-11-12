@@ -80,6 +80,18 @@
   min-width: var(--spacing-control-height-sm);
 }
 
+/*
+ * Home mockup rhythm (#249): 88px / 96px bands, 8px heading→subtitle.
+ * Compact `--spacing * 8/18` is the 33.28/74.88 audit miss; do not derive
+ * home section steps from that unit. Catalog `spacing="sm"` stays outside
+ * `#home-page` so it does not inherit 88px.
+ */
+#home-page {
+  --zk-section-md: 5.5rem;
+  --zk-section-lg: 6rem;
+  --zk-heading-to-sub: 0.5rem;
+}
+
 /* Scroll targets clear the compact header at every width. */
 #home-page section[id] {
   scroll-margin-top: calc(var(--zk-header-height) + 1rem);
