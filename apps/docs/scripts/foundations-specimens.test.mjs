@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -136,6 +136,82 @@ test("guide wires every band and site action is a real Button", () => {
   assert.match(buttons, /ThemeScope/);
   assert.doesNotMatch(buttons, /#[0-9A-Fa-f]{3,8}/);
   const color = readApp("components/foundations-color.tsx");
-  assert.match(color, /data-site-action/);
+  assert.doesNotMatch(color, /data-site-action/);
+  assert.doesNotMatch(color, /ThemeScope/);
+  assert.doesNotMatch(color, /variant="glass"/);
   assert.doesNotMatch(color, /#[0-9A-Fa-f]{3,8}/);
+});
+
+test("guide title is Site foundations at display scale with no Who this is for", () => {
+  const mdx = readApp("prose/guides/foundations.mdx");
+  assert.match(mdx, /^title:\s*Site foundations\s*$/m);
+  assert.match(mdx, /^hidePageTitle:\s*true\s*$/m);
+  assert.match(mdx, /import \{ FoundationsHero \} from "@\/components\/foundations-hero"/);
+  assert.match(mdx, /<FoundationsHero \/>/);
+  assert.match(mdx, /this page is the target look, not a claim that every page already matches/);
+  assert.doesNotMatch(mdx, /## Who this is for/);
+  assert.match(mdx, /## Color/);
+  assert.doesNotMatch(mdx, /## Color and surfaces/);
+  const colorIdx = mdx.indexOf("## Color");
+  const typeIdx = mdx.indexOf("## Type");
+  const buttonsIdx = mdx.indexOf("## Buttons: site vs kit");
+  assert.ok(colorIdx >= 0 && typeIdx > colorIdx && buttonsIdx > typeIdx);
+  assert.match(mdx, /VISUAL-CONTRACT\.md/);
+  assert.doesNotMatch(mdx, /Layer \| Owns \| Lives in \| Fix here when/);
+});
+
+test("hero is display H1 plus intro and the glass callout", () => {
+  const hero = readApp("components/foundations-hero.tsx");
+  const copy = readApp("components/i18n/foundations-copy.ts");
+  assert.match(copy, /title:\s*"Site foundations"/);
+  assert.doesNotMatch(copy, /siteAction/);
+  assert.match(hero, /typeRole="display"/);
+  assert.match(hero, /copy\.hero\.title/);
+  assert.match(hero, /copy\.hero\.intro/);
+  assert.match(hero, /copy\.swatches\.panelTitle/);
+  assert.match(hero, /ThemeScope identity="glass"/);
+  assert.match(hero, /variant="glass"/);
+  assert.doesNotMatch(hero, /<(div|span)[\s>/]/);
+  assert.doesNotMatch(hero, /#[0-9A-Fa-f]{3,8}/);
+});
+
+test("foundations chrome skips docs article chrome and keeps search", () => {
+  const page = readApp("app/docs/[[...slug]]/page.tsx");
+  const layout = readApp("app/docs/[[...slug]]/layout.tsx");
+  const headers = readApp("ui/site-headers.tsx");
+  const mobile = readApp("ui/mobile-header.tsx");
+  const nav = readApp("lib/site-nav-data.ts");
+  const mdxComponents = readApp("mdx-components.tsx");
+  const typography = readApp("app/docs-typography.css");
+  assert.equal(existsSync(join(APP, "ui/docs-layout-branch.tsx")), false);
+  assert.match(page, /isFoundationsPath/);
+  assert.match(page, /DocsBody/);
+  assert.match(page, /"data-foundations-page": ""/);
+  assert.match(typography, /#nd-page\[data-foundations-page\] \{\s*max-width: var\(--zk-container-wide\);/);
+  assert.equal((typography.match(/#nd-page\[data-foundations-page\] \{\s*max-width:/g) ?? []).length, 1);
+  assert.match(layout, /docsLayoutTree/);
+  assert.match(layout, /isFoundationsPath/);
+  assert.match(nav, /isFoundationsPath/);
+  assert.match(headers, /isFoundationsPath/);
+  assert.match(headers, /FoundationsDesktopHeader/);
+  assert.doesNotMatch(mdxComponents, /FoundationsHero/);
+  assert.match(layout, /sidebar=\{\{\s*enabled:\s*!isFoundationsPath\(pathname\)\s*\}\}/);
+  assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);
+  assert.match(layout, /searchToggle=\{\{\s*enabled:\s*true\s*\}\}/);
+  assert.match(page, /tableOfContent: \{ enabled: false as const \}/);
+  assert.match(page, /tableOfContentPopover: \{ enabled: false as const \}/);
+  assert.match(page, /skipDocsBody/);
+  assert.match(mobile, /SiteFullSearchTrigger/);
+  assert.match(mobile, /siteHeaderChrome/);
+  assert.match(headers, /HomeDesktopHeader/);
+  assert.match(headers, /bg-background/);
+});
+
+test("docs index and llms label say Site foundations", () => {
+  const index = readApp("prose/guides/index.mdx");
+  const generate = readApp("scripts/generate.mjs");
+  assert.match(index, /\[Site foundations\]\(\/docs\/foundations\)/);
+  assert.doesNotMatch(index, /\[UI foundations\]/);
+  assert.match(generate, /\[Site foundations\]\(https:\/\/zedkit\.app\/docs\/foundations\)/);
+  assert.doesNotMatch(generate, /\[UI foundations\]/);
 });

@@ -501,7 +501,7 @@ export function generate(outDir) {
     "- [zedkit setup map](https://zedkit.app/map.md) — what each setup-able package gives, order, combined setup",
     "- [Suggest a zedkit setup](https://zedkit.app/suggest.md) — inspect the repo, recommend a combo, leave the tree unchanged",
     "- [Maturity and compatibility](https://zedkit.app/docs/maturity-and-compatibility) — badge legend link and package matrix",
-    "- [UI foundations](https://zedkit.app/docs/foundations) — docs chrome color, type, site vs kit buttons, chips, cards, rhythm, motion",
+    "- [Site foundations](https://zedkit.app/docs/foundations) — docs chrome color, type, site vs kit buttons, chips, cards, rhythm, motion",
     "- [zedkit and shadcn/ui](https://zedkit.app/docs/zedkit-and-shadcn) — wraps, registry install, when to use plain shadcn",
     "- [Add SEO to a Next.js app](https://zedkit.app/docs/add-seo-to-nextjs) — robots, sitemap, metadata, JSON-LD",
     "",
