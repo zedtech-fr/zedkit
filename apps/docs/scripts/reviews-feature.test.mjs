@@ -1473,7 +1473,7 @@ test("issues views drop the inline preview form and keep the shared frame", () =
 
 test("issue pages use generateStaticParams; review pages redirect", () => {
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
-  const issueRun = readFileSync(join(issuesAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
   const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [issuePage, issueRun, unlinked, unlinkedRun]) {
@@ -1497,7 +1497,7 @@ test("not-found segments use per-tree copy through one shared body", () => {
   const issue = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
   assert.match(issue, /metadata\.missing/);
   assert.match(issue, /issue\.missing/);
-  const run = readFileSync(join(issuesAppRoot, "[n]/runs/not-found.tsx"), "utf8");
+  const run = readFileSync(join(issuesRunAppRoot, "[n]/runs/not-found.tsx"), "utf8");
   assert.match(run, /run\.missing/);
   const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
   assert.match(unlinked, /unlinked\.missing/);
@@ -1527,7 +1527,7 @@ test("list, issue, unlinked, and run views show the sample notice only when flag
 test("found /issues pages pass issuesIndexRobots", () => {
   const list = readFileSync(join(issuesAppRoot, "page.tsx"), "utf8");
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
-  const issueRun = readFileSync(join(issuesAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
   const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [list, issuePage, issueRun, unlinked, unlinkedRun]) {
