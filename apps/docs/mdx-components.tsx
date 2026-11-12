@@ -5,7 +5,6 @@ import { DocsAreaLabel } from "@/components/docs-area-label";
 import { ComponentWrapsLine } from "@/components/component-wraps-line";
 import { DocsProseTable } from "@/components/docs-prose-table";
 import { DocsKitNameList } from "@/components/docs-kit-name-list";
-import { IdentityEditorPanel } from "@/components/identity-editor-panel";
 import { AiSetupPrompt } from "@/components/ai-setup-prompt";
 import { SetupEntryPrompt } from "@/components/setup-entry-prompt";
 import { AiSetupPageTitle } from "@/components/ai-setup-page-title";
@@ -19,7 +18,6 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     DocsAreaLabel,
     DocsKitNameList,
     DocsProseTable,
-    IdentityEditorPanel,
     AiSetupPrompt,
     SetupEntryPrompt,
     AiSetupPageTitle,
