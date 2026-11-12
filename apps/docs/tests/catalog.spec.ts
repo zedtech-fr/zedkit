@@ -285,18 +285,18 @@ test("catalog desktop header has docs search and GitHub text, no version or them
   await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
 });
 
-test("catalog title is 40px at 1440 and 390", async ({ page }) => {
+test("catalog title follows the documented clamp at 1440 and 390", async ({ page }) => {
   for (const size of [
-    { width: 1440, height: 900 },
-    { width: 390, height: 844 },
+    { width: 1440, height: 900, min: 39, max: 41 },
+    { width: 390, height: 844, min: 31, max: 33 },
   ] as const) {
-    await page.setViewportSize(size);
+    await page.setViewportSize({ width: size.width, height: size.height });
     await gotoCatalogQuiet(page);
     const fontSize = await page.getByRole("heading", { name: "Catalog", level: 1 }).evaluate((el) =>
       Number.parseFloat(getComputedStyle(el).fontSize),
     );
-    expect(fontSize, `${size.width}px`).toBeGreaterThanOrEqual(39);
-    expect(fontSize, `${size.width}px`).toBeLessThanOrEqual(41);
+    expect(fontSize, `${size.width}px`).toBeGreaterThanOrEqual(size.min);
+    expect(fontSize, `${size.width}px`).toBeLessThanOrEqual(size.max);
   }
 });
 
