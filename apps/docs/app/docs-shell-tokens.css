@@ -233,18 +233,99 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
- * Manifesto is a full-bleed high-value band (not an inner inset card,
- * still not indigo page fill). Tokens only: Glass primary stays the
- * section accent. Quote, attribution, and the off-path link inherit
- * the inverted foreground. `--ring` is pinned so the link focus outline
- * is not Glass `--primary` on `--primary`.
+ * Manifesto is a full-bleed high-value Glass band (not an inner inset
+ * card, still not indigo page fill). Tokenized primary→accent fill plus
+ * the same static circle/stripe recipe as featured six-sentences cards.
+ * Quote, attribution, and the off-path link inherit the inverted
+ * foreground. `--ring` is pinned so the link focus outline is not Glass
+ * `--primary` on `--primary`.
  */
 #home-page #manifesto[data-slot="section"] {
   --foreground: var(--primary-foreground);
   --muted-foreground: var(--primary-foreground);
   --ring: var(--primary-foreground);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   background-color: hsl(var(--primary));
+  background-image: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary)) 60%,
+    hsl(var(--accent)) 100%
+  );
   color: hsl(var(--primary-foreground));
+}
+
+#home-page #manifesto[data-slot="section"]::before,
+#home-page #manifesto[data-slot="section"]::after,
+#home-page [data-home-six-sentences-card="featured"]::before,
+#home-page [data-home-six-sentences-card="featured"]::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+#home-page #manifesto[data-slot="section"]::before {
+  top: -7.5rem;
+  right: -5rem;
+  width: 22.5rem;
+  height: 22.5rem;
+  border-radius: 50%;
+  background-color: hsl(var(--primary-foreground) / 0.08);
+}
+
+#home-page #manifesto[data-slot="section"]::after {
+  top: -40%;
+  left: 12%;
+  width: 6.875rem;
+  height: 180%;
+  transform: rotate(24deg);
+  background-color: hsl(var(--primary-foreground) / 0.06);
+}
+
+#home-page #manifesto[data-slot="section"] > *,
+#home-page [data-home-six-sentences-card="featured"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * Hero and closing share one attached command field. One border around
+ * the row; the site-action Copy sits on the right. Overflow stays inside
+ * the input so the page does not grow sideways on 390.
+ */
+#home-page [data-home-copy-command] {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border: var(--zk-border-width, 1px) solid hsl(var(--input));
+  border-radius: var(--radius);
+  background-color: hsl(var(--background));
+}
+
+#home-page [data-home-copy-command] [data-slot="input"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#home-page [data-home-copy-command] [data-slot="input"]:focus-visible,
+#home-page [data-home-copy-command] [data-slot="button"]:focus-visible {
+  outline-offset: calc(var(--ring-width-control, 2px) * -1);
+}
+
+#home-page [data-home-copy-command] [data-slot="button"] {
+  flex-shrink: 0;
+  min-width: 88px;
+  height: auto;
+  border-radius: 0;
 }
 
 /*
@@ -289,20 +370,13 @@ html[data-docs-shell][data-identity] {
   color: hsl(var(--primary-foreground));
 }
 
-#home-page [data-home-six-sentences-card="featured"]::before,
-#home-page [data-home-six-sentences-card="featured"]::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  background-color: hsl(var(--primary-foreground) / 0.1);
-}
-
 #home-page [data-home-six-sentences-card="featured"]::before {
   top: -4.5rem;
   right: -4rem;
   width: 15rem;
   height: 15rem;
   border-radius: 50%;
+  background-color: hsl(var(--primary-foreground) / 0.1);
 }
 
 #home-page [data-home-six-sentences-card="featured"]::after {
@@ -312,11 +386,6 @@ html[data-docs-shell][data-identity] {
   height: 180%;
   transform: rotate(24deg);
   background-color: hsl(var(--primary-foreground) / 0.08);
-}
-
-#home-page [data-home-six-sentences-card="featured"] > * {
-  position: relative;
-  z-index: 1;
 }
 
 #home-page [data-home-six-sentences-card="featured"] [data-slot="badge"] {
@@ -333,6 +402,8 @@ html[data-docs-shell][data-identity] {
 }
 
 @media (prefers-reduced-transparency: reduce) {
+  #home-page #manifesto[data-slot="section"]::before,
+  #home-page #manifesto[data-slot="section"]::after,
   #home-page [data-home-six-sentences-card="featured"]::before,
   #home-page [data-home-six-sentences-card="featured"]::after {
     background-color: hsl(var(--primary-foreground) / 0.06);

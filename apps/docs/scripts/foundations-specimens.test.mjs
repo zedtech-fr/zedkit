@@ -255,7 +255,8 @@ test("foundations chrome skips docs article chrome and keeps search", () => {
   assert.match(page, /tableOfContent: \{ enabled: false as const \}/);
   assert.match(page, /tableOfContentPopover: \{ enabled: false as const \}/);
   assert.match(page, /skipDocsBody/);
-  assert.match(mobile, /SiteFullSearchTrigger/);
+  assert.match(mobile, /SiteSearchTrigger/);
+  assert.doesNotMatch(mobile, /SiteFullSearchTrigger/);
   assert.match(mobile, /siteHeaderChrome/);
   assert.match(headers, /HomeDesktopHeader/);
   assert.match(headers, /bg-background/);

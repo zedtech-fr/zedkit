@@ -7,8 +7,6 @@
 :root[data-identity] {
   /* 56px; mockup 60px declined so home / catalog / docs share one bar. */
   --zk-site-header-height: 3.5rem;
-  /* Two 44px rows + 24px wrap gap, plus a few px of border (~112px laid out). */
-  --zk-site-header-height-wrapped: 7.5rem;
   --zk-header-height: var(--zk-site-header-height);
 }
 :root[data-identity="glass"] {
@@ -27,7 +25,7 @@
   backdrop-filter: none;
 }
 
-/* Header: fixed compact height on desktop; phone bar may wrap. */
+/* Header: fixed compact height on desktop and phone. */
 #nd-nav,
 #nd-nav > div,
 #nd-nav nav {
@@ -35,7 +33,7 @@
   min-height: 0;
 }
 #nd-mobile-nav {
-  height: auto;
+  height: var(--zk-site-header-height);
   min-height: var(--zk-site-header-height);
 }
 /* Fumadocs inner bar clips overflowing children; wrapping header links must stay visible. */
@@ -82,26 +80,12 @@
   min-width: var(--spacing-control-height-sm);
 }
 
-/* Scroll targets clear the compact header (desktop) or the wrapped phone bar. */
+/* Scroll targets clear the compact header at every width. */
 #home-page section[id] {
   scroll-margin-top: calc(var(--zk-header-height) + 1rem);
 }
 [data-scroll-anchor] {
   scroll-margin-top: max(calc(var(--spacing) * 24), calc(var(--zk-header-height) + 1rem));
-}
-@media (width < 48rem) {
-  :root[data-identity] {
-    --zk-header-height: var(--zk-site-header-height-wrapped);
-  }
-  #nd-docs-layout {
-    --zk-docs-scroll-offset: calc(var(--fd-docs-row-1, 0px) + var(--zk-site-header-height-wrapped));
-  }
-  /* Mockup compact wrap: GitHub / Search / Get started as a right-aligned second row. */
-  #nd-mobile-nav [data-header-actions] {
-    flex-basis: 100%;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-  }
 }
 
 /*
@@ -186,10 +170,6 @@
 }
 #nd-nav:is([data-home-header], [data-catalog-header], [data-docs-header]) nav a:not([data-slot="button"]) {
   padding-inline: 0;
-}
-#nd-mobile-nav nav a:not([data-slot="button"]) {
-  /* 24px pointer floor on AI/UI without inflating Docs/Catalog off row 1. */
-  min-width: 1.5rem;
 }
 
 /* The hero example in Glass: the same calmer unit as the site, so its pages share one frame height. */

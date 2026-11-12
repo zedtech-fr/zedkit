@@ -124,10 +124,12 @@ async function assertMobileHeaderCoherent(page: Page) {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(HOME, { waitUntil: "networkidle" });
   const header = page.locator("#nd-mobile-nav");
-  await expect(header.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+  await expect(header.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
   await expect(header.locator("select")).toHaveCount(0);
   await expect(header.getByLabel("Try another identity")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+  await header.getByRole("button", { name: "Menu", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Site navigation" }).getByRole("link", { name: "AI", exact: true })).toBeVisible();
 }
 
 for (const theme of ["light", "dark"] as const) {

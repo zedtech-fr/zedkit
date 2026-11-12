@@ -640,7 +640,6 @@ export function generate(outDir) {
     (spec ? live : rest).push(card);
   }
   const gallery = [...live, ...rest];
-  const homeCuratedGallery = buildHomeCuratedGallery(gallery);
   const catalogIndex = buildCatalogIndex(sorted, slugsByNeed, rich);
   const docsSearchCanonicalByHref = buildDocsSearchCanonical(sorted, slugsByNeed);
   const stats = {
@@ -651,16 +650,12 @@ export function generate(outDir) {
   const uiChangelogUrl =
     "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
   const uiReleasesUrl = "https://github.com/zedtech-fr/zedkit/releases";
-  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const homeCuratedGallery: GalleryCard[] = ${JSON.stringify(homeCuratedGallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\nexport const featuredPackageReleasesUrl: string = ${JSON.stringify(uiReleasesUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
+  const galleryModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface GalleryCard {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  detail: string;\n  demo: string | null;\n}\n\nexport const gallery: GalleryCard[] = ${JSON.stringify(gallery, null, 2)};\n\nexport const catalogStats: { packages: number; needs: number } = ${JSON.stringify(stats)};\n\nexport const featuredPackage: string = ${JSON.stringify(uiPackage)};\n\nexport const featuredPackageVersion: string = ${JSON.stringify(uiVersion)};\n\nexport const featuredPackageChangelogUrl: string = ${JSON.stringify(uiChangelogUrl)};\nexport const featuredPackageReleasesUrl: string = ${JSON.stringify(uiReleasesUrl)};\n\nexport const uiGalleryStats: { components: number; livePreviews: number } = ${JSON.stringify({
     components: gallery.length,
     livePreviews: gallery.filter((card) => card.demo).length,
   })};\n`;
   const catalogIndexModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport type CatalogArea = "ui" | "backend" | "seo" | "agents";\n\nexport interface CatalogIndexEntry {\n  href: string;\n  title: string;\n  need: string;\n  status: string;\n  area: CatalogArea;\n  package: string;\n}\n\nexport const catalogIndex: CatalogIndexEntry[] = ${JSON.stringify(catalogIndex, null, 2)};\n`;
   const docsSearchCanonicalModule = `// GENERATED from docs/catalog/catalog.json — do not edit.\nexport interface DocsSearchCanonicalEntry {\n  href: string;\n  label: string;\n}\n\n/** Canonical UI component doc pages keyed by pathname (e.g. \`/docs/ui/trigger-actions-with-buttons\`). */\nexport const docsSearchCanonicalByHref: Record<string, DocsSearchCanonicalEntry> = ${JSON.stringify(docsSearchCanonicalByHref, null, 2)};\n`;
-  const homeScenarios = buildHomeScenarios(slugsByNeed, catalog);
-  const homeEntryPoints = buildHomeEntryPoints(catalog, slugsByNeed);
-  const scenariosModule = `// GENERATED from home-scenarios.json + catalog slugs — do not edit.\nexport interface HomeScenario {\n  situation: string;\n  goal: string;\n  action: string;\n  href: string;\n  linkLabel: string;\n}\n\nexport const homeScenarios: HomeScenario[] = ${JSON.stringify(homeScenarios, null, 2)};\n`;
-  const entryPointsModule = `// GENERATED from home-entry-points.json + catalog — do not edit.\nexport interface HomeEntryPoint {\n  title: string;\n  summary: string;\n  href: string;\n  needCount: number;\n  linkLabel: string;\n}\n\nexport const homeEntryPoints: HomeEntryPoint[] = ${JSON.stringify(homeEntryPoints, null, 2)};\n`;
   const registryBricks = loadRegistryBrickNames(ROOT);
   const registryBrickDocHref = buildRegistryBrickDocHref(catalog, placementByNeed);
   const registrySiteModule = `// GENERATED from registry.json — do not edit.\nexport const registryBrickNames: string[] = ${JSON.stringify(registryBricks)};\n\nexport const featuredRegistryBrick: string = ${JSON.stringify(registryBricks.includes("button") ? "button" : (registryBricks.find((name) => name !== "theme") ?? registryBricks[0]))};\n\nexport const registryBrickDocHref: Record<string, string> = ${JSON.stringify(registryBrickDocHref, null, 2)};\n`;
@@ -674,15 +669,10 @@ export function generate(outDir) {
     stats,
     uiPackage,
     galleryModule,
-    homeScenarios,
-    scenariosModule,
-    homeEntryPoints,
-    entryPointsModule,
     registrySiteModule,
     catalogIndex,
     catalogIndexModule,
     docsSearchCanonicalModule,
-    homeCuratedGallery,
     maturityModule,
   };
 }
@@ -752,117 +742,6 @@ function buildCatalogIndex(sorted, slugsByNeed, rich) {
   return entries.sort((a, b) => a.title.localeCompare(b.title, "en"));
 }
 
-function buildHomeCuratedGallery(gallery) {
-  const sourcePath = join(APP, "home-curated.json");
-  if (!existsSync(sourcePath)) {
-    throw new Error("home-curated.json missing (apps/docs/home-curated.json).");
-  }
-  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
-  const needs = source.catalogNeeds;
-  if (!Array.isArray(needs)) {
-    throw new Error("home-curated.json: catalogNeeds must be an array.");
-  }
-  const byNeed = new Map(gallery.map((card) => [card.need, card]));
-  const curated = [];
-  for (const need of needs) {
-    const card = byNeed.get(need);
-    if (!card) throw new Error(`home-curated.json: "${need}" is not a UI gallery entry.`);
-    curated.push(card);
-  }
-  return curated;
-}
-
-function buildHomeScenarios(slugsByNeed, catalog) {
-  const sourcePath = join(APP, "home-scenarios.json");
-  if (!existsSync(sourcePath)) {
-    throw new Error("home-scenarios.json missing (apps/docs/home-scenarios.json).");
-  }
-  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
-  const scenarios = [];
-  const seenLabels = new Set();
-  for (const row of source) {
-    if (!row.linkLabel) {
-      throw new Error(`home-scenarios.json: "${row.situation}" needs linkLabel.`);
-    }
-    if (seenLabels.has(row.linkLabel)) {
-      throw new Error(`home-scenarios.json: duplicate linkLabel "${row.linkLabel}".`);
-    }
-    seenLabels.add(row.linkLabel);
-    let pkg = null;
-    for (const [name, entry] of Object.entries(catalog.packages)) {
-      if (entry.needs.some((need) => need.need === row.catalogNeed)) {
-        pkg = name;
-        break;
-      }
-    }
-    if (!pkg) throw new Error(`home-scenarios.json: "${row.catalogNeed}" matches no catalog need.`);
-    const placed = slugsByNeed.get(`${pkg} ${row.catalogNeed}`);
-    if (!placed) throw new Error(`home-scenarios.json: no doc slug for "${row.catalogNeed}".`);
-    scenarios.push({
-      situation: row.situation,
-      goal: row.goal,
-      action: row.action,
-      href: `/docs/${placed.folder}/${placed.slug}`,
-      linkLabel: row.linkLabel,
-    });
-  }
-  return scenarios;
-}
-
-function buildHomeEntryPoints(catalog, slugsByNeed) {
-  const sourcePath = join(APP, "home-entry-points.json");
-  if (!existsSync(sourcePath)) {
-    throw new Error("home-entry-points.json missing (apps/docs/home-entry-points.json).");
-  }
-  const source = JSON.parse(readFileSync(sourcePath, "utf8"));
-  const entryPoints = [];
-  for (const row of source) {
-    let needCount = 0;
-    let href = null;
-    for (const pkg of row.packages) {
-      const entry = catalog.packages[pkg];
-      if (!entry) throw new Error(`home-entry-points.json: unknown package "${pkg}".`);
-      needCount += entry.needs.length;
-    }
-    if (!row.linkLabel) {
-      throw new Error(`home-entry-points.json: "${row.title}" needs linkLabel.`);
-    }
-    if (row.guideSlug) {
-      if (!GUIDE_NAV_SLUGS.includes(row.guideSlug)) {
-        throw new Error(`home-entry-points.json: guideSlug "${row.guideSlug}" is not a guide page.`);
-      }
-      href = `/docs/${row.guideSlug}`;
-    } else if (row.need) {
-      let pkg = null;
-      for (const name of row.packages) {
-        const entry = catalog.packages[name];
-        if (entry?.needs.some((need) => need.need === row.need)) {
-          pkg = name;
-          break;
-        }
-      }
-      if (!pkg) {
-        throw new Error(`home-entry-points.json: "${row.title}" need "${row.need}" matches no listed package.`);
-      }
-      const placed = slugsByNeed.get(`${pkg} ${row.need}`);
-      if (!placed) {
-        throw new Error(`home-entry-points.json: no doc slug for "${row.need}".`);
-      }
-      href = `/docs/${placed.folder}/${placed.slug}`;
-    } else {
-      throw new Error(`home-entry-points.json: "${row.title}" needs need or guideSlug.`);
-    }
-    entryPoints.push({
-      title: row.title,
-      summary: row.summary,
-      href,
-      needCount,
-      linkLabel: row.linkLabel,
-    });
-  }
-  return entryPoints;
-}
-
 // Gallery titles are short component names: the curated manifest
 // component when rich, else the first symbol in the import line,
 // else the need phrase (non-component needs like theming).
@@ -883,16 +762,12 @@ if (invoked === fileURLToPath(import.meta.url)) {
       pages,
       folders,
       galleryModule,
-      scenariosModule,
-      entryPointsModule,
       registrySiteModule,
       catalogIndexModule,
       docsSearchCanonicalModule,
       maturityModule,
     } = generate(outDir);
     writeFileSync(join(APP, "content", "gallery.ts"), galleryModule);
-    writeFileSync(join(APP, "content", "home-scenarios.ts"), scenariosModule);
-    writeFileSync(join(APP, "content", "home-entry-points.ts"), entryPointsModule);
     writeFileSync(join(APP, "content", "registry-site.ts"), registrySiteModule);
     writeFileSync(join(APP, "content", "catalog-index.ts"), catalogIndexModule);
     writeFileSync(join(APP, "content", "docs-search-canonical.ts"), docsSearchCanonicalModule);
