@@ -1,10 +1,5 @@
 {
   "dead": [
-    "components/hero-demo-style-control.tsx",
-    "components/hero-demo-style-fields.tsx",
-    "components/hero-tour-control.tsx",
-    "components/home-gallery-demos.tsx",
-    "components/i18n/hero-demo-style-copy.ts",
     "components/i18n/identity-specimen-compositions.ts",
     "components/identity-assistant-panes.tsx",
     "components/identity-assistant-parts.tsx",
