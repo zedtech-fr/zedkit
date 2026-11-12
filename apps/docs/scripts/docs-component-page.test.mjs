@@ -278,7 +278,7 @@ test("component pages turn off the TOC and the TOC popover", () => {
 test("component-page title tokens are 2.5rem / 500 without a raw 40px font-size", () => {
   const css = stripComments(read("app/docs-component-page.css"));
   assert.match(css, /\[data-component-page\]/);
-  assert.match(css, /--zk-type-doc-h1-size:\s*2\.5rem/);
+  assert.match(css, /--zk-type-doc-h1-size:\s*clamp\(2rem,\s*1\.7rem \+ 1\.2vw,\s*2\.5rem\)/);
   assert.match(css, /--zk-type-doc-h1-weight:\s*500/);
   assert.match(css, /--zk-type-doc-h1-leading:\s*1\.12/);
   assert.match(css, /--zk-type-doc-h1-tracking:\s*-0\.03em/);

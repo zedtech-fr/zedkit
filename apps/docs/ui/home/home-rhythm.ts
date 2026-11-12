@@ -79,8 +79,8 @@ export const HOME_PERSUASION_TEXT_CLASS = "text-home-persuasion";
 /** Secondary counts and labels (maps to `--zk-type-label-*`). */
 export const HOME_METADATA_TEXT_CLASS = "home-metadata-copy";
 
-/** Audit L2 mobile: home page scroll height budget at 390px width (40% shorter vs audit baseline). */
-export const HOME_MOBILE_PAGE_MAX_SCROLL_PX = 8000;
+/** Home page scroll height budget at 390px: mockup air (~10027px) plus slack. */
+export const HOME_MOBILE_PAGE_MAX_SCROLL_PX = 10200;
 
 /** Marks a subtree whose section intros use the home persuasion scale on mobile. */
 export const HOME_MARKETING_ROOT_PROPS = { "data-home-marketing": "" } as const;

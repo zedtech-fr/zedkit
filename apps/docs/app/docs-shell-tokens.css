@@ -54,6 +54,17 @@ html[data-docs-shell][data-identity] {
   --zk-page-gutter: 1.5rem;
 }
 
+/*
+ * Mockup 1200px measure with 120px sides at 1440: drop the extra 24px
+ * inside the box. Docs article keeps 24px. 390 stays 1.5rem above.
+ */
+@media (min-width: 90rem) {
+  #home-page,
+  [data-catalog-shell] {
+    --zk-page-gutter: 0;
+  }
+}
+
 #home-page [data-home-specimen-stage] {
   box-shadow: none;
 }
@@ -466,6 +477,11 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --muted-foreground: 240 5% 32%;
+  /* Stock zinc, not Glass blue-grey (`#EAEEF6` / `#E1E8F4` / `#CBD4E6`). */
+  --muted: 240 4.8% 95.9%;
+  --secondary: 240 4.8% 95.9%;
+  --sidebar-border: 240 5.9% 90%;
+  --border: 240 5.9% 90%;
 }
 
 /*

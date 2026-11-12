@@ -13,9 +13,23 @@ html[data-docs-shell][data-identity] {
   --zk-type-h2-tracking: -0.025em;
 }
 
+/* Home display only: a fixed 48px eats the first screen on a phone. */
+#home-page {
+  --zk-type-h1-size: clamp(2.125rem, 1.6rem + 2.2vw, 3rem);
+  --zk-type-h1-leading: 1.08;
+  --zk-type-h1-tracking: -0.035em;
+}
+
 @media (max-width: 390px) {
   html[data-docs-shell][data-identity] {
-    --zk-type-h1-size: 3rem;
+    --zk-type-lead-size: 1.125rem;
+    --zk-type-lead-leading: 1.55;
+  }
+  #home-page {
+    --zk-home-band-sub-size: 1rem;
+    --zk-home-band-sub-leading: 1.55;
+    --zk-home-persuasion-font-size: 0.9375rem;
+    --zk-home-persuasion-leading: 1.55;
   }
 }
 
@@ -35,9 +49,9 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   letter-spacing: var(--zk-type-h2-tracking);
 }
 
-/* Doc page title stays 2rem / 1.75rem — not the marketing H1. */
+/* Doc page title: clamp for consistency with the home display scale. */
 #nd-page {
-  --zk-type-doc-h1-size: 2rem;
+  --zk-type-doc-h1-size: clamp(1.75rem, 1.5rem + 1vw, 2.25rem);
   --zk-type-doc-h1-weight: 600;
   --zk-type-doc-h1-leading: 2.375rem;
   --zk-type-doc-h1-tracking: var(--zk-heading-tracking, -0.02em);
@@ -72,7 +86,7 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 
 /*
  * Title overlay on the hero only so the Inter 48 display specimen stays
- * on the shell 3rem token. Catalog uses the same 2.5rem overlay pattern.
+ * on the shell 3rem token. Catalog uses its own clamp overlay.
  */
 #nd-page[data-foundations-page] [data-foundations-hero] {
   --zk-foundations-title-size: 2.5rem;
@@ -174,7 +188,6 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 
 @media (width < 48rem) {
   #nd-page {
-    --zk-type-doc-h1-size: 1.75rem;
     --zk-type-doc-h1-leading: 2.125rem;
   }
 }
@@ -261,6 +274,17 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   font-weight: var(--zk-type-h2-weight);
   line-height: var(--zk-type-h2-leading);
   letter-spacing: var(--zk-type-h2-tracking);
+}
+
+#home-page [data-slot="section"] h2[data-slot="heading"] + [data-slot="text"] {
+  margin-top: var(--zk-heading-to-sub);
+}
+
+@media (max-width: 390px) {
+  #home-page [data-slot="section"] h2[data-slot="heading"] + [data-slot="text"] {
+    font-size: var(--zk-home-band-sub-size);
+    line-height: var(--zk-home-band-sub-leading);
+  }
 }
 
 #home-page h3[data-slot="heading"]:not([data-identity-scope] *) {
@@ -351,12 +375,6 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   color: hsl(var(--zk-subtle-foreground));
 }
 
-@media (width < 48rem) {
-  #home-page [data-home-marketing] [data-slot="section"] [data-slot="heading"] + [data-slot="text"] {
-    font-size: var(--zk-home-persuasion-font-size);
-    line-height: var(--zk-home-persuasion-leading);
-  }
-}
 
 @media (width >= 64rem) {
   #nd-docs-layout nav[aria-label] a,
