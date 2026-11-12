@@ -45,7 +45,7 @@ export function HomeBelowHero({
   return (
     <div data-home-below-hero="">
       <HomeSameIdeaSection />
-      <HomeSixSentencesSection />
+      <HomeSixSentencesSection componentCount={uiGalleryStats.components} />
       <HomePasteSection />
       <HomeIdentitiesSection />
       <HomeLimitsSection />

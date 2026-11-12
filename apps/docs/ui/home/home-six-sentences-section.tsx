@@ -14,6 +14,10 @@ function isFeaturedCard(id: SixSentencesCard["id"]) {
   return id === "quality" || id === "consistency";
 }
 
+function replyBodyText(card: SixSentencesCard, componentCount: number) {
+  return typeof card.replyBody === "function" ? card.replyBody(componentCount) : card.replyBody;
+}
+
 /**
  * Quote/reply cards between same-idea and paste: six agent sentences, then
  * the kit's answer.
@@ -26,7 +30,11 @@ function isFeaturedCard(id: SixSentencesCard["id"]) {
  * compose by priority. Tokens not hex, because other looks and dark mode
  * still have to read.
  */
-export function HomeSixSentencesSection() {
+export function HomeSixSentencesSection({
+  componentCount,
+}: {
+  componentCount: number;
+}) {
   return (
     <Section
       bleed
@@ -43,7 +51,7 @@ export function HomeSixSentencesSection() {
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset" data-home-six-sentences="">
         <ul className={HOME_SIX_SENTENCES_GRID}>
           {homeSixSentencesCopy.cards.map((card) => (
-            <SixSentencesCardItem key={card.id} card={card} />
+            <SixSentencesCardItem key={card.id} card={card} componentCount={componentCount} />
           ))}
         </ul>
       </Stack>
@@ -51,7 +59,13 @@ export function HomeSixSentencesSection() {
   );
 }
 
-function SixSentencesCardItem({ card }: { card: SixSentencesCard }) {
+function SixSentencesCardItem({
+  card,
+  componentCount,
+}: {
+  card: SixSentencesCard;
+  componentCount: number;
+}) {
   const featured = isFeaturedCard(card.id);
   const replyBody = (
     <>
@@ -59,7 +73,7 @@ function SixSentencesCardItem({ card }: { card: SixSentencesCard }) {
         {card.replyTitle}
       </Heading>
       <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-        {card.replyBody}
+        {replyBodyText(card, componentCount)}
       </Text>
     </>
   );

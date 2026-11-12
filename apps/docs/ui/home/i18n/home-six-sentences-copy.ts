@@ -66,8 +66,8 @@ export const homeSixSentencesCopy = {
       quote: "“I created a new Button component.”",
       quoteAside: "You already had three.",
       replyTitle: "One way to do each thing.",
-      replyBody:
-        "68 components that already agree with each other. The agent reaches for them instead of inventing.",
+      replyBody: (componentCount: number) =>
+        `${componentCount} components that already agree with each other. The agent reaches for them instead of inventing.`,
     },
   ],
 } as const;

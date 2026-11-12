@@ -164,6 +164,9 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sixSentences, /<blockquote/);
   assert.match(sixSentences, /lg:span-rest/);
   assert.match(sixSentences, /data-home-six-sentences-card=\{featured \? "featured" : "plain"\}/);
+  assert.match(sixSentences, /id === "quality" \|\| id === "consistency"/);
+  assert.match(sixSentences, /card\.replyBody\(componentCount\)/);
+  assert.match(src, /HomeSixSentencesSection componentCount=\{uiGalleryStats\.components\}/);
   assert.match(
     rhythm,
     /export const HOME_SIX_SENTENCES_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-quad"/,
@@ -198,8 +201,9 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sixSentencesCopy, /One way to do each thing\./);
   assert.match(
     sixSentencesCopy,
-    /68 components that already agree with each other\. The agent reaches for them instead of inventing\./,
+    /replyBody: \(componentCount: number\) =>\s*`\$\{componentCount\} components that already agree with each other\. The agent reaches for them instead of inventing\.`/,
   );
+  assert.doesNotMatch(sixSentencesCopy, /\d+ components that already agree/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.match(tokens, /\[data-home-six-sentences/);
   assert.match(tokens, /\[data-home-six-sentences-card="featured"\]/);
