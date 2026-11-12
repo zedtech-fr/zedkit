@@ -212,6 +212,8 @@ export type LiveRunInfo = {
   readonly branch?: string | null;
   readonly opened_pr_url?: string | null;
   readonly issue_title?: string | null;
+  readonly issue?: number | null;
+  readonly live_url?: string | null;
   readonly server_now: number;
 };
 

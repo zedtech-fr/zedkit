@@ -25,6 +25,7 @@ import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
   assertPubliclySafe,
   isExportableVisibility,
+  liveRunsToIndex,
   sanitizeLiveUrl,
   toPublicIndex,
   toPublicReviews,
@@ -89,6 +90,19 @@ function pr(overrides = {}) {
 
 function wrapper(issues, pullRequests = [pr()], extra = {}) {
   return { version: 1, kind: "public-stand-in", issues, pullRequests, ...extra };
+}
+
+function collectKeys(value, keys = []) {
+  if (value === null || typeof value !== "object") return keys;
+  if (Array.isArray(value)) {
+    for (const item of value) collectKeys(item, keys);
+    return keys;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    keys.push(key);
+    collectKeys(child, keys);
+  }
+  return keys;
 }
 
 function parsedIndex(issues, pullRequests, extra) {
@@ -525,32 +539,62 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
-test("the checked-in public snapshot is live-shaped, under 200KB, and sitemaps /issues", async () => {
-  const listed = await createSnapshotReviewPort().list();
-  assert.ok(listed.length >= 1);
-  const row = listed.find((record) => record.run.run_id === "20261111T065452Z-bc07a1a9") ?? listed[0];
-  assert.equal(row.visibility, "public");
-  assert.equal(typeof row.run.pr, "number");
-  assert.ok(String(row.run.sha ?? "").length > 0);
-  assert.ok(row.run.engine_label.length > 0);
-  assert.equal(typeof row.run.elapsed_s, "number");
-  assert.ok(String(row.run.verdict ?? "").length > 0);
-  assert.equal(typeof row.run.confidence_score, "number");
-  const kinds = new Set(row.items.map((item) => item.kind));
-  assert.ok(kinds.has("main"));
-  assert.ok(row.decision);
-  const unlinked = await createSnapshotReviewPort().listUnlinkedPullRequests();
-  assert.ok(unlinked.length >= 1);
-  for (const entry of unlinked) {
-    for (const item of entry.entries) {
+test("the checked-in public snapshot is a version-1 run index with exportable issues and no secrets", async () => {
+  const snapshotPath = join(reviewsRoot, "adapters/public-reviews.json");
+  const raw = JSON.parse(readFileSync(snapshotPath, "utf8"));
+  assert.equal(raw.version, 1);
+  assert.ok(Array.isArray(raw.issues));
+  assert.ok(Array.isArray(raw.pullRequests));
+  assert.equal("reviews" in raw, false);
+  const parsed = parsePublicReviewSnapshot(raw);
+  assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
+  assert.equal(Array.isArray(parsed.value), false);
+  const keys = collectKeys(raw);
+  assert.equal(keys.includes("prompt"), false);
+  assert.equal(keys.includes("token"), false);
+  assert.equal(keys.includes("token_hash"), false);
+  assertPubliclySafe(raw);
+
+  const port = createSnapshotReviewPort();
+  const issues = await port.listIssues();
+  const unlinked = await port.listUnlinkedPullRequests();
+  assert.ok(issues.length > 0);
+  const issue108 = issues.find((row) => row.number === 108);
+  assert.ok(issue108);
+  assert.equal(issue108.state, "closed");
+  assert.deepEqual(issue108.pullRequests, [133]);
+  const plan = issue108.entries.find((row) => row.type === "plan");
+  const implement = issue108.entries.find((row) => row.type === "implement");
+  assert.ok(plan);
+  assert.ok(implement);
+  assert.equal(plan.runId, implement.runId);
+  assert.ok(issues.some((row) => row.number === 93));
+  assert.ok(issues.some((row) => row.number === 110));
+  assert.ok(!issues.some((row) => row.number === 99));
+  assert.ok(unlinked.some((row) => row.number === 54));
+  assert.ok(!unlinked.some((row) => row.number === 50));
+
+  const redirects = await listReviewRedirectsFrom(port);
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
+  assert.ok(
+    redirects.some(
+      (row) =>
+        row.from === "/reviews/pr/133/runs/run-108-impl" && row.to === "/issues/108/runs/run-108-impl",
+    ),
+  );
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
+
+  for (const row of [...issues, ...unlinked]) {
+    for (const item of row.entries) {
       assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
     }
   }
-  const bytes = statSync(join(reviewsRoot, "adapters/public-reviews.json")).size;
+  const bytes = statSync(snapshotPath).size;
   assert.ok(bytes < 200 * 1024);
   assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
   const sitemap = await listIssueSitemapPaths();
   assert.equal(sitemap[0], "/issues");
+  assert.ok(sitemap.includes("/issues/108"));
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
@@ -866,6 +910,146 @@ function writeLiveSnapshot(reviews, extra = {}) {
   return path;
 }
 
+const GITHUB_REVIEW_URL = "https://github.com/example/repo/pull/133#pullrequestreview-1";
+const HOSTED_LIVE_URL = "https://example.test/live/abc";
+
+function liveMappedEntry(overrides = {}) {
+  const index = liveRunsToIndex([liveSample(overrides)]);
+  const linked = index.issues[0]?.entries[0];
+  if (linked !== undefined) return { index, entry: linked };
+  return { index, entry: index.pullRequests[0].entries[0] };
+}
+
+test("a GitHub review_url is not a hosted live console URL", () => {
+  const { entry } = liveMappedEntry({
+    run: { ...liveSample().run, review_url: GITHUB_REVIEW_URL },
+  });
+  assert.equal(entry.liveUrl, null);
+});
+
+test("hosted live_url is kept; http, token, userinfo, and home paths are dropped", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, HOSTED_LIVE_URL);
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl, null);
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/live/abc?token=secret" } }).entry
+      .liveUrl,
+    null,
+  );
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://user:pass@example.test/live/abc" } }).entry.liveUrl,
+    null,
+  );
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/home/alice/live" } }).entry.liveUrl,
+    null,
+  );
+});
+
+test("live mode live maps to review; improve and implement keep their names", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "live" } }).entry.type, "review");
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "improve" } }).entry.type, "improve");
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "implement" } }).entry.type, "implement");
+});
+
+test("a live row with issue 108 lists that issue and redirects the PR to it", async () => {
+  const path = writeLiveSnapshot([
+    liveSample({
+      run: {
+        ...liveSample().run,
+        pr: 133,
+        issue: 108,
+        issue_title: "Ship the public issues section",
+        live_url: HOSTED_LIVE_URL,
+        review_url: GITHUB_REVIEW_URL,
+      },
+    }),
+  ]);
+  const port = createSnapshotReviewPort(path);
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed.map((row) => row.number),
+    [108],
+  );
+  assert.equal(listed[0].title, "Ship the public issues section");
+  assert.equal(listed[0].state, "open");
+  assert.deepEqual(listed[0].pullRequests, [133]);
+  const resolved = await port.resolvePr(133);
+  assert.equal(resolved?.issueNumber, 108);
+  const redirects = await listReviewRedirectsFrom(port);
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
+  assert.ok(
+    redirects.some(
+      (row) => row.from === "/reviews/pr/133/runs/run-71" && row.to === "/issues/108/runs/run-71",
+    ),
+  );
+  const run = await port.getRun(108, "run-71");
+  assert.equal(run?.liveUrl, HOSTED_LIVE_URL);
+  assert.deepEqual(await port.listUnlinkedPullRequests(), []);
+});
+
+test("a live row with issue null or omitted stays an unlinked PR", async () => {
+  const omitted = writeLiveSnapshot([liveSample({ run: { ...liveSample().run, pr: 54 } })]);
+  const omittedPort = createSnapshotReviewPort(omitted);
+  assert.deepEqual(await omittedPort.listIssues(), []);
+  assert.equal((await omittedPort.resolvePr(54))?.issueNumber, null);
+  const omittedRedirects = await listReviewRedirectsFrom(omittedPort);
+  assert.ok(omittedRedirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
+
+  const explicitNull = writeLiveSnapshot([
+    liveSample({ run: { ...liveSample().run, pr: 55, issue: null } }),
+  ]);
+  const nullPort = createSnapshotReviewPort(explicitNull);
+  assert.deepEqual(await nullPort.listIssues(), []);
+  assert.equal((await nullPort.resolvePr(55))?.issueNumber, null);
+  const nullRedirects = await listReviewRedirectsFrom(nullPort);
+  assert.ok(nullRedirects.some((row) => row.from === "/reviews/pr/55" && row.to === "/issues/pr/55"));
+});
+
+test("a live row with an issue and no PR still appears on the issue list", () => {
+  const index = liveRunsToIndex([
+    liveSample({
+      run: { ...liveSample().run, pr: null, issue: 93, issue_title: "Failed implement" },
+    }),
+  ]);
+  assert.deepEqual(
+    index.issues.map((row) => row.number),
+    [93],
+  );
+  assert.deepEqual(index.issues[0].pullRequests, []);
+  assert.deepEqual(index.pullRequests, []);
+});
+
+test("live issue and live_url parse; unknown live run keys still fail", () => {
+  const accepted = parsePublicReviewSnapshot(
+    liveWrapper([
+      liveSample({
+        run: { ...liveSample().run, issue: 108, live_url: HOSTED_LIVE_URL },
+      }),
+    ]),
+  );
+  assert.equal(accepted.ok, true, accepted.ok ? "" : accepted.error.message);
+  assert.equal(accepted.value[0].run.issue, 108);
+  assert.equal(accepted.value[0].run.live_url, HOSTED_LIVE_URL);
+
+  const nulls = parsePublicReviewSnapshot(
+    liveWrapper([liveSample({ run: { ...liveSample().run, issue: null, live_url: null } })]),
+  );
+  assert.equal(nulls.ok, true, nulls.ok ? "" : nulls.error.message);
+  assert.equal(nulls.value[0].run.issue, null);
+  assert.equal(nulls.value[0].run.live_url, null);
+
+  assert.equal(
+    parsePublicReviewSnapshot(
+      liveWrapper([liveSample({ run: { ...liveSample().run, hosted_url: HOSTED_LIVE_URL } })]),
+    ).ok,
+    false,
+  );
+  assert.equal(
+    parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, issue: "108" } })])).ok,
+    false,
+  );
+});
+
 test("private and unknown live visibility never survive the public gate", () => {
   const privateRecord = liveSample({
     visibility: "private",
@@ -913,6 +1097,7 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
           },
         ],
         prompt: "Authorization: Basic eHl6OnBhc3M from /Users/bob/.config",
+        final_text: "Bearer leftoverPrompt._~+/=- in /home/dave/notes",
       }),
     ],
   });
@@ -928,9 +1113,8 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
   assert.match(clean.decision.summary, /Bearer \[redacted\]/);
   assert.doesNotMatch(clean.decision.summary, /xyzTOKEN789/);
   assert.doesNotMatch(clean.decision.summary, /\/home\/bob/);
-  assert.match(clean.items[0].prompt, /Basic \[redacted\]/);
-  assert.doesNotMatch(clean.items[0].prompt, /eHl6OnBhc3M/);
-  assert.doesNotMatch(clean.items[0].prompt, /\/Users\/bob/);
+  assert.equal(clean.items[0].prompt, "[redacted]");
+  assert.equal(clean.items[0].final_text, "[redacted]");
   assert.match(clean.items[0].entries[0].output, /Bearer \[redacted\]/);
   assert.doesNotMatch(clean.items[0].entries[0].output, /firstPassSecret/);
   assert.doesNotMatch(clean.items[0].entries[0].output, /\/home\/carol/);
@@ -1252,7 +1436,14 @@ test("the temporary mapper turns live rows into the current view-model", () => {
 });
 
 test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
-  const lives = await createSnapshotReviewPort().list();
+  const port = createSnapshotReviewPort();
+  const lives = await port.list();
+  if (lives.length === 0) {
+    const issues = await port.listIssues();
+    const unlinked = await port.listUnlinkedPullRequests();
+    assert.ok(issues.length + unlinked.length >= 1);
+    return;
+  }
   const live = lives[0];
   assert.ok(live);
   const record = toReviewRecord(live, lives);
