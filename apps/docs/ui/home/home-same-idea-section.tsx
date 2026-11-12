@@ -15,7 +15,7 @@ type SameIdeaCardId = (typeof CARD_IDS)[number];
 const WINDOW_CHIP =
   "rounded-md bg-primary-foreground/20 px-badge-inline py-badge-block font-mono text-caption text-primary-foreground";
 const WINDOW_SAVE =
-  "rounded-md bg-primary-foreground px-button-inline py-badge-block font-semibold text-caption text-primary";
+  "rounded-md bg-primary-foreground px-button-pad py-badge-block font-semibold text-caption text-primary";
 
 function SameIdeaWindow({ id }: { id: SameIdeaCardId }) {
   const chips = homeSameIdeaCopy.windows;
