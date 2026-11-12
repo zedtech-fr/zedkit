@@ -44,7 +44,11 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Setup" })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Get started" })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Browse catalog" })).toHaveCount(0);
-  await expect(page.locator("[data-home-hero-lead] [data-site-action]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead] a[data-site-action]")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveAttribute(
+    "data-site-action",
+    "",
+  );
 
   const tabs = page.locator("[data-home-hero-lead]").getByRole("tablist");
   await expect(tabs).toHaveCount(1);
@@ -195,10 +199,11 @@ test("home gallery shows no maturity badges", async ({ page }) => {
   expect(overflow).toBe(true);
 });
 
-test("home docs CTAs keep a decorative icon on phone (paste band)", async ({ page }) => {
+test("home paste band has no install control on phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("#paste [data-home-full-steps] svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.locator("#paste [data-home-full-steps]")).toHaveCount(0);
+  await expect(page.locator("#paste [data-home-paste-lands]")).toBeVisible();
   await expect(page.locator("#ai-setup [data-docs-ctas]")).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
   const overflow = await page.evaluate(
@@ -207,7 +212,7 @@ test("home docs CTAs keep a decorative icon on phone (paste band)", async ({ pag
   expect(overflow).toBe(true);
 });
 
-test.describe("home docs CTAs light/dark (#748)", () => {
+test.describe("home paste band light/dark (#748)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -217,7 +222,7 @@ test.describe("home docs CTAs light/dark (#748)", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const paste = page.locator("#paste").getByRole("link", { name: "Full install steps" });
+      const paste = page.locator("#paste [data-home-paste-lands]");
       await paste.scrollIntoViewIfNeeded();
       await expect(paste).toBeVisible();
       await paste.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
@@ -225,7 +230,7 @@ test.describe("home docs CTAs light/dark (#748)", () => {
   }
 });
 
-test.describe("home section docs CTAs light/dark (#769)", () => {
+test.describe("home paste band light/dark (#769)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -235,7 +240,7 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const paste = page.locator("#paste").getByRole("link", { name: "Full install steps" });
+      const paste = page.locator("#paste [data-home-paste-lands]");
       await paste.scrollIntoViewIfNeeded();
       await expect(paste).toBeVisible();
       await paste.screenshot({ path: `test-results/home-section-cta-install-${mode}.png` });
@@ -288,10 +293,8 @@ test("home get-started hash lands on the paste band, not an install panel", asyn
   await expect(page.locator("#install-or-copy")).toHaveCount(0);
   await expect(page.locator("#get-started [data-home-ai-setup]")).toHaveCount(0);
   await expect(page.locator("#get-started [data-home-way]")).toHaveCount(0);
-  await expect(page.locator("#get-started").getByRole("link", { name: "Full install steps" })).toHaveAttribute(
-    "href",
-    "/docs/getting-started#install-or-copy",
-  );
+  await expect(page.locator("#paste [data-home-full-steps]")).toHaveCount(0);
+  await expect(page.locator("#get-started [data-home-paste-lands]")).toBeVisible();
 });
 
 test("home has no registry brick grid; catalog link lives in the header", async ({ page }) => {

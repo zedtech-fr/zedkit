@@ -15,8 +15,10 @@ import { OffPathLink } from "@/ui/off-path-link";
  * Compose-UI: full-bleed manifesto band, because: client = developer who
  * just read limits; neighbours (muted limits grid, light closing) must
  * differ in shape; the inset card was the 12 Nov defect.
- * Token `--primary` fill, because: #73 forbids decorative gradients except
- * Glass material and forbids indigo/violet as page fill.
+ * Tokenized `--primary`→`--accent` 135° fill plus static circle/stripe,
+ * because: this is a high-value Glass band (not page fill); neighbours
+ * (muted limits grid, light closing) must differ in shape; #246 asks for
+ * kit tokens rather than mockup hex.
  * Sr-only Manifesto H2 + blockquote, because: the rotor needs a short
  * section name; the quote must not occupy the heading list.
  * Centered reading measure, because: mockup centers both bands; a full-wide
@@ -26,7 +28,7 @@ export function HomeManifestoSection() {
   return (
     <Section
       bleed
-      spacing="md"
+      spacing="lg"
       containerWidth="wide"
       id="manifesto"
       aria-labelledby="manifesto-heading"

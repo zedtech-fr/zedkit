@@ -2,15 +2,72 @@
 
 /** @typedef {{ id: "ui" | "backend" | "seo" | "agents"; label: string }} CatalogChipArea */
 
+/** @typedef {"ui" | "backend" | "seo" | "agents" | "all"} CatalogFilterArea */
+
+/** @typedef {{ area: CatalogFilterArea; status: string; q: string }} CatalogFilters */
+
 /** @type {readonly CatalogChipArea[]} */
 export const CATALOG_AREAS = Object.freeze([
   { id: "ui", label: "UI" },
-  { id: "backend", label: "Core & server" },
+  { id: "backend", label: "Core and server" },
   { id: "seo", label: "SEO" },
   { id: "agents", label: "Agents" },
 ]);
 
 const AREA_IDS = new Set(CATALOG_AREAS.map((area) => area.id));
+
+/** @type {CatalogChipArea["id"]} */
+export const CATALOG_DEFAULT_AREA = "ui";
+
+/** @type {Readonly<CatalogFilters>} */
+export const CATALOG_DEFAULT_FILTERS = Object.freeze({
+  area: CATALOG_DEFAULT_AREA,
+  status: "all",
+  q: "",
+});
+
+/**
+ * Missing, empty, or unknown area means UI. Explicit `all` is the mixed list.
+ *
+ * @param {string | null | undefined} value
+ * @returns {CatalogFilterArea}
+ */
+export function parseCatalogArea(value) {
+  if (value === "all") return "all";
+  if (typeof value === "string" && AREA_IDS.has(value)) return value;
+  return CATALOG_DEFAULT_AREA;
+}
+
+/**
+ * @param {string | URLSearchParams} search
+ * @returns {CatalogFilters}
+ */
+export function readCatalogFilters(search) {
+  const params =
+    typeof search === "string"
+      ? new globalThis.URLSearchParams(search.startsWith("?") ? search.slice(1) : search)
+      : search;
+  return {
+    area: parseCatalogArea(params.get("area")),
+    status: params.get("status") ?? "all",
+    q: params.get("q") ?? "",
+  };
+}
+
+/**
+ * Omit `area` for the default UI list. Write `area=all` when mixed.
+ *
+ * @param {{ area?: string; status?: string; q?: string }} filters
+ */
+export function catalogFilterSearchParams(filters) {
+  const params = new globalThis.URLSearchParams();
+  const area = parseCatalogArea(filters.area);
+  if (area === "all") params.set("area", "all");
+  else if (area !== CATALOG_DEFAULT_AREA) params.set("area", area);
+  if (filters.status && filters.status !== "all") params.set("status", filters.status);
+  if (filters.q) params.set("q", filters.q);
+  return params;
+}
 
 /** @returns {Record<CatalogChipArea["id"], number>} */
 function emptyCounts() {
@@ -48,7 +105,7 @@ export function catalogCounterItems(counts, labels) {
  * @param {{ area?: string; status?: string; q?: string }} [filters]
  */
 export function filterCatalogEntries(entries, filters = {}) {
-  const area = filters.area ?? "all";
+  const area = parseCatalogArea(filters.area);
   const status = filters.status ?? "all";
   const needle = (filters.q ?? "").trim().toLowerCase();
   return entries.filter((entry) => {
@@ -65,9 +122,9 @@ export function filterCatalogEntries(entries, filters = {}) {
  * @param {{ area?: string; status?: string; q?: string }} [filters]
  */
 export function catalogFilterView(entries, filters = {}) {
-  const area = filters.area ?? "all";
+  const area = parseCatalogArea(filters.area);
   const countsByArea = countCatalogByArea(entries);
-  const visible = filterCatalogEntries(entries, filters);
-  const areaTotal = area !== "all" && AREA_IDS.has(area) ? countsByArea[area] : entries.length;
+  const visible = filterCatalogEntries(entries, { ...filters, area });
+  const areaTotal = area !== "all" ? countsByArea[area] : entries.length;
   return { countsByArea, visible, areaTotal };
 }

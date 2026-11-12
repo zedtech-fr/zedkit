@@ -40,7 +40,7 @@ test("catalog intro bleeds full width and the filters sit in a narrower column",
   const intro = page.locator("[data-slot='section']").filter({
     has: page.getByRole("heading", { name: "Catalog", level: 1 }),
   });
-  await expect(intro).not.toHaveClass(/bg-muted/);
+  await expect(intro).toHaveClass(/bg-muted/);
   const introBox = await intro.boundingBox();
   const introColumn = intro.locator("[data-slot='container']");
   await expect(introColumn).toHaveClass(/max-w-default/);
@@ -79,7 +79,9 @@ test("catalog runs wide with three row-major columns at 1440", async ({ page }) 
   expect(firstRow.map((l) => l.left)).toEqual(lefts);
   expect(Math.abs(firstRow[0]!.top - firstRow[1]!.top)).toBeLessThanOrEqual(2);
   expect(Math.abs(firstRow[0]!.top - firstRow[2]!.top)).toBeLessThanOrEqual(2);
-  expect(firstRow.map((l) => l.text)).toEqual(catalogIndex.slice(0, 3).map((entry) => entry.title));
+  expect(firstRow.map((l) => l.text)).toEqual(
+    catalogIndex.filter((entry) => entry.area === "ui").slice(0, 3).map((entry) => entry.title),
+  );
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
@@ -124,20 +126,36 @@ test("catalog category chips show live counts and have no area icons", async ({ 
   await page.setViewportSize(MOBILE);
   await page.goto("/catalog", { waitUntil: "networkidle" });
   const ui = page.getByRole("button", { name: chipName("UI", "ui") });
-  const core = page.getByRole("button", { name: chipName("Core & server", "backend") });
+  const core = page.getByRole("button", { name: chipName("Core and server", "backend") });
   const seo = page.getByRole("button", { name: chipName("SEO", "seo") });
   const agents = page.getByRole("button", { name: chipName("Agents", "agents") });
+  await expect(page.getByRole("group", { name: "Catalog filters" })).toBeVisible();
+  const category = page.getByRole("group", { name: "Category" });
+  await expect(category).toBeVisible();
   await expect(ui).toBeVisible();
+  await expect(ui).toHaveAttribute("aria-pressed", "true");
   await expect(core).toBeVisible();
   await expect(seo).toBeVisible();
   await expect(agents).toBeVisible();
   await expect(ui.locator("svg")).toHaveCount(0);
+  const chipSize = await ui.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+  expect(chipSize).toBeGreaterThanOrEqual(13);
   await expect(page.getByRole("checkbox", { name: "Stable only" })).toBeVisible();
+  await expect(category.getByRole("checkbox", { name: "Stable only" })).toHaveCount(0);
   await expect(page.locator("[data-catalog-area]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
   expect(overflow).toBe(true);
+});
+
+test("Stable only visible label toggles the checkbox", async ({ page }) => {
+  await page.goto("/catalog", { waitUntil: "networkidle" });
+  const checkbox = page.getByRole("checkbox", { name: "Stable only" });
+  await expect(checkbox).not.toBeChecked();
+  await page.locator('label[for="catalog-stable-only"]').click();
+  await expect(checkbox).toBeChecked();
+  await expect(page).toHaveURL(/status=stable/);
 });
 
 test("catalog area chip filters the grid and a second press clears it", async ({ page }) => {
@@ -149,7 +167,7 @@ test("catalog area chip filters the grid and a second press clears it", async ({
   const titles = await page.locator("[data-catalog-results] a:not([data-badge-link])").allTextContents();
   expect(titles).toEqual(catalogIndex.filter((entry) => entry.area === "seo").map((entry) => entry.title));
   await seoChip.click();
-  await expect(page).toHaveURL(/\/catalog\/?$/);
+  await expect(page).toHaveURL(/area=all/);
   await expect(seoChip).toHaveAttribute("aria-pressed", "false");
 });
 
@@ -158,7 +176,9 @@ test("catalog result maturity chips keep a decorative icon", async ({ page }) =>
   await page.goto("/catalog", { waitUntil: "networkidle" });
   const badges = page.locator("a[data-badge-link]");
   const badgeCount = await badges.count();
-  const expectedBadges = catalogIndex.filter((entry) => entry.status.toLowerCase() !== "stable").length;
+  const expectedBadges = catalogIndex.filter(
+    (entry) => entry.area === "ui" && entry.status.toLowerCase() !== "stable",
+  ).length;
   expect(badgeCount).toBe(expectedBadges);
   await expect(badges.locator("svg[aria-hidden='true']")).toHaveCount(badgeCount);
   const overflow = await page.evaluate(
@@ -207,7 +227,7 @@ test.describe("catalog result maturity chips light/dark", () => {
 test("catalog search keeps every letter while typing", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto("/catalog", { waitUntil: "networkidle" });
-  const search = page.getByRole("searchbox", { name: "Catalog search" });
+  const search = page.getByRole("searchbox", { name: "Search the catalog" });
   await search.click();
   await search.pressSequentially("dialog", { delay: 20 });
   await expect(search).toHaveValue("dialog");
@@ -217,14 +237,19 @@ test("catalog search keeps every letter while typing", async ({ page }) => {
 test("catalog filters persist in the URL and show empty state", async ({ page }) => {
   await page.goto("/catalog", { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { name: "Catalog", level: 1 })).toBeVisible();
-  await page.getByRole("button", { name: chipName("UI", "ui") }).click();
-  await expect(page).toHaveURL(/area=ui/);
-  await page.getByRole("searchbox", { name: "Catalog search" }).fill("zzzz-no-match-zzzz");
+  const uiChip = page.getByRole("button", { name: chipName("UI", "ui") });
+  await expect(uiChip).toHaveAttribute("aria-pressed", "true");
+  await uiChip.click();
+  await expect(page).toHaveURL(/area=all/);
+  await expect(uiChip).toHaveAttribute("aria-pressed", "false");
+  await page.getByRole("button", { name: chipName("SEO", "seo") }).click();
+  await expect(page).toHaveURL(/area=seo/);
+  await page.getByRole("searchbox", { name: "Search the catalog" }).fill("zzzz-no-match-zzzz");
   await expect(page).toHaveURL(/q=zzzz/);
   await expect(page.getByText("No catalog entries match")).toBeVisible();
   await page.getByRole("link", { name: "Clear filters" }).click();
   await expect(page).toHaveURL(/\/catalog\/?$/);
-  await expect(page.getByRole("button", { name: chipName("UI", "ui") })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("button", { name: chipName("UI", "ui") })).toHaveAttribute("aria-pressed", "true");
 });
 
 async function visibleResultLinks(page: Page) {

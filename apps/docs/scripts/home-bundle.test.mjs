@@ -69,7 +69,8 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
   assert.match(lead, /AI_SETUP_MINI_PROMPT/);
   assert.match(lead, /UI_SETUP_MINI_PROMPT/);
-  assert.match(lead, /\bmultiline\b/);
+  assert.match(lead, /HomeCopyCommandField/);
+  assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
   assert.doesNotMatch(lead, /SetupEntryPrompt/);
   assert.doesNotMatch(lead, /\/issues/);
@@ -274,27 +275,73 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     tokens,
     /#home-page #manifesto\[data-slot="section"\] \{[^}]*--ring:\s*var\(--primary-foreground\)/,
   );
-  assert.doesNotMatch(tokens, /linear-gradient/);
-  const manifestoCss = tokens.match(/#home-page #manifesto\[data-slot="section"\] \{[^}]+\}/);
-  assert.ok(manifestoCss, "manifesto section fill rule");
-  assert.doesNotMatch(manifestoCss[0], /#[0-9A-Fa-f]{3,8}/);
-  assert.doesNotMatch(manifestoCss[0], /border-radius/);
-  assert.doesNotMatch(manifestoCss[0], /padding:/);
+  const manifestoRules = [
+    ...tokens.matchAll(/#home-page #manifesto\[data-slot="section"\][^{]*\{[^}]+\}/g),
+  ].map((match) => match[0]);
+  assert.ok(manifestoRules.length >= 3, "manifesto fill plus circle and stripe rules");
+  const manifestoCss = manifestoRules.join("\n");
+  assert.match(
+    manifestoCss,
+    /linear-gradient\(\s*135deg[\s\S]*var\(--primary\)[\s\S]*var\(--accent\)/,
+  );
+  assert.match(manifestoCss, /overflow:\s*hidden/);
+  assert.match(manifestoCss, /isolation:\s*isolate/);
+  assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]::before/);
+  assert.match(tokens, /#home-page #manifesto\[data-slot="section"\]::after/);
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\]::before,\s*#home-page #manifesto\[data-slot="section"\]::after,\s*#home-page \[data-home-six-sentences-card="featured"\]::before,\s*#home-page \[data-home-six-sentences-card="featured"\]::after/,
+  );
+  assert.match(
+    tokens,
+    /#home-page #manifesto\[data-slot="section"\] > \*,\s*#home-page \[data-home-six-sentences-card="featured"\] > \*/,
+  );
+  const glassReduced = [
+    ...tokens.matchAll(/@media \(prefers-reduced-transparency: reduce\) \{[\s\S]*?\n\}/g),
+  ]
+    .map((match) => match[0])
+    .filter((block) => block.includes("#manifesto") || block.includes("six-sentences-card"));
+  assert.equal(glassReduced.length, 1, "manifesto and featured share one reduced-transparency rule");
+  assert.match(glassReduced[0], /#manifesto/);
+  assert.match(glassReduced[0], /six-sentences-card="featured"/);
+  assert.match(manifestoCss, /hsl\(var\(--primary-foreground\) \//);
+  assert.match(manifestoCss, /rotate\(24deg\)/);
+  assert.doesNotMatch(manifestoCss, /#[0-9A-Fa-f]{3,8}/);
+  assert.doesNotMatch(manifestoCss, /@keyframes|animation:/);
+  assert.doesNotMatch(manifestoRules[0], /border-radius/);
+  assert.doesNotMatch(manifestoRules[0], /padding:/);
+  const tokensWithoutManifesto = tokens.replace(
+    /#home-page #manifesto\[data-slot="section"\][^{]*\{[^}]+\}/g,
+    "",
+  );
+  assert.doesNotMatch(tokensWithoutManifesto, /linear-gradient/);
   assert.match(paste, /id="paste"/);
   assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
   assert.match(paste, /id="get-started"/);
   assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
-  assert.match(paste, /homePasteCopy\.fullStepsHref/);
+  assert.doesNotMatch(paste, /fullStepsHref|landsHeading|nestLands|data-home-full-steps/);
+  assert.doesNotMatch(paste, /Button|HomeLink|DocsActionLabel/);
+  assert.match(paste, /spacing="lg"/);
+  assert.match(paste, /gap="blocks"/);
+  assert.match(paste, /surface-pad-lg/);
+  assert.doesNotMatch(paste, /surface-pad-md/);
   assert.match(paste, /homePasteCopy\.timeline/);
   assert.match(paste, /homePasteCopy\.lands/);
-  assert.match(paste, /homePasteCopy\.landsHeading/);
-  assert.match(paste, /homePasteCopy\.nestLands/);
+  assert.match(paste, /homePasteCopy\.skillsAgents/);
+  assert.match(paste, /homeSameIdeaCopy\.kitCounts/);
+  assert.match(paste, /kitCounts\.skills/);
+  assert.match(paste, /kitCounts\.agents/);
   assert.match(paste, /Object\.keys\(homePasteCopy\.lands\)/);
   assert.doesNotMatch(paste, /LANDS_IDS = \["ai", "ui"\]/);
   assert.doesNotMatch(paste, /role="list"/);
   assert.match(paste, /data-home-paste-lands/);
   assert.match(paste, /HOME_PASTE_LANDS_GRID/);
+  assert.match(paste, /<Badge /);
+  assert.match(paste, /bg-primary-foreground/);
+  assert.match(paste, /text-primary/);
+  assert.match(paste, /text-accent/);
+  assert.doesNotMatch(paste, /<Badge>/);
   assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
   assert.match(
@@ -327,27 +374,32 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(pasteCopy, /"15 to 45 min"/);
   assert.match(pasteCopy, /"Same run"/);
   assert.match(pasteCopy, /"Any time after"/);
-  assert.match(pasteCopy, /landsHeading: "What lands"/);
-  assert.match(pasteCopy, /Nest \(API\) lands with UI: the package pin and the boot file\./);
-  assert.match(pasteCopy, /lands: \{\s*ui:/);
-  assert.match(pasteCopy, /when: "during the run"/);
+  assert.doesNotMatch(pasteCopy, /landsHeading|nestLands|fullSteps/);
+  assert.doesNotMatch(pasteCopy, /What lands|Nest \(API\)|Full install steps/);
+  assert.match(pasteCopy, /lands: \{\s*ai:/);
+  assert.doesNotMatch(pasteCopy, /lands: \{\s*ui:/);
   assert.match(pasteCopy, /when: "after lunch"/);
+  assert.match(pasteCopy, /when: "same run"/);
+  assert.doesNotMatch(pasteCopy, /during the run/);
   assert.match(pasteCopy, /AGENTS\.md/);
   assert.match(pasteCopy, /\.agents\/product\.md/);
-  assert.match(pasteCopy, /\.agents\/domain\//);
-  assert.match(pasteCopy, /per-domain notes/);
+  assert.match(pasteCopy, /what the product does/);
+  assert.match(pasteCopy, /\.agents\/domain\/tasks\.md/);
+  assert.match(pasteCopy, /its rules/);
   assert.match(pasteCopy, /\.agents\/skills\//);
+  assert.match(pasteCopy, /skillsAgents: \(skills: number, agents: number\) =>/);
+  assert.match(pasteCopy, /\$\{skills\} · agents\/ \$\{agents\}/);
   assert.match(pasteCopy, /package\.json/);
-  assert.match(pasteCopy, /the UI package/);
-  assert.match(pasteCopy, /globals\.css/);
-  assert.match(pasteCopy, /layout\.tsx/);
-  assert.match(pasteCopy, /Glass on the document/);
+  assert.match(pasteCopy, /@zedtech\/zedkit-ui/);
+  assert.match(pasteCopy, /src\/app\/globals\.css/);
+  assert.match(pasteCopy, /kit styles/);
+  assert.match(pasteCopy, /src\/app\/layout\.tsx/);
+  assert.match(pasteCopy, /data-identity="glass"/);
   assert.match(pasteCopy, /\.agents\/design\.md/);
-  assert.doesNotMatch(pasteCopy, /data-identity=/);
-  assert.doesNotMatch(pasteCopy, /@zedtech\/zedkit-ui/);
+  assert.match(pasteCopy, /which components to use/);
   assert.doesNotMatch(pasteCopy, /combined prompt|copy field|SecretField/);
-  assert.doesNotMatch(pasteCopy, /30 skills|13 agents|68 components|6 looks|tasks\.md/);
-  assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
+  assert.doesNotMatch(pasteCopy, /30 skills|13 agents|68 components|6 looks/);
+  assert.doesNotMatch(pasteCopy, /\/docs\/getting-started#install-or-copy/);
   assert.match(looksCopy, /title: "Every screen, the same product\."/);
   assert.match(looksCopy, /A look sets type, shape, density and color together/);
   assert.doesNotMatch(looksCopy, /Looks like your product/);
@@ -360,6 +412,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(limitsCopy, /Not every component is finished\./);
   assert.equal((limitsCopy.match(/title: "/g) ?? []).length, 4);
   assert.match(manifesto, /id="manifesto"/);
+  assert.match(manifesto, /spacing="lg"/);
   assert.match(manifesto, /aria-labelledby="manifesto-heading"/);
   assert.match(manifesto, /data-home-manifesto=/);
   assert.doesNotMatch(manifesto, /data-home-manifesto-panel/);
@@ -385,8 +438,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closing, /id="closing"/);
   assert.match(closing, /aria-labelledby="closing-heading"/);
   assert.match(closing, /data-home-closing=/);
-  assert.match(closing, /SecretField/);
-  assert.match(closing, /\bmultiline\b/);
+  assert.match(closing, /HomeCopyCommandField/);
+  assert.doesNotMatch(closing, /SecretField|\bmultiline\b/);
   assert.match(closing, /w-full text-left/);
   assert.match(closing, /MAP_SETUP_MINI_PROMPT/);
   assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
@@ -420,6 +473,8 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
   const components = Number(componentsMatch?.[1]);
   const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
   const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
+  const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
+  const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
   assert.equal(looks, 6);
   assert.match(sameIdeaCopy, new RegExp(`skills:\\s*${skills}`));
   assert.match(sameIdeaCopy, new RegExp(`agents:\\s*${agents}`));
@@ -428,6 +483,10 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
   assert.equal(Number.isInteger(components) && components > 0, true);
   assert.match(sameIdea, /componentCount/);
   assert.doesNotMatch(sameIdeaCopy, /30 skills|13 agents|68 components/);
+  assert.match(paste, /homeSameIdeaCopy\.kitCounts/);
+  assert.match(paste, /homePasteCopy\.skillsAgents/);
+  assert.doesNotMatch(pasteCopy, new RegExp(`${skills} · agents/ ${agents}`));
+  assert.doesNotMatch(pasteCopy, /30 · agents\/ 13/);
 });
 
 test("home looks band is specimen | look-name pills, not a Section header or palette-dot tabs (#119)", () => {

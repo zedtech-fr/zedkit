@@ -3,6 +3,10 @@
   --zk-type-h1-size: var(--zk-catalog-title-size);
 }
 
+[data-catalog-shell] [data-catalog-header-band] {
+  border-bottom: var(--zk-border-width) solid hsl(var(--border));
+}
+
 /* Title beside the glass card at 1440; stacked under the title at 390. */
 [data-catalog-shell] [data-catalog-intro] {
   display: grid;
@@ -46,7 +50,6 @@
 }
 
 [data-catalog-shell] [data-catalog-filter-search] {
-  box-shadow: none;
   color: hsl(var(--foreground));
 }
 

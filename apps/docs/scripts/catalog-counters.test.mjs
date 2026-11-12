@@ -18,12 +18,12 @@ function read(rel) {
 
 const COUNTER_LABELS = catalogCopy.counters.labels;
 
-test("counter labels are UI, Core, SEO, Agents — not Core & server", () => {
+test("counter labels are UI, Core, SEO, Agents — not Core and server", () => {
   assert.deepEqual(Object.values(COUNTER_LABELS), ["UI", "Core", "SEO", "Agents"]);
-  assert.equal(Object.values(COUNTER_LABELS).includes("Core & server"), false);
+  assert.equal(Object.values(COUNTER_LABELS).includes("Core and server"), false);
   const card = read("ui/catalog/catalog-counters.tsx");
   assert.match(card, /catalogCopy\.counters\.labels/);
-  assert.doesNotMatch(card, /Core & server/);
+  assert.doesNotMatch(card, /Core and server/);
 });
 
 test("catalogCounterItems uses the passed counts, fills 0, and drops extra keys", () => {

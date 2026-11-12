@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 import { MAP_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
-import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
 import { homeSameIdeaCopy } from "../ui/home/i18n/home-same-idea-copy";
 import { homeSixSentencesCopy } from "../ui/home/i18n/home-six-sentences-copy";
 
@@ -11,7 +10,7 @@ test.describe("home paste band", () => {
     permissions: ["clipboard-read", "clipboard-write"],
   });
 
-  test("sits after the same-idea band, links Getting started; hero copies the map prompt", async ({
+  test("sits after the same-idea band, hashes land; hero copies the map prompt", async ({
     page,
     context,
   }) => {
@@ -55,10 +54,8 @@ test.describe("home paste band", () => {
     await page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt", exact: true }).click();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_SETUP_MINI_PROMPT);
 
-    await expect(paste.getByRole("link", { name: "Full install steps" })).toHaveAttribute(
-      "href",
-      homePasteCopy.fullStepsHref,
-    );
+    await expect(paste.locator("[data-home-full-steps]")).toHaveCount(0);
+    await expect(paste.locator("[data-home-paste-lands]")).toBeVisible();
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
       `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`,

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   Heading,
-  SecretField,
   Stack,
   Tabs,
   TabsContent,
@@ -16,6 +15,7 @@ import {
   MAP_SETUP_MINI_PROMPT,
   UI_SETUP_MINI_PROMPT,
 } from "@/lib/ai-setup-onboarding.generated";
+import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
 import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { HomeHeroIllustration } from "@/ui/home/home-hero-illustration";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
@@ -36,7 +36,7 @@ function isHeroKit(value: string): value is HeroKitId {
  * Client personas:  Integrating developers and coding agents who adopt from the home first screen; they already have an agent and want one paste.
  * Customers:        The same visitors on a laptop (1440) or a phone (390).
  * Customer personas: Rushed (want the promise and the prompt without a product tour). Assumed from `.agents/product.md`, not from interviews. Doubtful visitors still reach the public run history page, not from a hero link.
- * UI decisions:     Two-column hero from `lg` (copy | glass illustration) because the 1440 crop is that composition; stack copy then illustration on a phone because the 390 crop is headline-first and does not raise the card. Display h1 with a muted third clause because the mockup greys "From the agent you already use." Editorial paragraph with emphasized AI / UI because that is the mockup supporting copy. Kit Tabs for AI / UI / AI + UI because they are sibling setup prompts, not a primary CTA row. SecretField for the prompt because copy-with-announce already exists. Static glass card because the mockup right column is an illustration, not a live console. No issues link in the hero because the mockup first screen has none and #247 supersedes #117 for that placement. No band glow discs because the mockup hero is a flat light band and the only colour is the purple stage. No in-hero identity form because the dock is the identity surface (#110).
+ * UI decisions:     Two-column hero from `lg` (copy | glass illustration) because the 1440 crop is that composition; stack copy then illustration on a phone because the 390 crop is headline-first and does not raise the card. Display h1 with a muted third clause because the mockup greys "From the agent you already use." Editorial paragraph with emphasized AI / UI because that is the mockup supporting copy. Kit Tabs for AI / UI / AI + UI because they are sibling setup prompts, not a primary CTA row. Shared copy-command field for the prompt because #246 asks for a single-line field with an attached black Copy, and closing must stay identical. Static glass card because the mockup right column is an illustration, not a live console. No issues link in the hero because the mockup first screen has none and #247 supersedes #117 for that placement. No band glow discs because the mockup hero is a flat light band and the only colour is the purple stage. No in-hero identity form because the dock is the identity surface (#110).
  */
 export function HomeHeroLead() {
   const [kit, setKit] = useState<HeroKitId>("combined");
@@ -76,8 +76,7 @@ export function HomeHeroLead() {
           <Stack className="w-full" data-home-hero-prompt="">
             {(["ai", "ui", "combined"] as const).map((id) => (
               <TabsContent key={id} value={id}>
-                <SecretField
-                  multiline
+                <HomeCopyCommandField
                   value={PROMPTS[id]}
                   aria-label={homeCopy.hero.promptAriaLabel}
                   copyLabel={homeCopy.hero.promptCopyLabel}
