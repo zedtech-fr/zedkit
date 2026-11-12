@@ -168,6 +168,11 @@ html[data-docs-shell][data-identity] {
   font-style: italic;
 }
 
+#home-page [data-home-six-sentences-card="plain"] [data-home-six-sentences-kit="ai"] {
+  background-color: color-mix(in oklab, hsl(var(--primary)) 15%, transparent);
+  color: hsl(var(--primary));
+}
+
 #home-page [data-home-six-sentences-card="plain"] [data-home-six-sentences-kit="ui"] {
   background-color: hsl(var(--accent));
   color: hsl(var(--accent-foreground));

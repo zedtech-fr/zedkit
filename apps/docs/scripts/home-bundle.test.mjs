@@ -217,6 +217,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.match(tokens, /\[data-home-six-sentences/);
   assert.match(tokens, /\[data-home-six-sentences-card="featured"\]/);
+  assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ai"\]/);
+  assert.match(tokens, /\[data-home-six-sentences-card="plain"\] \[data-home-six-sentences-kit="ui"\]/);
   assert.doesNotMatch(tokens, /#1B1764|#2B23C7|#4B3FD9|#3B1F8F|#5B34B5|#7C5CE6/);
   assert.doesNotMatch(tokens, /data-home-install-choice/);
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
