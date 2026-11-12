@@ -1,16 +1,14 @@
 import { expect, test } from "@playwright/test";
-import { DEFAULT_IDENTITY } from "../lib/default-identity";
-import { openHeroPage } from "./hero-helpers";
 
 test("home explains the product without preview-only extra bands (#210)", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("[data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
+  await expect(page.locator("[data-home-hero-category]")).toHaveText("Open source · MIT · by Zed Tech");
   await expect(
     page.getByRole("heading", {
-      name: "Code that's checked. Screens that match.",
+      name: "Code that's checked. Screens that match. From the agent you already use.",
       level: 1,
     }),
   ).toBeVisible();
@@ -32,28 +30,26 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero offers Setup first with get started, catalog, and a discreet issues link (#111, #117)", async ({
+test("home hero matches the mockup first screen: clause, pills, prompt, glass card, issues link (#118)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
 
-  const heroActions = page.locator("[data-home-hero-actions] a");
-  await expect(heroActions).toHaveCount(4);
-  await expect(heroActions.nth(0)).toHaveText("Setup");
-  await expect(heroActions.nth(0)).toHaveAttribute("href", "#ai-setup");
-  await expect(heroActions.nth(0)).toHaveAttribute("data-site-action");
-  await expect(heroActions.nth(1)).toHaveText("Get started");
-  await expect(heroActions.nth(1)).toHaveAttribute("href", "#get-started");
-  await expect(heroActions.nth(1)).toHaveAttribute("data-site-action");
-  await expect(heroActions.nth(2)).toHaveText("Browse catalog");
-  await expect(heroActions.nth(2)).toHaveAttribute("href", "/catalog");
-  await expect(heroActions.nth(2)).not.toHaveAttribute("data-site-action");
-  for (const index of [0, 1, 2]) {
-    await expect(heroActions.nth(index)).not.toHaveAttribute("target");
-    await expect(heroActions.nth(index)).not.toHaveAttribute("rel");
-  }
-  const issues = heroActions.nth(3);
+  // #118 supersedes the Setup / Get started / Browse catalog hero row (#111).
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Setup" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Get started" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Browse catalog" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead] [data-site-action]")).toHaveCount(0);
+
+  const tabs = page.locator("[data-home-hero-lead]").getByRole("tablist");
+  await expect(tabs).toHaveCount(1);
+  await expect(page.getByRole("tab", { name: "AI", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "UI", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toHaveAttribute("aria-selected", "true");
+
+  const issues = page.locator("[data-home-hero-actions] a");
+  await expect(issues).toHaveCount(1);
   await expect(issues).toHaveAttribute("target", "_blank");
   await expect(issues).toHaveAttribute("rel", "noopener noreferrer");
   await expect(issues).toHaveAccessibleName(/opens in a new tab/i);
@@ -63,9 +59,10 @@ test("home hero offers Setup first with get started, catalog, and a discreet iss
   expect(issuesHref).not.toBe("/issues/0");
   await expect(issues).not.toHaveAttribute("data-site-action");
 
-  await expect(page.locator("[data-home-hero-sub]")).toHaveText(
-    "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
+  await expect(page.locator("[data-home-hero-sub]")).toContainText(
+    "zedkit is a set of kits your coding agent installs itself.",
   );
+  await expect(page.locator("[data-home-hero-sub]")).toContainText("definition of done");
   await expect(
     page.locator("[data-home-hero-prompt]").getByRole("textbox", { name: "Setup prompt", exact: true }),
   ).toBeVisible();
@@ -77,86 +74,94 @@ test("home hero offers Setup first with get started, catalog, and a discreet iss
   await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
   await expect(page.getByText("Name the kits you want, Nest included. The map knows the order.")).toBeVisible();
-  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();
+  await expect(page.getByText("An illustration of one run, not a recording.")).toBeVisible();
+  await expect(page.locator("[data-hero-run-stage]")).toBeVisible();
+  await expect(page.locator("#demo")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-  // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
-  await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
+  await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText(
+    "Open source · MIT · by Zed Tech",
+  );
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Code that's checked. Screens that match.",
+      name: "Code that's checked. Screens that match. From the agent you already use.",
       level: 1,
     }),
   ).toBeVisible();
+  await expect(page.locator("[data-home-hero-band]").getByRole("combobox")).toHaveCount(0);
   await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByText(/Latest in v/)).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead] [data-install-command]")).toHaveCount(0);
+
+  const pause = page.getByRole("button", { name: "Pause illustration motion" });
+  await expect(pause).toBeVisible();
+  await expect(pause).toHaveAttribute("aria-pressed", "false");
+  await pause.click();
+  await expect(page.getByRole("button", { name: "Play illustration motion" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute("role", "group");
+  await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute(
+    "aria-label",
+    "An illustration of one run, not a recording.",
+  );
+  const badgeInSpan = await page.evaluate(
+    () =>
+      [...document.querySelectorAll("[data-hero-run-stage] span")].some((node) =>
+        node.querySelector('[data-slot="badge"]'),
+      ),
+  );
+  expect(badgeInSpan).toBe(false);
 });
 
-test("home hero shows proof line without a separate proofs band (#1057)", async ({ page }) => {
+test("home hero has no facts line; same-idea holds MIT and React 19 proof (#118)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
+  // #118 drops the hero facts line; #1057's proofs band stays gone; MIT / React 19 live in same-idea.
   await expect(
-    page.getByText("What you see installs from npm or copies as source · MIT · React 19 · Tailwind 4"),
-  ).toBeVisible();
+    page.locator("[data-home-hero-lead]").getByText(/React 19/),
+  ).toHaveCount(0);
+  await expect(page.locator("[data-home-same-idea-lands]").getByText("MIT", { exact: true })).toBeVisible();
+  await expect(page.getByText("React 19 and Tailwind CSS 4, from npm or as source")).toBeVisible();
+  await expect(page.getByText("What you see is MIT, React 19, Tailwind 4.")).toHaveCount(0);
   await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
 });
 
-test("home hero proof follows site mode and can override dark (#1072)", async ({ page }) => {
+test("home hero has no identity form; looks stay in the dock (#118, #110)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.addInitScript(() => {
-    localStorage.setItem("theme", "dark");
-  });
   await page.goto("/", { waitUntil: "networkidle" });
-  const proof = page.locator("[data-home-hero-proof]");
-  const scope = proof.locator("[data-identity-scope]");
-  const shellIdentity = await page.locator("html").getAttribute("data-identity");
-  await expect(scope).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
-  // The scope repaints after the shell class flips (colour transition, slower under load), so poll the same bar.
-  const brightest = () =>
-    scope.evaluate((el) => Math.max(...getComputedStyle(el).backgroundColor.match(/\d+/g)!.slice(0, 3).map(Number)));
-  await expect.poll(brightest).toBeLessThan(70);
-
-  await proof.getByRole("combobox", { name: "Identity for this demo" }).click();
-  await page.getByRole("option", { name: "Tide" }).click();
-  await expect(scope).toHaveAttribute("data-identity", "tide");
-  await proof.getByRole("combobox", { name: "Color mode for this demo" }).click();
-  await page.getByRole("option", { name: "Light" }).click();
-  await expect.poll(brightest).toBeGreaterThan(200);
-
-  await proof.getByRole("combobox", { name: "Color mode for this demo" }).click();
-  await page.getByRole("option", { name: "Dark" }).click();
-  await expect.poll(brightest).toBeLessThan(70);
-  expect(await page.locator("html").getAttribute("data-identity")).toBe(shellIdentity);
-  expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
+  // #118 supersedes the Display-row identity picker (#1072) in the hero.
+  await expect(page.locator("[data-home-hero-band]").getByRole("combobox")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
 });
 
-test("home hero embeds the interactive admin demo above the fold on desktop (#1111 L1b)", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 720 });
+test("home hero glass card is on the first screen at 1440 (#118)", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await openHeroPage(page, "Apps");
-  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
-  await expect(demo.getByRole("button", { name: "Add app" })).toBeVisible();
-  const box = await demo.getByRole("button", { name: "Add app" }).boundingBox();
+  const title = page.getByText("Add an empty state to the tasks list");
+  await expect(title).toBeVisible();
+  const box = await title.boundingBox();
   expect(box).toBeTruthy();
-  expect(box!.y + box!.height).toBeLessThanOrEqual(720);
+  expect(box!.y + box!.height).toBeLessThanOrEqual(900);
+  await expect(page.getByText("Harbor Studio")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Add app" })).toHaveCount(0);
 });
 
-test("home hero specimen follows the headline within the mobile demo budget (#1111 L1b)", async ({ page }) => {
+test("home hero at 390 is headline-first; the glass card follows (#118)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  const metrics = await page.evaluate(() => {
-    const root = document.querySelector("#home-page");
-    const demoEl = document.querySelector("#demo");
-    if (!root || !demoEl) return null;
-    const rootTop = root.getBoundingClientRect().top + window.scrollY;
-    const demoTop = demoEl.getBoundingClientRect().top + window.scrollY;
-    return demoTop - rootTop;
+  await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toBeVisible();
+  const order = await page.evaluate(() => {
+    const lead = document.querySelector("[data-home-hero-lead]");
+    const stage = document.querySelector("[data-hero-run-stage]");
+    if (!lead || !stage) return null;
+    return lead.compareDocumentPosition(stage) & Node.DOCUMENT_POSITION_FOLLOWING;
   });
-  expect(metrics).not.toBeNull();
-  expect(metrics!).toBeLessThanOrEqual(760);
+  expect(order).toBeTruthy();
 });
 
 test("home extra bands stay gone at 390 and 1440; the dock remains (#210)", async ({ page }) => {
@@ -170,14 +175,14 @@ test("home extra bands stay gone at 390 and 1440; the dock remains (#210)", asyn
     await expect(page.getByRole("heading", { name: "More in the kit" })).toHaveCount(0);
     await expect(page.locator("#components, #entry-points, #your-identity, [data-home-yours]")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Browse catalog" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Catalog", exact: true }).first()).toBeVisible();
   }
 });
 
-test("home catalog link from the hero opens the catalog", async ({ page }) => {
+test("home catalog link in the site header opens the catalog", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await page.getByRole("link", { name: "Browse catalog" }).first().click();
+  await page.getByRole("link", { name: "Catalog", exact: true }).first().click();
   await page.waitForURL("**/catalog**", { timeout: 10000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
@@ -241,7 +246,7 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
   }
 });
 
-test.describe("home hero and proofs docs CTAs light/dark", () => {
+test.describe("home header Get started CTA light/dark", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -251,14 +256,10 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const hero = page.locator("[data-home-hero-actions]").getByRole("link", { name: "Get started" });
-      await hero.scrollIntoViewIfNeeded();
-      await expect(hero).toBeVisible();
-      await hero.screenshot({ path: `test-results/home-hero-docs-cta-${mode}.png` });
-      const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
-      await catalog.scrollIntoViewIfNeeded();
-      await expect(catalog).toBeVisible();
-      await catalog.screenshot({ path: `test-results/home-proofs-theme-cta-${mode}.png` });
+      const getStarted = page.getByRole("link", { name: "Get started" }).first();
+      await getStarted.scrollIntoViewIfNeeded();
+      await expect(getStarted).toBeVisible();
+      await getStarted.screenshot({ path: `test-results/home-header-docs-cta-${mode}.png` });
     });
   }
 });
@@ -295,12 +296,12 @@ test("home get-started hash lands on the paste band, not an install panel", asyn
   );
 });
 
-test("home has no registry brick grid; catalog link lives in the hero", async ({ page }) => {
+test("home has no registry brick grid; catalog link lives in the header", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`#paste`, { waitUntil: "networkidle" });
   await expect(page.locator("#install-or-copy")).toHaveCount(0);
   await expect(page.locator("[data-registry-bricks]")).toHaveCount(0);
-  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
+  const catalog = page.getByRole("link", { name: "Catalog", exact: true }).first();
   await catalog.scrollIntoViewIfNeeded();
   await expect(catalog).toHaveAttribute("href", "/catalog");
   const overflow = await page.evaluate(
@@ -315,12 +316,12 @@ test("home search opens from the header", async ({ page }) => {
   await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10000 });
 });
 
-test("home keyboard: tab reaches Browse catalog", async ({ page }) => {
+test("home keyboard: tab reaches Catalog", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   let found = false;
   for (let i = 0; i < 50; i++) {
     const active = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
-    if (active.includes("Browse catalog")) {
+    if (active === "Catalog" || active.includes("Catalog")) {
       found = true;
       break;
     }

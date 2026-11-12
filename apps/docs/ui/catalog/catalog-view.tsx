@@ -7,6 +7,7 @@ import { Container, Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import type { CatalogArea, CatalogIndexEntry } from "@/content/catalog-index";
 import { CATALOG_AREAS, catalogFilterView } from "@/lib/catalog-filter.mjs";
 
+import { CatalogCounters } from "@/ui/catalog/catalog-counters";
 import { CatalogFiltersToolbar, catalogResultsStatusLine } from "@/ui/catalog/catalog-filters";
 import { catalogCopy } from "@/ui/catalog/i18n/catalog-copy";
 
@@ -66,11 +67,14 @@ export function CatalogView({
     <>
       <Section bleed spacing="sm" containerWidth="default">
         <Stack gap="lg">
-          <Stack gap="sm">
-            <Heading level={1}>{catalogCopy.header.title}</Heading>
-            <Text variant="muted" typeRole="lead" className="text-muted-foreground">
-              {catalogCopy.header.lead}
-            </Text>
+          <Stack data-catalog-intro="">
+            <Stack gap="sm">
+              <Heading level={1}>{catalogCopy.header.title}</Heading>
+              <Text variant="muted" typeRole="lead" className="text-muted-foreground">
+                {catalogCopy.header.lead}
+              </Text>
+            </Stack>
+            <CatalogCounters counts={countsByArea} />
           </Stack>
 
           <CatalogFiltersToolbar

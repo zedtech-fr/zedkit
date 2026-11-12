@@ -303,18 +303,18 @@ test("catalog filter chips use quiet fill not primary accent", async ({ page }) 
   expect(usesPrimaryBg).toBe(false);
 });
 
-test("home links to catalog from the hero (#210)", async ({ page }) => {
+test("home links to catalog from the site header (#118)", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
+  const catalog = page.getByRole("link", { name: "Catalog", exact: true }).first();
   await expect(catalog).toBeVisible();
   await expect(catalog).toHaveAttribute("href", "/catalog");
   await expect(page.locator("#components, [data-home-component-families]")).toHaveCount(0);
 });
 
-test("catalog CTA from the hero stays visible at phone width", async ({ page }) => {
+test("catalog link in the header stays visible at phone width", async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.goto("/", { waitUntil: "networkidle" });
-  const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
+  const catalog = page.getByRole("link", { name: "Catalog", exact: true }).first();
   await catalog.scrollIntoViewIfNeeded();
   await expect(catalog).toBeVisible();
   const overflow = await page.evaluate(
@@ -333,7 +333,7 @@ test.describe("catalog CTA light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
+      const catalog = page.getByRole("link", { name: "Catalog", exact: true }).first();
       await catalog.scrollIntoViewIfNeeded();
       await expect(catalog).toBeVisible();
       await catalog.screenshot({ path: `test-results/home-catalog-cta-${mode}.png` });

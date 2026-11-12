@@ -5,6 +5,15 @@ export const catalogCopy = {
     lead: "Search by need. Filter by area or maturity if you want — share or reload keeps the URL.",
     loadingResults: "Loading results…",
   },
+  counters: {
+    ariaLabel: "Catalog area counts",
+    labels: {
+      ui: "UI",
+      backend: "Core",
+      seo: "SEO",
+      agents: "Agents",
+    },
+  },
   filters: {
     toolbarAriaLabel: "Catalog filters",
     searchLabel: "Catalog search",

@@ -59,7 +59,10 @@ test.describe("home paste band", () => {
       homePasteCopy.fullStepsHref,
     );
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Code that's checked. Screens that match.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Code that's checked. Screens that match. From the agent you already use.",
+    );
+    await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toHaveAttribute("aria-selected", "true");
 
     await page.setViewportSize({ width: 320, height: 844 });
     await expect(page.locator("#paste")).toBeVisible();

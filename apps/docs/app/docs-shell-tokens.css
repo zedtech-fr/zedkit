@@ -53,22 +53,6 @@ html[data-docs-shell][data-identity] {
   --zk-page-gutter: 1.5rem;
 }
 
-/*
- * Home hero band: tight top padding. Below-hero full-bleed bands use Section
- * spacing="md". Hash aliases #ai-setup / #get-started live inside #paste.
- */
-#home-page [data-home-hero-band] {
-  padding-top: 2.5rem;
-  padding-bottom: 0;
-}
-
-@media (width < 64rem) {
-  #home-page [data-home-hero-band] {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
-  }
-}
-
 #home-page [data-home-specimen-stage] {
   box-shadow: none;
 }
