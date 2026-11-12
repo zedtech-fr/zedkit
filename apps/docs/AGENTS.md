@@ -178,8 +178,9 @@ second fonts `pnpm add` next to that snippet.
   suggest service ([deploy/AGENTS.md](../../deploy/AGENTS.md)).
   The page's client is `lib/identity-assistant.ts`: it parses whatever the
   service returns and turns every failure into a named outcome (`unavailable`
-  with its reason, shown by `UnavailableBanner`). There is no silent keyword
-  fallback: a failed generation says so and leaves the draft untouched.
+  with its reason). The floating dock is manual customize only and does not
+  render those outcomes. There is no silent keyword fallback: a failed
+  generation says so and leaves the draft untouched.
 - Saved looks are local recipes (`lib/named-identities.ts`): re-validated on
   every read, no server copy. Changing the stored shape needs a version and a
   migration.
@@ -194,8 +195,9 @@ second fonts `pnpm add` next to that snippet.
 - Classic edits in the floating dock restyle the whole site immediately and
   persist in `lib/site-identity-storage.ts`. Reset restores the site default
   look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
-  has no Apply or Preview step and no opt-in key. The editor page still has
-  Preview dark (card only) and Suggest Apply (draft only).
+  has no Apply or Preview step and no opt-in key. Dock customize copy must
+  not name a preview; the page and its specimens follow. The editor page
+  still has Preview dark (card only) and Suggest Apply (draft only).
   Quotas, references and cost controls are server rules; the client never
   works around them.
 - The floating dock opens with Control or Meta+I, closes with Escape, and on

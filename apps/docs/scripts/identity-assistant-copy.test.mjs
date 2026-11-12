@@ -26,6 +26,14 @@ test("a retry tomorrow says tomorrow and the clock time", () => {
   assert.doesNotMatch(retryText(5 * 3_600, evening), /November|December|\d{4}/);
 });
 
+test("customize hint points at the page, not a preview above the fields", () => {
+  assert.equal(
+    identityAssistantCopy.views.customizeHint,
+    "Adjust the fields below; the page and its specimens follow.",
+  );
+  assert.doesNotMatch(identityAssistantCopy.views.customizeHint, /preview above/i);
+});
+
 test("a retry next month names the explicit date, not tomorrow", () => {
   const nextMonth = Math.round((Date.parse("2026-12-15T09:30:00.000Z") - now.getTime()) / 1000);
   assert.equal(retryText(nextMonth, now), "Try again after 15 December 2026, 09:30.");
