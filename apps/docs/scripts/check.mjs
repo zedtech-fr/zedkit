@@ -626,7 +626,7 @@ function tsxFiles(dir) {
   return out;
 }
 
-for (const dir of ["app", "ui"]) {
+for (const dir of ["app", "ui", "features"]) {
   if (!existsSync(join(APP, dir))) continue;
   for (const file of tsxFiles(join(APP, dir))) {
     const rel = file.slice(APP.length + 1);
@@ -641,9 +641,12 @@ for (const dir of ["app", "ui"]) {
   }
 }
 
-for (const file of tsxFiles(join(APP, "components"))) {
-  const rel = file.slice(APP.length + 1);
-  errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
+for (const dir of ["components", "features"]) {
+  if (!existsSync(join(APP, dir))) continue;
+  for (const file of tsxFiles(join(APP, dir))) {
+    const rel = file.slice(APP.length + 1);
+    errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
+  }
 }
 
 const nextConfig = readFileSync(join(APP, "next.config.mjs"), "utf8");

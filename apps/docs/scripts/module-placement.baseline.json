@@ -1,10 +1,5 @@
 {
   "dead": [
-    "components/hero-demo-style-control.tsx",
-    "components/hero-demo-style-fields.tsx",
-    "components/hero-tour-control.tsx",
-    "components/home-gallery-demos.tsx",
-    "components/i18n/hero-demo-style-copy.ts",
     "components/i18n/identity-specimen-compositions.ts",
     "components/identity-assistant-panes.tsx",
     "components/identity-assistant-parts.tsx",
@@ -54,7 +49,6 @@
     "components/use-creator-handoff.ts",
     "components/use-identity-dock-keyboard.ts",
     "lib/brief-specimen-domain.ts",
-    "lib/component-page-toc.ts",
     "lib/creator-handoff.ts",
     "lib/creator-session-brief.ts",
     "lib/docs-layout-tree.mjs",

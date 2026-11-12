@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import test from "node:test";
-import { readDeclaredProps } from "../lib/declared-props.mjs";
-import { DEFAULT_PROPS_PRIORITY, partitionPropsEntries } from "../lib/props-priority.mjs";
+import { readDeclaredProps } from "../features/docs/declared-props.mjs";
+import { DEFAULT_PROPS_PRIORITY, partitionPropsEntries } from "../features/docs/props-priority.mjs";
 
 const basePath = join(import.meta.dirname, "..", "..", "..", "packages", "ui", "src");
 const tsconfigPath = join(import.meta.dirname, "..", "tsconfig.json");

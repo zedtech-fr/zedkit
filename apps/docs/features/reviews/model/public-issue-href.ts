@@ -9,7 +9,7 @@ function firstPositiveNumber(rows: readonly { readonly number: number }[]): numb
   return rows.find((row) => Number.isSafeInteger(row.number) && row.number > 0)?.number;
 }
 
-/** Snapshot-backed public run-history URL for the home hero. Never `/issues/0`. */
+/** Snapshot-backed public run-history URL. Never `/issues/0`. */
 export async function publicIssueHrefFrom(port: PublicIssueHrefPort): Promise<string> {
   const issueNumber = firstPositiveNumber(await port.listIssues());
   if (issueNumber !== undefined) return issuePath(issueNumber);

@@ -25,11 +25,11 @@ const RESOLVE_EXT = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".mdx"];
 const ROUTE_STEMS = new Set(["page", "layout", "route", "not-found", "opengraph-image", "sitemap", "robots"]);
 const SKIP_DIR = new Set(["node_modules", "dist", "out", ".next", ".source", "coverage"]);
 const DOCS_WRITTEN = [
-  "components/component-page",
-  "components/component-preview",
+  "features/docs/ui/component-page",
+  "features/docs/ui/component-preview",
   "components/maturity-badge",
   "components/props-table",
-  "components/component-wraps-line",
+  "features/docs/ui/component-wraps-line",
 ];
 
 function posixPath(file) {
@@ -121,7 +121,11 @@ function ownersByFile(graph) {
       const feat = featureOf(cur);
       // Paths that entered a feature count that feature as the owner, so a
       // lib file used only by one domain is single-owner (not many routes).
-      const nextOwner = feat ? `features/${feat}` : owner;
+      // The synthetic `docs` owner stands in for the generated pages corpus
+      // (`DOCS_WRITTEN`). Keep it when that walk enters a feature, otherwise
+      // moving component-page into features/docs would retag every shared
+      // module it reaches as a new single-owner violation.
+      const nextOwner = owner === SHARED_OWNER ? SHARED_OWNER : feat ? `features/${feat}` : owner;
       const seenOwners = seen.get(cur) ?? new Set();
       if (seenOwners.has(nextOwner)) continue;
       seenOwners.add(nextOwner);

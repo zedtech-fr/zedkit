@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { highlight } from "fumadocs-core/highlight";
 import { Pre } from "fumadocs-ui/components/codeblock";
 
-import { AdoptionPanel } from "@/components/adoption-panel";
-import type { Highlighted } from "@/components/adoption-steps";
+import { AdoptionPanel } from "./adoption-panel";
+import type { Highlighted } from "./adoption-steps";
 import { featuredRegistryBrick } from "@/content/registry-site";
 import { FEATURED_EXAMPLE, buildAdoptionPlan, loadRegistry } from "@/lib/adoption-plan.mjs";
 import { blockKey, type AdoptionPlan } from "@/lib/adoption-types";
