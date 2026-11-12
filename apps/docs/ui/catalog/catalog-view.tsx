@@ -92,7 +92,7 @@ export function CatalogView({
       <Container width="wide" className="pt-start pb-section-lg">
         <Stack gap="md">
           <CatalogResultsBodyLazy filtered={visible} />
-          <Stack id="catalog-results-heading" data-catalog-results-heading="">
+          <Stack data-catalog-results-heading="">
             {catalogResultsStatusLine(visible.length, areaTotal)}
           </Stack>
         </Stack>

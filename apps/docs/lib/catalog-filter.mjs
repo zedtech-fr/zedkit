@@ -125,6 +125,6 @@ export function catalogFilterView(entries, filters = {}) {
   const area = parseCatalogArea(filters.area);
   const countsByArea = countCatalogByArea(entries);
   const visible = filterCatalogEntries(entries, { ...filters, area });
-  const areaTotal = area !== "all" && AREA_IDS.has(area) ? countsByArea[area] : entries.length;
+  const areaTotal = area !== "all" ? countsByArea[area] : entries.length;
   return { countsByArea, visible, areaTotal };
 }

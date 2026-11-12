@@ -213,6 +213,7 @@ test("area=all is the mixed list; other known areas win", () => {
   assert.equal(readCatalogFilters(new URLSearchParams("area=seo")).area, "seo");
   assert.equal(readCatalogFilters("area=seo").area, "seo");
   const mixed = catalogFilterView(MIXED, { area: "all" });
+  assert.equal(mixed.areaTotal, MIXED.length);
   assert.deepEqual(
     mixed.visible.map((entry) => entry.title),
     MIXED.map((entry) => entry.title),

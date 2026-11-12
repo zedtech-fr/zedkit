@@ -51,12 +51,12 @@ for (const width of DESKTOP_WIDTHS) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.waitForFunction(() => document.querySelector("[data-catalog-filter-row]"));
-    await expect(page.locator("#catalog-results-heading")).toBeVisible();
+    await expect(page.locator("[data-catalog-results-heading]")).toBeVisible();
 
     const metrics = await page.evaluate(() => {
       const filterRow = document.querySelector("[data-catalog-filter-row]");
       const filterContainer = filterRow?.closest("[data-slot='container']");
-      const resultsHeading = document.querySelector("#catalog-results-heading");
+      const resultsHeading = document.querySelector("[data-catalog-results-heading]");
       const resultsContainer = resultsHeading?.closest("[data-slot='container']");
       if (!filterRow || !filterContainer || !resultsHeading || !resultsContainer) {
         return null;

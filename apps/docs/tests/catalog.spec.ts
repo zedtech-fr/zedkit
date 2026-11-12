@@ -129,18 +129,33 @@ test("catalog category chips show live counts and have no area icons", async ({ 
   const core = page.getByRole("button", { name: chipName("Core and server", "backend") });
   const seo = page.getByRole("button", { name: chipName("SEO", "seo") });
   const agents = page.getByRole("button", { name: chipName("Agents", "agents") });
+  await expect(page.getByRole("group", { name: "Catalog filters" })).toBeVisible();
+  const category = page.getByRole("group", { name: "Category" });
+  await expect(category).toBeVisible();
   await expect(ui).toBeVisible();
   await expect(ui).toHaveAttribute("aria-pressed", "true");
   await expect(core).toBeVisible();
   await expect(seo).toBeVisible();
   await expect(agents).toBeVisible();
   await expect(ui.locator("svg")).toHaveCount(0);
+  const chipSize = await ui.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+  expect(chipSize).toBeGreaterThanOrEqual(13);
   await expect(page.getByRole("checkbox", { name: "Stable only" })).toBeVisible();
+  await expect(category.getByRole("checkbox", { name: "Stable only" })).toHaveCount(0);
   await expect(page.locator("[data-catalog-area]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
   expect(overflow).toBe(true);
+});
+
+test("Stable only visible label toggles the checkbox", async ({ page }) => {
+  await page.goto("/catalog", { waitUntil: "networkidle" });
+  const checkbox = page.getByRole("checkbox", { name: "Stable only" });
+  await expect(checkbox).not.toBeChecked();
+  await page.locator('label[for="catalog-stable-only"]').click();
+  await expect(checkbox).toBeChecked();
+  await expect(page).toHaveURL(/status=stable/);
 });
 
 test("catalog area chip filters the grid and a second press clears it", async ({ page }) => {

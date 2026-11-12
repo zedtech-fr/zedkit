@@ -10,6 +10,13 @@ function read(rel) {
   return readFileSync(join(app, rel), "utf8");
 }
 
+function functionSource(src, name) {
+  const start = src.indexOf(`function ${name}`);
+  assert.notEqual(start, -1, `missing function ${name}`);
+  const next = src.slice(start + 1).search(/\nfunction |\nexport function /);
+  return next === -1 ? src.slice(start) : src.slice(start, start + 1 + next);
+}
+
 test("catalog view reads as a catalog: lead, counters, filters, results, no identity form", () => {
   const view = read("ui/catalog/catalog-view.tsx");
   assert.match(view, /catalogCopy\.header\.lead\(entries\.length\)/);
@@ -74,6 +81,47 @@ test("selected chip uses site-action; chips and Stable only share one wrap row",
   const stableAt = rowSlice.indexOf("CatalogStableOnly");
   assert.equal(chipsAt >= 0 && stableAt >= 0, true);
   assert.equal(chipsAt < stableAt, true);
+});
+
+test("category chips override size=sm caption with text-dense", () => {
+  const chips = functionSource(read("ui/catalog/catalog-filters.tsx"), "CatalogCategoryChips");
+  assert.match(chips, /size="sm"/);
+  assert.match(chips, /text-dense/);
+});
+
+test("Category group holds chips only; toolbar is a labelled group", () => {
+  const filters = read("ui/catalog/catalog-filters.tsx");
+  const chips = functionSource(filters, "CatalogCategoryChips");
+  const stable = functionSource(filters, "CatalogStableOnly");
+  const toolbar = functionSource(filters, "CatalogFiltersToolbar");
+  assert.match(chips, /role="group"/);
+  assert.match(chips, /chipsAriaLabel/);
+  assert.doesNotMatch(chips, /CatalogStableOnly/);
+  assert.doesNotMatch(chips, /Checkbox/);
+  assert.match(stable, /htmlFor="catalog-stable-only"/);
+  assert.match(stable, /id="catalog-stable-only"/);
+  assert.doesNotMatch(stable, /aria-label/);
+  assert.match(toolbar, /role="group"/);
+  assert.match(toolbar, /toolbarAriaLabel/);
+  assert.doesNotMatch(toolbar, /role="toolbar"/);
+  assert.doesNotMatch(toolbar, /chipsAriaLabel/);
+});
+
+test("catalog search shadow is owned by the Input class, not catalog-shell.css", () => {
+  const search = functionSource(read("ui/catalog/catalog-filters.tsx"), "CatalogSearchField");
+  const css = read("app/catalog-shell.css");
+  const start = css.indexOf("[data-catalog-filter-search]");
+  assert.notEqual(start, -1);
+  const open = css.indexOf("{", start);
+  const close = css.indexOf("}", open);
+  assert.match(search, /className="shadow-none"/);
+  assert.doesNotMatch(css.slice(start, close + 1), /box-shadow/);
+});
+
+test("results status is a data hook, not a heading id", () => {
+  const view = read("ui/catalog/catalog-view.tsx");
+  assert.match(view, /data-catalog-results-heading/);
+  assert.doesNotMatch(view, /id="catalog-results-heading"/);
 });
 
 test("catalog cells use compact padding", () => {
