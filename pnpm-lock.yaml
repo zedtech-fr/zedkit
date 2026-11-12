@@ -386,6 +386,9 @@ importers:
       '@zedtech/zedkit-flags':
         specifier: workspace:*
         version: link:../../packages/flags
+      '@zedtech/zedkit-live':
+        specifier: workspace:*
+        version: link:../../packages/live
       '@zedtech/zedkit-seo':
         specifier: workspace:*
         version: link:../../packages/seo

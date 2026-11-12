@@ -35,6 +35,7 @@
     "@openfeature/web-sdk": "catalog:",
     "@zedtech/zedkit-core": "workspace:*",
     "@zedtech/zedkit-flags": "workspace:*",
+    "@zedtech/zedkit-live": "workspace:*",
     "@zedtech/zedkit-seo": "workspace:*",
     "@zedtech/zedkit-ui": "workspace:*",
     "fumadocs-core": "catalog:",

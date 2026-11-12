@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -53,7 +53,6 @@ import {
   unlinkedRunPath,
 } from "../features/reviews/model/review-routes.ts";
 import { toReviewRecord } from "../features/reviews/model/to-review-record.ts";
-import { copyPublicReviewsSnapshot } from "./copy-public-reviews-snapshot.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
@@ -98,19 +97,6 @@ function pr(overrides = {}) {
 
 function wrapper(issues, pullRequests = [pr()], extra = {}) {
   return { version: 1, kind: "public-stand-in", issues, pullRequests, ...extra };
-}
-
-function collectKeys(value, keys = []) {
-  if (value === null || typeof value !== "object") return keys;
-  if (Array.isArray(value)) {
-    for (const item of value) collectKeys(item, keys);
-    return keys;
-  }
-  for (const [key, child] of Object.entries(value)) {
-    keys.push(key);
-    collectKeys(child, keys);
-  }
-  return keys;
 }
 
 function parsedIndex(issues, pullRequests, extra) {
@@ -633,9 +619,9 @@ test("the fixture port lists only exportable copies and isolates mutations", asy
   assert.equal(run?.status, "completed");
 });
 
-test("the fixture test double is not a public stand-in", async () => {
+test("the fixture test double is not a load error", async () => {
   const port = createFixtureReviewPort();
-  assert.equal(await port.isPublicStandIn(), false);
+  assert.equal(await port.hasLoadError(), false);
   assert.deepEqual(await issueIndexRobotsFrom(port), undefined);
   const sitemap = await listIssueSitemapPathsFrom(port);
   assert.equal(sitemap[0], "/issues");
@@ -691,17 +677,17 @@ test("an empty snapshot lists nothing and keeps static placeholders", async () =
   assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
 });
 
-test("an empty stand-in is omitted from the sitemap; an empty generated index keeps /issues", async () => {
+test("an empty snapshot still lists /issues on the sitemap and stays indexable", async () => {
   const standInPath = writeSnapshot([], []);
   const standIn = createSnapshotReviewPort(standInPath);
-  assert.equal(await standIn.isPublicStandIn(), true);
-  assert.deepEqual(await listIssueSitemapPathsFrom(standIn), []);
-  assert.deepEqual(await listIssueSitemapPaths(standInPath), []);
-  assert.deepEqual(await issueIndexRobotsFrom(standIn), { index: false });
+  assert.equal(await standIn.hasLoadError(), false);
+  assert.deepEqual(await listIssueSitemapPathsFrom(standIn), ["/issues"]);
+  assert.deepEqual(await listIssueSitemapPaths(standInPath), ["/issues"]);
+  assert.equal(await issueIndexRobotsFrom(standIn), undefined);
 
   const generatedPath = writeSnapshot([], [], { kind: "generated-run-index" });
   const generated = createSnapshotReviewPort(generatedPath);
-  assert.equal(await generated.isPublicStandIn(), false);
+  assert.equal(await generated.hasLoadError(), false);
   assert.deepEqual(await listIssueSitemapPathsFrom(generated), ["/issues"]);
   assert.deepEqual(await listIssueSitemapPaths(generatedPath), ["/issues"]);
   assert.equal(await issueIndexRobotsFrom(generated), undefined);
@@ -830,62 +816,9 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
-test("the checked-in public snapshot is a version-1 run index with exportable issues and no secrets", async () => {
-  const snapshotPath = join(reviewsRoot, "adapters/public-reviews.json");
-  const raw = JSON.parse(readFileSync(snapshotPath, "utf8"));
-  assert.equal(raw.version, 1);
-  assert.ok(Array.isArray(raw.issues));
-  assert.ok(Array.isArray(raw.pullRequests));
-  assert.equal("reviews" in raw, false);
-  const parsed = parsePublicReviewSnapshot(raw);
-  assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
-  assert.equal(Array.isArray(parsed.value), false);
-  const keys = collectKeys(raw);
-  assert.equal(keys.includes("prompt"), false);
-  assert.equal(keys.includes("token"), false);
-  assert.equal(keys.includes("token_hash"), false);
-  assertPubliclySafe(raw);
-
-  const port = createSnapshotReviewPort();
-  const issues = await port.listIssues();
-  const unlinked = await port.listUnlinkedPullRequests();
-  assert.ok(issues.length > 0);
-  const issue108 = issues.find((row) => row.number === 108);
-  assert.ok(issue108);
-  assert.equal(issue108.state, "closed");
-  assert.deepEqual(issue108.pullRequests, [133]);
-  const plan = issue108.entries.find((row) => row.type === "plan");
-  const implement = issue108.entries.find((row) => row.type === "implement");
-  assert.ok(plan);
-  assert.ok(implement);
-  assert.equal(plan.runId, implement.runId);
-  assert.ok(issues.some((row) => row.number === 93));
-  assert.ok(issues.some((row) => row.number === 110));
-  assert.ok(!issues.some((row) => row.number === 99));
-  assert.ok(unlinked.some((row) => row.number === 54));
-  assert.ok(!unlinked.some((row) => row.number === 50));
-
-  const redirects = await listReviewRedirectsFrom(port);
-  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
-  assert.ok(
-    redirects.some(
-      (row) =>
-        row.from === "/reviews/pr/133/runs/run-108-impl" && row.to === "/issues/108/runs/run-108-impl",
-    ),
-  );
-  assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
-
-  assert.equal(await port.isPublicStandIn(), true);
-  for (const row of [...issues, ...unlinked]) {
-    for (const item of row.entries) {
-      assert.ok(item.liveUrl === null || item.liveUrl.startsWith(HOSTED_LIVE_HREF_PREFIX));
-      assert.doesNotMatch(item.liveUrl ?? "", /example\.test/);
-    }
-  }
-  const bytes = statSync(snapshotPath).size;
-  assert.ok(bytes < 200 * 1024);
-  const contract = readFileSync(join(reviewsRoot, "SNAPSHOT.md"), "utf8");
-  assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
+test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API sources", () => {
+  const contract = readFileSync(join(reviewsRoot, "DATA-SOURCES.md"), "utf8");
+  assert.equal(statSync(join(reviewsRoot, "DATA-SOURCES.md")).isFile(), true);
   assert.match(contract, /`opened_pr_url`/);
   assert.doesNotMatch(contract, /pr_url_opened/);
   assert.match(contract, /index parser does not invent a title/);
@@ -903,11 +836,14 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   assert.match(contract, /not merged into the issue timeline/);
   assert.match(contract, /HOSTED_LIVE_HREF_PREFIX/);
   assert.match(contract, /Allowlisted hosted-console href/);
-  const sitemap = await listIssueSitemapPaths();
-  assert.deepEqual(sitemap, []);
+  assert.match(contract, /GitHub REST/);
+  assert.match(contract, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.doesNotMatch(contract, /ingest-public-reviews/);
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
-  assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
+  assert.match(featureIndex, /createSiteReviewPort\(\)/);
+  assert.doesNotMatch(featureIndex, /createSnapshotReviewPort/);
   assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
+  assert.equal(existsSync(join(reviewsRoot, "adapters/public-reviews.json")), false);
 });
 
 const INVENTORY_ISSUES = [
@@ -1275,47 +1211,8 @@ test("inventory-scale generated run index stays under 200KB and extra keys are i
   assert.equal("denseLive" in issue108, false);
 });
 
-test("inventory-scale ingest succeeds; an unredacted home path still fails closed", () => {
-  const { path, dest } = writeInventorySnapshot();
-  writeFileSync(dest, "KEEP");
-  copyPublicReviewsSnapshot(path, dest);
-  const written = JSON.parse(readFileSync(dest, "utf8"));
-  assert.equal(written.kind, "generated-run-index");
-  assert.deepEqual(
-    written.issues.map((row) => row.number).sort((a, b) => a - b),
-    [...INVENTORY_ISSUES],
-  );
-  assert.equal(
-    written.issues.some((row) => row.number === 99),
-    false,
-  );
-  assert.equal(
-    written.pullRequests.some((row) => row.number === 999),
-    false,
-  );
-  assert.ok(statSync(dest).size < 200 * 1024);
-
-  const dirtyDir = mkdtempSync(join(tmpdir(), "public-issues-inventory-dirty-"));
-  const dirtySource = join(dirtyDir, "source.json");
-  const dirtyDest = join(dirtyDir, "dest.json");
-  const dirty = inventoryIndex();
-  dirty.issues = dirty.issues.map((row) =>
-    row.number === 66 ? { ...row, title: "notes from /home/" } : row,
-  );
-  writeFileSync(dirtySource, JSON.stringify(dirty));
-  writeFileSync(dirtyDest, "KEEP");
-  assert.throws(
-    () => copyPublicReviewsSnapshot(dirtySource, dirtyDest),
-    /unredacted token or machine path/,
-  );
-  assert.equal(readFileSync(dirtyDest, "utf8"), "KEEP");
-});
-
 test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
-  assert.equal(
-    reviewsCopy.list.empty,
-    "Public issues will show up here when the first exportable run exists.",
-  );
+  assert.equal(reviewsCopy.list.empty, "No public runs yet");
   assert.equal(reviewsCopy.type.improve, "Improve from review");
   assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
@@ -1329,11 +1226,7 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
   assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
   assert.equal(reviewsCopy.issue.timeline, "Timeline");
-  assert.equal(reviewsCopy.sampleNotice.title, "Sample data");
-  assert.equal(
-    reviewsCopy.sampleNotice.description,
-    "These rows are samples, not real public runs, and they stay until a generated run index is loaded.",
-  );
+  assert.equal(reviewsCopy.loadError.retry, "Retry");
   assert.equal("openUnlinked" in reviewsCopy.list, false);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
@@ -1426,8 +1319,8 @@ test("compactPreviewSpacing scales Nunit tokens and keeps unparsed input", () =>
   assert.equal(compactPreviewSpacing("1"), "1");
 });
 
-test("SNAPSHOT.md documents share-URL keys and is not an exporter field", () => {
-  const snapshot = readFileSync(join(reviewsRoot, "SNAPSHOT.md"), "utf8");
+test("DATA-SOURCES.md documents share-URL keys and is not an exporter field", () => {
+  const snapshot = readFileSync(join(reviewsRoot, "DATA-SOURCES.md"), "utf8");
   assert.match(snapshot, /## Share URL \(site, not exporter\)/);
   assert.match(snapshot, /`identity`/);
   assert.match(snapshot, /`preview`/);
@@ -1506,20 +1399,21 @@ test("not-found segments use per-tree copy through one shared body", () => {
   assert.doesNotMatch(reviews, /metadata\.missing\.title/);
 });
 
-test("list, issue, unlinked, and run views show the sample notice only when flagged", () => {
-  const notice = readFileSync(join(reviewsRoot, "ui/review-sample-notice.tsx"), "utf8");
-  assert.match(notice, /Alert asChild/);
-  assert.match(notice, /copy\.sampleNotice\.title/);
-  assert.match(notice, /copy\.sampleNotice\.description/);
-  assert.doesNotMatch(notice, /variant="destructive"/);
-  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
+test("list view shows ErrorState with Retry and does not ship a sample notice", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  assert.match(list, /ErrorState/);
+  assert.match(list, /copy\.loadError\.retry/);
+  assert.doesNotMatch(list, /ReviewSampleNotice/);
+  assert.doesNotMatch(list, /showSampleNotice/);
+  for (const file of ["review-pr-view.tsx", "review-run-view.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
-    assert.match(source, /ReviewSampleNotice/);
-    assert.match(source, /showSampleNotice \? <ReviewSampleNotice/);
+    assert.doesNotMatch(source, /ReviewSampleNotice/);
+    assert.doesNotMatch(source, /showSampleNotice/);
   }
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
-  assert.match(feature, /isPublicStandIn/);
-  assert.match(feature, /showSampleNotice=\{showSampleNotice\}/);
+  assert.match(feature, /hasLoadError/);
+  assert.doesNotMatch(feature, /isPublicStandIn/);
+  assert.equal(existsSync(join(reviewsRoot, "ui/review-sample-notice.tsx")), false);
 });
 
 test("found /issues pages pass issuesIndexRobots", () => {
@@ -1767,7 +1661,7 @@ test("a live row with issue 108 lists that issue and redirects the PR to it", as
   const run = await port.getRun(108, "run-71");
   assert.equal(run?.liveUrl, HOSTED_LIVE_URL);
   assert.deepEqual(await port.listUnlinkedPullRequests(), []);
-  assert.equal(await port.isPublicStandIn(), false);
+  assert.equal(await port.hasLoadError(), false);
 });
 
 test("a live row with issue null or omitted stays an unlinked PR", async () => {
@@ -2247,15 +2141,22 @@ test("the temporary mapper turns live rows into the current view-model", () => {
   );
 });
 
-test("the recorded snapshot maps must-change and kept first-pass findings", async () => {
-  const port = createSnapshotReviewPort();
+test("a live-shaped fixture maps must-change and kept first-pass findings", async () => {
+  const path = writeLiveSnapshot([
+    liveSample({
+      decision: {
+        ...liveSample().decision,
+        verdict: "REQUEST_CHANGES",
+        must: [{ text: "Fix the link" }],
+      },
+      verdict_json: {
+        blocking: [{ _disposition: "kept", text: "Keep this" }],
+        notes: [{ _disposition: "downgraded", text: "Note this" }],
+      },
+    }),
+  ]);
+  const port = createSnapshotReviewPort(path);
   const lives = await port.list();
-  if (lives.length === 0) {
-    const issues = await port.listIssues();
-    const unlinked = await port.listUnlinkedPullRequests();
-    assert.ok(issues.length + unlinked.length >= 1);
-    return;
-  }
   const live = lives[0];
   assert.ok(live);
   const record = toReviewRecord(live, lives);

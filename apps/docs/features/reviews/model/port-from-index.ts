@@ -95,6 +95,7 @@ function latestForPr(records: readonly PublicLiveRun[], n: number): PublicLiveRu
 export function createComposedReviewPort(
   index: PublicIssueIndex,
   lives: readonly PublicLiveRun[] = [],
+  options: { loadError?: boolean } = {},
 ): ReviewPort {
   const issues = [...index.issues]
     .filter((issue) => issue.entries.length > 0)
@@ -167,8 +168,8 @@ export function createComposedReviewPort(
       const record = Number.isInteger(n) ? latestForPr(lives, n) : undefined;
       return Promise.resolve(record === undefined ? null : copyLive(record));
     },
-    isPublicStandIn() {
-      return Promise.resolve(index.kind === "public-stand-in");
+    hasLoadError() {
+      return Promise.resolve(options.loadError === true);
     },
   };
 }

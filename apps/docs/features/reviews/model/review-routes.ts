@@ -119,7 +119,6 @@ export function linkedPrRunFallbackPath(issueNumber: number | null, runId: strin
 }
 
 export async function listIssueSitemapPathsFrom(port: ReviewPort) {
-  if (await port.isPublicStandIn()) return [];
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
   const paths = ["/issues"];
@@ -131,7 +130,8 @@ export async function listIssueSitemapPathsFrom(port: ReviewPort) {
 export async function issueIndexRobotsFrom(
   port: ReviewPort,
 ): Promise<{ index: false } | undefined> {
-  return (await port.isPublicStandIn()) ? { index: false } : undefined;
+  void port;
+  return undefined;
 }
 
 export async function listReviewSitemapPathsFrom(port: ReviewPort) {

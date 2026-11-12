@@ -11,19 +11,19 @@
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
  * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground.
- * - Empty state says public issues will show up here — because: the visitor always has a next thought.
+ * - Empty state says no public runs yet — because: the visitor always has a next thought.
+ * - Load error shows kit ErrorState with Retry — because: a dead GitHub or runs API must be obvious and recoverable.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
  * - Unlinked and timeline links use the visible title as the accessible name — because: speech-control users say the title they see (WCAG 2.5.3).
  * - List and timeline rows use py-row — because: hurried visitors at 390px need scan rhythm, not section padding between rows.
  * - Views stay client components — because: the frame is a client component that reads the share URL on mount.
  * - Retired /reviews/pr/64|79|80 stubs are export-only; run-level retired URLs 404 — because: run ids are unknowable once retired.
- * - Default Alert sample-data notice above the header while the snapshot is a public stand-in — because: a hurried visitor on a phone must see samples are not real runs before scanning rows, without error-red competing with the list.
  */
 
 import { notFound, redirect } from "next/navigation";
 
-import { createSnapshotReviewPort } from "./adapters/snapshot";
+import { createSiteReviewPort } from "./adapters/live";
 import { reviewsCopy } from "./i18n/reviews-copy";
 import { parsePrNumber } from "./model/pr-number";
 import {
@@ -44,7 +44,7 @@ import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
 
-const port = createSnapshotReviewPort();
+const port = createSiteReviewPort();
 
 export async function issuesIndexRobots() {
   return issueIndexRobotsFrom(port);
@@ -53,13 +53,13 @@ export async function issuesIndexRobots() {
 export async function ReviewListFeature() {
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
-  const showSampleNotice = await port.isPublicStandIn();
+  const loadError = await port.hasLoadError();
   return (
     <ReviewListView
       issues={issues}
       unlinked={unlinked}
       copy={reviewsCopy}
-      showSampleNotice={showSampleNotice}
+      loadError={loadError}
     />
   );
 }
@@ -68,18 +68,14 @@ export async function ReviewIssueFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
   if (issue === null) notFound();
-  const showSampleNotice = await port.isPublicStandIn();
-  return <ReviewPrView issue={issue} copy={reviewsCopy} showSampleNotice={showSampleNotice} />;
+  return <ReviewPrView issue={issue} copy={reviewsCopy} />;
 }
 
 export async function ReviewUnlinkedFeature({ n }: { n: string }) {
   const number = parsePrNumber(n);
   const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
   if (pullRequest !== null) {
-    const showSampleNotice = await port.isPublicStandIn();
-    return (
-      <UnlinkedPrView pullRequest={pullRequest} copy={reviewsCopy} showSampleNotice={showSampleNotice} />
-    );
+    return <UnlinkedPrView pullRequest={pullRequest} copy={reviewsCopy} />;
   }
   const resolved = number === null ? null : await port.resolvePr(number);
   const fallback = linkedPrFallbackPath(resolved?.issueNumber ?? null);
@@ -92,10 +88,7 @@ export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }
   const issue = number === null ? null : await port.getIssue(number);
   const run = number === null ? null : await port.getRun(number, id);
   if (issue === null || run === null || !isRunRecord(run)) notFound();
-  const showSampleNotice = await port.isPublicStandIn();
-  return (
-    <ReviewRunView issue={issue} run={run} copy={reviewsCopy} showSampleNotice={showSampleNotice} />
-  );
+  return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
 }
 
 export async function ReviewUnlinkedRunFeature({ n, id }: { n: string; id: string }) {
@@ -103,15 +96,7 @@ export async function ReviewUnlinkedRunFeature({ n, id }: { n: string; id: strin
   const pullRequest = number === null ? null : await port.getUnlinkedPullRequest(number);
   const run = number === null ? null : await port.getUnlinkedRun(number, id);
   if (pullRequest !== null && run !== null) {
-    const showSampleNotice = await port.isPublicStandIn();
-    return (
-      <UnlinkedRunView
-        pullRequest={pullRequest}
-        run={run}
-        copy={reviewsCopy}
-        showSampleNotice={showSampleNotice}
-      />
-    );
+    return <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />;
   }
   const resolved = number === null ? null : await port.resolvePr(number);
   if (resolved !== null && resolved.runIds.includes(id)) {

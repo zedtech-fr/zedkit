@@ -37,7 +37,7 @@ export const reviewsCopy = {
   list: {
     title: "Issues",
     description: "Public issues with at least one exportable run.",
-    empty: "Public issues will show up here when the first exportable run exists.",
+    empty: "No public runs yet",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
     unlinkedTitle: "Unlinked pull requests",
@@ -60,10 +60,10 @@ export const reviewsCopy = {
     // Defensive: zero-entry PRs are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this pull request.",
   },
-  sampleNotice: {
-    title: "Sample data",
-    description:
-      "These rows are samples, not real public runs, and they stay until a generated run index is loaded.",
+  loadError: {
+    title: "Could not load public runs",
+    description: "GitHub or the runs API did not answer. Try again.",
+    retry: "Retry",
   },
   run: {
     backToIssue: "Back to the issue",

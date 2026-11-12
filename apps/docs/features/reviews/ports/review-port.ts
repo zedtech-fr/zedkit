@@ -15,6 +15,8 @@ export type TimelineEntry = {
   readonly models: readonly string[];
   readonly verdict: ReviewVerdict | null;
   readonly liveUrl: string | null;
+  readonly score?: number | null;
+  readonly superseded?: boolean;
 };
 
 export type IssueRecord = {
@@ -287,5 +289,5 @@ export type ReviewPort = {
   resolvePr(n: number): Promise<PrResolve | null>;
   list(): Promise<PublicLiveRun[]>;
   getByPr(n: number): Promise<PublicLiveRun | null>;
-  isPublicStandIn(): Promise<boolean>;
+  hasLoadError(): Promise<boolean>;
 };

@@ -6,6 +6,7 @@ import {
   Badge,
   Button,
   EmptyState,
+  ErrorState,
   Heading,
   PageHeader,
   Stack,
@@ -25,7 +26,6 @@ import {
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
-import { ReviewSampleNotice } from "./review-sample-notice";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
   return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
@@ -104,21 +104,30 @@ export function ReviewListView({
   issues,
   unlinked,
   copy,
-  showSampleNotice = false,
+  loadError = false,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
   copy: ReviewsCopy;
-  showSampleNotice?: boolean;
+  loadError?: boolean;
 }) {
   const unlinkedHeadingId = useId();
   return (
     <ReviewAppearanceFrame>
-      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader title={copy.list.title} description={copy.list.description} />
-      {issues.length === 0 ? (
+      {loadError ? (
+        <ErrorState
+          title={copy.loadError.title}
+          description={copy.loadError.description}
+          actions={
+            <Button type="button" variant="outline" onClick={() => window.location.reload()}>
+              {copy.loadError.retry}
+            </Button>
+          }
+        />
+      ) : issues.length === 0 && unlinked.length === 0 ? (
         <EmptyState description={copy.list.empty} />
-      ) : (
+      ) : issues.length === 0 ? null : (
         <ul aria-label={copy.list.title}>
           {issues.map((issue) => (
             <li key={issue.number}>
@@ -127,7 +136,7 @@ export function ReviewListView({
           ))}
         </ul>
       )}
-      {unlinked.length > 0 ? (
+      {!loadError && unlinked.length > 0 ? (
         <Stack gap="sm">
           <Heading level={2} typeRole="section" id={unlinkedHeadingId}>
             {copy.list.unlinkedTitle}

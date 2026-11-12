@@ -9,8 +9,7 @@ const dev = readFileSync(join(root, ".github/workflows/deploy-dev.yml"), "utf8")
 const epic = readFileSync(join(root, ".github/workflows/deploy-epic-preview.yml"), "utf8");
 const prod = readFileSync(join(root, ".github/workflows/deploy-docs.yml"), "utf8");
 const publish = readFileSync(join(root, "deploy/publish-dev-static.sh"), "utf8");
-const ingest = readFileSync(join(root, "deploy/ingest-public-reviews.sh"), "utf8");
-const snapshot = readFileSync(join(root, "apps/docs/features/reviews/SNAPSHOT.md"), "utf8");
+const sources = readFileSync(join(root, "apps/docs/features/reviews/DATA-SOURCES.md"), "utf8");
 
 test("deploy-dev rsyncs a CI-built export to /data/srv/zedkit and does not touch host compose", () => {
   assert.match(dev, /pnpm --filter @zedtech\/zedkit-docs build/);
@@ -26,43 +25,25 @@ test("deploy-dev rsyncs a CI-built export to /data/srv/zedkit and does not touch
   assert.doesNotMatch(dev, /docker compose/);
 });
 
-function ingestOrder(yaml) {
-  const sshIdx = yaml.indexOf("Configure SSH to deploy host");
-  const coreIdx = yaml.indexOf("pnpm --filter @zedtech/zedkit-core build");
-  const ingestIdx = yaml.indexOf("bash deploy/ingest-public-reviews.sh");
-  const buildIdx = yaml.indexOf("pnpm --filter @zedtech/zedkit-docs build");
-  assert.ok(sshIdx >= 0 && coreIdx > sshIdx && ingestIdx > coreIdx && buildIdx > ingestIdx);
-}
-
-test("staging deploys ingest a generated run index before the docs build", () => {
-  ingestOrder(dev);
-  ingestOrder(epic);
-  assert.match(dev, /vars\.PUBLIC_REVIEWS_SNAPSHOT/);
-  assert.match(dev, /vars\.PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
-  assert.match(epic, /vars\.PUBLIC_REVIEWS_SNAPSHOT/);
-  assert.match(epic, /vars\.PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
-  assert.match(ingest, /keeping stand-in/);
-  assert.match(ingest, /scp failed \(exit /);
-  assert.match(ingest, /\|\| scp_status=\$\?/);
-  assert.match(ingest, /must not start with -/);
-  assert.doesNotMatch(ingest, /remote file absent/);
-  assert.doesNotMatch(ingest, /\/home\//);
-  assert.doesNotMatch(ingest, /\/Users\//);
-  assert.doesNotMatch(ingest, /set \+e/);
-  const gateTail = ingest.slice(ingest.indexOf("copy-public-reviews-snapshot.mjs"));
-  assert.ok(gateTail.length > 0, "ingest gate invocation");
-  assert.doesNotMatch(gateTail, /\|\|/);
-  assert.doesNotMatch(gateTail, /exit 0/);
+test("staging docs builds set the runs API base; production stays ingest-free", () => {
+  assert.match(dev, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE: https:\/\/dev\.zedkit\.app/);
+  assert.match(epic, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE: https:\/\/dev\.zedkit\.app/);
+  assert.match(dev, /secrets\.GITHUB_TOKEN/);
+  assert.match(epic, /secrets\.GITHUB_TOKEN/);
+  assert.doesNotMatch(dev, /ingest-public-reviews/);
+  assert.doesNotMatch(epic, /ingest-public-reviews/);
+  assert.doesNotMatch(dev, /copy-public-reviews-snapshot/);
+  assert.doesNotMatch(epic, /copy-public-reviews-snapshot/);
+  assert.doesNotMatch(dev, /PUBLIC_REVIEWS_SNAPSHOT/);
+  assert.doesNotMatch(epic, /PUBLIC_REVIEWS_SNAPSHOT/);
   assert.doesNotMatch(prod, /ingest-public-reviews/);
   assert.doesNotMatch(prod, /copy-public-reviews-snapshot/);
   assert.doesNotMatch(prod, /PUBLIC_REVIEWS_SNAPSHOT/);
-  const staging = snapshot.slice(snapshot.indexOf("## Staging ingest"));
-  assert.match(staging, /deploy-epic-preview/);
-  assert.match(staging, /ingest-public-reviews\.sh/);
-  assert.match(staging, /PUBLIC_REVIEWS_SNAPSHOT/);
-  assert.match(staging, /PUBLIC_REVIEWS_SNAPSHOT_REMOTE/);
-  assert.match(staging, /epic preview ingest/);
-  assert.match(staging, /Production deploys do not ingest/);
+  assert.doesNotMatch(prod, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.match(sources, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.match(sources, /deploy-epic-preview/);
+  assert.match(sources, /Production `deploy-docs.yml` is/);
+  assert.doesNotMatch(sources, /ingest-public-reviews/);
 });
 
 test("publish-dev-static allowlists dests and never talks to docker", () => {
