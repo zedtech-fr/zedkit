@@ -48,12 +48,27 @@ test("retired interactive home hero cluster is gone (#265)", () => {
   assert.match(registry, /AdminDashboardGuideDemo/);
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
   assert.doesNotMatch(copy, /\bheroApp:|\bheroTour:|\bHeroPageId\b/);
-  const homeCopy = readFileSync(join(app, "ui/home/i18n/home-copy.ts"), "utf8");
-  assert.doesNotMatch(homeCopy, /galleryPreview|homeGalleryPreviewCopy/);
+  assert.doesNotMatch(copy, /galleryPreview|homeGalleryPreviewCopy|\bheroActions\b/);
+  assert.equal(existsSync(join(app, "ui/home/i18n/home-copy.ts")), false);
   const identity = readFileSync(join(app, "lib/default-identity.ts"), "utf8");
   assert.doesNotMatch(identity, /HERO_TOUR_LOOK/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.doesNotMatch(rhythm, /HOME_HERO_PREVIEW_SHELL_CLASS|HOME_GALLERY_PREVIEW_SHELL_CLASS|HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX/);
+  assert.doesNotMatch(
+    rhythm,
+    /HOME_CARD_GRID_TWO_COL|HOME_CARD_GRID_THREE_COL|HOME_CARD_GRID_FOUR_COL|HOME_CARD_TITLE_CLASS|HOME_SMALL_TEXT_CLASS/,
+  );
+  const goneCss = [
+    "app/docs-shell-tokens.css",
+    "app/docs-signature.css",
+    "app/site-compact.css",
+    "app/home-hero.css",
+  ]
+    .map((rel) => readFileSync(join(app, rel), "utf8"))
+    .join("\n");
+  assert.doesNotMatch(goneCss, /data-hero-window/);
+  assert.doesNotMatch(goneCss, /data-admin-dashboard-demo/);
+  assert.doesNotMatch(goneCss, /data-home-gallery-preview/);
 });
 
 test("search dialog is lazy and not preloaded on every page", () => {
@@ -97,7 +112,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /typeRole="lead"/);
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
-  assert.match(lead, /homeCopy\.hero\.titleClause/);
+  assert.match(lead, /homeHeroCopy\.hero\.titleClause/);
   assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
   assert.match(lead, /AI_SETUP_MINI_PROMPT/);
   assert.match(lead, /UI_SETUP_MINI_PROMPT/);
@@ -119,7 +134,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
     copy,
     /promptCaption: "Name the kits you want, Nest included\. The map knows the order\."/,
   );
-  assert.match(lead, /aria-label=\{homeCopy\.hero\.promptAriaLabel\}/);
+  assert.match(lead, /aria-label=\{homeHeroCopy\.hero\.promptAriaLabel\}/);
   assert.doesNotMatch(copy, /facts:/);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole|ThemeScope/);
   assert.match(illustration, /data-hero-run-stage/);
@@ -436,6 +451,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(looksCopy, /A look sets type, shape, density and color together/);
   assert.doesNotMatch(looksCopy, /Looks like your product/);
   assert.match(limits, /id="limits"/);
+  assert.match(limits, /aria-labelledby="limits-heading"/);
+  assert.match(limits, /id="limits-heading"/);
   assert.match(limits, /HOME_LIMITS_GRID/);
   assert.doesNotMatch(limits, /FeatureGrid|SetupEntryPrompt|SecretField/);
   assert.match(limitsCopy, /What it doesn't do\./);

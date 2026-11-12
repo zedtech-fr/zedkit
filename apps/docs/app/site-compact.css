@@ -172,11 +172,6 @@
   padding-inline: 0;
 }
 
-/* The hero example in Glass: the same calmer unit as the site, so its pages share one frame height. */
-#demo [data-home-hero-visuals][data-identity="glass"] {
-  --spacing: 0.26rem;
-}
-
 /* Phones: one 24px gutter for the site (no extra inset stacked inside the bands or the hero example). */
 @media (max-width: 40rem) {
   :root[data-identity] {

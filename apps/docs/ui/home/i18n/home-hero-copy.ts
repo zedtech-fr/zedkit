@@ -54,9 +54,4 @@ export const homeHeroCopy = {
     settingsRegion: "Region",
     settingsRegionValue: "Europe",
   },
-  heroActions: {
-    getStarted: "Get started",
-    setup: "Setup",
-    browseCatalog: "Browse catalog",
-  },
 } as const;

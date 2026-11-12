@@ -18,8 +18,7 @@ import {
 import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
 import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
 import { HomeHeroIllustration } from "@/ui/home/home-hero-illustration";
-import { homeCopy } from "@/ui/home/i18n/home-copy";
-import type { HeroKitId } from "@/ui/home/i18n/home-hero-copy";
+import { homeHeroCopy, type HeroKitId } from "@/ui/home/i18n/home-hero-copy";
 
 const PROMPTS = {
   ai: AI_SETUP_MINI_PROMPT,
@@ -40,8 +39,8 @@ function isHeroKit(value: string): value is HeroKitId {
  */
 export function HomeHeroLead() {
   const [kit, setKit] = useState<HeroKitId>("combined");
-  const kits = homeCopy.heroKits;
-  const caption = kit === "combined" ? homeCopy.hero.promptCaption : homeCopy.hero.promptCaptionSingle;
+  const kits = homeHeroCopy.heroKits;
+  const caption = kit === "combined" ? homeHeroCopy.hero.promptCaption : homeHeroCopy.hero.promptCaptionSingle;
 
   return (
     <Tabs
@@ -55,17 +54,17 @@ export function HomeHeroLead() {
       <Stack gap="blocks" className="content-shrink items-start" data-home-hero-lead="">
         <Stack gap="sm" className="content-shrink items-start">
           <Text typeRole="label" className={`text-muted-foreground ${HOME_METADATA_TEXT_CLASS}`} data-home-hero-category="">
-            {homeCopy.hero.titleCategory}
+            {homeHeroCopy.hero.titleCategory}
           </Text>
           <Heading level={1} typeRole="display">
-            {homeCopy.hero.title}{" "}
-            <span className="text-muted-foreground">{homeCopy.hero.titleClause}</span>
+            {homeHeroCopy.hero.title}{" "}
+            <span className="text-muted-foreground">{homeHeroCopy.hero.titleClause}</span>
           </Heading>
         </Stack>
         <Text variant="muted" typeRole="lead" data-home-hero-sub="">
-          {homeCopy.hero.subLead}{" "}
-          <span className="font-semibold text-foreground">{homeCopy.hero.subAiName}</span> {homeCopy.hero.subAi}{" "}
-          <span className="font-semibold text-foreground">{homeCopy.hero.subUiName}</span> {homeCopy.hero.subUi}
+          {homeHeroCopy.hero.subLead}{" "}
+          <span className="font-semibold text-foreground">{homeHeroCopy.hero.subAiName}</span> {homeHeroCopy.hero.subAi}{" "}
+          <span className="font-semibold text-foreground">{homeHeroCopy.hero.subUiName}</span> {homeHeroCopy.hero.subUi}
         </Text>
         <Stack gap={HOME_CARD_CONTENT_GAP} className="w-full items-start">
           <TabsList aria-label={kits.ariaLabel}>
@@ -78,8 +77,8 @@ export function HomeHeroLead() {
               <TabsContent key={id} value={id}>
                 <HomeCopyCommandField
                   value={PROMPTS[id]}
-                  aria-label={homeCopy.hero.promptAriaLabel}
-                  copyLabel={homeCopy.hero.promptCopyLabel}
+                  aria-label={homeHeroCopy.hero.promptAriaLabel}
+                  copyLabel={homeHeroCopy.hero.promptCopyLabel}
                 />
               </TabsContent>
             ))}

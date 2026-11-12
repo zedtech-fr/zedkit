@@ -57,6 +57,8 @@
 }
 
 /*
+ * shortcut: leftover live-window / tour selectors below (agent panel, satellites,
+ * cursor, …) have no TS producers after #265. Remaining strip is #277.
  * Sizes and positions the window needs but a look must not rescale (identity `--spacing` scales `w-*`, `size-*` and
  * `gap-*`, so fixed marks are pinned here), and the position of each item in the build sequence. The sequence is
  * written as data (`data-beat`, `:nth-child`) instead of inline styles.
@@ -97,14 +99,6 @@
   [data-hero-agent-panel] {
     width: calc(var(--spacing) * 80);
   }
-}
-
-#home-page [data-hero-window] [data-hero-sidebar] {
-  width: 10.5rem;
-}
-
-#home-page [data-hero-window] [data-hero-main] {
-  padding: 1rem;
 }
 
 #home-page [data-hero-avatar] {
@@ -201,10 +195,6 @@
   z-index: 0;
 }
 
-#home-page [data-hero-window] {
-  z-index: 1;
-}
-
 #home-page [data-hero-panel-drift-blob] {
   position: absolute;
   border-radius: 9999px;
@@ -273,13 +263,6 @@
   z-index: 1;
 }
 
-/* From lg to xl the window is narrow: the sidebar becomes a rail of icons. */
-@media (min-width: 64rem) and (max-width: 79.999rem) {
-  #home-page [data-hero-window] [data-hero-sidebar] {
-    width: 3.5rem;
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) {
   /* 1. Load: the lead, one block at a time. Opacity and a short rise; `backwards`, so nothing is left applied. */
@@ -294,11 +277,6 @@
 
   #home-page [data-home-hero] [data-home-hero-lead] > :nth-child(3) {
     --zk-lead-beat: 2;
-  }
-
-  /* 1. Load: the window rises in, then its parts follow. */
-  #home-page [data-hero-window] {
-    animation: zk-home-window-in 640ms var(--zk-home-ease) 140ms backwards;
   }
 
   #home-page [data-hero-nav-item] {
@@ -339,25 +317,12 @@
     animation-delay: calc(260ms + var(--i, 0) * 55ms);
   }
 
-  /* The first assembly waits for the window to be in place. */
-  #home-page [data-hero-window][data-intro] [data-hero-page][data-state="active"] :is([data-hero-block], [data-demo-toolbar], tbody tr) {
-    animation-delay: calc(480ms + var(--b, 0) * 70ms);
-  }
-
-  #home-page [data-hero-window][data-intro] [data-hero-page][data-state="active"] [data-hero-bar] {
-    animation-delay: calc(740ms + var(--i, 0) * 55ms);
-  }
-
   /* The guided cursor: a glide between controls, a ring when it presses. */
   #home-page [data-hero-cursor] {
     opacity: 0;
     transition:
       translate 560ms cubic-bezier(0.4, 0.05, 0.2, 1),
       opacity 280ms ease-out;
-  }
-
-  #home-page [data-hero-window][data-tour="on"] [data-hero-cursor] {
-    opacity: 1;
   }
 
   #home-page [data-hero-cursor] svg {
