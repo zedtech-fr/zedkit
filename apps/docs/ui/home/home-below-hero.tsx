@@ -29,7 +29,8 @@ export type HomeBelowHeroProps = {
  *   two-place same-idea then six facts then one paste, because: client =
  *   integrating developer who just saw a hero paste and needs the joint idea
  *   before another command.
- *   lg two-column same-idea grid, because: mobile stacks by priority.
+ *   lg three-card same-idea grid plus a lands bar, because: mobile stacks
+ *   by priority and the mockup is AI, UI and Together as one band.
  *   hash aliases stay inside #paste, because: README and hero CTAs still
  *   land there.
  *   paste is a dark zinc band with a file listing, because: neighbours must
@@ -44,7 +45,7 @@ export function HomeBelowHero({
 }: HomeBelowHeroProps) {
   return (
     <div data-home-below-hero="">
-      <HomeSameIdeaSection />
+      <HomeSameIdeaSection componentCount={uiGalleryStats.components} />
       <HomeSixSentencesSection />
       <HomePasteSection />
       <HomeIdentitiesSection />

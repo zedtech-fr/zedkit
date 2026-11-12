@@ -131,6 +131,113 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
+ * Same-idea lands bar: inverted zinc like #paste (not Glass indigo).
+ * Full-bleed background via ::before; content stays on the section measure.
+ */
+#home-page #same-idea[data-slot="section"] {
+  overflow-x: clip;
+}
+
+#home-page [data-home-same-idea-lands] {
+  --foreground: var(--zk-site-action-foreground);
+  --muted-foreground: var(--zk-site-action-foreground);
+  --muted: var(--zk-site-action-hover);
+  --secondary: var(--zk-site-action-hover);
+  --secondary-foreground: var(--zk-site-action-foreground);
+  --background: var(--zk-site-action);
+  --border: var(--zk-site-action-hover);
+  --card: var(--zk-site-action);
+  position: relative;
+  z-index: 0;
+  margin-bottom: calc(-1 * var(--zk-section-pad));
+  padding-block: calc(var(--spacing) * 5.5);
+  background-color: hsl(var(--zk-site-action));
+  color: hsl(var(--zk-site-action-foreground));
+}
+
+#home-page [data-home-same-idea-lands]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  z-index: -1;
+  width: 100vw;
+  pointer-events: none;
+  background-color: hsl(var(--zk-site-action));
+  translate: -50%;
+}
+
+#home-page [data-home-same-idea-lands] .text-muted-foreground {
+  color: hsl(var(--zk-site-action-foreground) / 0.72);
+}
+
+#home-page [data-home-same-idea-window] {
+  position: relative;
+  z-index: 0;
+  height: calc(var(--spacing) * 30);
+  overflow: hidden;
+  padding-inline: calc(var(--spacing) * 6);
+}
+
+#home-page [data-home-same-idea-window]::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+#home-page [data-home-same-idea-window="ai"]::after {
+  inset-inline-end: calc(var(--spacing) * -8);
+  inset-block-end: calc(var(--spacing) * -12);
+  width: calc(var(--spacing) * 35);
+  height: calc(var(--spacing) * 35);
+  border-radius: 999px;
+  background-color: hsl(var(--accent) / 0.5);
+}
+
+#home-page [data-home-same-idea-window="ui"]::after {
+  inset-inline-end: calc(var(--spacing) * 8);
+  inset-block-start: calc(var(--spacing) * -18);
+  width: calc(var(--spacing) * 15);
+  height: calc(var(--spacing) * 65);
+  background-color: hsl(var(--primary-foreground) / 0.14);
+  rotate: 24deg;
+}
+
+#home-page [data-home-same-idea-window="together"]::after {
+  inset-inline-start: calc(var(--spacing) * -5);
+  inset-block-start: calc(var(--spacing) * -5);
+  width: calc(var(--spacing) * 30);
+  height: calc(var(--spacing) * 30);
+  border-radius: 999px;
+  background-color: hsl(var(--primary-foreground) / 0.14);
+}
+
+#home-page [data-home-same-idea-bullet] {
+  position: relative;
+  padding-inline-start: calc(var(--spacing) * 4);
+}
+
+#home-page [data-home-same-idea-bullet]::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.65em;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: 999px;
+  background-color: hsl(var(--primary));
+}
+
+#home-page [data-home-same-idea-column="ui"] [data-home-same-idea-bullet]::before {
+  background-color: hsl(var(--accent));
+}
+
+#home-page [data-home-same-idea-column="together"] [data-home-same-idea-bullet]::before {
+  background-color: hsl(var(--foreground));
+}
+
+/*
  * Manifesto is an inner high-value panel on the neutral page (not indigo
  * as page fill). Tokens only: Glass primary stays the panel accent.
  */

@@ -25,6 +25,13 @@ export const HOME_CARD_GRID_FOUR_COL = "grid content-shrink gap-stack-lg sm:grid
 export const HOME_SAME_IDEA_GRID =
   "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair";
 /**
+ * Same-idea cards: one column until `lg`, then three. Not `HOME_SAME_IDEA_GRID`
+ * (pair, still used by six-sentences) and not `HOME_CARD_GRID_THREE_COL`
+ * (`sm` pair / `xl` trio), because a phone must stack all three cards.
+ */
+export const HOME_SAME_IDEA_CARDS_GRID =
+  "trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio";
+/**
  * Limits: one column until `lg`, then three. Not `HOME_CARD_GRID_THREE_COL`
  * (`sm` pair / `xl` trio), because a phone must stack all three items.
  */

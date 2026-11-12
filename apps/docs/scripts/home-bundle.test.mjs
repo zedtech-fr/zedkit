@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const root = join(app, "../..");
 
 test("home hero dashboard loads the admin demo through next/dynamic", () => {
   const src = readFileSync(join(app, "ui/home/home-hero-app.tsx"), "utf8");
@@ -136,18 +137,38 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-section.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-ai-setup-terminal.tsx")), false);
   assert.equal(existsSync(join(app, "ui/home/home-get-started-section.tsx")), false);
-  assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField/);
-  assert.match(sameIdeaCopy, /title: "Same idea, two places"/);
-  assert.doesNotMatch(sameIdeaCopy, /three places/);
-  assert.doesNotMatch(sameIdeaCopy, /\btogether:/);
-  assert.match(sameIdeaCopy, /\bui:/);
-  assert.match(sameIdeaCopy, /\bai:/);
-  assert.match(sameIdea, /COLUMN_IDS = \["ui", "ai"\]/);
-  assert.match(sameIdea, /HOME_SAME_IDEA_GRID/);
+  assert.doesNotMatch(sameIdea, /SetupEntryPrompt|SecretField|FeatureGrid|OffPathLink|@zedtech\/zedkit-ui\/marketing/);
+  assert.match(sameIdeaCopy, /title: "Same idea, two places\."/);
+  assert.match(
+    sameIdeaCopy,
+    /description: "Tell the agent once what a good team already knows, and keep it in the repo\."/,
+  );
+  assert.match(sameIdeaCopy, /title: "zedkit AI"/);
+  assert.match(sameIdeaCopy, /title: "zedkit UI"/);
+  assert.match(sameIdeaCopy, /title: "Together"/);
+  assert.match(sameIdeaCopy, /href: "\/docs\/ai\/setup"/);
+  assert.match(sameIdeaCopy, /href: "\/catalog"/);
+  assert.match(sameIdeaCopy, /href: "\/map\.md"/);
+  assert.match(sameIdeaCopy, /heading: "What lands in your repo"/);
+  assert.match(sameIdeaCopy, /link: "AI setup guide"/);
+  assert.match(sameIdeaCopy, /link: "Browse the catalog"/);
+  assert.match(sameIdeaCopy, /link: "Read map\.md"/);
+  assert.match(sameIdea, /CARD_IDS = \["ai", "ui", "together"\]/);
+  assert.match(sameIdea, /HOME_SAME_IDEA_CARDS_GRID/);
+  assert.doesNotMatch(sameIdea, /HOME_SAME_IDEA_GRID/);
+  assert.match(sameIdea, /data-home-same-idea-lands/);
+  assert.match(sameIdea, /data-home-same-idea-window/);
+  assert.match(sameIdea, /aria-hidden/);
+  assert.match(sameIdea, /HomeLink/);
+  assert.match(src, /HomeSameIdeaSection componentCount=\{uiGalleryStats\.components\}/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.match(
     rhythm,
     /export const HOME_SAME_IDEA_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-pair"/,
+  );
+  assert.match(
+    rhythm,
+    /export const HOME_SAME_IDEA_CARDS_GRID =\s*"trim-margin grid content-shrink list-none gap-stack-lg flush lg:grid-trio"/,
   );
   assert.match(
     rhythm,
@@ -201,6 +222,13 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(
     tokens,
     /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
+  );
+  assert.match(tokens, /\[data-home-same-idea-lands\]/);
+  assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
+  assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
+  assert.match(
+    tokens,
+    /#home-page \[data-home-same-idea-lands\] \{[^}]*background-color:\s*hsl\(var\(--zk-site-action\)\)/,
   );
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
   assert.match(
@@ -261,6 +289,30 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closingCopy, /And it will look like the rest of your product\./);
   assert.match(closingCopy, /action: "Setup"/);
   assert.match(closingCopy, /actionHref: "#ai-setup"/);
+});
+
+test("same-idea lands counts match kit dirs, gallery components, and six identity sheets (#209)", () => {
+  const skillsDir = join(root, "packages/ai/kit/skills");
+  const agentsDir = join(root, "packages/ai/kit/agents");
+  const identitiesDir = join(root, "packages/ui/src/identities");
+  const skills = readdirSync(skillsDir, { withFileTypes: true }).filter(
+    (entry) => entry.isDirectory() && existsSync(join(skillsDir, entry.name, "SKILL.md")),
+  ).length;
+  const agents = readdirSync(agentsDir).filter((name) => name.endsWith(".md")).length;
+  const looks = 1 + readdirSync(identitiesDir).filter((name) => name.endsWith(".css")).length;
+  const gallery = readFileSync(join(app, "content/gallery.ts"), "utf8");
+  const componentsMatch = gallery.match(/uiGalleryStats[^=]*=\s*\{[^}]*"components":\s*(\d+)/);
+  const components = Number(componentsMatch?.[1]);
+  const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
+  const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
+  assert.equal(looks, 6);
+  assert.match(sameIdeaCopy, new RegExp(`skills:\\s*${skills}`));
+  assert.match(sameIdeaCopy, new RegExp(`agents:\\s*${agents}`));
+  assert.match(sameIdeaCopy, new RegExp(`looks:\\s*${looks}`));
+  assert.match(sameIdeaCopy, /Six looks, or one made for your brand/);
+  assert.equal(Number.isInteger(components) && components > 0, true);
+  assert.match(sameIdea, /componentCount/);
+  assert.doesNotMatch(sameIdeaCopy, /30 skills|13 agents|68 components/);
 });
 
 test("home looks band is specimen | look-name pills, not a Section header or palette-dot tabs (#119)", () => {
