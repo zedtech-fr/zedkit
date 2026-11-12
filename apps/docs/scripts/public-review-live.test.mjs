@@ -182,7 +182,7 @@ test("GitHub catalog times out without echoing the token", async () => {
       const onAbort = () => reject(signal?.reason ?? new Error("aborted"));
       // AbortSignal.timeout does not keep the event loop alive on its own.
       const keepAlive = setTimeout(() => reject(new Error("signal never aborted")), 5_000);
-      const finish = (err) => {
+      const finish = () => {
         clearTimeout(keepAlive);
         onAbort();
       };
