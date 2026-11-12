@@ -3,7 +3,7 @@ import type { Root } from "fumadocs-core/page-tree";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { source } from "#source";
 import { SiteBrand } from "@/ui/site-brand";
-import { docsLayoutTree } from "@/lib/docs-layout-tree.mjs";
+import { docsLayoutTree } from "@/features/docs/docs-layout-tree.mjs";
 import { isFoundationsPath } from "@/lib/site-nav-data";
 import { docsChromeSlots } from "@/ui/site-chrome-slots";
 import { DocsDesktopHeader, DocsSiteHeader } from "@/ui/site-headers";

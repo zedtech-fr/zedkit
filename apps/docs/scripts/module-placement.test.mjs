@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -321,6 +321,23 @@ describe("live docs tree", () => {
     assert.match(hook, /createStoredChoice\("package-manager"/);
     assert.match(hook, /from "@\/lib\/use-stored-choice"/);
     assert.match(hook, /from "@\/lib\/package-manager-commands"/);
+  });
+
+  it("imports the catch-all main slot from _docs and the layout tree from features/docs", () => {
+    const page = readFileSync(join(docsRoot, "app/docs/[[...slug]]/page.tsx"), "utf8");
+    const layout = readFileSync(join(docsRoot, "app/docs/[[...slug]]/layout.tsx"), "utf8");
+    const main = join(docsRoot, "app/docs/[[...slug]]/_docs/docs-main-content.tsx");
+    assert.match(page, /from "\.\/_docs\/docs-main-content"/);
+    assert.match(layout, /from "@\/features\/docs\/docs-layout-tree\.mjs"/);
+    assert.doesNotMatch(page, /from "@\/ui\/docs-main-content"/);
+    assert.doesNotMatch(layout, /from "@\/lib\/docs-layout-tree\.mjs"/);
+    assert.equal(existsSync(join(docsRoot, "ui/docs-main-content.tsx")), false);
+    assert.equal(existsSync(join(docsRoot, "lib/docs-layout-tree.mjs")), false);
+    assert.ok(existsSync(main));
+    assert.ok(existsSync(join(docsRoot, "features/docs/docs-layout-tree.mjs")));
+    assert.match(readFileSync(main, "utf8"), /id="main-content"/);
+    assert.equal(REQUIRED_GLOBS.includes("ui/docs-main-content.tsx"), false);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 });
 

@@ -8,7 +8,6 @@ export const SHARED_OWNER = "docs";
 // Drop a glob from this list when that lot moves. File paths are exact.
 export const REQUIRED_GLOBS = [
   "ui/home/**",
-  "ui/docs-main-content.tsx",
 ];
 
 // No remaining required cross-feature edges. prose/guides → features/docs and
