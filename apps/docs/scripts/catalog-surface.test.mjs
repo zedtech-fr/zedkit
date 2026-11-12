@@ -31,6 +31,19 @@ test("catalog view reads as a catalog: lead, filters, results, no identity form"
   assert.equal(resultsAt < statusAt, true);
 });
 
+test("catalog intro is the page fill, not a muted band", () => {
+  const view = read("ui/catalog/catalog-view.tsx");
+  assert.match(view, /<Section bleed/);
+  assert.doesNotMatch(view, /tone="muted"/);
+  assert.doesNotMatch(view, /bg-muted/);
+});
+
+test("catalog cells use compact padding", () => {
+  const results = read("ui/catalog/catalog-results.tsx");
+  assert.match(results, /surface-pad-compact/);
+  assert.doesNotMatch(results, /surface-pad-md/);
+});
+
 test("catalog ships no identity host module", () => {
   assert.equal(existsSync(join(app, "ui/catalog/catalog-identity.tsx")), false);
   const names = readdirSync(join(app, "ui/catalog")).map(String);
