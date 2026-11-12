@@ -209,7 +209,7 @@ export function ReviewAppearanceFrame({
       className="bg-background text-foreground"
     >
       <Container width="wide" className="py-section-sm">
-        <Stack gap="lg">{children(panel)}</Stack>
+        <Stack gap="md">{children(panel)}</Stack>
       </Container>
     </ThemeScope>
   );

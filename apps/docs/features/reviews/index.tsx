@@ -6,7 +6,7 @@
  * UI decisions:
  * - Issue list at /issues with title, state, linked PRs, and latest status first — because: hurried visitor scans work without opening every issue.
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
- * - Stacked rows, not a wide table — because: phone users at 390px compose by priority.
+ * - Wrapping scan rows (title then status), not a wide table — because: phone users at 390px compose by priority and a hurried reader scans one band per run.
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
@@ -14,6 +14,8 @@
  * - Empty state says public issues will show up here — because: the visitor always has a next thought.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
+ * - Unlinked and timeline links use the visible title as the accessible name — because: speech-control users say the title they see (WCAG 2.5.3).
+ * - List and timeline rows use py-row, and the frame stack is md — because: hurried visitors at 390px need scan rhythm, not section padding between rows.
  * - Views stay client components — because: ReviewAppearanceFrame takes render-function children.
  * - Retired /reviews/pr/64|79|80 stubs are export-only; run-level retired URLs 404 — because: run ids are unknowable once retired.
  */
