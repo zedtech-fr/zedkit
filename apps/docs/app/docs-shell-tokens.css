@@ -321,7 +321,8 @@ html[data-docs-shell][data-identity] {
   min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
 }
 
-#home-page [data-home-copy-command] [data-slot="button"]:focus-visible {
+#home-page [data-home-copy-command] [data-slot="button"]:focus-visible,
+#home-page [data-home-copy-command] [data-home-copy-command-value]:focus-visible {
   outline-offset: calc(var(--ring-width-control, 2px) * -1);
 }
 

@@ -41,17 +41,21 @@ test("hero and closing share one wrapping copy-command field (#298)", () => {
   assert.match(field, /homeCopyCommandCopy\.copied/);
   assert.match(field, /content-shrink/);
   assert.match(field, /shrink-0/);
-  assert.match(field, /wrap-anywhere/);
-  assert.match(field, /whitespace-pre-wrap/);
-  assert.match(field, /font-mono/);
+  assert.match(field, /tabIndex=\{0\}/);
+  assert.match(field, /selectNodeContents/);
+  assert.match(field, /focus-ring-control/);
+  assert.match(field, /font-mono wrap-anywhere whitespace-pre-wrap/);
   assert.match(field, /px-field-pad/);
   assert.match(field, /py-control-block/);
   assert.match(field, /writeText\(value\)/);
   assert.match(field, /if \(!clipboard\)/);
+  assert.match(field, /setCopyFailed\(false\);\s*const clipboard/);
   assert.match(field, /setCopyFailed\(true\)/);
   assert.match(field, /copiedTimer/);
   assert.match(field, /clearTimeout\(copiedTimer\.current\)/);
   assert.match(field, /useEffect\(\(\) => \(\) => clearTimeout\(copiedTimer\.current\), \[\]\)/);
+  assert.match(field, /SecretField plus a copied-timer reset/);
+  assert.doesNotMatch(field, /SecretField verbatim/);
   assert.doesNotMatch(field, /import \{[^}]*\bInput\b|<\s*Input\b/);
   assert.doesNotMatch(field, /import \{[^}]*\bSecretField\b|<\s*SecretField\b/);
   assert.doesNotMatch(field, /\bmultiline\b|Textarea|whitespace-pre-line/);
@@ -80,6 +84,10 @@ test("hero and closing share one wrapping copy-command field (#298)", () => {
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*overflow:\s*hidden/);
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*min-width:\s*0/);
   assert.match(tokens, /\[data-home-copy-command\] \{[^}]*align-items:\s*stretch/);
+  assert.match(
+    tokens,
+    /\[data-home-copy-command\] \[data-home-copy-command-value\]:focus-visible/,
+  );
   const buttonRule =
     tokens.match(/\[data-home-copy-command\] \[data-slot="button"\] \{[^}]+\}/)?.[0] ?? "";
   assert.match(buttonRule, /min-width:\s*88px/);
