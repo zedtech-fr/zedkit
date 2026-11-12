@@ -31,15 +31,6 @@ function blockFrom(src, openBraceIndex) {
   return spanFrom(src, openBraceIndex);
 }
 
-function functionBody(src, name) {
-  const head = src.search(new RegExp(`function ${name}\\b`));
-  if (head < 0) throw new Error(`missing function ${name}`);
-  const paren = src.indexOf("(", head);
-  const afterParams = spanFrom(src, paren, "(", ")").end;
-  const open = src.indexOf("{", afterParams);
-  return blockFrom(src, open).inner;
-}
-
 function eachNoPreferenceBlock(src) {
   const re = /@media\s*\(\s*prefers-reduced-motion\s*:\s*no-preference\s*\)\s*\{/g;
   const blocks = [];
@@ -103,37 +94,33 @@ test("home hero animation rules run only when motion is allowed", () => {
 
 test("mockup motion jobs map onto live names, not a rebuilt run", () => {
   const css = readApp("app/home-hero.css");
-  const preview = readApp("ui/home/home-hero-preview.tsx");
+  const illustration = readApp("ui/home/home-hero-illustration.tsx");
   const rhythm = readApp("ui/home/home-rhythm.ts");
-  const agent = readApp("ui/home/home-hero-agent-panel.tsx");
-  const live = `${css}\n${preview}\n${rhythm}\n${agent}`;
-  // zk-up → lead rise + band fade-up; zk-in → window; zk-drift → interior float; zk-s1…s5 → agent data-state.
+  const live = `${css}\n${illustration}\n${rhythm}`;
+  // zk-up → lead rise; zk-in → glass stage; zk-s1…s5 → zk-home-run-* steps (not mockup names).
   assert.match(css, /@keyframes zk-home-hero-rise/);
   assert.match(css, /@keyframes zk-home-window-in/);
+  assert.match(css, /@keyframes zk-home-run-plan/);
+  assert.match(css, /@keyframes zk-home-run-build/);
+  assert.match(css, /@keyframes zk-home-run-check/);
+  assert.match(css, /@keyframes zk-home-run-fix/);
+  assert.match(css, /@keyframes zk-home-run-done/);
   assert.match(rhythm, /"data-animate": "fade-up"/);
-  assert.match(preview, /data-hero-panel-drift/);
-  assert.match(preview, /animate-float/);
-  assert.match(agent, /data-state=\{state\}/);
+  assert.match(illustration, /data-hero-run-stage/);
+  assert.match(illustration, /data-hero-run-step/);
+  assert.match(css, /animation-play-state:\s*paused/);
   assert.doesNotMatch(live, /@keyframes zk-(?:up|in|drift|s[1-5])\b/);
   assert.doesNotMatch(live, /\bzk-s[1-5]\b/);
   assert.doesNotMatch(css, /\[data-hero-shapes\][^{]*\{[^}]*animation\s*:/);
 });
 
-test("interior panel drift is decorative and does not wrap the window", () => {
-  const preview = readApp("ui/home/home-hero-preview.tsx");
-  const drift = functionBody(preview, "HeroPanelDrift");
-  const stage = functionBody(preview, "HeroSpecimenStage");
-  assert.match(
-    drift,
-    /<span[^>]*aria-hidden="true"[^>]*data-hero-panel-drift/,
-  );
-  assert.match(drift, /\binert\b/);
-  assert.doesNotMatch(drift, /<(?:a|button|input)\b/);
-  const driftUse = stage.indexOf("<HeroPanelDrift");
-  const childrenUse = stage.indexOf("{children}");
-  assert.ok(driftUse >= 0 && childrenUse >= 0);
-  assert.ok(driftUse < childrenUse, "drift sits behind the window, not around it");
-  assert.equal(preview.includes("data-hero-shapes"), false);
+test("illustration drift is decorative and does not wrap the glass card", () => {
+  const illustration = readApp("ui/home/home-hero-illustration.tsx");
+  assert.match(illustration, /data-hero-run-drift/);
+  assert.match(illustration, /aria-hidden="true"/);
+  assert.doesNotMatch(illustration, /<(?:input)\b/);
+  assert.equal(illustration.includes("data-hero-shapes"), false);
+  assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole/);
 });
 
 test("foundations motion copy states the live rule, not a later ticket", () => {
@@ -141,16 +128,17 @@ test("foundations motion copy states the live rule, not a later ticket", () => {
   assert.match(copy, /motion:\s*"Chrome uses named motions only\./);
   assert.match(copy, /does not invent durations/);
   assert.match(copy, /One hero entrance/);
-  assert.match(copy, /one pausable tour/);
-  assert.doesNotMatch(copy, /pausable loop/);
+  assert.match(copy, /one pausable illustration/);
+  assert.doesNotMatch(copy, /pausable (?:loop|tour)/);
   assert.match(copy, /Reduced motion shows the final state/);
   assert.doesNotMatch(copy, /motion ticket/);
 });
 
-test("visual contract allows interior panel drift, not page-fill motion", () => {
+test("visual contract allows illustration motion, not page-fill motion", () => {
   const contract = readApp("VISUAL-CONTRACT.md");
-  assert.match(contract, /interior panel blob/);
   assert.match(contract, /never on the page fill/);
-  assert.match(contract, /loops live on the decorative cards and one interior panel blob/);
-  assert.match(contract, /scroll-driven motion stays on the cards/);
+  assert.match(contract, /glass illustration/);
+  assert.match(contract, /paused illustration/);
+  assert.doesNotMatch(contract, /guided cursor/);
+  assert.doesNotMatch(contract, /Display row/);
 });

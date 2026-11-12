@@ -1,22 +1,14 @@
 /*
- * Home hero: the proposition beside one working example.
+ * Home hero: the proposition beside a static glass illustration of one run.
  *
- * The example is a small product (sidebar, pages, a table, a calendar, a form). The page scrolls normally: nothing
- * is pinned, faded or clipped, so overlays raised inside the example (toasts, menus, dialogs) land where they say.
- * Below `lg` the lead comes first and the example follows at the full measure.
+ * Below `lg` the lead comes first and the illustration follows at the full measure. From `lg` they sit in two
+ * columns. The page scrolls normally: nothing is pinned.
  *
- * Motion has five parts, and every one of them is off under `prefers-reduced-motion` and `data-motion="reduce"`:
- *   1. load: the lead rises block by block, then the window assembles (frame, sidebar, page blocks, cards);
- *   2. pages: each page rebuilds the same way when it is shown;
- *   3. pointer: the two cards over the window's edges drift toward the cursor (see `use-pointer-parallax.ts`);
- *   4. scroll: the same cards drift a little as the page scrolls (scroll-driven, where the browser supports it);
- *   5. interior: one decorative blob inside the specimen panel floats (`animate-float`); never `[data-hero-shapes]`.
- * A guided cursor tours the pages until the visitor touches the window (see `use-hero-tour.ts`).
- *
- * Rules the motion keeps, because the window holds toasts and portaled menus that are positioned against the
- * viewport: the window and its pages only ever run finite entrance animations (a transform that is still running
- * would become the containing block of a toast), and everything that loops or follows the page lives on the
- * decorative cards or the interior panel blob, which wrap nothing interactive.
+ * Motion, all off under `prefers-reduced-motion` and `data-motion="reduce"`:
+ *   1. load: the lead rises block by block, then the glass stage enters;
+ *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop; Pause sets animation-play-state;
+ *   3. one decorative blob on the purple stage drifts (`zk-home-float`); never `[data-hero-shapes]`.
+ * Reduced motion shows the final card, no Pause control, no displacement.
  */
 #home-page [data-home-hero] {
   min-width: 0;
@@ -29,6 +21,15 @@
 
 #home-page [data-home-hero] {
   --zk-home-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Category cue as the mockup first-screen chip. Tokens, not mockup hex. */
+#home-page [data-home-hero-category] {
+  padding-block: calc(var(--spacing) * 1);
+  padding-inline: calc(var(--spacing) * 2.5);
+  border-radius: var(--radius-md);
+  background: hsl(var(--card));
+  border: var(--zk-border-width, 1px) solid hsl(var(--border));
 }
 
 /*
@@ -230,6 +231,63 @@
   background: hsl(var(--primary) / 0.35);
 }
 
+/*
+ * High-value illustration stage (violet/indigo allowed on this panel only).
+ * Tokens, not mockup hex. The glass card sits above the blobs.
+ */
+#home-page [data-hero-run-stage] {
+  z-index: 1;
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 8);
+  border-radius: var(--radius-2xl, 1rem);
+  background-color: hsl(var(--primary));
+  background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  box-shadow: var(--zk-shadow-xl);
+}
+
+#home-page [data-hero-run-blob],
+#home-page [data-hero-run-drift] {
+  position: absolute;
+  border-radius: 9999px;
+  aspect-ratio: 1;
+}
+
+#home-page [data-hero-run-blob="1"] {
+  left: -3.75rem;
+  top: 3.75rem;
+  width: 13.75rem;
+  background: hsl(var(--accent) / 0.55);
+}
+
+#home-page [data-hero-run-drift] {
+  right: -2.5rem;
+  top: -3.75rem;
+  width: 16.25rem;
+  background: hsl(0 0% 100% / 0.1);
+}
+
+#home-page [data-hero-run-blob="2"] {
+  right: 3.75rem;
+  bottom: 1.875rem;
+  width: 5.625rem;
+  background: hsl(var(--accent) / 0.7);
+}
+
+#home-page [data-hero-run-step] {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  padding-block: 0.5625rem;
+}
+
+#home-page [data-hero-run-step] + [data-hero-run-step] {
+  border-top: var(--zk-border-width, 1px) solid hsl(var(--border) / 0.6);
+}
+
+#home-page [data-hero-run-stage] > [data-slot="surface"] {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 47.999rem) {
   #home-page [data-hero-shapes] > [data-shape="3"] {
     display: none;
@@ -362,6 +420,39 @@
       zk-home-float 7s ease-in-out infinite;
     animation-delay: calc(1100ms + var(--b, 0) * 180ms), calc(1700ms + var(--b, 0) * 900ms);
   }
+
+  #home-page [data-hero-run-stage] {
+    animation: zk-home-window-in 640ms var(--zk-home-ease) 140ms backwards;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="plan"] {
+    animation: zk-home-run-plan 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="build"] {
+    animation: zk-home-run-build 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="check"] {
+    animation: zk-home-run-check 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="fix"] {
+    animation: zk-home-run-fix 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="done"] {
+    animation: zk-home-run-done 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-drift] {
+    animation: zk-home-float 7s ease-in-out infinite alternate;
+  }
+
+  #home-page [data-hero-run-stage][data-paused] [data-hero-run-step],
+  #home-page [data-hero-run-stage][data-paused] [data-hero-run-drift] {
+    animation-play-state: paused;
+  }
   }
 }
 
@@ -442,12 +533,42 @@
   }
 }
 
+@keyframes zk-home-run-plan {
+  0%, 3% { opacity: 0.3; }
+  7%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-build {
+  0%, 17% { opacity: 0.3; }
+  21%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-check {
+  0%, 31% { opacity: 0.3; }
+  35%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-fix {
+  0%, 47% { opacity: 0.3; }
+  51%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-done {
+  0%, 61% { opacity: 0.3; }
+  65%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
 @media (min-width: 64rem) {
   #home-page [data-home-hero] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     align-items: center;
-    column-gap: 2.5rem;
-    padding-block: 1.5rem 2rem;
+    column-gap: 3rem;
+    padding-block: 3.5rem 4rem;
   }
 }
