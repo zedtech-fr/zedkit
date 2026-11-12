@@ -25,7 +25,9 @@ test.describe("home paste band", () => {
     await expect(page.locator("[data-home-same-idea-column]")).toHaveCount(3);
     await expect(page.locator("[data-home-same-idea-column='together']")).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 2, name: homeSixSentencesCopy.section.title })).toBeVisible();
+    await expect(page.getByText(homeSixSentencesCopy.section.description)).toBeVisible();
     await expect(page.locator("[data-home-six-sentences] li")).toHaveCount(6);
+    await expect(page.getByRole("heading", { name: "What the kit is" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "What you get" })).toHaveCount(0);
 
     const hero = await page.locator("[data-home-hero-band]").boundingBox();
