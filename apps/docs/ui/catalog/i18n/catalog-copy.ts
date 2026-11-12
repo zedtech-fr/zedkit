@@ -2,7 +2,7 @@
 export const catalogCopy = {
   header: {
     title: "Catalog",
-    lead: "Search by need. Filter by area or maturity if you want — share or reload keeps the URL.",
+    lead: (count: number) => `${count} entries. Search by what you need to do.`,
     loadingResults: "Loading results…",
   },
   counters: {
@@ -16,8 +16,8 @@ export const catalogCopy = {
   },
   filters: {
     toolbarAriaLabel: "Catalog filters",
-    searchLabel: "Catalog search",
-    searchPlaceholder: "Need or title",
+    searchLabel: "Search the catalog",
+    searchPlaceholder: "pick a date, confirm a delete, rate limit…",
     chipsAriaLabel: "Category",
     chipLabel: (label: string, count: number) => `${label} · ${count}`,
     stableOnly: "Stable only",

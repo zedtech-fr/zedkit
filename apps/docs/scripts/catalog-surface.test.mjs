@@ -12,7 +12,7 @@ function read(rel) {
 
 test("catalog view reads as a catalog: lead, counters, filters, results, no identity form", () => {
   const view = read("ui/catalog/catalog-view.tsx");
-  assert.match(view, /\{catalogCopy\.header\.lead\}/);
+  assert.match(view, /catalogCopy\.header\.lead\(entries\.length\)/);
   assert.match(view, /CatalogCounters/);
   assert.match(view, /CatalogFiltersToolbar/);
   assert.match(view, /CatalogResultsBodyLazy/);
@@ -22,7 +22,7 @@ test("catalog view reads as a catalog: lead, counters, filters, results, no iden
   assert.doesNotMatch(view, /bindLookLibrary/);
   assert.doesNotMatch(view, /useDraftTokens/);
   assert.doesNotMatch(view, /ThemeScope/);
-  const leadAt = view.indexOf("{catalogCopy.header.lead}");
+  const leadAt = view.indexOf("catalogCopy.header.lead(entries.length)");
   const countersAt = view.indexOf("<CatalogCounters");
   const toolbarAt = view.indexOf("<CatalogFiltersToolbar");
   const resultsAt = view.indexOf("<CatalogResultsBodyLazy");
@@ -37,11 +37,43 @@ test("catalog view reads as a catalog: lead, counters, filters, results, no iden
   assert.equal(resultsAt < statusAt, true);
 });
 
-test("catalog intro is the page fill, not a muted band", () => {
+test("catalog header is a muted band with a hairline; search sits in the next section", () => {
   const view = read("ui/catalog/catalog-view.tsx");
-  assert.match(view, /<Section bleed/);
-  assert.doesNotMatch(view, /tone="muted"/);
-  assert.doesNotMatch(view, /bg-muted/);
+  const css = read("app/catalog-shell.css");
+  const headerAt = view.indexOf("data-catalog-header-band");
+  const mutedAt = view.indexOf('tone="muted"');
+  const toolbarAt = view.indexOf("<CatalogFiltersToolbar");
+  const resultsAt = view.indexOf("<CatalogResultsBodyLazy");
+  assert.equal(headerAt >= 0 && mutedAt >= 0 && toolbarAt >= 0 && resultsAt >= 0, true);
+  assert.equal(mutedAt < headerAt, true);
+  assert.equal(headerAt < toolbarAt, true);
+  assert.equal(toolbarAt < resultsAt, true);
+  assert.match(view, /data-catalog-header-band/);
+  assert.match(css, /\[data-catalog-header-band\]/);
+  assert.match(css, /--zk-border-width/);
+  assert.match(css, /var\(--border\)/);
+  assert.doesNotMatch(view, /#FAFAFA/);
+  assert.doesNotMatch(css, /#FAFAFA/);
+  const headerSlice = view.slice(mutedAt, toolbarAt);
+  assert.match(headerSlice, /data-catalog-header-band/);
+  assert.match(headerSlice, /<CatalogCounters/);
+  assert.doesNotMatch(headerSlice, /CatalogFiltersToolbar/);
+});
+
+test("selected chip uses site-action; chips and Stable only share one wrap row", () => {
+  const filters = read("ui/catalog/catalog-filters.tsx");
+  assert.match(filters, /data-site-action=\{selected \? "" : undefined\}/);
+  assert.match(filters, /variant=\{selected \? "default" : "outline"\}/);
+  assert.match(filters, /data-catalog-chip-row/);
+  assert.match(filters, /ms-auto/);
+  assert.doesNotMatch(filters, /xl:ms-auto/);
+  const rowStart = filters.indexOf("data-catalog-chip-row");
+  assert.notEqual(rowStart, -1);
+  const rowSlice = filters.slice(rowStart);
+  const chipsAt = rowSlice.indexOf("CatalogCategoryChips");
+  const stableAt = rowSlice.indexOf("CatalogStableOnly");
+  assert.equal(chipsAt >= 0 && stableAt >= 0, true);
+  assert.equal(chipsAt < stableAt, true);
 });
 
 test("catalog cells use compact padding", () => {

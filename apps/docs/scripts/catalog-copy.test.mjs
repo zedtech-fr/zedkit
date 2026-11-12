@@ -7,17 +7,14 @@ import test from "node:test";
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { catalogCopy } = await import("../ui/catalog/i18n/catalog-copy.ts");
 
-const SEARCH_FIRST_LEAD =
-  "Search by need. Filter by area or maturity if you want — share or reload keeps the URL.";
-
-test("catalog lead tells the visitor to search by need", () => {
-  assert.equal(catalogCopy.header.lead, SEARCH_FIRST_LEAD);
-  assert.equal(catalogCopy.header.lead.startsWith("Filter"), false);
-  assert.doesNotMatch(catalogCopy.header.lead, /\d/);
+test("catalog lead interpolates a live count and does not hard-code a total", () => {
+  assert.equal(catalogCopy.header.lead(0), "0 entries. Search by what you need to do.");
+  assert.equal(catalogCopy.header.lead(1), "1 entries. Search by what you need to do.");
+  assert.equal(catalogCopy.header.lead(7), "7 entries. Search by what you need to do.");
   assert.equal("counters" in catalogCopy, true);
 });
 
-test("catalog counters copy uses short area labels, not Core & server", () => {
+test("catalog counters copy uses short area labels, not Core and server", () => {
   assert.deepEqual(catalogCopy.counters.labels, {
     ui: "UI",
     backend: "Core",
@@ -25,11 +22,15 @@ test("catalog counters copy uses short area labels, not Core & server", () => {
     agents: "Agents",
   });
   assert.equal(catalogCopy.counters.ariaLabel, "Catalog area counts");
-  assert.equal(catalogCopy.filters.chipLabel("Core & server", 53), "Core & server · 53");
+  assert.equal(catalogCopy.filters.chipLabel("Core and server", 53), "Core and server · 53");
 });
 
-test("catalog search placeholder puts need before title", () => {
-  assert.equal(catalogCopy.filters.searchPlaceholder, "Need or title");
+test("catalog search uses the mockup label and example placeholder", () => {
+  assert.equal(catalogCopy.filters.searchLabel, "Search the catalog");
+  assert.equal(
+    catalogCopy.filters.searchPlaceholder,
+    "pick a date, confirm a delete, rate limit…",
+  );
 });
 
 test("catalog copy carries no inline identity form", () => {
@@ -38,7 +39,7 @@ test("catalog copy carries no inline identity form", () => {
 
 test("chip labels use a middle dot and a live count", () => {
   assert.equal(catalogCopy.filters.chipLabel("UI", 68), "UI · 68");
-  assert.equal(catalogCopy.filters.chipLabel("Core & server", 53), "Core & server · 53");
+  assert.equal(catalogCopy.filters.chipLabel("Core and server", 53), "Core and server · 53");
 });
 
 test("results status line shows visible of area total plus the stable legend", () => {
@@ -59,7 +60,7 @@ test("catalog UI has a counters module", () => {
 test("catalog view keeps the quiet filtered count and the copy lead", () => {
   const view = readFileSync(join(app, "ui/catalog/catalog-view.tsx"), "utf8");
   const page = readFileSync(join(app, "app/(site)/catalog/page.tsx"), "utf8");
-  assert.match(view, /\{catalogCopy\.header\.lead\}/);
+  assert.match(view, /catalogCopy\.header\.lead\(entries\.length\)/);
   assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
   assert.match(view, /<CatalogCounters/);
   assert.match(view, /data-catalog-intro/);

@@ -37,37 +37,27 @@ function CatalogCategoryChips({
   countsByArea: Record<(typeof CATALOG_AREAS)[number]["id"], number>;
   onFilters: (next: { area?: string }) => void;
 }) {
-  return (
-    <Stack
-      direction="horizontal"
-      gap="sm"
-      className="flex-wrap"
-      role="group"
-      aria-label={catalogCopy.filters.chipsAriaLabel}
-    >
-      {CATALOG_AREAS.map((row) => {
-        const selected = area === row.id;
-        return (
-          <Button
-            key={row.id}
-            type="button"
-            size="sm"
-            variant={selected ? "default" : "outline"}
-            aria-pressed={selected}
-            data-catalog-chip={row.id}
-            data-site-action={selected ? "" : undefined}
-            className={cn(
-              "min-h-target rounded-full px-button-inline-sm shadow-none",
-              selected ? undefined : "bg-background text-foreground hover:text-foreground",
-            )}
-            onClick={() => onFilters({ area: selected ? "all" : row.id })}
-          >
-            {catalogCopy.filters.chipLabel(row.label, countsByArea[row.id])}
-          </Button>
-        );
-      })}
-    </Stack>
-  );
+  return CATALOG_AREAS.map((row) => {
+    const selected = area === row.id;
+    return (
+      <Button
+        key={row.id}
+        type="button"
+        size="sm"
+        variant={selected ? "default" : "outline"}
+        aria-pressed={selected}
+        data-catalog-chip={row.id}
+        data-site-action={selected ? "" : undefined}
+        className={cn(
+          "min-h-target rounded-full px-button-inline-sm shadow-none",
+          selected ? undefined : "bg-background text-foreground hover:text-foreground",
+        )}
+        onClick={() => onFilters({ area: selected ? "all" : row.id })}
+      >
+        {catalogCopy.filters.chipLabel(row.label, countsByArea[row.id])}
+      </Button>
+    );
+  });
 }
 
 function CatalogStableOnly({
@@ -79,7 +69,7 @@ function CatalogStableOnly({
 }) {
   const checked = status === "stable";
   return (
-    <Stack direction="horizontal" gap="sm" className="min-h-target items-center xl:ms-auto">
+    <Stack direction="horizontal" gap="sm" className="ms-auto min-h-target items-center">
       <Checkbox
         id="catalog-stable-only"
         checked={checked}
@@ -105,11 +95,21 @@ export function CatalogFiltersToolbar({
   onFilters: (next: { area?: string; status?: string; q?: string }) => void;
 }) {
   return (
-    <Stack gap="md" data-catalog-toolbar="" aria-label={catalogCopy.filters.toolbarAriaLabel}>
-      <Stack gap="md" data-catalog-filter-row="">
-        <CatalogSearchField q={q} onFilters={onFilters} />
-      </Stack>
-      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+    <Stack
+      gap="md"
+      data-catalog-toolbar=""
+      data-catalog-filter-row=""
+      aria-label={catalogCopy.filters.toolbarAriaLabel}
+    >
+      <CatalogSearchField q={q} onFilters={onFilters} />
+      <Stack
+        direction="horizontal"
+        gap="sm"
+        className="flex-wrap items-center"
+        role="group"
+        aria-label={catalogCopy.filters.chipsAriaLabel}
+        data-catalog-chip-row=""
+      >
         <CatalogCategoryChips area={area} countsByArea={countsByArea} onFilters={onFilters} />
         <CatalogStableOnly status={status} onFilters={onFilters} />
       </Stack>
