@@ -1,4 +1,10 @@
-import { listIssueParams, parsePrNumber, ReviewIssueFeature, reviewsCopy } from "@/features/reviews";
+import {
+  issuesIndexRobots,
+  listIssueParams,
+  parsePrNumber,
+  ReviewIssueFeature,
+  reviewsCopy,
+} from "@/features/reviews";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
@@ -12,10 +18,14 @@ export async function generateMetadata({ params }: { params: Promise<{ n: string
   if (number === null) {
     return docsPageMetadata("/issues", reviewsCopy.metadata.missing, { index: false });
   }
-  return docsPageMetadata(`/issues/${number}`, {
-    title: `${reviewsCopy.metadata.issue.title} #${number}`,
-    description: reviewsCopy.metadata.issue.description,
-  });
+  return docsPageMetadata(
+    `/issues/${number}`,
+    {
+      title: `${reviewsCopy.metadata.issue.title} #${number}`,
+      description: reviewsCopy.metadata.issue.description,
+    },
+    await issuesIndexRobots(),
+  );
 }
 
 export default async function IssuePage({ params }: { params: Promise<{ n: string }> }) {

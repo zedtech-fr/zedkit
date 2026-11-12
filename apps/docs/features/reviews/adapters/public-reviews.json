@@ -20,7 +20,7 @@
             "cursor-grok-4.6-high"
           ],
           "verdict": null,
-          "liveUrl": "https://example.test/live/run-110-impl"
+          "liveUrl": null
         }
       ]
     },
@@ -44,7 +44,7 @@
             "cursor-grok-4.6-high"
           ],
           "verdict": null,
-          "liveUrl": "https://example.test/live/run-108-impl"
+          "liveUrl": null
         },
         {
           "id": "108-implement",
@@ -57,7 +57,7 @@
             "cursor-grok-4.6-high"
           ],
           "verdict": null,
-          "liveUrl": "https://example.test/live/run-108-impl"
+          "liveUrl": null
         },
         {
           "id": "108-review",
@@ -70,7 +70,7 @@
             "cursor-grok-4.6-high"
           ],
           "verdict": "approve",
-          "liveUrl": "https://example.test/live/run-108-review"
+          "liveUrl": null
         },
         {
           "id": "108-improve",
@@ -83,7 +83,7 @@
             "cursor-grok-4.6-high"
           ],
           "verdict": null,
-          "liveUrl": "https://example.test/live/run-108-improve"
+          "liveUrl": null
         }
       ]
     },
@@ -138,7 +138,7 @@
             "cursor-grok-4.6-high"
           ],
           "verdict": "comment",
-          "liveUrl": "https://example.test/live/run-54-review"
+          "liveUrl": null
         }
       ]
     }

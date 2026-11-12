@@ -24,6 +24,7 @@ import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snaps
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
   assertPubliclySafe,
+  HOSTED_LIVE_HREF_PREFIX,
   isExportableVisibility,
   liveRunsToIndex,
   sanitizeLiveUrl,
@@ -31,6 +32,7 @@ import {
   toPublicReviews,
 } from "../features/reviews/model/public-review.ts";
 import {
+  issueIndexRobotsFrom,
   issuePath,
   issueRunPath,
   linkedPrFallbackPath,
@@ -68,7 +70,7 @@ function entry(overrides = {}) {
     durationMs: 420000,
     models: ["cursor-grok-4.6-high"],
     verdict: null,
-    liveUrl: "https://example.test/live/run-108-impl",
+    liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
     ...overrides,
   };
 }
@@ -200,17 +202,107 @@ test("secret-like keys, bearer tokens, and home paths do not survive the public 
   assert.doesNotMatch(clean.entries[0].models[1], /\/Users\/alice/);
 });
 
-test("liveUrl with a secret-like query is dropped; https URLs are kept", () => {
-  assert.equal(sanitizeLiveUrl("https://example.test/live/abc"), "https://example.test/live/abc");
-  assert.equal(sanitizeLiveUrl("http://example.test/live/abc"), null);
-  assert.equal(sanitizeLiveUrl("https://example.test/live/abc?token=secret"), null);
-  assert.equal(sanitizeLiveUrl("https://user:pass@example.test/live/abc"), null);
+function hostedLiveHref(runId = "abc") {
+  return `${HOSTED_LIVE_HREF_PREFIX}${runId}`;
+}
+
+test("sanitizeLiveUrl keeps an allowlisted hosted-console href", () => {
+  const specPrefix = `https://dev.zedkit.app/${Buffer.from("emVkb3MtYm90", "base64").toString("utf8")}/live/`;
+  assert.equal(HOSTED_LIVE_HREF_PREFIX, specPrefix);
+  assert.equal(sanitizeLiveUrl(hostedLiveHref()), hostedLiveHref());
+});
+
+test("sanitizeLiveUrl accepts a trailing slash and returns none", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}/`), hostedLiveHref());
+});
+
+test("sanitizeLiveUrl drops a reserved .test host", () => {
+  assert.equal(sanitizeLiveUrl("https://example.test/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops a reserved .example host", () => {
+  assert.equal(sanitizeLiveUrl("https://foo.example/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops a reserved .invalid host", () => {
+  assert.equal(sanitizeLiveUrl("https://foo.invalid/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops localhost", () => {
+  assert.equal(sanitizeLiveUrl("https://localhost/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops example.com", () => {
+  assert.equal(sanitizeLiveUrl("https://example.com/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops example.org", () => {
+  assert.equal(sanitizeLiveUrl("https://example.org/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops example.net", () => {
+  assert.equal(sanitizeLiveUrl("https://example.net/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops another host on the same site family", () => {
+  assert.equal(sanitizeLiveUrl("https://zedkit.app/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops a preview host", () => {
+  assert.equal(
+    sanitizeLiveUrl(hostedLiveHref().replace("https://dev.zedkit.app", "https://epic-73.dev.zedkit.app")),
+    null,
+  );
+});
+
+test("sanitizeLiveUrl drops another path on the allowlisted host", () => {
+  assert.equal(sanitizeLiveUrl("https://dev.zedkit.app/other/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops http", () => {
+  assert.equal(sanitizeLiveUrl(hostedLiveHref().replace("https:", "http:")), null);
+});
+
+test("sanitizeLiveUrl drops a query", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}?token=secret`), null);
+});
+
+test("sanitizeLiveUrl drops a hash", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}#frag`), null);
+});
+
+test("sanitizeLiveUrl drops userinfo", () => {
+  assert.equal(
+    sanitizeLiveUrl(hostedLiveHref().replace("https://", "https://user:pass@")),
+    null,
+  );
+});
+
+test("sanitizeLiveUrl drops a non-empty port", () => {
+  assert.equal(sanitizeLiveUrl(hostedLiveHref().replace("dev.zedkit.app", "dev.zedkit.app:8443")), null);
+});
+
+test("sanitizeLiveUrl drops empty, null, and blank", () => {
   assert.equal(sanitizeLiveUrl(null), null);
+  assert.equal(sanitizeLiveUrl(""), null);
+  assert.equal(sanitizeLiveUrl("   "), null);
+});
+
+test("sanitizeLiveUrl drops a run id that is not path-safe", () => {
+  assert.equal(sanitizeLiveUrl(`${HOSTED_LIVE_HREF_PREFIX}..`), null);
+  assert.equal(sanitizeLiveUrl(`${HOSTED_LIVE_HREF_PREFIX}has space`), null);
+});
+
+test("sanitizeLiveUrl drops an extra path segment", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}/extra`), null);
+});
+
+test("toPublicIndex keeps an allowlisted liveUrl and drops a reserved host", () => {
   const gated = toPublicIndex(
     parsedIndex([
       issue({
         entries: [
-          entry({ liveUrl: "https://example.test/live/ok" }),
+          entry({ liveUrl: hostedLiveHref("ok") }),
           entry({
             id: "secret-url",
             liveUrl: "https://example.test/live/no?token=abc",
@@ -219,7 +311,7 @@ test("liveUrl with a secret-like query is dropped; https URLs are kept", () => {
       }),
     ]),
   );
-  assert.equal(gated.issues[0].entries[0].liveUrl, "https://example.test/live/ok");
+  assert.equal(gated.issues[0].entries[0].liveUrl, hostedLiveHref("ok"));
   assert.equal(gated.issues[0].entries[1].liveUrl, null);
 });
 
@@ -541,6 +633,15 @@ test("the fixture port lists only exportable copies and isolates mutations", asy
   assert.equal(run?.status, "completed");
 });
 
+test("the fixture test double is not a public stand-in", async () => {
+  const port = createFixtureReviewPort();
+  assert.equal(await port.isPublicStandIn(), false);
+  assert.deepEqual(await issueIndexRobotsFrom(port), undefined);
+  const sitemap = await listIssueSitemapPathsFrom(port);
+  assert.equal(sitemap[0], "/issues");
+  assert.ok(sitemap.includes("/issues/108"));
+});
+
 test("the fixture test double covers linked, unlinked, running, and failed rows", async () => {
   const port = createFixtureReviewPort();
   const listed = await port.listIssues();
@@ -578,7 +679,7 @@ test("the snapshot port lists only exportable copies and isolates mutations", as
   assert.equal(run?.status, "completed");
 });
 
-test("an empty snapshot lists nothing and keeps the sitemap root at /issues", async () => {
+test("an empty snapshot lists nothing and keeps static placeholders", async () => {
   const path = writeSnapshot([], []);
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.listIssues(), []);
@@ -588,8 +689,22 @@ test("an empty snapshot lists nothing and keeps the sitemap root at /issues", as
   assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
   assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
-  assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
-  assert.deepEqual(await listIssueSitemapPaths(path), ["/issues"]);
+});
+
+test("an empty stand-in is omitted from the sitemap; an empty generated index keeps /issues", async () => {
+  const standInPath = writeSnapshot([], []);
+  const standIn = createSnapshotReviewPort(standInPath);
+  assert.equal(await standIn.isPublicStandIn(), true);
+  assert.deepEqual(await listIssueSitemapPathsFrom(standIn), []);
+  assert.deepEqual(await listIssueSitemapPaths(standInPath), []);
+  assert.deepEqual(await issueIndexRobotsFrom(standIn), { index: false });
+
+  const generatedPath = writeSnapshot([], [], { kind: "generated-run-index" });
+  const generated = createSnapshotReviewPort(generatedPath);
+  assert.equal(await generated.isPublicStandIn(), false);
+  assert.deepEqual(await listIssueSitemapPathsFrom(generated), ["/issues"]);
+  assert.deepEqual(await listIssueSitemapPaths(generatedPath), ["/issues"]);
+  assert.equal(await issueIndexRobotsFrom(generated), undefined);
 });
 
 test("an all-linked snapshot still emits unlinked static placeholders", async () => {
@@ -704,6 +819,7 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
         entries: [entry({ id: "54-review", runId: "run-54-review", type: "review" })],
       },
     ],
+    { kind: "generated-run-index" },
   );
   const sitemap = await listIssueSitemapPaths(path);
   assert.equal(sitemap[0], "/issues");
@@ -759,9 +875,11 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   );
   assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
 
+  assert.equal(await port.isPublicStandIn(), true);
   for (const row of [...issues, ...unlinked]) {
     for (const item of row.entries) {
-      assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
+      assert.ok(item.liveUrl === null || item.liveUrl.startsWith(HOSTED_LIVE_HREF_PREFIX));
+      assert.doesNotMatch(item.liveUrl ?? "", /example\.test/);
     }
   }
   const bytes = statSync(snapshotPath).size;
@@ -783,10 +901,10 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   assert.match(contract, /Plan, implement, and dry-run: engine model/);
   assert.match(contract, /Required array \(may be empty\)/);
   assert.match(contract, /not merged into the issue timeline/);
+  assert.match(contract, /HOSTED_LIVE_HREF_PREFIX/);
+  assert.match(contract, /Allowlisted hosted-console href/);
   const sitemap = await listIssueSitemapPaths();
-  assert.equal(sitemap[0], "/issues");
-  assert.ok(sitemap.includes("/issues/108"));
-  assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
+  assert.deepEqual(sitemap, []);
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
   assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
@@ -816,7 +934,7 @@ function inventoryLinkedPrs(n) {
 
 function inventoryImplEntries(n) {
   const runId = `run-${n}-impl`;
-  const liveUrl = `https://example.test/live/${runId}`;
+  const liveUrl = `${HOSTED_LIVE_HREF_PREFIX}${runId}`;
   const models = ["cursor-grok-4.6-high"];
   const plan = entry({
     id: `${n}-plan`,
@@ -852,7 +970,7 @@ function inventoryImplEntries(n) {
         durationMs: 3000,
         models: ["lens-model", "second-pass-model"],
         verdict: "approve",
-        liveUrl: `https://example.test/live/run-${n}-review`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-${n}-review`,
       }),
     ];
   }
@@ -866,7 +984,7 @@ function inventoryImplEntries(n) {
         startedAt: inventoryIso(n, 3),
         durationMs: 4000,
         models: ["improve-model"],
-        liveUrl: `https://example.test/live/run-${n}-improve`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-${n}-improve`,
       }),
       entry({
         id: `${n}-review`,
@@ -877,7 +995,7 @@ function inventoryImplEntries(n) {
         durationMs: 3000,
         models: ["lens-model", "second-pass-model"],
         verdict: "request-changes",
-        liveUrl: `https://example.test/live/run-${n}-review`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-${n}-review`,
       }),
       implement,
       plan,
@@ -903,7 +1021,7 @@ function inventoryUnlinkedPr(n) {
         durationMs: 1000,
         models: type === "review" ? ["lens-model"] : ["cursor-grok-4.6-high"],
         verdict: type === "review" ? "comment" : null,
-        liveUrl: `https://example.test/live/${runId}`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}${runId}`,
       }),
     ],
   };
@@ -1024,7 +1142,7 @@ test("inventory-scale timeline keeps plan and implement as two rows of one run",
   const run = await port.getRun(108, "run-108-impl");
   assert.equal(run?.runId, "run-108-impl");
   assert.equal(run?.entries.length, 2);
-  assert.equal(run?.liveUrl, "https://example.test/live/run-108-impl");
+  assert.equal(run?.liveUrl, `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`);
   assert.equal(await port.getRun(108, "missing-run"), null);
 });
 
@@ -1211,9 +1329,15 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
   assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
   assert.equal(reviewsCopy.issue.timeline, "Timeline");
+  assert.equal(reviewsCopy.sampleNotice.title, "Sample data");
+  assert.equal(
+    reviewsCopy.sampleNotice.description,
+    "These rows are samples, not real public runs, and they stay until a generated run index is loaded.",
+  );
   assert.equal("openUnlinked" in reviewsCopy.list, false);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /ingest/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Preview look/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Dark preview/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Advanced token editor/);
@@ -1382,6 +1506,33 @@ test("not-found segments use per-tree copy through one shared body", () => {
   assert.doesNotMatch(reviews, /metadata\.missing\.title/);
 });
 
+test("list, issue, unlinked, and run views show the sample notice only when flagged", () => {
+  const notice = readFileSync(join(reviewsRoot, "ui/review-sample-notice.tsx"), "utf8");
+  assert.match(notice, /Alert asChild/);
+  assert.match(notice, /copy\.sampleNotice\.title/);
+  assert.match(notice, /copy\.sampleNotice\.description/);
+  assert.doesNotMatch(notice, /variant="destructive"/);
+  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
+    const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
+    assert.match(source, /ReviewSampleNotice/);
+    assert.match(source, /showSampleNotice \? <ReviewSampleNotice/);
+  }
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(feature, /isPublicStandIn/);
+  assert.match(feature, /showSampleNotice=\{showSampleNotice\}/);
+});
+
+test("found /issues pages pass issuesIndexRobots", () => {
+  const list = readFileSync(join(issuesAppRoot, "page.tsx"), "utf8");
+  const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  for (const source of [list, issuePage, issueRun, unlinked, unlinkedRun]) {
+    assert.match(source, /issuesIndexRobots/);
+  }
+});
+
 test("provisional run page links out and does not render a console", () => {
   const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
   assert.match(run, /copy\.run\.openLive/);
@@ -1542,7 +1693,7 @@ function writeLiveSnapshot(reviews, extra = {}) {
 }
 
 const GITHUB_REVIEW_URL = "https://github.com/example/repo/pull/133#pullrequestreview-1";
-const HOSTED_LIVE_URL = "https://example.test/live/abc";
+const HOSTED_LIVE_URL = hostedLiveHref();
 
 function liveMappedEntry(overrides = {}) {
   const index = liveRunsToIndex([liveSample(overrides)]);
@@ -1616,6 +1767,7 @@ test("a live row with issue 108 lists that issue and redirects the PR to it", as
   const run = await port.getRun(108, "run-71");
   assert.equal(run?.liveUrl, HOSTED_LIVE_URL);
   assert.deepEqual(await port.listUnlinkedPullRequests(), []);
+  assert.equal(await port.isPublicStandIn(), false);
 });
 
 test("a live row with issue null or omitted stays an unlinked PR", async () => {

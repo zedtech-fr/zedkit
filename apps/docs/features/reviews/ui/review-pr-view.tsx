@@ -19,6 +19,7 @@ import { issueRunPath, unlinkedRunPath } from "../model/review-routes";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
+import { ReviewSampleNotice } from "./review-sample-notice";
 
 function TimelineRow({
   entry,
@@ -91,12 +92,15 @@ function Timeline({
 export function ReviewPrView({
   issue,
   copy,
+  showSampleNotice = false,
 }: {
   issue: IssueRecord;
   copy: ReviewsCopy;
+  showSampleNotice?: boolean;
 }) {
   return (
     <ReviewAppearanceFrame>
+      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader
         title={`#${issue.number} ${issue.title}`}
         back={
@@ -128,12 +132,15 @@ export function ReviewPrView({
 export function UnlinkedPrView({
   pullRequest,
   copy,
+  showSampleNotice = false,
 }: {
   pullRequest: UnlinkedPullRequest;
   copy: ReviewsCopy;
+  showSampleNotice?: boolean;
 }) {
   return (
     <ReviewAppearanceFrame>
+      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader
         title={`${copy.unlinked.title} #${pullRequest.number}`}
         back={
