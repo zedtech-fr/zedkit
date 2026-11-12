@@ -65,6 +65,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
   assert.match(lead, /homeCopy\.hero\.titleClause/);
+  assert.doesNotMatch(lead, /^["']use client["']/m);
   assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
   assert.doesNotMatch(lead, /AI_SETUP_MINI_PROMPT|UI_SETUP_MINI_PROMPT/);
   assert.match(lead, /HomeCopyCommandField/);
@@ -86,9 +87,11 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
-    /promptCaption: "Name the kits you want, Nest included\. The map knows the order\."/,
+    /promptCaption: "Name the kits you want\. The agent installs only those, in map\.md order\."/,
   );
   assert.match(lead, /aria-label=\{homeCopy\.hero\.promptAriaLabel\}/);
+  assert.match(lead, /aria-describedby="home-hero-prompt-caption"/);
+  assert.match(lead, /id="home-hero-prompt-caption"/);
   assert.match(lead, /homeCopy\.hero\.promptCaption/);
   assert.doesNotMatch(lead, /promptCaptionSingle/);
   assert.doesNotMatch(copy, /facts:/);

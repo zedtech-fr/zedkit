@@ -1,5 +1,3 @@
-"use client";
-
 import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { MAP_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
 import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
@@ -37,10 +35,16 @@ export function HomeHeroLead() {
             <HomeCopyCommandField
               value={MAP_SETUP_MINI_PROMPT}
               aria-label={homeCopy.hero.promptAriaLabel}
+              aria-describedby="home-hero-prompt-caption"
               copyLabel={homeCopy.hero.promptCopyLabel}
             />
           </Stack>
-          <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
+          <Text
+            id="home-hero-prompt-caption"
+            variant="muted"
+            typeRole="caption"
+            className={HOME_METADATA_TEXT_CLASS}
+          >
             {homeCopy.hero.promptCaption}
           </Text>
         </Stack>
