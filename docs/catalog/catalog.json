@@ -2962,7 +2962,7 @@
             },
             {
               "title": "Hover feedback",
-              "code": "<Card className=\"hover-lift\">Lifts on hover (devices that hover)</Card>\n<Button className=\"hover-press\">Presses down on click</Button>"
+              "code": "<Card className=\"hover-lift\">Lifts on hover and keyboard focus</Card>\n<Button className=\"hover-press\">Presses down on click</Button>"
             },
             {
               "title": "Staggered children",
@@ -2994,7 +2994,7 @@
               "data-stagger"
             ]
           },
-          "a11y": "Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. Hover lift only applies on devices that hover, so it never sticks after a tap.",
+          "a11y": "Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. The `:hover` lift only applies on devices that hover, so hover never sticks after a tap; `:focus-within` lift stays until blur. Put `hover-lift` on the bordered host (`Card`/`Surface`) — a borderless wrapper never paints the primary-tinted border. `hover-lift` uses the same lift, shadow and primary-tinted border on `:hover`, `:focus-visible` and `:focus-within`; reduced motion keeps the border and shadow and kills the translate.",
           "troubleshooting": "Nothing animates — check the OS reduced-motion setting first. Content stays hidden — `data-reveal=\"pending\"` and `data-stagger=\"pending\"` hide content until your code sets them to `\"in\"`. Stagger has no delay — `stagger-*` delays an animation class (`animate-fade-up stagger-2`), not a transition. Parallax travel follows `--zk-motion-intensity` (default 1, `0` = no shift) times `--zk-motion-mobile` (`0.5` under 40rem); override on a subtree (`.hero { --zk-motion-intensity: 0.3 }`), not as an identity token. Derived amplitude is `min(calc(var(--zk-reveal-distance) * 8), var(--zk-parallax-max-shift, 120px))` (x-axis cap `12vw`). Sticky offset is `--zk-pin-top` (`calc(var(--zk-header-height) + 1rem)`).",
           "seeAlso": [
             "Theme an admin app (dark/light included)",
@@ -3056,7 +3056,7 @@
               }
             ]
           },
-          "a11y": "`prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`.",
+          "a11y": "`prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`. Stagger-pending children are `visibility: hidden` (out of the tab order) until `in`.",
           "troubleshooting": "Nothing appears to move — mount `<AnimateObserver />` once near the app root (or call `observeAnimate()`), then check reduced motion and `data-motion` on `<html>`. Content stays visible without JS by design. Scroll parallax needs `animation-timeline: view()` or the runtime fallback. In-app reduce flashes on load — render `<MotionScript />` in `<head>` (same pattern as `IdentityScript`) so `data-motion=\"reduce\"` is set before paint; `useMotionPreference()` is `\"reduce\"` on the server.",
           "seeAlso": [
             "Animate entrances and hover feedback with CSS utilities",
