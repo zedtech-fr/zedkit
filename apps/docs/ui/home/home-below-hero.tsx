@@ -1,3 +1,4 @@
+import { uiGalleryStats } from "@/content/gallery";
 import { HomeClosingSection } from "@/ui/home/home-closing-section";
 import { HomeIdentitiesSection } from "@/ui/home/home-identities-section";
 import { HomeLimitsSection } from "@/ui/home/home-limits-section";
@@ -8,7 +9,7 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
 
 /**
  * Marketing sections below the hero, in the order a visitor decides: two
- * places, six facts, hash landing plus Getting started, then the same task
+ * places, six quote/reply cards, hash landing plus Getting started, then the same task
  * in four looks, then limits, manifesto, closing ask.
  * Kept in the main home payload (not dynamically imported) so section anchors stay in the live layout on first paint.
  *
@@ -18,9 +19,9 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
  * Customers: the developer's own users — this page does not sell to them.
  * Customer personas: n/a on the docs home.
  * UI decisions:
- *   two-place same-idea then six facts then one paste, because: client =
- *   integrating developer who just saw a hero paste and needs the joint idea
- *   before another command.
+ *   two-place same-idea then six quote/reply cards then one paste, because:
+ *   client = integrating developer who just saw the joint idea and still
+ *   hears agent excuses.
  *   lg two-column same-idea grid, because: mobile stacks by priority.
  *   hash aliases stay inside #paste, because: README and hero CTAs still
  *   land there.
@@ -34,7 +35,7 @@ export function HomeBelowHero() {
   return (
     <div data-home-below-hero="">
       <HomeSameIdeaSection />
-      <HomeSixSentencesSection />
+      <HomeSixSentencesSection componentCount={uiGalleryStats.components} />
       <HomePasteSection />
       <HomeIdentitiesSection />
       <HomeLimitsSection />
