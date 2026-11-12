@@ -5,10 +5,10 @@
 //   guidance fields, install tabs with the changesets version,
 //   catalog example, wraps line) plus per-folder meta.json nav files.
 // - Needs listed in docs-manifest.json also get a live preview (the
-//   REAL workspace component via components/component-preview.tsx, which
+//   REAL workspace component via features/docs/ui/component-preview.tsx, which
 //   resolves the demo through components/demos/registry.ts) and a props
 //   table resolved at build by fumadocs-typescript AutoTypeTable
-//   (via components/props-table.tsx, inherited props expanded).
+//   (via features/docs/ui/props-table.tsx, inherited props expanded).
 // - Also writes public/llms.txt and public/llms-full.txt (same source, always current)
 //   plus public/{map,suggest}.md and public/{ai,ui,nest}/setup.md for agents.
 //
@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
 import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
-import { componentPageSections } from "../lib/component-page-sections.mjs";
+import { componentPageSections } from "../features/docs/component-page-sections.mjs";
 import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import {
@@ -250,9 +250,9 @@ function componentPageMdx(pkg, need, version, spec, related, prose) {
     "{/* GENERATED from docs/catalog/catalog.json — do not edit. */}",
     "",
   ];
-  head.push(`import { ComponentPage } from "../../../components/component-page";`);
+  head.push(`import { ComponentPage } from "../../../features/docs/ui/component-page";`);
   if (prose?.includes("<ComponentPreview")) {
-    head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
+    head.push(`import { ComponentPreview } from "../../../features/docs/ui/component-preview";`);
   }
   head.push(
     "",
@@ -365,9 +365,9 @@ function writeGuidePages(outDir) {
   };
   for (const entry of readdirSync(GUIDES_DIR, { withFileTypes: true })) {
     if (!entry.isFile() || !entry.name.endsWith(".mdx")) continue;
-    writeOne(entry.name, entry.name, "../../components/component-preview");
+    writeOne(entry.name, entry.name, "../../features/docs/ui/component-preview");
   }
-  writeOne(join("ai", "setup.mdx"), join("ai", "setup.mdx"), "../../../components/component-preview");
+  writeOne(join("ai", "setup.mdx"), join("ai", "setup.mdx"), "../../../features/docs/ui/component-preview");
   return count;
 }
 
@@ -385,11 +385,11 @@ function pageMdx(pkg, need, version, rich, seeAlsoLinks, prose, folder) {
   ];
   if (maturity.badgeImport) head.push(maturity.badgeImport);
   head.push(`import { Tab, Tabs } from "fumadocs-ui/components/tabs";`);
-  if (rich || prose?.includes("<ComponentPreview")) head.push(`import { ComponentPreview } from "../../../components/component-preview";`);
+  if (rich || prose?.includes("<ComponentPreview")) head.push(`import { ComponentPreview } from "../../../features/docs/ui/component-preview";`);
   if (rich && rich.propsFile && rich.propsName) {
-    head.push(`import { PropsTable } from "../../../components/props-table";`);
+    head.push(`import { PropsTable } from "../../../features/docs/ui/props-table";`);
   }
-  head.push(`import { ComponentWrapsLine } from "../../../components/component-wraps-line";`);
+  head.push(`import { ComponentWrapsLine } from "../../../features/docs/ui/component-wraps-line";`);
   head.push("", ...maturity.badgeLine);
   head.push(...guidanceBlock(need, seeAlsoLinks));
   if (rich) {

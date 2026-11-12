@@ -134,7 +134,7 @@ const sizeBudgetOverFile = [
 ];
 const sizeBudgetOverFunction = [
   "apps/docs/components/admin-dashboard-demo-app.tsx",
-  "apps/docs/components/component-page.tsx",
+  "apps/docs/features/docs/ui/component-page.tsx",
   "apps/docs/components/demos/drawer-demo.tsx",
   "apps/docs/components/demos/tabs-demo.tsx",
   "apps/docs/components/preview-viewport.tsx",
@@ -313,27 +313,6 @@ export default tseslint.config(
               message: docsAppFeatureBan.message,
             },
             docsHashImportBan,
-          ],
-        },
-      ],
-    },
-  },
-  {
-    // L8: move component-page-toc next to the page, then drop this block.
-    name: "docs/one-way-exception-l8-component-page-toc",
-    files: ["apps/docs/lib/component-page-toc.ts"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            deepRelativeImport,
-            docsAppFeatureBan,
-            docsHashImportBan,
-            {
-              group: docsUiGroup,
-              message: docsLibUiBan.message,
-            },
           ],
         },
       ],

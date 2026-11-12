@@ -1,5 +1,5 @@
 import type { TOCItemType } from "fumadocs-core/toc";
-import { componentPageCopy } from "@/components/i18n/component-page-copy";
+import { componentPageCopy } from "./i18n/component-page-copy";
 
 /** Every section anchor `ComponentPage` can render (Fumadocs TOC only sees MDX headings). */
 const SECTION_TOC: Record<string, TOCItemType> = {
