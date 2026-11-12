@@ -4,6 +4,6 @@ export const homeClosingCopy = {
     title: "Next time it says done, it will be.",
     description: "And it will look like the rest of your product.",
   },
-  action: "Setup",
-  actionHref: "#ai-setup",
+  promptAriaLabel: "Closing setup prompt",
+  promptCopyLabel: "Copy closing prompt",
 } as const;

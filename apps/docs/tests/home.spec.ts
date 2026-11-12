@@ -63,7 +63,15 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
     "zedkit is a set of kits your coding agent installs itself.",
   );
   await expect(page.locator("[data-home-hero-sub]")).toContainText("definition of done");
-  await expect(page.getByRole("textbox", { name: "Setup prompt" })).toBeVisible();
+  await expect(
+    page.locator("[data-home-hero-prompt]").getByRole("textbox", { name: "Setup prompt", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Setup prompt", exact: true })).toHaveCount(1);
+  await expect(
+    page.locator("[data-home-closing]").getByRole("textbox", { name: "Closing setup prompt", exact: true }),
+  ).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
   await expect(page.getByText("Name the kits you want, Nest included. The map knows the order.")).toBeVisible();
   await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();

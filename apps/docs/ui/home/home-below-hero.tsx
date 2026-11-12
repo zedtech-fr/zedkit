@@ -28,8 +28,9 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
  *   paste is a dark zinc band with a file listing, because: neighbours must
  *   differ in shape and the mockup's paste surface was not a #73 drop.
  *   looks then limits then manifesto then closing, because: the visitor
- *   should read what it does not do and the lock-in quote before the Setup
- *   ask. Catalog and nav already list components and package areas.
+ *   should read what it does not do and the lock-in quote (readLink "Read
+ *   the manifesto") before the closing copyable prompt. Catalog and nav
+ *   already list components and package areas.
  */
 export function HomeBelowHero({
   uiGalleryStats,
