@@ -319,6 +319,7 @@ test("merge uses GitHub verdict and score only on review entries with a null ver
   assert.equal(implement.score, null);
   assert.equal(review.verdict, "approve");
   assert.equal(review.score, 8);
+  assert.equal(review.superseded, false);
   const fromRun = mergePublicIndex({
     github: { issues: [githubIssue()], pullRequests: [githubPull()] },
     runs: [runRow({ kind: "review", phase: "review", verdict: "comment", score: 3 })],
@@ -326,6 +327,49 @@ test("merge uses GitHub verdict and score only on review entries with a null ver
   });
   assert.equal(fromRun.issues[0].entries[0].verdict, "comment");
   assert.equal(fromRun.issues[0].entries[0].score, 3);
+});
+
+test("merge does not stamp GitHub fallback onto a failed or running review with a null verdict", () => {
+  const fallbacks = [{ prNumber: 250, verdict: "approve", score: 8 }];
+  const failed = mergePublicIndex({
+    github: { issues: [githubIssue()], pullRequests: [githubPull()] },
+    runs: [
+      runRow({
+        runId: "run-rev-fail",
+        kind: "review",
+        phase: "review",
+        status: "failed",
+        verdict: null,
+        score: null,
+        superseded: true,
+      }),
+    ],
+    fallbacks,
+  });
+  const failedReview = failed.issues[0].entries[0];
+  assert.equal(failedReview.verdict, null);
+  assert.equal(failedReview.score, null);
+  assert.equal(failedReview.status, "failed");
+  assert.equal(failedReview.superseded, true);
+  const running = mergePublicIndex({
+    github: { issues: [githubIssue()], pullRequests: [githubPull()] },
+    runs: [
+      runRow({
+        runId: "run-rev-run",
+        kind: "review",
+        phase: "review",
+        status: "running",
+        durationMs: null,
+        verdict: null,
+        score: null,
+      }),
+    ],
+    fallbacks,
+  });
+  const runningReview = running.issues[0].entries[0];
+  assert.equal(runningReview.verdict, null);
+  assert.equal(runningReview.score, null);
+  assert.equal(runningReview.status, "running");
 });
 
 test("merge keeps allowlisted live URLs and drops others; GitHub-only issues stay off the index", () => {
@@ -411,6 +455,76 @@ test("unset runs base is not an error and yields an empty list", async () => {
   assert.equal(await port.hasLoadError(), false);
 });
 
+test("invalid runs base is a load error", async () => {
+  const port = createPublicReviewPort({
+    fetch: fetchFrom([
+      { includes: "/issues?", body: [githubIssue()] },
+      { includes: "/pulls?", body: [githubPull()] },
+    ]).fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    runsBase: "not-a-url",
+  });
+  assert.deepEqual(await port.listIssues(), []);
+  assert.equal(await port.hasLoadError(), true);
+});
+
+test("GitHub catalog stops after 10 full pages and still succeeds", async () => {
+  const { fetchImpl, calls } = fetchFrom([
+    {
+      includes: "/issues?",
+      respond: (url) => {
+        const page = Number(new URL(url).searchParams.get("page"));
+        const start = (page - 1) * 100;
+        const body = Array.from({ length: 100 }, (_, i) =>
+          githubIssue({ number: start + i + 1, title: `Issue ${start + i + 1}` }),
+        );
+        return jsonResponse(200, body);
+      },
+    },
+    { includes: "/pulls?", body: [] },
+  ]);
+  const result = await fetchGithubCatalog({ fetch: fetchImpl, sleep: noSleep, retries: 0 });
+  assert.equal(result.ok, true);
+  assert.equal(result.value.issues.length, 1000);
+  assert.equal(calls.filter((row) => row.url.includes("/issues?")).length, 10);
+});
+
+test("GitHub review fallbacks cap at 40 PRs and still succeed", async () => {
+  const prs = Array.from({ length: 41 }, (_, i) => i + 1);
+  const { fetchImpl, calls } = fetchFrom([{ includes: "/reviews", body: [githubReview()] }]);
+  const result = await fetchGithubReviewFallbacks(prs, {
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.value.length, 40);
+  assert.equal(calls.length, 40);
+});
+
+test("runs adapter stops after 10 pages with a leftover cursor and still succeeds", async () => {
+  const { fetchImpl, calls } = fetchFrom([
+    {
+      includes: "/api/runs",
+      respond: (url) => {
+        const cursor = new URL(url).searchParams.get("cursor");
+        const n = cursor === null ? 1 : Number(cursor.replace("page-", "")) + 1;
+        return jsonResponse(200, runsEnvelope([runRow({ runId: `run-${n}` })], { nextCursor: `page-${n}` }));
+      },
+    },
+  ]);
+  const listed = await fetchRunsIndex({
+    fetch: fetchImpl,
+    sleep: noSleep,
+    retries: 0,
+    runsBase: RUNS_BASE,
+  });
+  assert.equal(listed.ok, true);
+  assert.equal(listed.value.length, 10);
+  assert.equal(calls.length, 10);
+});
+
 test("readGithubToken prefers the dedicated env and ignores blanks", () => {
   assert.equal(readGithubToken({ ZEDKIT_GITHUB_READ_TOKEN: TOKEN, GITHUB_TOKEN: "other" }), TOKEN);
   assert.equal(readGithubToken({ GITHUB_TOKEN: TOKEN }), TOKEN);
@@ -444,12 +558,13 @@ test("list view copy and load error are wired through kit states", () => {
   );
   assert.equal("retry" in reviewsCopy.loadError, false);
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
-  assert.match(list, /ReviewLoadErrorView/);
+  assert.doesNotMatch(list, /ReviewLoadErrorView/);
   assert.doesNotMatch(list, /window\.location\.reload/);
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(feature, /reviewLoadErrorView/);
   assert.match(list, /issues\.length === 0 && unlinked\.length === 0/);
   assert.match(list, /EmptyState description=\{copy\.list\.empty\}/);
   assert.doesNotMatch(list, /ReviewSampleNotice/);
-  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(feature, /createSiteReviewPort/);
   assert.doesNotMatch(feature, /createSnapshotReviewPort/);
   assert.doesNotMatch(readFileSync(join(reviewsRoot, "adapters/snapshot.ts"), "utf8"), /public-reviews\.json/);

@@ -108,7 +108,13 @@ function applyFallback(
   entry: TimelineEntry,
   fallback: GithubReviewFallback | undefined,
 ): TimelineEntry {
-  if (fallback === undefined || entry.type !== "review") return entry;
+  if (
+    fallback === undefined ||
+    entry.type !== "review" ||
+    entry.status !== "completed"
+  ) {
+    return entry;
+  }
   return {
     ...entry,
     verdict: entry.verdict ?? fallback.verdict,

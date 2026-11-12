@@ -1,8 +1,9 @@
 # Public run history data sources
 
 The public run history page (`/issues`) is built from two adapters
-behind `ReviewPort`, merged into the version-1 generated run index
-(`PublicIssueIndex`: `issues` + `pullRequests`):
+behind `ReviewPort`, merged at docs build into a version-1
+`PublicIssueIndex` (`kind: public-github-runs`; `issues` +
+`pullRequests`):
 
 1. **GitHub REST** for `zedtech-fr/zedkit` (public): issue number,
    title, state, and linked PRs (runs-API `issue`/`pr` union closing
@@ -15,12 +16,14 @@ behind `ReviewPort`, merged into the version-1 generated run index
    `https://dev.zedkit.app`. Production leaves it unset, so the section
    is empty (not an error).
 
-Build-time fetch fills the static export. A later client refresh is a
-separate batch. If GitHub or an attempted runs fetch fails after
-retries, the page renders the empty or error state — never sample rows.
+Build-time fetch fills the static export. There is no client refresh.
+If GitHub or an attempted runs fetch fails after retries, the page
+renders ErrorState with no Retry — recovery is the next site publish —
+never sample rows.
 
-`kind: public-stand-in` is not a production feed. Fixture JSON for the
-snapshot parser lives only under tests.
+`kind: public-github-runs` is the production merge. Fixture JSON for
+the snapshot parser (`public-stand-in`, `generated-run-index`) lives
+only under tests.
 
 The live-shaped parser below stays so tests (and a denser payload later)
 do not need a rewrite. It is **not** the public-page feed.
@@ -35,13 +38,28 @@ do not need a rewrite. It is **not** the public-page feed.
 ## Failure policy
 
 GitHub is always attempted. The runs API is attempted only when the
-base is a non-empty URL. Any attempted source that fails after
-`fetchJson` retries yields an empty index plus an error flag. Empty
+base is a non-empty HTTPS/HTTP URL. An invalid base is a load error
+(same as a failed fetch). Any attempted source that fails after
+`fetchJson` retries yields an empty index plus `hasLoadError`. Empty
 successful lists are the empty state (“No public runs yet”), not the
-error state.
+error state. Load-error HTML is `robots` noindex; `/issues` stays on
+the sitemap so the URL still resolves.
+
+The HTML is baked at build. ErrorState has no Retry. The visitor sees
+fresh data after the next publish.
 
 `liveUrl` is kept only when it matches `HOSTED_LIVE_HREF_PREFIX` plus a
 path-safe run id.
+
+## Caps (contract)
+
+Partial lists return as success. There is no truncated flag.
+
+| Source | Cap |
+| --- | --- |
+| GitHub issues / pulls | 10 pages × 100 |
+| GitHub review fallbacks | 40 PRs |
+| Hosted runs API | 10 pages × 200 (`limit`) |
 
 ## Version
 
@@ -54,12 +72,12 @@ Extra keys on the wrapper and on index rows are ignored
 (`requiredObject`) so a denser payload can sit in the same file.
 
 ```json
-{ "version": 1, "kind": "public-stand-in", "issues": [], "pullRequests": [] }
+{ "version": 1, "kind": "public-github-runs", "issues": [], "pullRequests": [] }
 ```
 
 An empty `issues` / `pullRequests` array is valid. Static export still
 needs a placeholder `generateStaticParams` entry; that is a site
-concern, not an exporter concern.
+concern, not a merge concern.
 
 ### Issue rows
 
@@ -112,9 +130,12 @@ Each `pullRequests[]` object:
 Unjoined review / improve / dry-run PRs stay in `pullRequests` with
 `issueNumber: null` and their runs. Never omit them.
 
-Join order for the exporter: implement metadata (`issue`, `pr_url`,
-`opened_pr_url`) first; then GitHub closing references / `Fixes #N`;
-remainder unlinked.
+Join order for the live merge: GitHub closing references (`Fixes #N`
+in the PR body) first; then runs-API `issue` / `pr`; remainder
+unlinked. GitHub review fallback (verdict + Confidence score) stamps
+only a **completed** `review` entry whose verdict is still null. A
+failed or running review keeps `verdict: null` so Failed / Running
+stays visible.
 
 ### Visibility (index)
 
@@ -143,12 +164,12 @@ or nested `run` / `items` / `decision` / `related` fail closed
 extra keys there are accepted (`parseVerdict`).
 
 ```json
-{ "version": 1, "kind": "public-live-runs", "reviews": [ /* hosted live rows */ ] }
+{ "version": 1, "kind": "public-live-runs", "reviews": [] }
 ```
 
-This shape stays parseable so a denser payload can land later. It is
-**not** the production feed for the public run history page. There is
-no `selected` field.
+`reviews` holds hosted live rows. This shape stays parseable so a
+denser payload can land later. It is **not** the production feed for
+the public run history page. There is no `selected` field.
 
 Optional join fields on `run` (safe integer or null / string or null;
 omit when unknown):

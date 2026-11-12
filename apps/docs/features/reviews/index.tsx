@@ -78,17 +78,11 @@ export async function issuesIndexRobots() {
 }
 
 export async function ReviewListFeature() {
+  const loadError = await reviewLoadErrorView();
+  if (loadError !== null) return loadError;
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
-  const loadError = await port.hasLoadError();
-  return (
-    <ReviewListView
-      issues={issues}
-      unlinked={unlinked}
-      copy={reviewsCopy}
-      loadError={loadError}
-    />
-  );
+  return <ReviewListView issues={issues} unlinked={unlinked} copy={reviewsCopy} />;
 }
 
 export async function ReviewIssueFeature({ n }: { n: string }) {

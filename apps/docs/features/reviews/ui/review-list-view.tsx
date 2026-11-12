@@ -24,7 +24,6 @@ import {
 } from "../model/review-routes";
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { ReviewLoadErrorView } from "./review-load-error-view";
 import { LatestStatusMark } from "./issue-status";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
@@ -151,17 +150,12 @@ export function ReviewListView({
   issues,
   unlinked,
   copy,
-  loadError = false,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
   copy: ReviewsCopy;
-  loadError?: boolean;
 }) {
   const unlinkedHeadingId = useId();
-  if (loadError) {
-    return <ReviewLoadErrorView copy={copy} />;
-  }
   return (
     <ReviewAppearanceFrame>
       <PageHeader title={copy.list.title} description={copy.list.description} />

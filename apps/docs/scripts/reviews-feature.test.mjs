@@ -13,6 +13,7 @@ import {
   serializeReviewAppearance,
 } from "../lib/review-appearance.ts";
 import { createFixtureReviewPort } from "../features/reviews/adapters/fixture.ts";
+import { createComposedReviewPort } from "../features/reviews/model/port-from-index.ts";
 import {
   createSnapshotReviewPort,
   listIssueSitemapPaths,
@@ -105,6 +106,22 @@ function parsedIndex(issues, pullRequests, extra) {
   const parsed = parsePublicReviewSnapshot(wrapper(issues, pullRequests, extra));
   assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
   return parsed.value;
+}
+
+function exportedAsync(source, name) {
+  const marker = `export async function ${name}`;
+  const start = source.indexOf(marker);
+  assert.notEqual(start, -1, name);
+  const next = source.indexOf("\nexport ", start + marker.length);
+  return source.slice(start, next === -1 ? source.length : next);
+}
+
+function pinsLoadErrorBeforeNotFound(body) {
+  const loadErrorAt = body.search(/reviewLoadErrorView\(\)/);
+  const notFoundAt = body.search(/\bnotFound\(\)/);
+  assert.notEqual(loadErrorAt, -1, "missing reviewLoadErrorView");
+  assert.notEqual(notFoundAt, -1, "missing notFound");
+  assert.ok(loadErrorAt < notFoundAt, "load error must run before notFound");
 }
 
 test("public-repo visibility: missing, null, and public are exportable; only private is dropped", () => {
@@ -536,6 +553,10 @@ test("latest status uses the last entry; a review verdict wins", () => {
     "failed",
   );
   assert.equal(
+    latestStatus([entry({ type: "review", status: "failed", verdict: null })]),
+    "failed",
+  );
+  assert.equal(
     latestStatus([entry({ type: "implement", status: "running", durationMs: null })]),
     "running",
   );
@@ -628,6 +649,17 @@ test("the fixture test double is not a load error", async () => {
   const sitemap = await listIssueSitemapPathsFrom(port);
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
+});
+
+test("a load-error index is noindex and still lists /issues on the sitemap", async () => {
+  const port = createComposedReviewPort(
+    { version: 1, kind: "public-github-runs", issues: [], pullRequests: [] },
+    [],
+    { loadError: true },
+  );
+  assert.equal(await port.hasLoadError(), true);
+  assert.deepEqual(await issueIndexRobotsFrom(port), { index: false });
+  assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
 });
 
 test("the fixture test double covers linked, unlinked, running, and failed rows", async () => {
@@ -840,6 +872,11 @@ test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API so
   assert.match(contract, /Allowlisted hosted-console href/);
   assert.match(contract, /GitHub REST/);
   assert.match(contract, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.match(contract, /kind: public-github-runs/);
+  assert.match(contract, /ErrorState with no Retry/);
+  assert.match(contract, /10 pages × 100/);
+  assert.match(contract, /Join order for the live merge/);
+  assert.doesNotMatch(contract, /later client refresh/);
   assert.doesNotMatch(contract, /ingest-public-reviews/);
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   assert.match(featureIndex, /createSiteReviewPort\(\)/);
@@ -1398,17 +1435,20 @@ test("not-found segments use per-tree copy through one shared body", () => {
   const run = readFileSync(join(issuesRunAppRoot, "[n]/runs/not-found.tsx"), "utf8");
   assert.match(run, /run\.missing/);
   const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
+  assert.match(unlinked, /ReviewMissingFeature/);
   assert.match(unlinked, /unlinked\.missing/);
   const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
+  assert.match(unlinkedRun, /ReviewMissingFeature/);
   assert.match(unlinkedRun, /run\.missing/);
   const reviews = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
+  assert.match(reviews, /ReviewMissingFeature/);
   assert.match(reviews, /metadata\.reviewsMissing/);
   assert.doesNotMatch(reviews, /metadata\.missing\.title/);
 });
 
 test("list view shows a static load error and does not ship a sample notice", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
-  assert.match(list, /ReviewLoadErrorView/);
+  assert.doesNotMatch(list, /ReviewLoadErrorView/);
   assert.doesNotMatch(list, /window\.location\.reload/);
   assert.doesNotMatch(list, /ReviewSampleNotice/);
   assert.doesNotMatch(list, /showSampleNotice/);
@@ -1421,7 +1461,21 @@ test("list view shows a static load error and does not ship a sample notice", ()
   assert.match(feature, /hasLoadError/);
   assert.match(feature, /ReviewLoadErrorView/);
   assert.match(feature, /reviewLoadErrorView/);
-  assert.match(feature, /ReviewIssueFeature[\s\S]*reviewLoadErrorView[\s\S]*notFound/);
+  const listFeature = exportedAsync(feature, "ReviewListFeature");
+  assert.match(listFeature, /reviewLoadErrorView\(\)/);
+  assert.doesNotMatch(listFeature, /loadError=\{/);
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewIssueFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewUnlinkedFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewIssueRunFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewUnlinkedRunFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "redirectReviewsPr"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "redirectReviewsPrRun"));
+  const missing = exportedAsync(feature, "ReviewMissingFeature");
+  const loadErrorAt = missing.search(/reviewLoadErrorView\(\)/);
+  const notFoundViewAt = missing.search(/ReviewNotFoundView/);
+  assert.notEqual(loadErrorAt, -1);
+  assert.notEqual(notFoundViewAt, -1);
+  assert.ok(loadErrorAt < notFoundViewAt);
   assert.doesNotMatch(feature, /window\.location\.reload/);
   assert.doesNotMatch(feature, /isPublicStandIn/);
   assert.equal(existsSync(join(reviewsRoot, "ui/review-sample-notice.tsx")), false);

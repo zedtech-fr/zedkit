@@ -130,7 +130,7 @@ export async function listIssueSitemapPathsFrom(port: ReviewPort) {
 export async function issueIndexRobotsFrom(
   port: ReviewPort,
 ): Promise<{ index: false } | undefined> {
-  void port;
+  if (await port.hasLoadError()) return { index: false };
   return undefined;
 }
 
