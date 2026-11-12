@@ -45,6 +45,7 @@ html.dark[data-identity] #home-page [data-slot="tabs-trigger"][data-state="activ
 html[data-docs-shell][data-identity] {
   --zk-site-page: 0 0% 100%;
   --zk-site-band: 0 0% 98%;
+  --zk-site-hairline: 240 5.9% 90%;
   --zk-site-action: 240 5.9% 10%;
   --zk-site-action-foreground: 0 0% 98%;
   --zk-site-action-hover: 240 5% 26%;
