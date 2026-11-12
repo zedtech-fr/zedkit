@@ -1,32 +1,35 @@
-import { Section, Stack, Text } from "@zedtech/zedkit-ui";
+import { Section, Stack } from "@zedtech/zedkit-ui";
 import { HomeIdentityLooks } from "@/ui/home/home-identity-looks";
 import { HomeYoursScene } from "@/ui/home/home-yours-scene";
-import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 import {
   HOME_MARKETING_ROOT_PROPS,
-  HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
   HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
 
-/** Comparison: a different product in each look, right after the proof and before the visitor decides how to adopt. */
+/**
+ * Comparison: a different product in each look, after paste and before limits.
+ *
+ * Compose-UI: two columns from lg (specimen | title + look-name pills +
+ * data-identity caption), because: client = hurried integrator; one focal
+ * specimen, controls recede. Three live product screens, not one settings
+ * card, because a look is type+shape+density+color together. Copy+pills
+ * first on a phone, because the first control must stay reachable. Glass
+ * stays on the page and hero, not a fourth pill.
+ */
 export function HomeIdentitiesSection() {
   return (
     <Section
       bleed
-      tone="muted"
       spacing="md"
       containerWidth="wide"
       id="identities"
-      title={homeIdentityLooksCopy.title}
+      aria-labelledby="identities-heading"
       snap="none"
       {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack id="use-cases" gap={HOME_SECTION_CONTENT_GAP} data-scroll-anchor="">
-        <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
-          {homeIdentityLooksCopy.body}
-        </Text>
         <HomeIdentityLooks />
         <HomeYoursScene />
       </Stack>

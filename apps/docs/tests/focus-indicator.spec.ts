@@ -128,7 +128,7 @@ test.describe("controls whose own styles used to hide the ring", () => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
     await openHeroPage(page, "Apps");
-    const tab = page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Dev console" });
+    const tab = page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Mist", exact: true });
     await tab.scrollIntoViewIfNeeded();
     await focusWithKeyboard(tab);
     await assertFocusVisibleRing(tab);
@@ -147,7 +147,7 @@ test.describe("controls whose own styles used to hide the ring", () => {
   // Each one is a control inside a container that scrolls or clips: the ring must be drawn, and drawn whole.
   const UNCLIPPED: { name: string; path: string; viewport?: number; find: (page: Page) => Locator }[] = [
     { name: "hero page entry", path: "/", find: (page) => page.locator("#demo").getByRole("navigation", { name: "Pages of the example app" }).getByRole("button", { name: "Calendar", exact: true }) },
-    { name: "identity example tab", path: "/", find: (page) => page.locator("[data-home-identity-looks]").getByRole("tab", { name: /Dev console/ }) },
+    { name: "identity example tab", path: "/", find: (page) => page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Mist", exact: true }) },
     { name: "docs Preview tab", path: "/docs/ui/trigger-actions-with-buttons", find: (page) => page.getByRole("tab", { name: "Preview" }).first() },
     { name: "editor Look select", path: "/features/identity-editor", find: (page) => page.getByLabel("Look", { exact: true }) },
     { name: "editor Preview dark", path: "/features/identity-editor", find: (page) => page.getByRole("button", { name: "Preview dark" }) },

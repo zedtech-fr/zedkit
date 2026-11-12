@@ -4,10 +4,6 @@ export const IDENTITY_IDS = ["mist", "press", "maison"] as const;
 
 export type IdentityId = (typeof IDENTITY_IDS)[number];
 
-export const IDENTITY_PALETTE_TOKENS = ["background", "primary", "accent", "card", "border"] as const;
-
-export type IdentityPaletteToken = (typeof IDENTITY_PALETTE_TOKENS)[number];
-
 export type IdentityFacts = {
   id: IdentityId;
   label: string;

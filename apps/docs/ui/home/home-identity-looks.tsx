@@ -3,15 +3,28 @@
 import { HomeLink } from "@/ui/home/home-link";
 import { useState, useSyncExternalStore, type ComponentType } from "react";
 import { useTheme } from "next-themes";
-import { Button, Stack, TabsContent, Text, ThemeScope } from "@zedtech/zedkit-ui";
+import {
+  Button,
+  Heading,
+  Stack,
+  Tabs,
+  TabsContent,
+  Text,
+  ThemeScope,
+  signatureMotionClass,
+} from "@zedtech/zedkit-ui";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
-import { HOME_IDENTITY_FACTS, type IdentityId } from "@/ui/home/home-identity-facts";
+import { HOME_IDENTITY_FACTS, isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
 import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
 import { HomeIdentityExampleMaison } from "@/ui/home/home-identity-example-maison";
 import { HomeIdentityExampleMist } from "@/ui/home/home-identity-example-mist";
 import { HomeIdentityExamplePress } from "@/ui/home/home-identity-example-press";
 import { HomeIdentityLooksTabs } from "@/ui/home/home-identity-looks-tabs";
-import { HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
+import {
+  HOME_LOOKS_GRID,
+  HOME_METADATA_TEXT_CLASS,
+  HOME_PERSUASION_TEXT_CLASS,
+} from "@/ui/home/home-rhythm";
 
 const noop = () => () => {};
 
@@ -33,28 +46,52 @@ export function HomeIdentityLooks() {
 
   return (
     <Stack gap="md" className="content-shrink" data-home-identity-looks="" data-scroll-anchor="">
-      <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
-        {homeIdentityLooksCopy.liveNote}
-      </Text>
-      <HomeIdentityLooksTabs value={identity} mode={mode} onValueChange={setIdentity}>
-        <TabsContent value={identity} className="trim-top">
-          <div className="content-shrink rounded-xl border border-border" data-identity-frame-stage="">
+      <Tabs
+        value={identity}
+        onValueChange={(next: string) => {
+          if (isIdentityId(next)) setIdentity(next);
+        }}
+        className={HOME_LOOKS_GRID}
+      >
+        <Stack gap="md" className="content-shrink lg:col-start-next">
+          <Stack gap="tight">
+            <Heading id="identities-heading" level={2} typeRole="title">
+              {homeIdentityLooksCopy.title}
+            </Heading>
+            <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+              {homeIdentityLooksCopy.body}
+            </Text>
+          </Stack>
+          <HomeIdentityLooksTabs />
+          <Stack gap="tight">
+            <Text
+              variant="muted"
+              typeRole="caption"
+              className={`font-mono ${HOME_METADATA_TEXT_CLASS}`}
+              data-identity-caption=""
+            >
+              {`<html data-identity="${identity}">`}
+            </Text>
+            <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
+              {`${facts.label}: ${facts.type}; ${facts.shape}.`}
+            </Text>
+          </Stack>
+        </Stack>
+        <TabsContent value={identity} className="trim-top content-shrink lg:col-start-first lg:row-start-first">
+          <Stack className="content-shrink rounded-xl border border-border" data-identity-frame-stage="">
             <ThemeScope
               identity={identity}
               mode={mode}
               data-home-identity-stage=""
               className="content-shrink rounded-xl bg-background surface-pad-sm sm:surface-pad-md"
             >
-              <div data-identity-example="" key={identity}>
+              <Stack data-identity-example="" key={identity} className={signatureMotionClass.settle}>
                 <Example />
-              </div>
+              </Stack>
             </ThemeScope>
-          </div>
+          </Stack>
         </TabsContent>
-      </HomeIdentityLooksTabs>
-      <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS} data-identity-caption="">
-        {homeIdentityLooksCopy.caption(facts.label, facts.type, facts.shape)}
-      </Text>
+      </Tabs>
       <HomeIdentityLooksLinks />
     </Stack>
   );
