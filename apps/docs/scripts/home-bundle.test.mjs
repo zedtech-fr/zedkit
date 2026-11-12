@@ -38,16 +38,15 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
   const firstScreen = hero + lead + illustration;
-  // #118 supersedes #111/#114: kit tabs and the third title clause are the first screen, not one Setup row.
+  // #258: one map prompt, no kit tablist. #118 still owns the third title clause vs one Setup row.
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
   assert.doesNotMatch(hero, /HeroShapes|data-hero-shapes|publicIssueHref|issuesHref/);
   assert.doesNotMatch(firstScreen, /data-hero-shapes/);
-  assert.match(lead, /\bTabs\b/);
-  assert.match(lead, /TabsList/);
-  assert.match(lead, /TabsTrigger/);
-  assert.match(lead, /defaultValue="combined"|value=\{kit\}/);
+  assert.doesNotMatch(lead, /\bTabs\b|TabsList|TabsTrigger|TabsContent|useState|HeroKitId|isHeroKit|heroKits/);
+  assert.match(lead, /data-home-hero=/);
+  assert.match(lead, /<HomeHeroIllustration\s*\/>/);
   assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
   assert.match(
     copy,
@@ -55,7 +54,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   );
   assert.match(copy, /titleClause: "From the agent you already use\."/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
-  assert.match(copy, /combined: "AI \+ UI"/);
+  assert.doesNotMatch(copy, /heroKits:|promptCaptionSingle:|HeroKitId|dueDatesTitle:|aiPlan:|settingsTitle:/);
   assert.match(copy, /emptyStateTitle: "Add an empty state to the tasks list"/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
@@ -66,12 +65,14 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
   assert.match(lead, /homeCopy\.hero\.titleClause/);
+  assert.doesNotMatch(lead, /^["']use client["']/m);
   assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
-  assert.match(lead, /AI_SETUP_MINI_PROMPT/);
-  assert.match(lead, /UI_SETUP_MINI_PROMPT/);
+  assert.doesNotMatch(lead, /AI_SETUP_MINI_PROMPT|UI_SETUP_MINI_PROMPT/);
   assert.match(lead, /HomeCopyCommandField/);
+  assert.equal((lead.match(/<HomeCopyCommandField/g) ?? []).length, 1);
   assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
+  assert.equal((lead.match(/data-home-hero-prompt/g) ?? []).length, 1);
   assert.doesNotMatch(lead, /SetupEntryPrompt/);
   assert.doesNotMatch(lead, /\/issues/);
   assert.doesNotMatch(firstScreen, /data-site-action/);
@@ -82,12 +83,17 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(copy, /seeARealIssue/);
   assert.match(illustration, /data-hero-run-blob/);
   assert.match(illustration, /data-hero-run-drift/);
+  assert.doesNotMatch(illustration, /SettingsCard|AI_STEPS|HeroKitId|kit ===/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
-    /promptCaption: "Name the kits you want, Nest included\. The map knows the order\."/,
+    /promptCaption: "Name the kits you want\. The agent installs only those, in map\.md order\."/,
   );
   assert.match(lead, /aria-label=\{homeCopy\.hero\.promptAriaLabel\}/);
+  assert.match(lead, /aria-describedby="home-hero-prompt-caption"/);
+  assert.match(lead, /id="home-hero-prompt-caption"/);
+  assert.match(lead, /homeCopy\.hero\.promptCaption/);
+  assert.doesNotMatch(lead, /promptCaptionSingle/);
   assert.doesNotMatch(copy, /facts:/);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole|ThemeScope/);
   assert.match(illustration, /data-hero-run-stage/);
