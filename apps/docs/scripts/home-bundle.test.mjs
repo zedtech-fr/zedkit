@@ -174,12 +174,22 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.doesNotMatch(tokens, /#home-page #get-started\[data-slot="section"\]/);
   assert.match(tokens, /\[data-home-manifesto-panel\]/);
   assert.match(paste, /id="paste"/);
+  assert.match(paste, /data-home-paste=/);
   assert.match(paste, /id="ai-setup"/);
   assert.match(paste, /id="get-started"/);
   assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
   assert.match(paste, /homePasteCopy\.fullStepsHref/);
   assert.match(paste, /homePasteCopy\.timeline/);
+  assert.match(paste, /homePasteCopy\.lands/);
+  assert.match(paste, /data-home-paste-lands/);
+  assert.match(paste, /HOME_PASTE_LANDS_GRID/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
+  assert.match(
+    rhythm,
+    /export const HOME_PASTE_LANDS_GRID =\s*"trim-margin grid content-shrink list-none flush lg:grid-pair"/,
+  );
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\]/);
+  assert.match(tokens, /background-color:\s*hsl\(var\(--zk-site-action\)\)/);
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
   assert.match(
     pasteCopy,
@@ -189,7 +199,17 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(pasteCopy, /"15 to 45 min"/);
   assert.match(pasteCopy, /"Same run"/);
   assert.match(pasteCopy, /"Any time after"/);
+  assert.match(pasteCopy, /AGENTS\.md/);
+  assert.match(pasteCopy, /\.agents\/product\.md/);
+  assert.match(pasteCopy, /\.agents\/domain\//);
+  assert.match(pasteCopy, /\.agents\/skills\//);
+  assert.match(pasteCopy, /package\.json/);
+  assert.match(pasteCopy, /globals\.css/);
+  assert.match(pasteCopy, /layout\.tsx/);
+  assert.match(pasteCopy, /data-identity="glass"/);
+  assert.match(pasteCopy, /\.agents\/design\.md/);
   assert.doesNotMatch(pasteCopy, /combined prompt|copy field|SecretField/);
+  assert.doesNotMatch(pasteCopy, /30 skills|13 agents|68 components|6 looks|tasks\.md/);
   assert.match(pasteCopy, /\/docs\/getting-started#install-or-copy/);
   assert.match(looksCopy, /title: "Every screen, the same product\."/);
   assert.match(looksCopy, /A look sets type, shape, density and color together/);

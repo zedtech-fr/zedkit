@@ -32,6 +32,8 @@ export type HomeBelowHeroProps = {
  *   lg two-column same-idea grid, because: mobile stacks by priority.
  *   hash aliases stay inside #paste, because: README and hero CTAs still
  *   land there.
+ *   paste is a dark zinc band with a file listing, because: neighbours must
+ *   differ in shape and the mockup's paste surface was not a #73 drop.
  *   limits then manifesto then closing before families, because: the visitor
  *   should read what it does not do and the lock-in quote before the rest of
  *   the kit.

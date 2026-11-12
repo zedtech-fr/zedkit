@@ -19,4 +19,26 @@ export const homePasteCopy = {
     },
     { label: "Any time after", body: "Run the prompt again to add a kit. It is safe to repeat." },
   ],
+  lands: {
+    ai: {
+      kit: "AI",
+      when: "after lunch",
+      files: [
+        { path: "AGENTS.md" },
+        { path: ".agents/product.md", note: "what the product does" },
+        { path: ".agents/domain/", note: "its rules" },
+        { path: ".agents/skills/" },
+      ],
+    },
+    ui: {
+      kit: "UI",
+      when: "same run",
+      files: [
+        { path: "package.json", note: "@zedtech/zedkit-ui" },
+        { path: "globals.css", note: "kit styles" },
+        { path: "layout.tsx", note: 'data-identity="glass"' },
+        { path: ".agents/design.md", note: "which components to use" },
+      ],
+    },
+  },
 } as const;
