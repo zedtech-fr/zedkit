@@ -1,11 +1,5 @@
 import assert from "node:assert/strict";
-import {
-  existsSync,
-  mkdtempSync,
-  readFileSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -25,10 +19,7 @@ import {
   listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
-import {
-  latestEntry,
-  latestStatus,
-} from "../features/reviews/model/latest-status.ts";
+import { latestEntry, latestStatus } from "../features/reviews/model/latest-status.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
@@ -107,19 +98,11 @@ function pr(overrides = {}) {
 }
 
 function wrapper(issues, pullRequests = [pr()], extra = {}) {
-  return {
-    version: 1,
-    kind: "public-stand-in",
-    issues,
-    pullRequests,
-    ...extra,
-  };
+  return { version: 1, kind: "public-stand-in", issues, pullRequests, ...extra };
 }
 
 function parsedIndex(issues, pullRequests, extra) {
-  const parsed = parsePublicReviewSnapshot(
-    wrapper(issues, pullRequests, extra),
-  );
+  const parsed = parsePublicReviewSnapshot(wrapper(issues, pullRequests, extra));
   assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
   return parsed.value;
 }
@@ -255,12 +238,7 @@ test("sanitizeLiveUrl drops another host on the same site family", () => {
 
 test("sanitizeLiveUrl drops a preview host", () => {
   assert.equal(
-    sanitizeLiveUrl(
-      hostedLiveHref().replace(
-        "https://dev.zedkit.app",
-        "https://epic-73.dev.zedkit.app",
-      ),
-    ),
+    sanitizeLiveUrl(hostedLiveHref().replace("https://dev.zedkit.app", "https://epic-73.dev.zedkit.app")),
     null,
   );
 });
@@ -270,10 +248,7 @@ test("sanitizeLiveUrl drops another path on the allowlisted host", () => {
 });
 
 test("sanitizeLiveUrl drops http", () => {
-  assert.equal(
-    sanitizeLiveUrl(hostedLiveHref().replace("https:", "http:")),
-    null,
-  );
+  assert.equal(sanitizeLiveUrl(hostedLiveHref().replace("https:", "http:")), null);
 });
 
 test("sanitizeLiveUrl drops a query", () => {
@@ -292,12 +267,7 @@ test("sanitizeLiveUrl drops userinfo", () => {
 });
 
 test("sanitizeLiveUrl drops a non-empty port", () => {
-  assert.equal(
-    sanitizeLiveUrl(
-      hostedLiveHref().replace("dev.zedkit.app", "dev.zedkit.app:8443"),
-    ),
-    null,
-  );
+  assert.equal(sanitizeLiveUrl(hostedLiveHref().replace("dev.zedkit.app", "dev.zedkit.app:8443")), null);
 });
 
 test("sanitizeLiveUrl drops empty, null, and blank", () => {
@@ -369,9 +339,7 @@ test("run ids that are not a safe path segment fail closed", () => {
   );
   assert.equal(traversal.ok, false);
   const live = parsePublicReviewSnapshot(
-    liveWrapper([
-      liveSample({ run: { ...liveSample().run, run_id: "../../x" } }),
-    ]),
+    liveWrapper([liveSample({ run: { ...liveSample().run, run_id: "../../x" } })]),
   );
   assert.equal(live.ok, false);
 });
@@ -384,17 +352,13 @@ test("an empty snapshot is valid", () => {
 });
 
 test("an unknown snapshot kind is accepted when version is 1", () => {
-  const parsed = parsePublicReviewSnapshot(
-    wrapper([issue()], [pr()], { kind: "redacted-export" }),
-  );
+  const parsed = parsePublicReviewSnapshot(wrapper([issue()], [pr()], { kind: "redacted-export" }));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.kind, "redacted-export");
 });
 
 test("version 2 snapshots are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(
-    wrapper([issue()], [pr()], { version: 2 }),
-  );
+  const parsed = parsePublicReviewSnapshot(wrapper([issue()], [pr()], { version: 2 }));
   assert.equal(parsed.ok, false);
 });
 
@@ -426,18 +390,13 @@ test("a snapshot with a missing required field is rejected", () => {
 });
 
 test("wrong types in a snapshot are rejected", () => {
-  assert.equal(
-    parsePublicReviewSnapshot(wrapper([issue({ number: "108" })])).ok,
-    false,
-  );
+  assert.equal(parsePublicReviewSnapshot(wrapper([issue({ number: "108" })])).ok, false);
   assert.equal(parsePublicReviewSnapshot(null).ok, false);
   assert.equal(parsePublicReviewSnapshot([]).ok, false);
 });
 
 test("private visibility is kept by parse so the public gate can drop it", () => {
-  const parsed = parsePublicReviewSnapshot(
-    wrapper([issue({ number: 99, visibility: "private" })]),
-  );
+  const parsed = parsePublicReviewSnapshot(wrapper([issue({ number: 99, visibility: "private" })]));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.issues[0].visibility, "private");
 });
@@ -446,11 +405,7 @@ test("plan and implement phases share a runId and stay two timeline entries", ()
   const parsed = parsedIndex([
     issue({
       entries: [
-        entry({
-          id: "plan",
-          type: "plan",
-          startedAt: "2026-11-10T16:00:00.000Z",
-        }),
+        entry({ id: "plan", type: "plan", startedAt: "2026-11-10T16:00:00.000Z" }),
         entry({
           id: "implement",
           type: "implement",
@@ -460,10 +415,7 @@ test("plan and implement phases share a runId and stay two timeline entries", ()
     }),
   ]);
   assert.equal(parsed.issues[0].entries.length, 2);
-  assert.equal(
-    parsed.issues[0].entries[0].runId,
-    parsed.issues[0].entries[1].runId,
-  );
+  assert.equal(parsed.issues[0].entries[0].runId, parsed.issues[0].entries[1].runId);
   assert.deepEqual(
     parsed.issues[0].entries.map((row) => row.type),
     ["plan", "implement"],
@@ -508,9 +460,7 @@ test("index models on implement, review, and improve survive parse and the snaps
   const port = createSnapshotReviewPort(path);
   const listed = await port.listIssues();
   assert.equal(listed.length, 1);
-  const byType = Object.fromEntries(
-    listed[0].entries.map((row) => [row.type, [...row.models]]),
-  );
+  const byType = Object.fromEntries(listed[0].entries.map((row) => [row.type, [...row.models]]));
   assert.deepEqual(byType.plan, ["cursor-grok-4.6-high"]);
   assert.deepEqual(byType.implement, ["cursor-grok-4.6-high"]);
   assert.deepEqual(byType.review, ["lens-model", "second-pass-model"]);
@@ -519,9 +469,7 @@ test("index models on implement, review, and improve survive parse and the snaps
     "lens-model",
     "second-pass-model",
   ]);
-  assert.deepEqual((await port.getRun(108, "run-108-impl"))?.models, [
-    "cursor-grok-4.6-high",
-  ]);
+  assert.deepEqual((await port.getRun(108, "run-108-impl"))?.models, ["cursor-grok-4.6-high"]);
 });
 
 test("unlinked pull request without entries fails closed", () => {
@@ -543,18 +491,14 @@ test("linked PR entries stay on the PR row and are not merged into the issue", a
 });
 
 test("empty model strings are skipped", () => {
-  const parsed = parsedIndex([
-    issue({ entries: [entry({ models: ["", "kept-model", ""] })] }),
-  ]);
+  const parsed = parsedIndex([issue({ entries: [entry({ models: ["", "kept-model", ""] })] })]);
   assert.deepEqual(parsed.issues[0].entries[0].models, ["kept-model"]);
 });
 
 test("dry-run type is kept on the generated run index", () => {
   const parsed = parsedIndex([
     issue({
-      entries: [
-        entry({ id: "dry", runId: "run-dry", type: "dry-run", liveUrl: null }),
-      ],
+      entries: [entry({ id: "dry", runId: "run-dry", type: "dry-run", liveUrl: null })],
     }),
   ]);
   assert.equal(parsed.issues[0].entries[0].type, "dry-run");
@@ -562,28 +506,21 @@ test("dry-run type is kept on the generated run index", () => {
 
 test("durationMs of 0 is kept", () => {
   assert.equal(
-    parsedIndex([issue({ entries: [entry({ durationMs: 0 })] })]).issues[0]
-      .entries[0].durationMs,
+    parsedIndex([issue({ entries: [entry({ durationMs: 0 })] })]).issues[0].entries[0].durationMs,
     0,
   );
 });
 
 test("negative durationMs fails closed", () => {
   assert.equal(
-    parsePublicReviewSnapshot(
-      wrapper([issue({ entries: [entry({ durationMs: -1 })] })]),
-    ).ok,
+    parsePublicReviewSnapshot(wrapper([issue({ entries: [entry({ durationMs: -1 })] })])).ok,
     false,
   );
 });
 
 test("latest status uses the last entry; a review verdict wins", () => {
   const reviewLast = [
-    entry({
-      type: "implement",
-      status: "completed",
-      startedAt: "2026-11-10T16:00:00.000Z",
-    }),
+    entry({ type: "implement", status: "completed", startedAt: "2026-11-10T16:00:00.000Z" }),
     entry({
       id: "rev",
       runId: "run-rev",
@@ -595,15 +532,11 @@ test("latest status uses the last entry; a review verdict wins", () => {
   ];
   assert.equal(latestStatus(reviewLast), "approve");
   assert.equal(
-    latestStatus([
-      entry({ type: "implement", status: "failed", verdict: null }),
-    ]),
+    latestStatus([entry({ type: "implement", status: "failed", verdict: null })]),
     "failed",
   );
   assert.equal(
-    latestStatus([
-      entry({ type: "implement", status: "running", durationMs: null }),
-    ]),
+    latestStatus([entry({ type: "implement", status: "running", durationMs: null })]),
     "running",
   );
   assert.equal(latestStatus([]), null);
@@ -628,11 +561,7 @@ test("latestEntry returns the later startedAt runId when they differ", () => {
 
 test("latestEntry keeps the first entry when startedAt ties", () => {
   const last = latestEntry([
-    entry({
-      id: "first",
-      runId: "run-first",
-      startedAt: "2026-11-10T16:00:00.000Z",
-    }),
+    entry({ id: "first", runId: "run-first", startedAt: "2026-11-10T16:00:00.000Z" }),
     entry({
       id: "second",
       runId: "run-second",
@@ -658,14 +587,8 @@ test("latestEntry uses one runId when plan and implement share it", () => {
 });
 
 test("issue and unlinked run paths format /issues/:n/runs/:id", () => {
-  assert.equal(
-    issueRunPath(108, "run-108-impl"),
-    "/issues/108/runs/run-108-impl",
-  );
-  assert.equal(
-    unlinkedRunPath(54, "run-54-review"),
-    "/issues/pr/54/runs/run-54-review",
-  );
+  assert.equal(issueRunPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(unlinkedRunPath(54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
   assert.equal(issuePath(108), "/issues/108");
   assert.equal(unlinkedPrPath(54), "/issues/pr/54");
 });
@@ -681,12 +604,7 @@ test("the fixture port lists only exportable copies and isolates mutations", asy
   const port = createFixtureReviewPort(
     wrapper([
       issue(),
-      issue({
-        number: 99,
-        visibility: "private",
-        title: "hidden",
-        pullRequests: [],
-      }),
+      issue({ number: 99, visibility: "private", title: "hidden", pullRequests: [] }),
     ]),
   );
   const listed = await port.listIssues();
@@ -732,12 +650,7 @@ test("the fixture test double covers linked, unlinked, running, and failed rows"
 test("the snapshot port lists only exportable copies and isolates mutations", async () => {
   const path = writeSnapshot([
     issue(),
-    issue({
-      number: 99,
-      visibility: "private",
-      title: "hidden",
-      pullRequests: [],
-    }),
+    issue({ number: 99, visibility: "private", title: "hidden", pullRequests: [] }),
   ]);
   const port = createSnapshotReviewPort(path);
   const listed = await port.listIssues();
@@ -759,17 +672,11 @@ test("an empty snapshot lists nothing and keeps static placeholders", async () =
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.listIssues(), []);
   assert.deepEqual(await listIssueParamsFrom(port), [{ n: "0" }]);
-  assert.deepEqual(await listIssueRunParamsFrom(port), [
-    { n: "0", id: "_placeholder" },
-  ]);
+  assert.deepEqual(await listIssueRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
-  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [
-    { n: "0", id: "_placeholder" },
-  ]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
-  assert.deepEqual(await listReviewRunParamsFrom(port), [
-    { n: "0", id: "_placeholder" },
-  ]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
 });
 
 test("an empty snapshot still lists /issues on the sitemap and stays indexable", async () => {
@@ -791,9 +698,7 @@ test("an empty snapshot still lists /issues on the sitemap and stays indexable",
 test("an all-linked snapshot still emits unlinked static placeholders", async () => {
   const port = createSnapshotReviewPort(writeSnapshot([issue()], [pr()]));
   assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
-  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [
-    { n: "0", id: "_placeholder" },
-  ]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "133" }]);
 });
 
@@ -813,11 +718,7 @@ test("same runId from plan and implement opens one run record", async () => {
     writeSnapshot([
       issue({
         entries: [
-          entry({
-            id: "plan",
-            type: "plan",
-            startedAt: "2026-11-10T16:00:00.000Z",
-          }),
+          entry({ id: "plan", type: "plan", startedAt: "2026-11-10T16:00:00.000Z" }),
           entry({
             id: "implement",
             type: "implement",
@@ -862,43 +763,22 @@ test("redirect map: linked PR goes to the issue; unlinked PR uses /issues/pr/:n"
   );
   assert.equal(redirectPathForPr(108, 133), "/issues/108");
   assert.equal(redirectPathForPr(null, 54), "/issues/pr/54");
-  assert.equal(
-    redirectPathForPrRun(108, 133, "run-108-impl"),
-    "/issues/108/runs/run-108-impl",
-  );
-  assert.equal(
-    redirectPathForPrRun(null, 54, "run-54-review"),
-    "/issues/pr/54/runs/run-54-review",
-  );
+  assert.equal(redirectPathForPrRun(108, 133, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(redirectPathForPrRun(null, 54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
   assert.equal(linkedPrFallbackPath(108), "/issues/108");
   assert.equal(linkedPrFallbackPath(null), null);
-  assert.equal(
-    linkedPrRunFallbackPath(108, "run-108-impl"),
-    "/issues/108/runs/run-108-impl",
-  );
+  assert.equal(linkedPrRunFallbackPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
   assert.equal(linkedPrRunFallbackPath(null, "run-108-impl"), null);
-  assert.deepEqual(await listReviewPrParamsFrom(port), [
-    { n: "133" },
-    { n: "54" },
-  ]);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "133" }, { n: "54" }]);
   assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "54" }]);
   const redirects = await listReviewRedirectsFrom(port);
   assert.deepEqual(redirects[0], { from: "/reviews", to: "/issues" });
-  assert.ok(
-    redirects.some(
-      (row) => row.from === "/reviews/pr/133" && row.to === "/issues/108",
-    ),
-  );
-  assert.ok(
-    redirects.some(
-      (row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54",
-    ),
-  );
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
   assert.ok(
     redirects.some(
       (row) =>
-        row.from === "/reviews/pr/133/runs/run-108-impl" &&
-        row.to === "/issues/108/runs/run-108-impl",
+        row.from === "/reviews/pr/133/runs/run-108-impl" && row.to === "/issues/108/runs/run-108-impl",
     ),
   );
   assert.equal(await port.resolvePr(404), null);
@@ -909,9 +789,7 @@ test("retired review PR numbers keep redirect stubs to /issues", async () => {
   const redirects = await listReviewRedirectsFrom(port);
   for (const n of RETIRED_REVIEW_PR_NUMBERS) {
     assert.ok(
-      redirects.some(
-        (row) => row.from === `/reviews/pr/${n}` && row.to === "/issues",
-      ),
+      redirects.some((row) => row.from === `/reviews/pr/${n}` && row.to === "/issues"),
       `missing stub for /reviews/pr/${n}`,
     );
   }
@@ -926,9 +804,7 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
         number: 54,
         issueNumber: null,
         runIds: ["run-54-review"],
-        entries: [
-          entry({ id: "54-review", runId: "run-54-review", type: "review" }),
-        ],
+        entries: [entry({ id: "54-review", runId: "run-54-review", type: "review" })],
       },
     ],
     { kind: "generated-run-index" },
@@ -969,30 +845,23 @@ test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API so
   assert.match(featureIndex, /createSiteReviewPort\(\)/);
   assert.doesNotMatch(featureIndex, /createSnapshotReviewPort/);
   assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
-  assert.equal(
-    existsSync(join(reviewsRoot, "adapters/public-reviews.json")),
-    false,
-  );
+  assert.equal(existsSync(join(reviewsRoot, "adapters/public-reviews.json")), false);
 });
 
 const INVENTORY_ISSUES = [
-  66, 69, 70, 71, 73, 81, 82, 83, 87, 88, 89, 90, 91, 92, 93, 95, 96, 104, 105,
-  106, 107, 108, 109, 110, 137,
+  66, 69, 70, 71, 73, 81, 82, 83, 87, 88, 89, 90, 91, 92, 93, 95, 96, 104, 105, 106, 107, 108, 109, 110, 137,
 ];
 const INVENTORY_ISSUE_LIST_ORDER = [
-  137, 110, 109, 108, 107, 106, 105, 104, 96, 95, 93, 92, 91, 90, 89, 88, 87,
-  83, 82, 81, 73, 71, 70, 69, 66,
+  137, 110, 109, 108, 107, 106, 105, 104, 96, 95, 93, 92, 91, 90, 89, 88, 87, 83, 82, 81, 73, 71, 70, 69, 66,
 ];
 const INVENTORY_UNLINKED_PRS = [45, 46, 47, 50, 51, 53, 54, 55, 64];
 const INVENTORY_LINKED_PRS = [
-  266, 267, 269, 270, 271, 273, 281, 282, 283, 287, 288, 289, 290, 291, 292,
-  295, 296, 304, 305, 306, 307, 308, 309,
+  266, 267, 269, 270, 271, 273, 281, 282, 283, 287, 288, 289, 290, 291, 292, 295, 296, 304, 305, 306, 307, 308,
+  309,
 ];
 
 function inventoryIso(issueNumber, extraSeconds = 0) {
-  return new Date(
-    Date.UTC(2026, 10, 1, 12, 0, issueNumber * 10 + extraSeconds),
-  ).toISOString();
+  return new Date(Date.UTC(2026, 10, 1, 12, 0, issueNumber * 10 + extraSeconds)).toISOString();
 }
 
 function inventoryLinkedPrs(n) {
@@ -1015,8 +884,7 @@ function inventoryImplEntries(n) {
     models,
     liveUrl,
   });
-  const implementStatus =
-    n === 93 ? "failed" : n === 110 || n === 137 ? "running" : "completed";
+  const implementStatus = n === 93 ? "failed" : n === 110 || n === 137 ? "running" : "completed";
   const implement = entry({
     id: `${n}-implement`,
     runId,
@@ -1075,8 +943,7 @@ function inventoryImplEntries(n) {
 }
 
 function inventoryUnlinkedPr(n) {
-  const type =
-    n === 45 || n === 46 ? "dry-run" : n === 47 ? "improve" : "review";
+  const type = n === 45 || n === 46 ? "dry-run" : n === 47 ? "improve" : "review";
   const runId = `run-${n}-${type === "dry-run" ? "dry" : type}`;
   return {
     number: n,
@@ -1148,8 +1015,7 @@ function inventoryIndex() {
       pullRequests.push(inventoryLinkedPrRow(prNumber, n));
     }
   }
-  for (const n of INVENTORY_UNLINKED_PRS)
-    pullRequests.push(inventoryUnlinkedPr(n));
+  for (const n of INVENTORY_UNLINKED_PRS) pullRequests.push(inventoryUnlinkedPr(n));
   pullRequests.push(
     { number: 299, issueNumber: 99, runIds: ["run-99-impl"] },
     {
@@ -1157,9 +1023,7 @@ function inventoryIndex() {
       issueNumber: null,
       runIds: ["run-999-review"],
       visibility: "private",
-      entries: [
-        entry({ id: "999-review", runId: "run-999-review", type: "review" }),
-      ],
+      entries: [entry({ id: "999-review", runId: "run-999-review", type: "review" })],
     },
   );
   return wrapper([...issues].reverse(), pullRequests, {
@@ -1186,31 +1050,13 @@ test("inventory-scale generated run index lists every exportable issue and drops
     INVENTORY_ISSUE_LIST_ORDER,
   );
   assert.equal(listed.length, 25);
-  assert.equal(
-    listed.find((row) => row.number === 69)?.title,
-    "Issue 69 exportable run",
-  );
+  assert.equal(listed.find((row) => row.number === 69)?.title, "Issue 69 exportable run");
   assert.equal(listed.find((row) => row.number === 70)?.state, "closed");
-  assert.deepEqual(
-    listed.find((row) => row.number === 66)?.pullRequests,
-    [266, 267],
-  );
-  assert.equal(
-    latestStatus(listed.find((row) => row.number === 66).entries),
-    "approve",
-  );
-  assert.equal(
-    latestStatus(listed.find((row) => row.number === 93).entries),
-    "failed",
-  );
-  assert.equal(
-    latestStatus(listed.find((row) => row.number === 110).entries),
-    "running",
-  );
-  assert.equal(
-    latestStatus(listed.find((row) => row.number === 108).entries),
-    "completed",
-  );
+  assert.deepEqual(listed.find((row) => row.number === 66)?.pullRequests, [266, 267]);
+  assert.equal(latestStatus(listed.find((row) => row.number === 66).entries), "approve");
+  assert.equal(latestStatus(listed.find((row) => row.number === 93).entries), "failed");
+  assert.equal(latestStatus(listed.find((row) => row.number === 110).entries), "running");
+  assert.equal(latestStatus(listed.find((row) => row.number === 108).entries), "completed");
   assert.equal(await port.getIssue(99), null);
   assert.equal(await port.getIssue(1), null);
   assert.equal(await port.resolvePr(299), null);
@@ -1229,10 +1075,7 @@ test("inventory-scale timeline keeps plan and implement as two rows of one run",
   assert.equal(issue108.entries[0].id, "108-plan");
   assert.equal(issue108.entries[1].id, "108-implement");
   assert.deepEqual([...issue108.entries[0].models], ["cursor-grok-4.6-high"]);
-  assert.deepEqual(
-    [...issue108.entries[2].models],
-    ["lens-model", "second-pass-model"],
-  );
+  assert.deepEqual([...issue108.entries[2].models], ["lens-model", "second-pass-model"]);
   assert.deepEqual([...issue108.entries[3].models], ["improve-model"]);
   const run = await port.getRun(108, "run-108-impl");
   assert.equal(run?.runId, "run-108-impl");
@@ -1249,22 +1092,10 @@ test("inventory-scale unlinked pull requests stay reachable", async () => {
     unlinked.map((row) => row.number),
     INVENTORY_UNLINKED_PRS,
   );
-  assert.equal(
-    (await port.getUnlinkedPullRequest(64))?.entries[0].type,
-    "review",
-  );
-  assert.equal(
-    (await port.getUnlinkedPullRequest(45))?.entries[0].type,
-    "dry-run",
-  );
-  assert.equal(
-    (await port.getUnlinkedPullRequest(47))?.entries[0].type,
-    "improve",
-  );
-  assert.equal(
-    (await port.getUnlinkedRun(64, "run-64-review"))?.runId,
-    "run-64-review",
-  );
+  assert.equal((await port.getUnlinkedPullRequest(64))?.entries[0].type, "review");
+  assert.equal((await port.getUnlinkedPullRequest(45))?.entries[0].type, "dry-run");
+  assert.equal((await port.getUnlinkedPullRequest(47))?.entries[0].type, "improve");
+  assert.equal((await port.getUnlinkedRun(64, "run-64-review"))?.runId, "run-64-review");
   assert.equal(await port.getUnlinkedPullRequest(999), null);
   assert.equal(await port.getUnlinkedRun(64, "missing-run"), null);
 });
@@ -1292,18 +1123,15 @@ test("inventory-scale redirects cover every PR and run; unknown n is absent; ret
     "/issues/pr/64",
   );
   assert.equal(
-    redirects.find((row) => row.from === "/reviews/pr/308/runs/run-108-impl")
-      ?.to,
+    redirects.find((row) => row.from === "/reviews/pr/308/runs/run-108-impl")?.to,
     "/issues/108/runs/run-108-impl",
   );
   assert.equal(
-    redirects.find((row) => row.from === "/reviews/pr/64/runs/run-64-review")
-      ?.to,
+    redirects.find((row) => row.from === "/reviews/pr/64/runs/run-64-review")?.to,
     "/issues/pr/64/runs/run-64-review",
   );
   assert.equal(
-    redirects.find((row) => row.from === "/reviews/pr/266/runs/run-66-impl")
-      ?.to,
+    redirects.find((row) => row.from === "/reviews/pr/266/runs/run-66-impl")?.to,
     "/issues/66/runs/run-66-impl",
   );
   assert.equal(froms.includes("/reviews/pr/404"), false);
@@ -1320,13 +1148,8 @@ test("inventory-scale redirects cover every PR and run; unknown n is absent; ret
     "/issues",
   );
   assert.equal(froms.includes("/reviews/pr/79/runs/run-108-impl"), false);
-  const prLevel = redirects.filter((row) =>
-    /^\/reviews\/pr\/\d+$/.test(row.from),
-  );
-  assert.equal(
-    prLevel.length,
-    INVENTORY_LINKED_PRS.length + INVENTORY_UNLINKED_PRS.length + 2,
-  );
+  const prLevel = redirects.filter((row) => /^\/reviews\/pr\/\d+$/.test(row.from));
+  assert.equal(prLevel.length, INVENTORY_LINKED_PRS.length + INVENTORY_UNLINKED_PRS.length + 2);
   assert.equal(redirects.length, 71);
 });
 
@@ -1338,20 +1161,21 @@ test("inventory-scale static params and sitemap stay on /issues paths", async ()
     INVENTORY_ISSUE_LIST_ORDER.map((n) => ({ n: String(n) })),
   );
   const issueRuns = await listIssueRunParamsFrom(port);
-  assert.ok(
-    issueRuns.some((row) => row.n === "108" && row.id === "run-108-impl"),
+  assert.ok(issueRuns.some((row) => row.n === "108" && row.id === "run-108-impl"));
+  assert.equal(
+    issueRuns.filter((row) => row.n === "108").length,
+    3,
   );
-  assert.equal(issueRuns.filter((row) => row.n === "108").length, 3);
-  assert.equal(issueRuns.filter((row) => row.id === "run-108-impl").length, 1);
+  assert.equal(
+    issueRuns.filter((row) => row.id === "run-108-impl").length,
+    1,
+  );
   assert.deepEqual(
     await listUnlinkedPrParamsFrom(port),
     INVENTORY_UNLINKED_PRS.map((n) => ({ n: String(n) })),
   );
   const reviewPrs = await listReviewPrParamsFrom(port);
-  assert.equal(
-    reviewPrs.length,
-    INVENTORY_LINKED_PRS.length + INVENTORY_UNLINKED_PRS.length,
-  );
+  assert.equal(reviewPrs.length, INVENTORY_LINKED_PRS.length + INVENTORY_UNLINKED_PRS.length);
   assert.equal(
     reviewPrs.some((row) => row.n === "0"),
     false,
@@ -1392,35 +1216,17 @@ test("inventory-scale generated run index stays under 200KB and extra keys are i
 test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
   assert.equal(reviewsCopy.list.empty, "No public runs yet");
   assert.equal(reviewsCopy.type.improve, "Improve from review");
-  assert.equal(
-    reviewsCopy.run.openLive,
-    "Open the hosted live console (new tab)",
-  );
-  assert.equal(
-    reviewsCopy.unlinked.timelineEmpty,
-    "No exportable runs on this pull request.",
-  );
+  assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
+  assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
   assert.equal(
     reviewsCopy.unlinked.missing,
     "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
   );
-  assert.equal(
-    reviewsCopy.metadata.reviewsMissing.title,
-    "Review page not found",
-  );
-  assert.equal(
-    reviewsCopy.run.noLive,
-    "No hosted live console URL is available for this run.",
-  );
-  assert.equal(
-    reviewsCopy.list.description,
-    "Public issues with at least one exportable run.",
-  );
-  assert.equal(
-    reviewsCopy.metadata.list.description,
-    "Public issues with exportable runs on zedkit.",
-  );
+  assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
+  assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
+  assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
+  assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
   assert.equal(reviewsCopy.issue.timeline, "Timeline");
   assert.equal(
     reviewsCopy.loadError.description,
@@ -1458,16 +1264,8 @@ test("appearance round-trips identity, dark preview, and compact density", () =>
 test("canonical form omits glass, light, and default density", () => {
   assert.equal(serializeReviewAppearance(DEFAULT_REVIEW_APPEARANCE), "");
   assert.deepEqual(parseReviewAppearance(""), DEFAULT_REVIEW_APPEARANCE);
-  assert.deepEqual(
-    parseReviewAppearance("identity=glass&preview=light&density=default"),
-    DEFAULT_REVIEW_APPEARANCE,
-  );
-  assert.equal(
-    serializeReviewAppearance(
-      parseReviewAppearance("identity=glass&preview=dark"),
-    ),
-    "preview=dark",
-  );
+  assert.deepEqual(parseReviewAppearance("identity=glass&preview=light&density=default"), DEFAULT_REVIEW_APPEARANCE);
+  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=glass&preview=dark")), "preview=dark");
 });
 
 test("preview=dark and legacy theme=dark both parse as dark", () => {
@@ -1480,17 +1278,12 @@ test("unknown identity and hostile query values fall back without throwing", () 
   assert.equal(parseReviewAppearance("identity=<script>").identity, "glass");
   assert.equal(parseReviewAppearance("density=comfortable").density, "default");
   assert.equal(parseReviewAppearance("preview=DARK").mode, "light");
-  assert.doesNotThrow(() =>
-    parseReviewAppearance(`identity=${"x".repeat(4000)}&preview=${"\0"}`),
-  );
-  assert.deepEqual(
-    parseReviewAppearance("identity=tide&bogus=1&density=compact"),
-    {
-      identity: "tide",
-      mode: "light",
-      density: "compact",
-    },
-  );
+  assert.doesNotThrow(() => parseReviewAppearance(`identity=${"x".repeat(4000)}&preview=${"\0"}`));
+  assert.deepEqual(parseReviewAppearance("identity=tide&bogus=1&density=compact"), {
+    identity: "tide",
+    mode: "light",
+    density: "compact",
+  });
 });
 
 test("appearance codec still ignores unknown keys including item", () => {
@@ -1499,12 +1292,7 @@ test("appearance codec still ignores unknown keys including item", () => {
     mode: "light",
     density: "default",
   });
-  assert.equal(
-    serializeReviewAppearance(
-      parseReviewAppearance("identity=volt&item=agent-review"),
-    ),
-    "identity=volt",
-  );
+  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=volt&item=agent-review")), "identity=volt");
 });
 
 test("hasReviewAppearanceQuery is true only when an appearance key is present", () => {
@@ -1522,10 +1310,7 @@ test("hasReviewAppearanceQuery is true only when an appearance key is present", 
 
 test("a single appearance key pins the rest to codec defaults", () => {
   assert.equal(hasReviewAppearanceQuery("identity="), true);
-  assert.deepEqual(
-    parseReviewAppearance("identity="),
-    DEFAULT_REVIEW_APPEARANCE,
-  );
+  assert.deepEqual(parseReviewAppearance("identity="), DEFAULT_REVIEW_APPEARANCE);
   assert.deepEqual(parseReviewAppearance("density=compact"), {
     identity: "glass",
     mode: "light",
@@ -1551,27 +1336,12 @@ test("DATA-SOURCES.md documents share-URL keys and is not an exporter field", ()
 });
 
 test("issues views drop the inline preview form and keep the shared frame", () => {
-  const frame = readFileSync(
-    join(reviewsRoot, "ui", "appearance-panel.tsx"),
-    "utf8",
-  );
-  const list = readFileSync(
-    join(reviewsRoot, "ui", "review-list-view.tsx"),
-    "utf8",
-  );
-  const issue = readFileSync(
-    join(reviewsRoot, "ui", "review-pr-view.tsx"),
-    "utf8",
-  );
-  const run = readFileSync(
-    join(reviewsRoot, "ui", "review-run-view.tsx"),
-    "utf8",
-  );
+  const frame = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
+  const list = readFileSync(join(reviewsRoot, "ui", "review-list-view.tsx"), "utf8");
+  const issue = readFileSync(join(reviewsRoot, "ui", "review-pr-view.tsx"), "utf8");
+  const run = readFileSync(join(reviewsRoot, "ui", "review-run-view.tsx"), "utf8");
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
-  const fixture = readFileSync(
-    join(reviewsRoot, "adapters", "fixture.ts"),
-    "utf8",
-  );
+  const fixture = readFileSync(join(reviewsRoot, "adapters", "fixture.ts"), "utf8");
   assert.doesNotMatch(fixture, /Appearance panel/);
   assert.doesNotMatch(fixture, /preview look/);
   for (const source of [frame, list, issue, run]) {
@@ -1592,10 +1362,7 @@ test("issues views drop the inline preview form and keep the shared frame", () =
   assert.match(frame, /hasReviewAppearanceQuery/);
   assert.match(frame, /identity=\{pin \? appearance\.identity : undefined\}/);
   assert.match(frame, /mode=\{pin \? appearance\.mode : undefined\}/);
-  assert.match(
-    frame,
-    /identityPresets\[appearance\.identity\] \?\? identityPresets\.glass/,
-  );
+  assert.match(frame, /identityPresets\[appearance\.identity\] \?\? identityPresets\.glass/);
   assert.doesNotMatch(feature, /identity testing ground/);
   assert.doesNotMatch(feature, /render-function children/);
   assert.match(feature, /share-URL pin/);
@@ -1603,28 +1370,16 @@ test("issues views drop the inline preview form and keep the shared frame", () =
 
 test("issue pages use generateStaticParams; review pages redirect", () => {
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
-  const issueRun = readFileSync(
-    join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"),
-    "utf8",
-  );
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
-  const unlinkedRun = readFileSync(
-    join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"),
-    "utf8",
-  );
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [issuePage, issueRun, unlinked, unlinkedRun]) {
     assert.match(source, /generateStaticParams/);
     assert.match(source, /dynamicParams = false/);
   }
   const reviews = readFileSync(join(reviewsAppRoot, "page.tsx"), "utf8");
-  const reviewPr = readFileSync(
-    join(reviewsAppRoot, "pr/[n]/page.tsx"),
-    "utf8",
-  );
-  const reviewRun = readFileSync(
-    join(reviewsAppRoot, "pr/[n]/runs/[id]/page.tsx"),
-    "utf8",
-  );
+  const reviewPr = readFileSync(join(reviewsAppRoot, "pr/[n]/page.tsx"), "utf8");
+  const reviewRun = readFileSync(join(reviewsAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   assert.match(reviews, /redirectReviewsIndex/);
   assert.match(reviewPr, /redirectReviewsPr/);
   assert.match(reviewRun, /redirectReviewsPrRun/);
@@ -1634,29 +1389,17 @@ test("issue pages use generateStaticParams; review pages redirect", () => {
 });
 
 test("not-found segments use per-tree copy through one shared body", () => {
-  const body = readFileSync(
-    join(reviewsRoot, "ui/review-not-found-view.tsx"),
-    "utf8",
-  );
+  const body = readFileSync(join(reviewsRoot, "ui/review-not-found-view.tsx"), "utf8");
   assert.match(body, /href="\/issues"/);
   const issue = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
   assert.match(issue, /ReviewMissingFeature/);
   assert.match(issue, /metadata\.missing/);
   assert.match(issue, /issue\.missing/);
-  const run = readFileSync(
-    join(issuesRunAppRoot, "[n]/runs/not-found.tsx"),
-    "utf8",
-  );
+  const run = readFileSync(join(issuesRunAppRoot, "[n]/runs/not-found.tsx"), "utf8");
   assert.match(run, /run\.missing/);
-  const unlinked = readFileSync(
-    join(issuesAppRoot, "pr/not-found.tsx"),
-    "utf8",
-  );
+  const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
   assert.match(unlinked, /unlinked\.missing/);
-  const unlinkedRun = readFileSync(
-    join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"),
-    "utf8",
-  );
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
   assert.match(unlinkedRun, /run\.missing/);
   const reviews = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
   assert.match(reviews, /metadata\.reviewsMissing/);
@@ -1664,10 +1407,7 @@ test("not-found segments use per-tree copy through one shared body", () => {
 });
 
 test("list view shows a static load error and does not ship a sample notice", () => {
-  const list = readFileSync(
-    join(reviewsRoot, "ui/review-list-view.tsx"),
-    "utf8",
-  );
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   assert.match(list, /ReviewLoadErrorView/);
   assert.doesNotMatch(list, /window\.location\.reload/);
   assert.doesNotMatch(list, /ReviewSampleNotice/);
@@ -1681,44 +1421,27 @@ test("list view shows a static load error and does not ship a sample notice", ()
   assert.match(feature, /hasLoadError/);
   assert.match(feature, /ReviewLoadErrorView/);
   assert.match(feature, /reviewLoadErrorView/);
-  assert.match(
-    feature,
-    /ReviewIssueFeature[\s\S]*reviewLoadErrorView[\s\S]*notFound/,
-  );
+  assert.match(feature, /ReviewIssueFeature[\s\S]*reviewLoadErrorView[\s\S]*notFound/);
   assert.doesNotMatch(feature, /window\.location\.reload/);
   assert.doesNotMatch(feature, /isPublicStandIn/);
-  assert.equal(
-    existsSync(join(reviewsRoot, "ui/review-sample-notice.tsx")),
-    false,
-  );
+  assert.equal(existsSync(join(reviewsRoot, "ui/review-sample-notice.tsx")), false);
 });
 
 test("found /issues pages pass issuesIndexRobots", () => {
   const list = readFileSync(join(issuesAppRoot, "page.tsx"), "utf8");
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
-  const issueRun = readFileSync(
-    join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"),
-    "utf8",
-  );
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
-  const unlinkedRun = readFileSync(
-    join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"),
-    "utf8",
-  );
+  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [list, issuePage, issueRun, unlinked, unlinkedRun]) {
     assert.match(source, /issuesIndexRobots/);
   }
 });
 
+
 test("list and timeline views read from issue records, not a PR console", () => {
-  const list = readFileSync(
-    join(reviewsRoot, "ui/review-list-view.tsx"),
-    "utf8",
-  );
-  const timeline = readFileSync(
-    join(reviewsRoot, "ui/review-pr-view.tsx"),
-    "utf8",
-  );
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
   assert.match(list, /issuePath/);
   assert.match(list, /copy\.list\.unlinkedTitle/);
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
@@ -1735,19 +1458,10 @@ test("list and timeline views read from issue records, not a PR console", () => 
 });
 
 test("list title href is the latest run; Timeline is the labelled secondary", () => {
-  const list = readFileSync(
-    join(reviewsRoot, "ui/review-list-view.tsx"),
-    "utf8",
-  );
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   assert.match(list, /latestEntry\(issue\.entries\)/);
-  assert.match(
-    list,
-    /last\s*\?\s*issueRunPath\(issue\.number, last\.runId\)\s*:\s*issuePath\(issue\.number\)/,
-  );
-  assert.match(
-    list,
-    /last\s*\?\s*unlinkedRunPath\(entry\.number, last\.runId\)\s*:\s*unlinkedPrPath\(entry\.number\)/,
-  );
+  assert.match(list, /last\s*\?\s*issueRunPath\(issue\.number, last\.runId\)\s*:\s*issuePath\(issue\.number\)/);
+  assert.match(list, /last\s*\?\s*unlinkedRunPath\(entry\.number, last\.runId\)\s*:\s*unlinkedPrPath\(entry\.number\)/);
   assert.match(list, /unlinkedPrPath/);
   assert.match(list, /copy\.issue\.timeline/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
@@ -1756,50 +1470,23 @@ test("list title href is the latest run; Timeline is the labelled secondary", ()
 });
 
 test("unlinked and timeline links take their accessible name from visible title text", () => {
-  const list = readFileSync(
-    join(reviewsRoot, "ui/review-list-view.tsx"),
-    "utf8",
-  );
-  const timeline = readFileSync(
-    join(reviewsRoot, "ui/review-pr-view.tsx"),
-    "utf8",
-  );
-  assert.match(
-    list,
-    /<Link\s+href=\{\s*last\s*\?\s*unlinkedRunPath\(entry\.number, last\.runId\)\s*:\s*unlinkedPrPath\(entry\.number\)\s*\}\s*>\s*#\{entry\.number\}/,
-  );
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.match(list, /<Link\s+href=\{\s*last\s*\?\s*unlinkedRunPath\(entry\.number, last\.runId\)\s*:\s*unlinkedPrPath\(entry\.number\)\s*\}\s*>\s*#\{entry\.number\}/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
-  assert.match(
-    timeline,
-    /<Link href=\{href\}>\s*\{copy\.type\[entry\.type\]\}/,
-  );
+  assert.match(timeline, /<Link href=\{href\}>\s*\{copy\.type\[entry\.type\]\}/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
 });
 
 test("list and timeline rows use row padding, not section padding", () => {
-  const list = readFileSync(
-    join(reviewsRoot, "ui/review-list-view.tsx"),
-    "utf8",
-  );
-  const timeline = readFileSync(
-    join(reviewsRoot, "ui/review-pr-view.tsx"),
-    "utf8",
-  );
-  const frame = readFileSync(
-    join(reviewsRoot, "ui/appearance-panel.tsx"),
-    "utf8",
-  );
-  assert.match(
-    list,
-    /flex-wrap items-center border-b border-border py-row max-md:flex-col/,
-  );
-  assert.match(
-    timeline,
-    /flex-wrap items-center border-b border-border py-row/,
-  );
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
+  assert.match(list, /flex-wrap items-center border-b border-border py-row max-md:flex-col/);
+  assert.match(timeline, /flex-wrap items-center border-b border-border py-row/);
   assert.doesNotMatch(timeline, /max-md:flex-col/);
   assert.doesNotMatch(list, /py-section-sm/);
   assert.doesNotMatch(timeline, /py-section-sm/);
@@ -1808,23 +1495,11 @@ test("list and timeline rows use row padding, not section padding", () => {
 });
 
 test("list stays in the shared wide frame and stacks title then meta below md", () => {
-  const list = readFileSync(
-    join(reviewsRoot, "ui/review-list-view.tsx"),
-    "utf8",
-  );
-  const frame = readFileSync(
-    join(reviewsRoot, "ui/appearance-panel.tsx"),
-    "utf8",
-  );
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
   assert.doesNotMatch(list, /ReviewSampleNotice/);
-  assert.match(
-    list,
-    /<ReviewAppearanceFrame>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/,
-  );
-  assert.match(
-    list,
-    /<ReviewAppearanceFrame>[\s\S]*copy\.list\.unlinkedTitle[\s\S]*<\/ReviewAppearanceFrame>/,
-  );
+  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*copy\.list\.unlinkedTitle[\s\S]*<\/ReviewAppearanceFrame>/);
   assert.match(frame, /width="wide"/);
   assert.doesNotMatch(frame, /width="full"/);
   assert.doesNotMatch(list, /width="full"/);
@@ -1848,11 +1523,7 @@ test("verdict and status tones live in one shared module", () => {
   assert.match(status, /from "\.\/review-badges"/);
   assert.match(status, /STATUS_BADGE/);
   assert.doesNotMatch(status, /StatusLabel/);
-  for (const file of [
-    "review-list-view.tsx",
-    "review-pr-view.tsx",
-    "review-run-view.tsx",
-  ]) {
+  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.match(source, /from "\.\/issue-status"/);
     assert.doesNotMatch(source, /const VERDICT_BADGE/);
@@ -1878,13 +1549,7 @@ function liveItem(overrides = {}) {
     last_activity_ms: 1_762_698_600_000,
     entries: [
       { type: "message", text: "hello" },
-      {
-        type: "tool",
-        tool: "read",
-        label: "Read",
-        status: "done",
-        output_chars: 12,
-      },
+      { type: "tool", tool: "read", label: "Read", status: "done", output_chars: 12 },
     ],
     prompt: "review this",
     final_text: "approve",
@@ -1903,13 +1568,7 @@ function liveSample(overrides = {}) {
       degraded: false,
       enforcement_reasons: [],
       first_pass: { verdict: "APPROVE", confidence_score: 8.6 },
-      second_pass: {
-        kept: 0,
-        dropped: 0,
-        adjusted: 0,
-        confirmed_blockers: 0,
-        status: "ran",
-      },
+      second_pass: { kept: 0, dropped: 0, adjusted: 0, confirmed_blockers: 0, status: "ran" },
       verdict: "APPROVE",
       confidence_score: 8.6,
       summary: "The public review section is ready to merge.",
@@ -1947,8 +1606,7 @@ function writeLiveSnapshot(reviews, extra = {}) {
   return path;
 }
 
-const GITHUB_REVIEW_URL =
-  "https://github.com/example/repo/pull/133#pullrequestreview-1";
+const GITHUB_REVIEW_URL = "https://github.com/example/repo/pull/133#pullrequestreview-1";
 const HOSTED_LIVE_URL = hostedLiveHref();
 
 function liveMappedEntry(overrides = {}) {
@@ -1966,61 +1624,27 @@ test("a GitHub review_url is not a hosted live console URL", () => {
 });
 
 test("hosted live_url is kept; http, token, userinfo, and home paths are dropped", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, HOSTED_LIVE_URL);
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl, null);
   assert.equal(
-    liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } })
-      .entry.liveUrl,
-    HOSTED_LIVE_URL,
-  );
-  assert.equal(
-    liveMappedEntry({
-      run: { ...liveSample().run, live_url: "http://example.test/live/abc" },
-    }).entry.liveUrl,
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/live/abc?token=secret" } }).entry
+      .liveUrl,
     null,
   );
   assert.equal(
-    liveMappedEntry({
-      run: {
-        ...liveSample().run,
-        live_url: "https://example.test/live/abc?token=secret",
-      },
-    }).entry.liveUrl,
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://user:pass@example.test/live/abc" } }).entry.liveUrl,
     null,
   );
   assert.equal(
-    liveMappedEntry({
-      run: {
-        ...liveSample().run,
-        live_url: "https://user:pass@example.test/live/abc",
-      },
-    }).entry.liveUrl,
-    null,
-  );
-  assert.equal(
-    liveMappedEntry({
-      run: {
-        ...liveSample().run,
-        live_url: "https://example.test/home/alice/live",
-      },
-    }).entry.liveUrl,
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/home/alice/live" } }).entry.liveUrl,
     null,
   );
 });
 
 test("live mode live maps to review; improve and implement keep their names", () => {
-  assert.equal(
-    liveMappedEntry({ run: { ...liveSample().run, mode: "live" } }).entry.type,
-    "review",
-  );
-  assert.equal(
-    liveMappedEntry({ run: { ...liveSample().run, mode: "improve" } }).entry
-      .type,
-    "improve",
-  );
-  assert.equal(
-    liveMappedEntry({ run: { ...liveSample().run, mode: "implement" } }).entry
-      .type,
-    "implement",
-  );
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "live" } }).entry.type, "review");
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "improve" } }).entry.type, "improve");
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, mode: "implement" } }).entry.type, "implement");
 });
 
 test("a live row with issue 108 lists that issue and redirects the PR to it", async () => {
@@ -2048,16 +1672,10 @@ test("a live row with issue 108 lists that issue and redirects the PR to it", as
   const resolved = await port.resolvePr(133);
   assert.equal(resolved?.issueNumber, 108);
   const redirects = await listReviewRedirectsFrom(port);
+  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
   assert.ok(
     redirects.some(
-      (row) => row.from === "/reviews/pr/133" && row.to === "/issues/108",
-    ),
-  );
-  assert.ok(
-    redirects.some(
-      (row) =>
-        row.from === "/reviews/pr/133/runs/run-71" &&
-        row.to === "/issues/108/runs/run-71",
+      (row) => row.from === "/reviews/pr/133/runs/run-71" && row.to === "/issues/108/runs/run-71",
     ),
   );
   const run = await port.getRun(108, "run-71");
@@ -2069,18 +1687,12 @@ test("a live row with issue 108 lists that issue and redirects the PR to it", as
 });
 
 test("a live row with issue null or omitted stays an unlinked PR", async () => {
-  const omitted = writeLiveSnapshot([
-    liveSample({ run: { ...liveSample().run, pr: 54 } }),
-  ]);
+  const omitted = writeLiveSnapshot([liveSample({ run: { ...liveSample().run, pr: 54 } })]);
   const omittedPort = createSnapshotReviewPort(omitted);
   assert.deepEqual(await omittedPort.listIssues(), []);
   assert.equal((await omittedPort.resolvePr(54))?.issueNumber, null);
   const omittedRedirects = await listReviewRedirectsFrom(omittedPort);
-  assert.ok(
-    omittedRedirects.some(
-      (row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54",
-    ),
-  );
+  assert.ok(omittedRedirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
 
   const explicitNull = writeLiveSnapshot([
     liveSample({ run: { ...liveSample().run, pr: 55, issue: null } }),
@@ -2089,22 +1701,13 @@ test("a live row with issue null or omitted stays an unlinked PR", async () => {
   assert.deepEqual(await nullPort.listIssues(), []);
   assert.equal((await nullPort.resolvePr(55))?.issueNumber, null);
   const nullRedirects = await listReviewRedirectsFrom(nullPort);
-  assert.ok(
-    nullRedirects.some(
-      (row) => row.from === "/reviews/pr/55" && row.to === "/issues/pr/55",
-    ),
-  );
+  assert.ok(nullRedirects.some((row) => row.from === "/reviews/pr/55" && row.to === "/issues/pr/55"));
 });
 
 test("a live row with an issue and no PR still appears on the issue list", () => {
   const index = liveRunsToIndex([
     liveSample({
-      run: {
-        ...liveSample().run,
-        pr: null,
-        issue: 93,
-        issue_title: "Failed implement",
-      },
+      run: { ...liveSample().run, pr: null, issue: 93, issue_title: "Failed implement" },
     }),
   ]);
   assert.deepEqual(
@@ -2128,9 +1731,7 @@ test("live issue and live_url parse; unknown live run keys still fail", () => {
   assert.equal(accepted.value[0].run.live_url, HOSTED_LIVE_URL);
 
   const nulls = parsePublicReviewSnapshot(
-    liveWrapper([
-      liveSample({ run: { ...liveSample().run, issue: null, live_url: null } }),
-    ]),
+    liveWrapper([liveSample({ run: { ...liveSample().run, issue: null, live_url: null } })]),
   );
   assert.equal(nulls.ok, true, nulls.ok ? "" : nulls.error.message);
   assert.equal(nulls.value[0].run.issue, null);
@@ -2138,18 +1739,12 @@ test("live issue and live_url parse; unknown live run keys still fail", () => {
 
   assert.equal(
     parsePublicReviewSnapshot(
-      liveWrapper([
-        liveSample({
-          run: { ...liveSample().run, hosted_url: HOSTED_LIVE_URL },
-        }),
-      ]),
+      liveWrapper([liveSample({ run: { ...liveSample().run, hosted_url: HOSTED_LIVE_URL } })]),
     ).ok,
     false,
   );
   assert.equal(
-    parsePublicReviewSnapshot(
-      liveWrapper([liveSample({ run: { ...liveSample().run, issue: "108" } })]),
-    ).ok,
+    parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, issue: "108" } })])).ok,
     false,
   );
 });
@@ -2157,17 +1752,13 @@ test("live issue and live_url parse; unknown live run keys still fail", () => {
 test("opened_pr_url is accepted; pr_url_opened fails closed", () => {
   const opened = "https://example.test/pr/71";
   const accepted = parsePublicReviewSnapshot(
-    liveWrapper([
-      liveSample({ run: { ...liveSample().run, opened_pr_url: opened } }),
-    ]),
+    liveWrapper([liveSample({ run: { ...liveSample().run, opened_pr_url: opened } })]),
   );
   assert.equal(accepted.ok, true, accepted.ok ? "" : accepted.error.message);
   assert.equal(accepted.value[0].run.opened_pr_url, opened);
   assert.equal(
     parsePublicReviewSnapshot(
-      liveWrapper([
-        liveSample({ run: { ...liveSample().run, pr_url_opened: opened } }),
-      ]),
+      liveWrapper([liveSample({ run: { ...liveSample().run, pr_url_opened: opened } })]),
     ).ok,
     false,
   );
@@ -2175,9 +1766,7 @@ test("opened_pr_url is accepted; pr_url_opened fails closed", () => {
 
 test("live mapper falls back to Issue #N when issue_title is empty; index parse requires title", () => {
   const empty = liveRunsToIndex([
-    liveSample({
-      run: { ...liveSample().run, pr: 133, issue: 108, issue_title: "" },
-    }),
+    liveSample({ run: { ...liveSample().run, pr: 133, issue: 108, issue_title: "" } }),
   ]);
   assert.equal(empty.issues[0].title, "Issue #108");
   const omittedTitle = { ...liveSample().run, pr: 133, issue: 108 };
@@ -2216,11 +1805,7 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
     decision: {
       ...base.decision,
       summary: "Bearer xyzTOKEN789._~+/=- lives in /home/bob/kit",
-      notes: [
-        {
-          text: "Call with Bearer abcDEF123._~+/=- from /home/alice/kit/token",
-        },
-      ],
+      notes: [{ text: "Call with Bearer abcDEF123._~+/=- from /home/alice/kit/token" }],
       must: [
         {
           text: "Authorization: Basic dXNlcjpwYXNz lives in /Users/alice/.config",
@@ -2267,25 +1852,22 @@ test("a payload that still has a home path or token is rejected", () => {
   assert.throws(() => assertPubliclySafe({ notes: "from /home/alice/kit" }));
   assert.throws(() => assertPubliclySafe({ notes: "Bearer abcDEF123._~+/=" }));
   assert.throws(() => assertPubliclySafe({ notes: "bearer abcDEF123._~+/=" }));
-  assert.throws(() =>
-    assertPubliclySafe({ notes: String.raw`C:\Users\bob\token` }),
-  );
-  assert.doesNotThrow(() =>
-    assertPubliclySafe({ notes: "Bearer [redacted] at [path]" }),
-  );
+  assert.throws(() => assertPubliclySafe({ notes: String.raw`C:\Users\bob\token` }));
+  assert.doesNotThrow(() => assertPubliclySafe({ notes: "Bearer [redacted] at [path]" }));
 });
 
 test("toPublicIndex fails closed when a home path survives scrub", () => {
-  assert.throws(() =>
-    toPublicIndex(parsedIndex([issue({ title: "notes from /home/" })])),
-  );
+  assert.throws(() => toPublicIndex(parsedIndex([issue({ title: "notes from /home/" })])));
 });
 
 test("zero-entry issues and unlinked PRs are dropped before the list", () => {
   const gated = toPublicIndex(
     parsedIndex(
       [issue({ number: 1, entries: [] }), issue()],
-      [pr({ number: 10, issueNumber: null, runIds: [], entries: [] }), pr()],
+      [
+        pr({ number: 10, issueNumber: null, runIds: [], entries: [] }),
+        pr(),
+      ],
     ),
   );
   assert.deepEqual(
@@ -2326,24 +1908,18 @@ test("an empty live snapshot is valid", () => {
 });
 
 test("an unknown live snapshot kind is accepted when version is 1", () => {
-  const parsed = parsePublicReviewSnapshot(
-    liveWrapper([liveSample()], { kind: "redacted-export" }),
-  );
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { kind: "redacted-export" }));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.length, 1);
 });
 
 test("version 2 live snapshots are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(
-    liveWrapper([liveSample()], { version: 2 }),
-  );
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { version: 2 }));
   assert.equal(parsed.ok, false);
 });
 
 test("unknown keys on a live snapshot record are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(
-    liveWrapper([{ ...liveSample(), apiKey: "x" }]),
-  );
+  const parsed = parsePublicReviewSnapshot(liveWrapper([{ ...liveSample(), apiKey: "x" }]));
   assert.equal(parsed.ok, false);
 });
 
@@ -2356,9 +1932,7 @@ test("unknown keys on nested live snapshot objects are rejected", () => {
     parsePublicReviewSnapshot(
       liveWrapper([
         liveSample({
-          items: [
-            liveItem({ entries: [{ type: "message", text: "x", token: "x" }] }),
-          ],
+          items: [liveItem({ entries: [{ type: "message", text: "x", token: "x" }] })],
         }),
       ]),
     ).ok,
@@ -2367,9 +1941,7 @@ test("unknown keys on nested live snapshot objects are rejected", () => {
 });
 
 test("unknown keys on the live snapshot wrapper are rejected", () => {
-  const parsed = parsePublicReviewSnapshot(
-    liveWrapper([liveSample()], { token: "x" }),
-  );
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample()], { token: "x" }));
   assert.equal(parsed.ok, false);
 });
 
@@ -2382,11 +1954,7 @@ test("a live snapshot with a missing required field is rejected", () => {
 
 test("wrong types in a live snapshot are rejected", () => {
   assert.equal(
-    parsePublicReviewSnapshot(
-      liveWrapper([
-        liveSample({ run: { ...liveSample().run, created_at: "71" } }),
-      ]),
-    ).ok,
+    parsePublicReviewSnapshot(liveWrapper([liveSample({ run: { ...liveSample().run, created_at: "71" } })])).ok,
     false,
   );
   assert.equal(parsePublicReviewSnapshot(null).ok, false);
@@ -2394,27 +1962,18 @@ test("wrong types in a live snapshot are rejected", () => {
 });
 
 test("unknown visibility in a live snapshot is rejected", () => {
-  assert.equal(
-    parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "team" })]))
-      .ok,
-    false,
-  );
+  assert.equal(parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "team" })])).ok, false);
 });
 
 test("omitted live visibility is rejected at parse and dropped at the public gate", () => {
   const omitted = liveSample();
   delete omitted.visibility;
   assert.equal(parsePublicReviewSnapshot(liveWrapper([omitted])).ok, false);
-  assert.deepEqual(
-    toPublicReviews([omitted]).map((row) => row.run.pr),
-    [],
-  );
+  assert.deepEqual(toPublicReviews([omitted]).map((row) => row.run.pr), []);
 });
 
 test("private live visibility is kept by parse so the public gate can drop it", () => {
-  const parsed = parsePublicReviewSnapshot(
-    liveWrapper([liveSample({ visibility: "private" })]),
-  );
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample({ visibility: "private" })]));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value[0].visibility, "private");
 });
@@ -2422,20 +1981,14 @@ test("private live visibility is kept by parse so the public gate can drop it", 
 test("an item without entries still parses", () => {
   const item = liveItem();
   delete item.entries;
-  const parsed = parsePublicReviewSnapshot(
-    liveWrapper([liveSample({ items: [item] })]),
-  );
+  const parsed = parsePublicReviewSnapshot(liveWrapper([liveSample({ items: [item] })]));
   assert.equal(parsed.ok, true);
   assert.deepEqual(parsed.value[0].items[0].entries, []);
 });
 
 test("verdict_json extra keys are accepted", () => {
   const parsed = parsePublicReviewSnapshot(
-    liveWrapper([
-      liveSample({
-        verdict_json: { verdict: "APPROVE", extra_flag: true, blocking: [] },
-      }),
-    ]),
+    liveWrapper([liveSample({ verdict_json: { verdict: "APPROVE", extra_flag: true, blocking: [] } })]),
   );
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value[0].verdict_json.extra_flag, true);
@@ -2508,13 +2061,9 @@ test("an empty live snapshot lists nothing and keeps the /reviews helper root", 
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.list(), []);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
-  assert.deepEqual(await listReviewRunParamsFrom(port), [
-    { n: "0", id: "_placeholder" },
-  ]);
+  assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listUnlinkedPrParamsFrom(port), [{ n: "0" }]);
-  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [
-    { n: "0", id: "_placeholder" },
-  ]);
+  assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewSitemapPathsFrom(port), ["/reviews"]);
   assert.deepEqual(await listReviewSitemapPaths(path), ["/reviews"]);
 });
@@ -2534,12 +2083,7 @@ test("static params and live sitemap come from public snapshot records only", as
   const path = writeLiveSnapshot([
     liveSample(),
     liveSample({
-      run: {
-        ...liveSample().run,
-        run_id: "run-64-a",
-        pr: 64,
-        issue_title: "Presentation blockers",
-      },
+      run: { ...liveSample().run, run_id: "run-64-a", pr: 64, issue_title: "Presentation blockers" },
     }),
     liveSample({
       run: {
@@ -2553,10 +2097,7 @@ test("static params and live sitemap come from public snapshot records only", as
     liveSample({ visibility: "private", run: { ...liveSample().run, pr: 99 } }),
   ]);
   const port = createSnapshotReviewPort(path);
-  assert.deepEqual(await listReviewPrParamsFrom(port), [
-    { n: "71" },
-    { n: "64" },
-  ]);
+  assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "71" }, { n: "64" }]);
   assert.deepEqual(await listReviewRunParamsFrom(port), [
     { n: "71", id: "run-71" },
     { n: "64", id: "run-64-a" },
@@ -2582,6 +2123,8 @@ test("item titles go through the public scrubber", () => {
   assert.doesNotMatch(clean.items[0].name, /abcDEF123/);
 });
 
+
+
 test("share URL merge keeps appearance query and hash together", () => {
   assert.equal(
     mergeReviewShareUrl({
@@ -2598,10 +2141,7 @@ test("share URL merge keeps appearance query and hash together", () => {
 });
 
 test("appearance share write keeps the selection hash", () => {
-  const src = readFileSync(
-    join(reviewsRoot, "ui", "review-console-appearance.tsx"),
-    "utf8",
-  );
+  const src = readFileSync(join(reviewsRoot, "ui", "review-console-appearance.tsx"), "utf8");
   assert.match(src, /mergeReviewShareUrl/);
   assert.match(src, /window\.location\.hash/);
   assert.doesNotMatch(
@@ -2611,20 +2151,11 @@ test("appearance share write keeps the selection hash", () => {
 });
 
 test("live-backed issue runs mount AgentConsole; index-only runs still link out", () => {
-  const consoleView = readFileSync(
-    join(reviewsRoot, "ui/review-console-view.tsx"),
-    "utf8",
-  );
+  const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
-  const layout = readFileSync(
-    join(here, "../app/(run-console)/layout.tsx"),
-    "utf8",
-  );
-  const siteLayout = readFileSync(
-    join(here, "../app/(site)/layout.tsx"),
-    "utf8",
-  );
+  const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
+  const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
   assert.match(consoleView, /AgentConsole/);
   assert.match(feature, /toAgentConsole/);
   assert.match(feature, /ReviewConsoleView/);
@@ -2664,14 +2195,7 @@ test("toAgentConsole maps tool, message, and reasoning entries and omits prompts
           id: "main",
           entries: [
             { type: "message", text: "hello", id: "m1" },
-            {
-              type: "tool",
-              tool: "read",
-              label: "Read file",
-              status: "done",
-              output: "ok",
-              duration_ms: 4,
-            },
+            { type: "tool", tool: "read", label: "Read file", status: "done", output: "ok", duration_ms: 4 },
             { type: "reasoning", text: "thinking", live: true },
             { type: "tool", tool: "write", output: null },
           ],
@@ -2706,19 +2230,12 @@ test("toAgentConsole maps first-pass findings from verdict_json and second_pass.
       decision: {
         ...liveSample().decision,
         first_pass: { verdict: "REQUEST_CHANGES", confidence_score: 7.2 },
-        second_pass: {
-          model: "docs-reviewer",
-          blocks_merge: true,
-          summary: "Block",
-        },
+        second_pass: { model: "docs-reviewer", blocks_merge: true, summary: "Block" },
         review_url: "javascript:alert(1)",
       },
       verdict_json: {
         blocking: [{ _disposition: "kept", text: "Keep this" }],
-        notes: [
-          { _disposition: "downgraded", text: "Note this" },
-          { _disposition: null, text: "skip" },
-        ],
+        notes: [{ _disposition: "downgraded", text: "Note this" }, { _disposition: null, text: "skip" }],
       },
     }),
   );
@@ -2743,11 +2260,7 @@ test("toAgentConsole still folds first pass when findings are empty", () => {
 test("toAgentConsole marks running items from live status and ignores live_url as a review href", () => {
   const mapped = toAgentConsole(
     liveSample({
-      run: {
-        ...liveSample().run,
-        live_url: "https://example.test/live/abc",
-        review_url: null,
-      },
+      run: { ...liveSample().run, live_url: "https://example.test/live/abc", review_url: null },
       decision: { ...liveSample().decision, review_url: null },
       items: [
         liveItem({ status: "starting" }),
@@ -2772,15 +2285,7 @@ test("optional reviews on an index snapshot feed getRun for that run id", async 
   const path = writeSnapshot(
     [
       issue({
-        entries: [
-          entry(),
-          entry({
-            id: "108-recorded",
-            runId: recordedId,
-            type: "review",
-            liveUrl: null,
-          }),
-        ],
+        entries: [entry(), entry({ id: "108-recorded", runId: recordedId, type: "review", liveUrl: null })],
       }),
     ],
     [pr({ runIds: ["run-108-impl", recordedId] })],
@@ -2793,10 +2298,7 @@ test("optional reviews on an index snapshot feed getRun for that run id", async 
   assert.ok(liveRun && "items" in liveRun);
   assert.equal(liveRun.run.run_id, recordedId);
   const indexRun = await port.getRun(108, "run-108-impl");
-  assert.equal(
-    indexRun && "runId" in indexRun ? indexRun.runId : null,
-    "run-108-impl",
-  );
+  assert.equal(indexRun && "runId" in indexRun ? indexRun.runId : null, "run-108-impl");
   assert.equal(
     indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null,
     `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
@@ -2806,9 +2308,5 @@ test("optional reviews on an index snapshot feed getRun for that run id", async 
 });
 
 test("invalid reviews on an index snapshot fail closed", () => {
-  assert.throws(() =>
-    createSnapshotReviewPort(
-      writeSnapshot([issue()], [pr()], { reviews: "nope" }),
-    ),
-  );
+  assert.throws(() => createSnapshotReviewPort(writeSnapshot([issue()], [pr()], { reviews: "nope" })));
 });
