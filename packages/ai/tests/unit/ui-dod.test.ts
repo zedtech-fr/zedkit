@@ -33,7 +33,7 @@ describe("UI DoD v2", () => {
   it("pins the evidence matrix and looks-grid condition in Visual work", () => {
     const dod = kitText("skills/definition-of-done/SKILL.md");
     expect(dod).toContain("375 (phone)");
-    expect(dod).toContain("809 (tablet / split-view)");
+    expect(dod).toContain("809 (tablet / split-view; not 768, 810, or 834)");
     expect(dod).toContain("1440 (desktop) × light and dark");
     expect(dod).toContain("visual risk");
     expect(dod).toContain("touched routes");
@@ -55,6 +55,16 @@ describe("UI DoD v2", () => {
     expect(dod).toContain("4.5");
     expect(dod).toContain("no horizontal overflow");
     expect(dod).toContain("no clipped text");
+    expect(dod).toContain("containing element");
+    expect(dod).toContain("scrollheight");
+    expect(dod).not.toContain("on the text node");
+    expect(dod).toContain("stricter-than-wcag house bar");
+    expect(dod).toContain("spacing");
+    expect(dod).toContain("non-text ui");
+    expect(dod).toContain("never opened");
+    expect(dod).toContain("not performed");
+    expect(dod).toContain("one sentence per matrix cell");
+    expect(dod).not.toContain("one sentence per width and per mode");
     expect(dod).toContain("unintended ellipsis");
     expect(dod).toContain("zero console errors");
     expect(dod).toContain("a single `h1`");
@@ -81,9 +91,13 @@ describe("UI DoD v2", () => {
     expect(evidence?.trigger).toContain("**/*.tsx");
     expect(evidence?.output.toLowerCase()).toContain("unseen");
     expect(evidence?.output.toLowerCase()).toContain("missing evidence");
+    expect(evidence?.output.toLowerCase()).toContain("cap at 6");
     expect(evidence?.output.toLowerCase()).not.toContain("manifest");
     expect(kitRaw("skills/review/SKILL.md")).toMatch(
-      /UI trigger[\s\S]*`evidence`[\s\S]*do not spawn `review`/u,
+      /`lenses.md` owns each trigger[\s\S]*For `evidence`[\s\S]*do not spawn `review`/u,
+    );
+    expect(kitRaw("skills/review/SKILL.md")).not.toMatch(
+      /When the UI trigger matches/u,
     );
     const copy = rows.find((row) => row.lens === "copy");
     expect(copy?.trigger.toLowerCase()).toContain("user-visible strings");
@@ -101,15 +115,28 @@ describe("UI DoD v2", () => {
     expect(decision.toLowerCase()).toContain("ship");
     expect(decision).toContain("COMMENT");
     expect(decision).toContain("GitLab");
-    expect(kitText("agents/reviewer.md")).toContain("partial-unseen");
+    expect(decision).toContain("local record");
+    expect(kitText("agents/reviewer.md")).toContain("unseen");
+    expect(kitText("agents/reviewer.md")).toContain("does not by itself forbid");
+    expect(kitText("agents/reviewer.md")).not.toContain("partial-unseen");
     expect(kitText("agents/reviewer.md")).toContain("review/decision.md");
     expect(kitText("agents/ui-designer.md")).toContain("unseen");
-    expect(kitText("agents/ui-designer.md")).toContain("inverted wells");
+    expect(kitText("agents/ui-designer.md")).toContain("fill inverts");
+    expect(kitText("agents/ui-designer.md")).not.toContain("inverted wells");
+    expect(kitText("agents/ui-designer.md")).not.toContain(
+      "kit-first is frontend rule 8",
+    );
     expect(kitText("agents/ui-designer.md")).not.toContain("data-state=active");
     expect(kitText("agents/a11y-auditor.md")).toContain("wcag2a");
     expect(kitText("agents/a11y-auditor.md")).toContain("clipped text");
     expect(kitText("agents/verifier.md")).toContain(
       "apply definition-of-done visual work",
+    );
+    expect(kitText("agents/verifier.md")).toContain(
+      "any required screenshot is `unseen`",
+    );
+    expect(kitText("agents/verifier.md")).toContain(
+      "does not by itself forbid `ship`",
     );
   });
 

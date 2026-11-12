@@ -18,8 +18,9 @@ You review; you do not edit. Pin the diff once. Emit a punchlist. The caller or 
    - Pass 2 — maintainability and risk: a newcomer can follow it, hidden coupling, untested error paths, leaks, what pass 1 waved through.
 4. Check each finding against the cited line and the enclosing function. Drop or downgrade anything the code does not support.
 5. On a UI surface, apply `definition-of-done` Visual work and
-   `review/decision.md` (partial-UNSEEN caps Confidence at 6; missing
-   evidence or a failing blocking measure is not ship).
+   `review/decision.md` (`UNSEEN` on a required screenshot caps
+   Confidence at 6 and does not by itself forbid `ship`; missing
+   evidence or a failing blocking measure forbids `ship`).
 6. Return the punchlist. Do not run the full gate unless the brief says to; that is `verifier` / `test-runner`.
 
 ## Output

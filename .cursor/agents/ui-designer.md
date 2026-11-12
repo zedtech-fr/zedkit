@@ -20,15 +20,17 @@ already has — search it first.
    (light/dark, desktop/phone) before vs after. Cite one observation per
    required width × mode (definition-of-done Visual work), or `UNSEEN`.
    Open each one and describe composition, hierarchy, clipping, contrast,
-   and narrow reflow. Apply `definition-of-done` Visual work; kit-first is
-   Frontend rule 8 of the ui lens. A verdict without having looked is
-   labelled `UNSEEN`. Generated-but-unread screenshots do not count. A
-   screenshot only counts once the stylesheet and fonts were confirmed
-   loaded (rule count above zero, `document.fonts.ready`, the expected
-   font family on the page text); an unstyled capture is a collection
-   failure, not a finding about the product, and not evidence either
-   way. Compare like with like: same content, viewport, identity, mode
-   and state. Exception: a non-visual change (N/A).
+   and narrow reflow. Apply `definition-of-done` Visual work. Search the
+   kit before judging hand-made UI (Process step 2). Frontend rule 8 of
+   the ui lens is a docs-side CSS override of a kit component. A verdict
+   without having looked is labelled `UNSEEN`. Generated-but-unread
+   screenshots do not count. A screenshot only counts once the stylesheet
+   and fonts were confirmed loaded (rule count above zero,
+   `document.fonts.ready`, the expected font family on the page text); an
+   unstyled capture is a collection failure, not a finding about the
+   product, and not evidence either way. Compare like with like: same
+   content, viewport, identity, mode and state. Exception: a non-visual
+   change (N/A).
 2. **Kit first.** Search the kit (components, tokens, utilities) before
    judging any hand-made UI. A custom element that duplicates a kit piece is
    a finding: name the kit piece and its path. One file, one job: a catch-all
@@ -92,7 +94,8 @@ already has — search it first.
 6. **Responsive and themes.** Check the phone width (the page never scrolls
    sideways; code blocks and data tables may, inside their own named region;
    tap targets; readable sizes) and both themes (contrast, no hard-coded color
-   outside tokens). Check text/background pairs on inverted wells and bands.
+   outside tokens). Check text/background pairs on surfaces whose fill
+   inverts relative to the page.
    If the first action falls below the first screen, ask for a recomposition
    (order or slot), not for smaller tokens. One broken theme or width is a
    finding.
