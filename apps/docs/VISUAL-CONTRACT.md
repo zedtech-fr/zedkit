@@ -97,6 +97,8 @@ Title, purpose (role), maturity including Stable, package, source, preview, usag
 
 Compose by priority, not by stacking desktop. The first screen reaches the example or its start. Secondary tools are disclosed. Wide data scrolls in its own region, never clipped.
 
+**#73 adjustment (#261):** at 390 the quiet-glass mockup wraps the header onto two rows. The shipped phone bar is one compact row (wordmark; Get started or icon search; Menu) no taller than 64px. Menu is a kit Drawer of AI, UI, Docs, Catalog, and GitHub. Desktop 1440 stays the mockup single row at 56px (`--zk-site-header-height`), not the mockup 60px.
+
 Recompose (change the order or the arrangement, not the tokens) when any of these holds at 390px: the first action sits below the first screen; a control group wraps onto a second row of equal weight; two columns become two unreadable ones. Order with one DOM and CSS `order`, or with a slot (the editor's `afterShape`); never render a control twice and hide one. Compressing a look's spacing or type to make a phone fit changes the specimen and is not recomposition.
 
 ## Traps (31 Oct–1 Nov 2026)
