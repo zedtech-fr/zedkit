@@ -1,4 +1,3 @@
-import { uiGalleryStats } from "@/content/gallery";
 import { HomeClosingSection } from "@/ui/home/home-closing-section";
 import { HomeIdentitiesSection } from "@/ui/home/home-identities-section";
 import { HomeLimitsSection } from "@/ui/home/home-limits-section";
@@ -8,8 +7,8 @@ import { HomeSameIdeaSection } from "@/ui/home/home-same-idea-section";
 import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
 
 /**
- * Marketing sections below the hero, in the order a visitor decides: two
- * places, six quote/reply cards, hash landing plus Getting started, then the same task
+ * Marketing sections below the hero, in the order a visitor decides: the
+ * three-card same-idea band, six quote/reply cards, hash landing plus Getting started, then the same task
  * in four looks, then limits, manifesto, closing ask.
  * Kept in the main home payload (not dynamically imported) so section anchors stay in the live layout on first paint.
  *
@@ -19,10 +18,11 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
  * Customers: the developer's own users — this page does not sell to them.
  * Customer personas: n/a on the docs home.
  * UI decisions:
- *   two-place same-idea then six quote/reply cards then one paste, because:
- *   client = integrating developer who just saw the joint idea and still
- *   hears agent excuses.
- *   lg two-column same-idea grid, because: mobile stacks by priority.
+ *   three-card same-idea then six quote/reply cards then one paste, because:
+ *   client = integrating developer who just saw a hero paste and needs the
+ *   joint idea before another command, and still hears agent excuses.
+ *   lg three-card same-idea grid plus a lands bar, because: mobile stacks
+ *   by priority and the mockup is AI, UI and Together as one band.
  *   hash aliases stay inside #paste, because: README and hero CTAs still
  *   land there.
  *   paste is a dark zinc band with a file listing, because: neighbours must
@@ -31,10 +31,14 @@ import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
  *   should read what it does not do and the lock-in quote before the Setup
  *   ask. Catalog and nav already list components and package areas.
  */
-export function HomeBelowHero() {
+export function HomeBelowHero({
+  uiGalleryStats,
+}: {
+  uiGalleryStats: { components: number; livePreviews: number };
+}) {
   return (
     <div data-home-below-hero="">
-      <HomeSameIdeaSection />
+      <HomeSameIdeaSection componentCount={uiGalleryStats.components} />
       <HomeSixSentencesSection componentCount={uiGalleryStats.components} />
       <HomePasteSection />
       <HomeIdentitiesSection />
