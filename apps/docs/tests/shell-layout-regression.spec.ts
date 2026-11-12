@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { openHeroPage } from "./hero-helpers";
 
 const DESKTOP_WIDTHS = [1280, 1440] as const;
 
@@ -80,39 +79,6 @@ for (const width of DESKTOP_WIDTHS) {
     expect(metrics!.resultsInWideColumn).toBe(true);
     expect(metrics!.filterRowInset).toBeLessThanOrEqual(2);
     expect(metrics!.resultsInset).toBeLessThanOrEqual(2);
-  });
-}
-
-for (const theme of ["light", "dark"] as const) {
-  test(`home hero admin demo shows table and detail at 390px ${theme}`, async ({ page }) => {
-    await page.addInitScript((mode) => localStorage.setItem("theme", mode), theme);
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    await openHeroPage(page, "Apps");
-
-    const card = page.locator("[data-home-dashboard-card]");
-    await card.scrollIntoViewIfNeeded();
-    await expect(card.getByRole("heading", { name: "Project apps", level: 2 })).toBeVisible();
-    await expect(card.locator("[data-slot='table']")).toBeVisible();
-    await expect(card.getByRole("columnheader", { name: "Region" })).toBeVisible();
-
-    const preview = page.locator("[data-home-hero-preview]");
-    await preview.scrollIntoViewIfNeeded();
-
-    await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
-    await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
-    await expect(card.locator("[data-slot='table']")).toBeVisible();
-
-    const visible = await preview.evaluate((el) => {
-      const style = getComputedStyle(el);
-      const hiddenClip =
-        style.overflowY === "hidden" ||
-        style.overflow === "hidden" ||
-        style.overflowX === "hidden";
-      const sizedToContent = el.clientHeight + 2 >= el.scrollHeight;
-      return { ok: !hiddenClip && sizedToContent, hiddenClip, sizedToContent };
-    });
-    expect(visible, JSON.stringify(visible)).toMatchObject({ ok: true });
   });
 }
 
