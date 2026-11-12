@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 import { assertA11yGate } from "./a11y-helpers";
 import { persistDocsSiteLook, probe, useIdentity } from "./identity-helpers";
-import { openHeroPage } from "./hero-helpers";
 
 // Relative path: the config baseURL decides the port.
 const HOME = "/";
@@ -55,30 +54,6 @@ test.describe("tide identity", () => {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
-  });
-
-  test("hero admin preview sizes to content on phone (no clipped overflow)", async ({ page }) => {
-    await persistDocsSiteLook(page, "tide", "light");
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(HOME, { waitUntil: "networkidle" });
-    await openHeroPage(page, "Apps");
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    const preview = page.locator("[data-home-hero-preview]");
-    await preview.scrollIntoViewIfNeeded();
-    const clip = await preview.evaluate((el) => {
-      const style = getComputedStyle(el);
-      return {
-        overflowY: style.overflowY,
-        maxHeight: style.maxHeight,
-        clientHeight: el.clientHeight,
-        scrollHeight: el.scrollHeight,
-      };
-    });
-    expect(clip.overflowY).not.toBe("hidden");
-    expect(clip.clientHeight + 2).toBeGreaterThanOrEqual(clip.scrollHeight);
-    const card = page.locator("[data-home-dashboard-card]");
-    await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
-    await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
   });
 
   for (const width of [360, 390] as const) {

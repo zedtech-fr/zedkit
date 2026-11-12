@@ -34,7 +34,7 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   }
 });
 
-test("home hero matches the mockup first screen: clause, pills, prompt, glass card (#118, #247)", async ({
+test("home hero matches the mockup first screen: clause, prompt, glass card (#118, #247, #258)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -50,11 +50,8 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
     "",
   );
 
-  const tabs = page.locator("[data-home-hero-lead]").getByRole("tablist");
-  await expect(tabs).toHaveCount(1);
-  await expect(page.getByRole("tab", { name: "AI", exact: true })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "UI", exact: true })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tab")).toHaveCount(0);
 
   await expect(page.locator("[data-home-hero-actions]")).toHaveCount(0);
   await expect(page.locator("[data-hero-shapes]")).toHaveCount(0);
@@ -75,7 +72,7 @@ test("home hero matches the mockup first screen: clause, pills, prompt, glass ca
   await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
-  await expect(page.getByText("Name the kits you want, Nest included. The map knows the order.")).toBeVisible();
+  await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
   await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();
   await expect(page.getByText("An illustration of one run, not a recording.")).toBeVisible();
   await expect(page.locator("[data-hero-run-stage]")).toBeVisible();
@@ -158,7 +155,8 @@ test("home hero at 390 is headline-first; the glass card follows (#118)", async 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByRole("tab", { name: "AI + UI", exact: true })).toBeVisible();
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
   const order = await page.evaluate(() => {
     const lead = document.querySelector("[data-home-hero-lead]");
     const stage = document.querySelector("[data-hero-run-stage]");
@@ -191,7 +189,7 @@ test("home catalog link in the site header opens the catalog", async ({ page }) 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("home gallery shows no maturity badges", async ({ page }) => {
+test("home shows no maturity badges", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.locator("a[data-badge-link]")).toHaveCount(0);

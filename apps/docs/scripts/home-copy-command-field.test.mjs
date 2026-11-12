@@ -22,6 +22,8 @@ test("hero and closing share one attached copy-command field (#246)", () => {
   assert.match(field, /data-home-copy-command/);
   assert.match(field, /data-site-action/);
   assert.match(field, /"aria-label": ariaLabel/);
+  assert.match(field, /"aria-describedby": ariaDescribedBy/);
+  assert.match(field, /aria-describedby=\{ariaDescribedBy\}/);
   assert.match(field, /aria-label=\{copied \? homeCopyCommandCopy\.copied : copyLabel\}/);
   assert.match(field, /role="status"/);
   assert.match(field, /aria-live="polite"/);

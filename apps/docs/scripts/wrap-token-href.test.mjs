@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { wrapTokenHref } from "../components/wrap-token-href.mjs";
+import { wrapTokenHref } from "../features/docs/wrap-token-href.mjs";
 
 test("wraps links real packages and leaves component notes as text", () => {
   assert.equal(

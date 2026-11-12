@@ -37,11 +37,6 @@
   border-top-color: color-mix(in oklab, hsl(var(--border)) 40%, transparent);
 }
 
-/* Gallery card preview, tall enough that a lazy demo does not collapse the card. */
-[data-home-gallery-preview] {
-  min-height: calc(var(--spacing) * 32);
-}
-
 /* Chat turn. Stays inside the thread, with a little of the other side showing. */
 [data-assistant-log] > li {
   max-width: 90%;
@@ -49,14 +44,6 @@
 /* A notice beside the composer. Slightly wider than a thread turn. */
 [data-assistant-notice] {
   max-width: 95%;
-}
-
-/* Home index rows. The line is 60% of the border colour. The last row has no line. */
-[data-home-secondary-links] > [data-index-lead] {
-  border-bottom-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
-}
-[data-home-secondary-links] > [data-index-lead].border-b:last-child {
-  border-bottom-width: 0;
 }
 
 /* The last job in the badge table has no line under it. */
@@ -281,9 +268,7 @@
 }
 
 /* One-off insets. The step matches another role; the job does not, so the number stays a literal here. */
-[data-dock-scroll],
-[data-hero-activity],
-[data-hero-nav] {
+[data-dock-scroll] {
   padding-bottom: calc(var(--spacing) * 2);
 }
 

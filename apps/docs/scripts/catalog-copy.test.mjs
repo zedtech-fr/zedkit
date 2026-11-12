@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
-const { catalogCopy } = await import("../ui/catalog/i18n/catalog-copy.ts");
+const { catalogCopy } = await import("../app/(site)/catalog/_catalog/i18n/catalog-copy.ts");
 
 test("catalog lead interpolates a live count and does not hard-code a total", () => {
   assert.equal(catalogCopy.header.lead(0), "0 entries. Search by what you need to do.");
@@ -50,7 +50,7 @@ test("results status line shows visible of area total plus the stable legend", (
 });
 
 test("catalog UI has a counters module", () => {
-  const names = readdirSync(join(app, "ui/catalog"), { recursive: true }).map(String);
+  const names = readdirSync(join(app, "app/(site)/catalog/_catalog"), { recursive: true }).map(String);
   assert.equal(
     names.filter((name) => /counter/i.test(name)).length >= 1,
     true,
@@ -58,7 +58,7 @@ test("catalog UI has a counters module", () => {
 });
 
 test("catalog view keeps the quiet filtered count and the copy lead", () => {
-  const view = readFileSync(join(app, "ui/catalog/catalog-view.tsx"), "utf8");
+  const view = readFileSync(join(app, "app/(site)/catalog/_catalog/catalog-view.tsx"), "utf8");
   const page = readFileSync(join(app, "app/(site)/catalog/page.tsx"), "utf8");
   assert.match(view, /catalogCopy\.header\.lead\(entries\.length\)/);
   assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
