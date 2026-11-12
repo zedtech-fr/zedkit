@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  isFoundationsPath,
   isHomePath,
   isSiteNavLinkActive,
   siteHeaderLinks,
@@ -82,6 +83,16 @@ test("isHomePath is only the site root", () => {
   assert.equal(isHomePath("/catalog"), false);
   assert.equal(isHomePath("/docs"), false);
   assert.equal(isHomePath("/docs/getting-started"), false);
+});
+
+test("isFoundationsPath is only the foundations guide URL", () => {
+  assert.equal(isFoundationsPath("/docs/foundations"), true);
+  assert.equal(isFoundationsPath("/docs/foundations/"), true);
+  assert.equal(isFoundationsPath(""), false);
+  assert.equal(isFoundationsPath("/"), false);
+  assert.equal(isFoundationsPath("/docs"), false);
+  assert.equal(isFoundationsPath("/docs/foundations/extra"), false);
+  assert.equal(isFoundationsPath("/catalog"), false);
 });
 
 test("exact url matching does not current-state Docs on an AI or UI page", () => {

@@ -50,6 +50,31 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   letter-spacing: var(--zk-heading-tracking, -0.02em);
 }
 
+/* Foundations keeps the marketing display scale; do not change #nd-page h1 globally. */
+#nd-page[data-foundations-page] {
+  max-width: var(--zk-container-wide);
+}
+
+#nd-page[data-foundations-page] h1 {
+  font-size: var(--zk-type-h1-size);
+  font-weight: var(--zk-type-h1-weight);
+  line-height: var(--zk-type-h1-leading);
+  letter-spacing: var(--zk-type-h1-tracking);
+}
+
+#nd-page[data-foundations-page] h2 {
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  line-height: var(--zk-type-h2-leading);
+  letter-spacing: var(--zk-heading-tracking, -0.02em);
+}
+
+@media (min-width: 120rem) {
+  #nd-page[data-foundations-page] {
+    max-width: var(--zk-container-wide);
+  }
+}
+
 @media (width < 48rem) {
   #nd-page {
     --zk-type-doc-h1-size: 1.75rem;

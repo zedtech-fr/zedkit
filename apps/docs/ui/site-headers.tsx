@@ -11,8 +11,9 @@ import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
 import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
+import { SiteSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
+import { isFoundationsPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
 /**
  * Métier: public TypeScript kit documentation site.
@@ -21,10 +22,20 @@ import { isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site
  * Customer personas: first visit on `/` — next action is Get started or Docs, not search or a version chip.
  * UI decisions: home header is brand + AI/UI/Docs/Catalog + GitHub text + Get started, because customer = first-visit integrator on `/`.
  */
-function HomeDesktopHeader() {
+function HomeDesktopHeader({
+  className,
+  search = false,
+}: {
+  className?: string;
+  search?: boolean;
+}) {
   const pathname = usePathname();
   return (
-    <header id="nd-nav" data-home-header="" className="sticky pin-top z-header max-md:hidden">
+    <header
+      id="nd-nav"
+      data-home-header=""
+      className={cn("sticky pin-top z-header max-md:hidden", className)}
+    >
       <div>
         <nav
           aria-label={siteChromeCopy.nav.siteNavigation}
@@ -57,6 +68,7 @@ function HomeDesktopHeader() {
             })}
           </ul>
           <div className="ms-auto flex items-center gap-stack-md">
+            {search ? <SiteSearchTrigger /> : null}
             <HomeGitHubLink />
             <HomeGetStartedAction />
           </div>
@@ -81,14 +93,18 @@ export function MarketingSiteHeader() {
   );
 }
 
-/** Docs layout phone header (desktop docs chrome has no top bar). */
+/** Docs layout phone header (desktop docs chrome has no top bar, except foundations). */
 export function DocsSiteHeader() {
+  const foundations = isFoundationsPath(usePathname());
   return (
-    <MobileHeader
-      mode="docs"
-      version={featuredPackageVersion}
-      releasesHref={featuredPackageReleasesUrl}
-      className="sticky top-(--fd-docs-row-1) flex h-phone-bar items-center justify-between gap-stack-sm border-b px-control-tight backdrop-blur-sm [grid-area:header] md:hidden"
-    />
+    <>
+      <MobileHeader
+        mode="docs"
+        version={featuredPackageVersion}
+        releasesHref={featuredPackageReleasesUrl}
+        className="sticky top-(--fd-docs-row-1) flex h-phone-bar items-center justify-between gap-stack-sm border-b px-control-tight backdrop-blur-sm [grid-area:header] md:hidden"
+      />
+      {foundations ? <HomeDesktopHeader className="[grid-area:header]" search /> : null}
+    </>
   );
 }

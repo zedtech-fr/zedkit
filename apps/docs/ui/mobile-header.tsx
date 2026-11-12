@@ -26,6 +26,7 @@ import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 import { SHELL_NAV_PRIMARY_ITEM_CLASS } from "@/lib/shell-nav-classes";
 import {
+  isFoundationsPath,
   isHomePath,
   isSiteNavLinkActive,
   sitePrimaryNavLinks,
@@ -97,6 +98,7 @@ function NavDrawerLink({
 function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
   const home = isHomePath(pathname);
+  const foundations = isFoundationsPath(pathname);
   const primary = sitePrimaryNavLinks();
 
   return (
@@ -131,7 +133,7 @@ function SiteNavDrawerBody({ onNavigate }: { onNavigate: () => void }) {
             <GithubIcon className="size-icon shrink-0" />
             {siteChromeCopy.nav.github}
           </OffPathLink>
-          <ThemeButton />
+          {foundations ? null : <ThemeButton />}
         </div>
       )}
     </div>
@@ -180,6 +182,36 @@ function HomeMenuButton() {
   );
 }
 
+function PhoneHeaderActions({
+  home,
+  foundations,
+  mode,
+}: {
+  home: boolean;
+  foundations: boolean;
+  mode: "home" | "docs";
+}) {
+  if (home) {
+    return (
+      <>
+        <HomeGitHubLink className="px-touch" />
+        <HomeGetStartedAction />
+        <HomeMenuButton />
+      </>
+    );
+  }
+  return (
+    <>
+      <MobileSearchTrigger className={iconButtonClassName} />
+      {foundations ? null : <ThemeButton />}
+      <OffPathLink href={SITE_GITHUB_URL} aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
+        <GithubIcon className="size-icon" />
+      </OffPathLink>
+      {mode === "docs" && !foundations ? <DocsMenuButton /> : <HomeMenuButton />}
+    </>
+  );
+}
+
 /**
  * Phone header (< md): brand at the left; remaining chrome at the right.
  * Home `/` is brand, GitHub text, Get started, and the menu — no search, theme, or version.
@@ -195,50 +227,35 @@ export function MobileHeader({
   version: string;
   releasesHref: string;
 }) {
-  const home = isHomePath(usePathname());
+  const pathname = usePathname();
+  const home = isHomePath(pathname);
+  const foundations = isFoundationsPath(pathname);
   return (
-    <>
-      <header
-        id="nd-mobile-nav"
-        {...(mode === "docs" ? { "data-docs-phone-bar": "" } : {})}
-        className={
-          className ??
-          "sticky pin-top z-header flex h-phone-bar items-center justify-between gap-stack-sm border-b bg-background px-control-tight md:hidden"
-        }
-      >
-        <div className="flex content-shrink items-center gap-icon">
-          <DocsAppLink
-            href="/"
-            aria-label={siteChromeCopy.brand.homeAriaLabel}
-            className="inline-flex min-h-overlay-touch-target items-center rounded-md px-touch text-foreground focus-ring-control"
-          >
-            <SiteBrand />
-          </DocsAppLink>
-          {home ? null : (
-            <span className="hidden sm:inline-flex">
-              <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />
-            </span>
-          )}
-        </div>
-        <div className="flex shrink-0 items-center">
-          {home ? (
-            <>
-              <HomeGitHubLink className="px-touch" />
-              <HomeGetStartedAction />
-              <HomeMenuButton />
-            </>
-          ) : (
-            <>
-              <MobileSearchTrigger className={iconButtonClassName} />
-              <ThemeButton />
-              <OffPathLink href={SITE_GITHUB_URL} aria-label={siteChromeCopy.nav.github} className={iconButtonClassName}>
-                <GithubIcon className="size-icon" />
-              </OffPathLink>
-              {mode === "docs" ? <DocsMenuButton /> : <HomeMenuButton />}
-            </>
-          )}
-        </div>
-      </header>
-    </>
+    <header
+      id="nd-mobile-nav"
+      {...(mode === "docs" ? { "data-docs-phone-bar": "" } : {})}
+      className={
+        className ??
+        "sticky pin-top z-header flex h-phone-bar items-center justify-between gap-stack-sm border-b bg-background px-control-tight md:hidden"
+      }
+    >
+      <div className="flex content-shrink items-center gap-icon">
+        <DocsAppLink
+          href="/"
+          aria-label={siteChromeCopy.brand.homeAriaLabel}
+          className="inline-flex min-h-overlay-touch-target items-center rounded-md px-touch text-foreground focus-ring-control"
+        >
+          <SiteBrand />
+        </DocsAppLink>
+        {home || foundations ? null : (
+          <span className="hidden sm:inline-flex">
+            <KitVersionLabel version={version} releasesHref={releasesHref} tone="shell" />
+          </span>
+        )}
+      </div>
+      <div className="flex shrink-0 items-center">
+        <PhoneHeaderActions home={home} foundations={foundations} mode={mode} />
+      </div>
+    </header>
   );
 }
