@@ -7,7 +7,7 @@
  * (`registry.json` plus the files it lists), the same data the shadcn CLI reads.
  *
  * Layout assumed by every path and stated in the steps: a Next.js App Router project with a `src/` folder.
- * The plan holds ids and data only; the words come from components/i18n/adoption-copy.ts.
+ * The plan holds ids and data only; the words come from features/docs/i18n/adoption-copy.ts.
  *
  * @typedef {"pnpm" | "npm" | "yarn"} PackageManager
  * @typedef {{ kind: "command", commands: Record<PackageManager, string> }} CommandBlock

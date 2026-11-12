@@ -2,9 +2,9 @@ import { join } from "node:path";
 import type { DocEntry } from "fumadocs-typescript";
 import { TypeTable, type TypeNode } from "fumadocs-ui/components/type-table";
 import { Stack, Text } from "@zedtech/zedkit-ui";
-import { readDeclaredProps, registryHostName } from "../lib/declared-props.mjs";
-import { DEFAULT_PROPS_PRIORITY, partitionPropsEntries } from "../lib/props-priority.mjs";
-import { inheritedPropsCopy } from "./i18n/inherited-props-copy";
+import { readDeclaredProps, registryHostName } from "../declared-props.mjs";
+import { DEFAULT_PROPS_PRIORITY, partitionPropsEntries } from "../props-priority.mjs";
+import { inheritedPropsCopy } from "../i18n/inherited-props-copy";
 import { InheritedPropsPanel } from "./inherited-props-panel";
 
 /** React-only bookkeeping props that are not part of any component's API. */

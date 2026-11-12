@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 import { Heading, Stack, Text, cn } from "@zedtech/zedkit-ui";
 
-import { CommandBlock, FileBlock, SnippetBlock } from "@/components/adoption-blocks";
-import { adoptionCopy } from "@/components/i18n/adoption-copy";
+import { CommandBlock, FileBlock, SnippetBlock } from "./adoption-blocks";
+import { adoptionCopy } from "../i18n/adoption-copy";
 import { blockKey, type AdoptionBlock, type AdoptionMode, type AdoptionStep } from "@/lib/adoption-types";
 import type { PackageManager } from "@/lib/package-manager-commands";
 

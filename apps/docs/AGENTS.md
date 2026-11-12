@@ -13,6 +13,12 @@ packages; owns no component logic. Out of scope: kit components
 themselves (live in `packages/ui`), catalog content (lives in each
 package `CATALOG.md`).
 
+Rules:
+
+- Docs-page views (`ComponentPage`, `ComponentPreview`, props, adoption,
+  wraps) live in `features/docs/`. `preview-viewport.tsx` stays in
+  `components/` because kit demos cannot import a feature.
+
 ## Mental model
 
 Manifest-driven: `docs-manifest.json` maps catalog needs to demos;

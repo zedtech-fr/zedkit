@@ -5,7 +5,7 @@ import { CodeBlock } from "fumadocs-ui/components/codeblock";
 import { Check, Copy } from "lucide-react";
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stack, Text } from "@zedtech/zedkit-ui";
 
-import { adoptionCopy } from "@/components/i18n/adoption-copy";
+import { adoptionCopy } from "../i18n/adoption-copy";
 import { packageManagers, type PackageManager } from "@/lib/package-manager-commands";
 import { isPackageManager } from "@/lib/use-package-manager";
 

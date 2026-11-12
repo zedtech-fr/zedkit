@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 import { Stack, Tabs, TabsContent, TabsList, TabsTrigger, Text } from "@zedtech/zedkit-ui";
 
-import { ModeView, type Highlighted } from "@/components/adoption-steps";
-import { adoptionCopy } from "@/components/i18n/adoption-copy";
+import { ModeView, type Highlighted } from "./adoption-steps";
+import { adoptionCopy } from "../i18n/adoption-copy";
 import type { AdoptionMode, AdoptionPlan } from "@/lib/adoption-types";
 import { createStoredChoice } from "@/lib/use-stored-choice";
 import { usePackageManager } from "@/lib/use-package-manager";

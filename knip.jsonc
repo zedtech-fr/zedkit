@@ -28,7 +28,7 @@
         "source.config.ts",
         "mdx-components.tsx",
         "scripts/**/*.mjs",
-        "components/component-page.tsx",
+        "features/docs/ui/component-page.tsx",
         "components/maturity-compatibility-view.tsx",
         "home-quickstart/snippets/**",
         "prose/guides/snippets/**",
