@@ -75,6 +75,8 @@ html[data-docs-shell][data-identity] {
  * (light-mode leftovers are ~1.6:1 on this band).
  */
 #home-page #paste[data-slot="section"] {
+  /* Glass light accent: file-note text-accent stays ≥ 4.5 on this zinc band in page dark. */
+  --accent: 262 85% 70%;
   --foreground: var(--zk-site-action-foreground);
   --muted-foreground: var(--zk-site-action-foreground);
   --muted: var(--zk-site-action-hover);
@@ -83,6 +85,8 @@ html[data-docs-shell][data-identity] {
   --background: var(--zk-site-action);
   --border: var(--zk-site-action-hover);
   --card: var(--zk-site-action);
+  /* Glass light --accent: keep the highlighted file note ≥4.5 on zinc in page dark. */
+  --accent: 262 85% 70%;
   background-color: hsl(var(--zk-site-action));
   color: hsl(var(--zk-site-action-foreground));
 }
@@ -428,7 +432,7 @@ html[data-docs-shell][data-identity] {
  * re-declare their look on ThemeScope. Specificity beats the unlayered
  * identity body rule.
  */
-html[data-docs-shell]:not(.dark) body {
+html[data-docs-shell]:not(.dark):not([data-identity="custom"]) body {
   background-image: none;
   background-color: hsl(var(--zk-site-page));
 }
@@ -437,7 +441,12 @@ html[data-docs-shell].dark body {
   background-image: none;
 }
 
-html[data-docs-shell]:not(.dark) {
+html[data-docs-shell][data-identity="custom"] body {
+  background-image: none;
+  background-color: hsl(var(--background));
+}
+
+html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --muted-foreground: 240 5% 32%;
@@ -471,7 +480,7 @@ html[data-docs-shell]:not(.dark) {
  * ThemeScope node, so these roles never leak into what is being shown.
  * Roles: --border = structural divider, --input = interactive boundary.
  */
-:root[data-identity] {
+:root[data-identity]:not([data-identity="custom"]) {
   --zk-border-width: 1px;
   --border: var(--sidebar-border);
   --radius: 0.5rem;

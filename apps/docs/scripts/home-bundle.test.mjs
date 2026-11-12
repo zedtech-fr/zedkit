@@ -391,7 +391,11 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(paste, /<Badge /);
   assert.match(paste, /bg-primary-foreground/);
   assert.match(paste, /text-primary/);
-  assert.match(paste, /text-accent/);
+  assert.match(
+    paste,
+    /ui: "border-transparent bg-primary-foreground text-accent-foreground shadow-none hover:bg-primary-foreground"/,
+  );
+  assert.match(paste, /accent \? "font-mono text-accent" : "font-mono"/);
   assert.doesNotMatch(paste, /<Badge>/);
   assert.doesNotMatch(paste, /variant="muted" className="font-mono text-dense"/);
   assert.doesNotMatch(paste, /SetupEntryPrompt|SecretField|data-setup-entry/);
@@ -403,10 +407,12 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(tokens, /background-color:\s*hsl\(var\(--zk-site-action\)\)/);
   assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
   assert.match(
     tokens,
     /#home-page #paste\[data-slot="section"\] \{[^}]*--secondary-foreground:\s*var\(--zk-site-action-foreground\)/,
   );
+  assert.match(tokens, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
   assert.match(tokens, /\[data-home-same-idea-lands\]/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--muted:\s*var\(--zk-site-action-hover\)/);
   assert.match(tokens, /#home-page \[data-home-same-idea-lands\] \{[^}]*--secondary:\s*var\(--zk-site-action-hover\)/);
@@ -681,4 +687,44 @@ test("phone header is one compact row with a kit Drawer site menu", () => {
     /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-nav\[data-docs-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
   );
   assert.doesNotMatch(compact, /--zk-site-header-height-wrapped/);
+});
+
+function walkTsx(dir, relBase = "") {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name === ".next" || entry.name === "out") continue;
+    const rel = relBase ? `${relBase}/${entry.name}` : entry.name;
+    const abs = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkTsx(abs, rel));
+    else if (entry.name.endsWith(".tsx")) out.push({ abs, rel });
+  }
+  return out;
+}
+
+test("docs home uses native document scroll; SectionScroll is not mounted (#262)", () => {
+  const view = readFileSync(join(app, "ui/home/home-view.tsx"), "utf8");
+  const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
+  assert.doesNotMatch(view, /\bSectionScroll\b/);
+  assert.doesNotMatch(view, /data-slot=["']section-scroll["']/);
+  assert.match(
+    view,
+    /\{\.\.\.HOME_MARKETING_ROOT_PROPS\}[\s\S]*id=["']home-page["'][\s\S]*className=["']content-shrink["']/,
+  );
+
+  const importers = [];
+  for (const file of walkTsx(join(app, "ui/home"))) {
+    const src = readFileSync(file.abs, "utf8");
+    if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
+  }
+  assert.deepEqual(importers, []);
+
+  assert.doesNotMatch(compact, /#nd-home-layout/);
+  assert.match(
+    compact,
+    /#home-page section\[id\]\s*\{[^}]*scroll-margin-top:\s*calc\(var\(--zk-header-height\) \+ 1rem\)/,
+  );
+  assert.match(
+    compact,
+    /\[data-scroll-anchor\]\s*\{[^}]*scroll-margin-top:\s*max\(calc\(var\(--spacing\) \* 24\), calc\(var\(--zk-header-height\) \+ 1rem\)\)/,
+  );
 });

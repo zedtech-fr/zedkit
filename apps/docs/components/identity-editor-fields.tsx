@@ -8,6 +8,7 @@ import {
   Badge,
   Button,
   Field,
+  FieldError,
   FieldLabel,
   FieldLegend,
   FieldSet,
@@ -17,12 +18,13 @@ import {
   Text,
   cn,
   identityContrastTokenLabel,
+  parseIdentityTokens,
   type IdentityContrastWarning,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS } from "@/lib/identity-editor-search";
+import { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS, isLightKey } from "@/lib/identity-editor-search";
 import { identityTokenCssVars } from "@/lib/identity-token-css-vars";
 
 const DRAFT_ID = "draft";
@@ -31,55 +33,71 @@ const DRAFT_SELECTOR = `[data-identity-scope][data-identity="${DRAFT_ID}"]`;
 /** `H S% L%` triplets, the format the color tokens use. */
 const HSL_TRIPLET = /^\d+(?:\.\d+)?\s+\d+(?:\.\d+)?%\s+\d+(?:\.\d+)?%$/;
 
+type TokenFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  tokens: IdentityTokens;
+  tokenKey: string;
+  scheme: "light" | "dark";
+  onChange: (value: string) => void;
+  swatch?: boolean;
+};
+
+function TokenFieldSwatch({ draft }: { draft: string }) {
+  const color = HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
+  return (
+    <svg
+      aria-hidden="true"
+      data-token-swatch=""
+      className="size-control-height shrink-0 rounded-md border border-border"
+    >
+      <rect width="100%" height="100%" fill={color ?? "none"} />
+    </svg>
+  );
+}
+
 function TokenField({
   id,
   label,
   value,
+  tokens,
+  tokenKey,
+  scheme,
   onChange,
   swatch,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  swatch?: boolean;
-}) {
+}: TokenFieldProps) {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
-  const color = swatch && HSL_TRIPLET.test(draft.trim()) ? `hsl(${draft.trim()})` : null;
-  const invalidSwatch = Boolean(swatch) && !HSL_TRIPLET.test(draft.trim());
+  const next = isLightKey(tokenKey)
+    ? { ...tokens, [scheme]: { ...tokens[scheme], [tokenKey]: draft } }
+    : { ...tokens, [tokenKey]: draft };
+  const invalid = draft !== value && !parseIdentityTokens(next).success;
   const formatId = `${id}-format`;
   return (
     // shortcut: 7rem clears the docs header; the draft lives in its own column on desktop and is compact on a phone.
-    <Field className="content-shrink" data-invalid={invalidSwatch ? true : undefined}>
+    <Field className="content-shrink" data-invalid={invalid ? true : undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Stack direction="horizontal" gap="sm" className="content-shrink">
-        {swatch ? (
-          <svg
-            aria-hidden="true"
-            data-token-swatch=""
-            className="size-control-height shrink-0 rounded-md border border-border"
-          >
-            <rect width="100%" height="100%" fill={color ?? "none"} />
-          </svg>
-        ) : null}
+        {swatch ? <TokenFieldSwatch draft={draft} /> : null}
         <Input
           id={id}
           value={draft}
           className="content-shrink flex-1"
           data-editor-scroll=""
-          aria-invalid={invalidSwatch || undefined}
-          aria-describedby={invalidSwatch ? formatId : undefined}
+          aria-invalid={invalid || undefined}
+          aria-describedby={invalid ? formatId : undefined}
           onChange={(event) => {
             setDraft(event.target.value);
             onChange(event.target.value);
           }}
         />
       </Stack>
-      {invalidSwatch ? (
-        <Text as="span" id={formatId} className="sr-only">
-          {identityEditorCopy.fields.hslFormat}
-        </Text>
+      {invalid ? (
+        <FieldError
+          id={formatId}
+          errors={[{ message: swatch ? identityEditorCopy.fields.hslFormat : identityEditorCopy.fields.invalidValue }]}
+        />
       ) : null}
     </Field>
   );
@@ -120,6 +138,9 @@ function EditorFields({
         id={`${idPrefix}-${key}`}
         label={identityTokenCssVars[key]}
         value={tokens[key]}
+        tokens={tokens}
+        tokenKey={key}
+        scheme={scheme}
         onChange={(value) => onPatch(key, value)}
       />
     ));
@@ -137,6 +158,9 @@ function EditorFields({
             id={`${idPrefix}-${key}`}
             label={identityTokenCssVars[key]}
             value={pair[key]}
+            tokens={tokens}
+            tokenKey={key}
+            scheme={scheme}
             swatch
             onChange={(value) => onPatch(key, value, scheme)}
           />
@@ -230,7 +254,7 @@ function ContrastChips({
 }) {
   if (warnings.length === 0) return null;
   return (
-    <Stack gap="sm" role="status">
+    <Stack gap="sm">
       {warnings.map((warning) => {
         const label = identityContrastTokenLabel(warning.token);
         return (

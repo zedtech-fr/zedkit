@@ -1,9 +1,9 @@
 import { Badge, Heading, Section, Stack, Surface, Text } from "@zedtech/zedkit-ui";
 import {
+  HOME_CARD_GRID_REVEAL_PROPS,
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
-  HOME_SECTION_REVEAL_PROPS,
   HOME_SIX_SENTENCES_GRID,
 } from "@/ui/home/home-rhythm";
 import { homeSixSentencesCopy } from "@/ui/home/i18n/home-six-sentences-copy";
@@ -45,11 +45,10 @@ export function HomeSixSentencesSection({
       title={homeSixSentencesCopy.section.title}
       description={homeSixSentencesCopy.section.description}
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset" data-home-six-sentences="">
-        <ul className={HOME_SIX_SENTENCES_GRID}>
+        <ul className={HOME_SIX_SENTENCES_GRID} {...HOME_CARD_GRID_REVEAL_PROPS}>
           {homeSixSentencesCopy.cards.map((card) => (
             <SixSentencesCardItem key={card.id} card={card} componentCount={componentCount} />
           ))}
@@ -84,7 +83,7 @@ function SixSentencesCardItem({
         radius="xl"
         padding="card"
         data-home-six-sentences-card={featured ? "featured" : "plain"}
-        className="h-full"
+        className={featured ? "h-full" : "h-full hover-lift"}
       >
         <Stack gap="lg" className="h-full justify-between">
           <Stack gap="sm">

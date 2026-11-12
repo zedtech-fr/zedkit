@@ -4,7 +4,6 @@ import type { RefObject } from "react";
 import { Stack, Text, cn, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { identityAssistantCopy as copy } from "@/components/i18n/identity-assistant-copy";
-import { ConversationSiteApply, type ApplySiteHandlers, type ApplySiteTokenHandlers } from "@/components/identity-apply-site-row";
 import { AssistantNoticeBubble, BriefForm, ProposalCard, Thread, UnavailableBanner, type View } from "@/components/identity-assistant-parts";
 import { ChatLog, PendingAssistant } from "@/components/identity-chat-log";
 import { IdentityMiniPreview } from "@/components/identity-mini-preview";
@@ -46,8 +45,6 @@ type ConversationMessagesProps = {
   off: Unavailable | null;
   /** When true, refusal copy lives in the dock footer only (one on-screen hook, below the pinned preview). */
   noticeInComposerFooter?: boolean;
-  /** Apply to the whole site once a suggestion exists (Conversation tab; hidden on lg when Preview also shows it). */
-  siteApply?: ApplySiteHandlers;
 };
 
 function ConversationHistory(props: {
@@ -110,12 +107,6 @@ export function ConversationMessages(props: ConversationMessagesProps) {
         disabled={props.busy || props.off !== null}
         onSelect={props.onQuickRefine}
       />
-      {props.siteApply && props.session.proposal ? (
-        <ConversationSiteApply
-          siteApply={props.siteApply}
-          className={cn(props.narrowSplit || !props.compact ? "lg:hidden" : undefined)}
-        />
-      ) : null}
       <DetectedLinks text={props.brief} onText={props.onBrief} fieldId="identity-assistant-brief" disabled={props.busy} />
     </Stack>
   );
@@ -206,7 +197,6 @@ export function PreviewPane(props: {
   narrowSplit?: boolean;
   onUse: (tokens: IdentityTokens) => void;
   onDiscard: () => void;
-  siteApply?: ApplySiteTokenHandlers;
 }) {
   const compact = props.compact ?? false;
   const hidden = compact ? props.view !== "preview" : props.view === "conversation";
@@ -225,7 +215,6 @@ export function PreviewPane(props: {
           busy={props.busy}
           onUse={props.onUse}
           onDiscard={props.onDiscard}
-          {...(props.siteApply ? { siteApply: props.siteApply } : {})}
           {...(compact
             ? { className: "overflow-y-auto overscroll-y-contain", "data-proposal-inset": "", pinApply: true }
             : {})}
