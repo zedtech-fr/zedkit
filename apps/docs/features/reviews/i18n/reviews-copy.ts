@@ -44,7 +44,6 @@ export const reviewsCopy = {
     unlinkedTitle: "Unlinked pull requests",
     unlinkedDescription:
       "These runs are not joined to a GitHub issue yet. They stay reachable here and from old review URLs.",
-    openUnlinked: "Open unlinked pull request",
     run: "run",
     runs: "runs",
   },
@@ -53,7 +52,6 @@ export const reviewsCopy = {
     timeline: "Timeline",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
-    openRun: "Open this run",
     missing: "This issue is not on the public list.",
   },
   unlinked: {

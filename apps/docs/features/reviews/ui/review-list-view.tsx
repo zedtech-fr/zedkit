@@ -31,24 +31,22 @@ function runCountLabel(count: number, copy: ReviewsCopy): string {
 function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
   const status = latestStatus(issue.entries);
   return (
-    <Stack gap="sm" className="border-b border-border py-section-sm">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center border-b border-border py-row">
       <Button asChild variant="link" className="min-h-target w-fit">
         <Link href={issuePath(issue.number)}>
           #{issue.number} {issue.title}
         </Link>
       </Button>
-      <Stack direction="horizontal" gap="sm" className="flex-wrap">
-        <Badge variant="outline">{copy.state[issue.state]}</Badge>
-        {status ? <LatestStatusMark status={status} copy={copy} /> : null}
-        {issue.pullRequests.length > 0 ? (
-          <Text variant="muted" typeRole="caption">
-            {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
-              .map((n) => `#${n}`)
-              .join(", ")}`}
-          </Text>
-        ) : null}
-        <UpdatedAgo date={new Date(issue.lastRunAt)} />
-      </Stack>
+      <Badge variant="outline">{copy.state[issue.state]}</Badge>
+      {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+      {issue.pullRequests.length > 0 ? (
+        <Text variant="muted" typeRole="caption">
+          {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
+            .map((n) => `#${n}`)
+            .join(", ")}`}
+        </Text>
+      ) : null}
+      <UpdatedAgo date={new Date(issue.lastRunAt)} />
     </Stack>
   );
 }
@@ -64,24 +62,22 @@ function UnlinkedRow({
   const last = latestEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
   return (
-    <Stack gap="sm" className="border-b border-border py-section-sm">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center border-b border-border py-row">
       <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={unlinkedPrPath(entry.number)} aria-label={`${copy.list.openUnlinked} #${entry.number}`}>
+        <Link href={unlinkedPrPath(entry.number)}>
           #{entry.number}
         </Link>
       </Button>
-      <Stack direction="horizontal" gap="sm" className="flex-wrap">
-        {last ? (
-          <Text variant="muted" typeRole="caption">
-            {copy.type[last.type]}
-          </Text>
-        ) : null}
-        {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+      {last ? (
         <Text variant="muted" typeRole="caption">
-          {runCountLabel(runCount, copy)}
+          {copy.type[last.type]}
         </Text>
-        <UpdatedAgo date={new Date(entry.lastRunAt)} />
-      </Stack>
+      ) : null}
+      {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+      <Text variant="muted" typeRole="caption">
+        {runCountLabel(runCount, copy)}
+      </Text>
+      <UpdatedAgo date={new Date(entry.lastRunAt)} />
     </Stack>
   );
 }

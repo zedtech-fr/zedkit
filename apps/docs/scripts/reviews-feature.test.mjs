@@ -735,6 +735,7 @@ test("provisional run page links out and does not render a console", () => {
   assert.match(run, /copy\.run\.noLive/);
   assert.match(run, /target="_blank"/);
   assert.doesNotMatch(run, /ReviewConsole/);
+  assert.doesNotMatch(run, /AgentConsole/);
   assert.doesNotMatch(run, /reviewMainFlow/);
   assert.doesNotMatch(run, /ReviewAgentList/);
   assert.doesNotMatch(run, /<iframe/);
@@ -756,6 +757,27 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
   assert.doesNotMatch(list, /ReviewConsole/);
   assert.doesNotMatch(timeline, /ReviewConsole/);
+});
+
+test("unlinked and timeline links take their accessible name from visible title text", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.match(list, /<Link href=\{unlinkedPrPath\(entry\.number\)\}>\s*#\{entry\.number\}/);
+  assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
+  assert.match(timeline, /<Link href=\{href\}>\s*\{copy\.type\[entry\.type\]\}/);
+  assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
+});
+
+test("list and timeline rows use row padding, not section padding", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
+  assert.match(list, /flex-wrap items-center border-b border-border py-row/);
+  assert.match(timeline, /flex-wrap items-center border-b border-border py-row/);
+  assert.doesNotMatch(list, /py-section-sm/);
+  assert.doesNotMatch(timeline, /py-section-sm/);
+  assert.match(frame, /<Stack gap="md">\{children\(panel\)\}<\/Stack>/);
 });
 
 test("verdict and status tones live in one shared module", () => {

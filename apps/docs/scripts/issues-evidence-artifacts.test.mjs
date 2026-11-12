@@ -11,9 +11,13 @@ const EVIDENCE_FILES = [
   "issues-list-390.png",
   "issues-108-1440.png",
   "issues-108-390.png",
+  "issues-108-run-impl-1440.png",
+  "issues-108-run-impl-390.png",
+  "issues-93-run-impl-1440.png",
+  "issues-93-run-impl-390.png",
 ];
 
-test("issue list and issue 108 evidence PNGs exist under the artefact cap", () => {
+test("issue list, issue 108, and run-page evidence PNGs exist under the artefact cap", () => {
   for (const name of EVIDENCE_FILES) {
     const path = join(evidenceDir, name);
     const stat = statSync(path);
