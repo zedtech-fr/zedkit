@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Badge, Button, Stack, StatusDot, Surface, Text } from "@zedtech/zedkit-ui";
-import { HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
+import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "@/ui/home/home-rhythm";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
 import type { HeroKitId } from "@/ui/home/i18n/home-hero-copy";
 import { useMotionOk } from "@/ui/home/use-motion-ok";
@@ -130,22 +130,24 @@ export function HomeHeroIllustration({ kit }: { kit: HeroKitId }) {
   const [paused, setPaused] = useState(false);
 
   return (
-    <div
-      role="group"
-      aria-label={copy.caption}
-      data-home-hero-preview=""
-      data-hero-run-stage=""
-      data-paused={motionOk && paused ? "" : undefined}
-      className="relative content-shrink overflow-clip"
-    >
-      <span aria-hidden="true" data-hero-run-blob="1" className="pointer-events-none" />
-      <span aria-hidden="true" data-hero-run-drift="" className="pointer-events-none" />
-      <span aria-hidden="true" data-hero-run-blob="2" className="pointer-events-none" />
-      {kit === "ui" ? (
-        <SettingsCard />
-      ) : (
-        <RunCard kit={kit} motionOk={motionOk} paused={paused} onToggle={() => setPaused((value) => !value)} />
-      )}
+    <div {...HOME_PARALLAX_SCROLL_PROPS}>
+      <div
+        role="group"
+        aria-label={copy.caption}
+        data-home-hero-preview=""
+        data-hero-run-stage=""
+        data-paused={motionOk && paused ? "" : undefined}
+        className="relative content-shrink overflow-clip"
+      >
+        <span aria-hidden="true" data-hero-run-blob="1" className="pointer-events-none" />
+        <span aria-hidden="true" data-hero-run-drift="" className="pointer-events-none" />
+        <span aria-hidden="true" data-hero-run-blob="2" className="pointer-events-none" />
+        {kit === "ui" ? (
+          <SettingsCard />
+        ) : (
+          <RunCard kit={kit} motionOk={motionOk} paused={paused} onToggle={() => setPaused((value) => !value)} />
+        )}
+      </div>
     </div>
   );
 }

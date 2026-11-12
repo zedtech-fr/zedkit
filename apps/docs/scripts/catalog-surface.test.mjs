@@ -130,6 +130,16 @@ test("catalog cells use compact padding", () => {
   assert.doesNotMatch(results, /surface-pad-md/);
 });
 
+test("catalog result cells lift on hover and focus; counters stay still", () => {
+  const results = read("ui/catalog/catalog-results.tsx");
+  const counters = read("ui/catalog/catalog-counters.tsx");
+  const cell = functionSource(results, "CatalogCell");
+  assert.match(cell, /data-catalog-cell=/);
+  assert.match(cell, /hover-lift/);
+  assert.match(cell, /focus-ring/);
+  assert.doesNotMatch(counters, /hover-lift/);
+});
+
 test("catalog ships no identity host module", () => {
   assert.equal(existsSync(join(app, "ui/catalog/catalog-identity.tsx")), false);
   const names = readdirSync(join(app, "ui/catalog")).map(String);

@@ -54,8 +54,23 @@ export const HOME_PASTE_LANDS_GRID =
  */
 export const HOME_LOOKS_GRID = "grid content-shrink gap-stack-lg lg:grid-pair";
 
-/** Soft enter on scroll; static without JS and under reduced motion. */
-export const HOME_SECTION_REVEAL_PROPS = { "data-animate": "fade-up" } as const;
+/** Card grids: fade-up children in order. Apply on the `ul`, never the Section. */
+export const HOME_CARD_GRID_REVEAL_PROPS = {
+  "data-animate": "fade-up",
+  "data-animate-stagger": "",
+} as const;
+
+/** Paste timeline: slide from above. Apply on the timeline `ul` only. */
+export const HOME_PASTE_TIMELINE_REVEAL_PROPS = {
+  "data-animate": "fade-down",
+  "data-animate-stagger": "",
+} as const;
+
+/** Reading bands: opacity only. Apply on the inner stack, never the Section. */
+export const HOME_READING_REVEAL_PROPS = { "data-animate": "fade-in" } as const;
+
+/** Hero glass and looks specimen: scroll-linked drift on a node that is not already entering. */
+export const HOME_PARALLAX_SCROLL_PROPS = { "data-animate-scroll": "parallax" } as const;
 
 /** Min-height hero preview slot while the demo chunk loads; grows with the specimen (no fixed clip). */
 export const HOME_HERO_PREVIEW_SHELL_CLASS = "pane-shrink w-full content-shrink";

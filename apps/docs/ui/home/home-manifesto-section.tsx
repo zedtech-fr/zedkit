@@ -3,8 +3,8 @@ import { SITE_COMPANY_URL } from "@/lib/site-links.mjs";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
+  HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
-  HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
 import { homeManifestoCopy } from "@/ui/home/i18n/home-manifesto-copy";
 import { OffPathLink } from "@/ui/off-path-link";
@@ -31,13 +31,13 @@ export function HomeManifestoSection() {
       id="manifesto"
       aria-labelledby="manifesto-heading"
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack
         gap={HOME_SECTION_CONTENT_GAP}
         className="mx-auto max-w-reading items-center content-offset text-center"
         data-home-manifesto=""
+        {...HOME_READING_REVEAL_PROPS}
       >
         <Heading id="manifesto-heading" level={2} className="sr-only">
           {homeManifestoCopy.sectionLabel}

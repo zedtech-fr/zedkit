@@ -20,6 +20,7 @@ import { HomeIdentityLooksTabs } from "@/ui/home/home-identity-looks-tabs";
 import {
   HOME_LOOKS_GRID,
   HOME_METADATA_TEXT_CLASS,
+  HOME_PARALLAX_SCROLL_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
 import { useLookFade } from "@/ui/home/use-look-fade";
@@ -79,7 +80,7 @@ export function HomeIdentityLooks() {
           </Text>
         </Stack>
         <TabsContent value={identity} className="trim-top content-shrink lg:col-start-first lg:row-start-first">
-          <Stack className="content-shrink rounded-xl" data-identity-frame-stage="">
+          <Stack className="content-shrink rounded-xl" data-identity-frame-stage="" {...HOME_PARALLAX_SCROLL_PROPS}>
             <ThemeScope
               ref={stageRef}
               identity={identity}
