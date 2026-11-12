@@ -3,10 +3,63 @@
   // Exports used in the same file (slot maps, typed helpers, fixture classes)
   // are live; knip would otherwise list them as unused.
   "ignoreExportsUsedInFile": true,
+  // Shrink-only: a lot that starts using an ignored file or dependency must
+  // drop that ignore in the same PR. `scripts/ci-hygiene.test.mjs` fails when
+  // an ignore path matches no tracked file.
   "ignore": [
     // Copied onto consumer repos by the skill; not executed here.
-    "**/setup-ts-deep-modules/dependency-cruiser.config.cjs"
+    "**/setup-ts-deep-modules/dependency-cruiser.config.cjs",
+    "apps/docs/components/hero-demo-style-control.tsx",
+    "apps/docs/components/hero-demo-style-fields.tsx",
+    "apps/docs/components/hero-tour-control.tsx",
+    "apps/docs/components/home-gallery-demos.tsx",
+    "apps/docs/components/i18n/hero-demo-style-copy.ts",
+    "apps/docs/components/i18n/identity-specimen-compositions.ts",
+    "apps/docs/components/identity-assistant-panes.tsx",
+    "apps/docs/components/identity-assistant-parts.tsx",
+    "apps/docs/components/identity-assistant.tsx",
+    "apps/docs/components/identity-chat-log.tsx",
+    "apps/docs/components/identity-detected-links.tsx",
+    "apps/docs/components/identity-mini-preview.tsx",
+    "apps/docs/components/identity-proposal-compare.tsx",
+    "apps/docs/components/identity-references.tsx",
+    "apps/docs/components/identity-refinement-chips.tsx",
+    "apps/docs/components/identity-specimen-card.tsx",
+    "apps/docs/components/identity-specimens/booking-screen.tsx",
+    "apps/docs/components/identity-specimens/commerce-screen.tsx",
+    "apps/docs/components/identity-specimens/console-screen.tsx",
+    "apps/docs/components/identity-specimens/editorial-screen.tsx",
+    "apps/docs/components/identity-specimens/screen.tsx",
+    "apps/docs/components/use-assistant-submit.ts",
+    "apps/docs/components/use-assistant-view.ts",
+    "apps/docs/components/use-identity-assistant.ts",
+    "apps/docs/fixtures/setup-map/host/**",
+    "apps/docs/lib/identity-token-diff.ts",
+    "apps/docs/ui/home/home-gallery-preview.tsx",
+    "apps/docs/ui/home/home-hero-agent-panel.tsx",
+    "apps/docs/ui/home/home-hero-app.tsx",
+    "apps/docs/ui/home/home-hero-calendar.tsx",
+    "apps/docs/ui/home/home-hero-data.ts",
+    "apps/docs/ui/home/home-hero-overview.tsx",
+    "apps/docs/ui/home/home-hero-preview.tsx",
+    "apps/docs/ui/home/home-hero-satellites.tsx",
+    "apps/docs/ui/home/home-hero-settings.tsx",
+    "apps/docs/ui/home/home-hero-shell-parts.tsx",
+    "apps/docs/ui/home/home-hero-team.tsx",
+    "apps/docs/ui/home/use-hero-agent.ts",
+    "apps/docs/ui/home/use-hero-tour.ts",
+    "apps/docs/ui/home/use-pointer-parallax.ts",
+    "packages/ai/scripts/legacy-hashes.mjs",
+    "packages/ui/preview/cascade.spec.ts",
+    "packages/ui/preview/parallax.spec.ts",
+    "packages/ui/preview/smoke.spec.ts",
+    "packages/ui/tests/unit/parallax-rsc.test.ts"
   ],
+  // Same-file exports/types stay on via ignoreExportsUsedInFile. Cross-file
+  // unused exports and types are not in this ratchet (files and deps are).
+  "ignoreIssues": {
+    "**": ["exports", "types", "enumMembers", "nsExports", "nsTypes", "duplicates"]
+  },
   "workspaces": {
     ".": {
       // Root scripts. `shadcn` is a CLI (`pnpm exec shadcn`), not an import.
@@ -30,18 +83,25 @@
         "scripts/**/*.mjs",
         "features/docs/ui/component-page.tsx",
         "components/maturity-compatibility-view.tsx",
+        // Guide MDX imports these; knip does not follow .mdx.
+        "features/docs/guides/foundations/ui/foundations-color.tsx",
+        "features/docs/guides/foundations/ui/foundations-hero.tsx",
+        "features/docs/guides/foundations/ui/foundations-type.tsx",
+        "features/docs/guides/zedkit-and-shadcn/ui/zedkit-shadcn-faq.tsx",
         "home-quickstart/snippets/**",
         "prose/guides/snippets/**",
         "fixtures/**/*.mjs"
+      ],
+      "ignoreDependencies": [
+        "vaul"
+      ],
+      "ignoreUnresolved": [
+        "@/components/ui/button"
       ]
     },
     "packages/ui": {
       // gallery.tsx is compiled by preview/build.mjs (string read, not import).
-      "entry": ["preview/gallery.tsx", "preview/*.mjs"],
-      "ignoreDependencies": [
-        // Wanted by DropdownMenu (#627); not imported yet.
-        "@radix-ui/react-dropdown-menu"
-      ]
+      "entry": ["preview/gallery.tsx", "preview/*.mjs"]
     },
     "packages/quality": {
       // Fixtures compiled by the tsconfig unit test; usage.ts is the typecheck probe.
@@ -49,6 +109,11 @@
     },
     "packages/nest": {
       "entry": ["tests/**/*.ts", "examples/**/*.ts"]
+    },
+    "packages/observability": {
+      "ignoreDependencies": [
+        "posthog-js"
+      ]
     }
   }
 }

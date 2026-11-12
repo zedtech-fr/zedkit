@@ -1,11 +1,11 @@
 import { Badge, Card, Heading, Section, Stack, Text, cn } from "@zedtech/zedkit-ui";
 import { HomeLink } from "@/ui/home/home-link";
 import {
+  HOME_CARD_GRID_REVEAL_PROPS,
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SAME_IDEA_CARDS_GRID,
   HOME_SECTION_CONTENT_GAP,
-  HOME_SECTION_REVEAL_PROPS,
 } from "@/ui/home/home-rhythm";
 import { homeSameIdeaCopy } from "@/ui/home/i18n/home-same-idea-copy";
 
@@ -88,7 +88,7 @@ function SameIdeaCard({ id, componentCount }: { id: SameIdeaCardId; componentCou
   const card = homeSameIdeaCopy.cards[id];
   return (
     <li data-home-same-idea-column={id}>
-      <Card className="flex h-full flex-col overflow-hidden shadow-none">
+      <Card className="flex h-full hover-lift flex-col overflow-hidden shadow-none">
         <SameIdeaWindow id={id} />
         <Stack gap="lg" className="flex-1 surface-pad-md">
           <Stack gap="tight">
@@ -174,11 +174,10 @@ export function HomeSameIdeaSection({ componentCount }: { componentCount: number
       title={homeSameIdeaCopy.section.title}
       description={homeSameIdeaCopy.section.description}
       snap="none"
-      {...HOME_SECTION_REVEAL_PROPS}
       {...HOME_MARKETING_ROOT_PROPS}
     >
       <Stack gap={HOME_SECTION_CONTENT_GAP} className="content-offset" data-home-same-idea="">
-        <ul className={HOME_SAME_IDEA_CARDS_GRID}>
+        <ul className={HOME_SAME_IDEA_CARDS_GRID} {...HOME_CARD_GRID_REVEAL_PROPS}>
           {CARD_IDS.map((id) => (
             <SameIdeaCard key={id} id={id} componentCount={componentCount} />
           ))}

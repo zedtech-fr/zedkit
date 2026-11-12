@@ -1509,7 +1509,7 @@
           ".hover-lift, .hover-press": {
             "transition": "none"
           },
-          ".hover-lift:hover, .hover-press:active": {
+          ".hover-lift:hover, .hover-lift:focus-visible, .hover-lift:focus-within, .hover-press:active": {
             "translate": "none"
           },
           ".motion-reveal, .motion-settle, .motion-emphasis": {
@@ -1923,7 +1923,7 @@
         ":root[data-motion=\"reduce\"] .hover-lift, :root[data-motion=\"reduce\"] .hover-press": {
           "transition": "none"
         },
-        ":root[data-motion=\"reduce\"] .hover-lift:hover, :root[data-motion=\"reduce\"] .hover-press:active": {
+        ":root[data-motion=\"reduce\"] .hover-lift:hover, :root[data-motion=\"reduce\"] .hover-lift:focus-visible, :root[data-motion=\"reduce\"] .hover-lift:focus-within, :root[data-motion=\"reduce\"] .hover-press:active": {
           "translate": "none"
         },
         "@media (max-width: 40rem)": {

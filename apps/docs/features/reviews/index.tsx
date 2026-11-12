@@ -6,11 +6,13 @@
  * UI decisions:
  * - Issue list at /issues with title, state, linked PRs, and latest status first; the title opens the latest run and Timeline is a labelled secondary — because: hurried visitor scans work and reaches a run in one click.
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
- * - Wrapping scan rows (title then status), not a wide table — because: phone users at 390px compose by priority and a hurried reader scans one band per run.
+ * - Public run history list stays in the shared appearance-frame Container (width wide) — because: a hurried visitor at 1440 expects the same centered column as an issue detail page.
+ * - Issue and unlinked rows are two bands below md (title plus Timeline, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per run without chasing wrapped fragments.
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
- * - Provisional run page is a short page with one primary hosted-console link (or a placeholder) — because: this is not a second console.
- * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground.
+ * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
+ * - Index-only runs keep the hosted-console link (or a placeholder) — because: failed or in-progress rows without a console body still resolve, and this is not a second console.
+ * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground. The console uses `ReviewConsoleAppearanceFrame` (dense strip) only.
  * - Empty state says public issues will show up here — because: the visitor always has a next thought.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
@@ -39,7 +41,9 @@ import {
   redirectPathForPr,
   redirectPathForPrRun,
 } from "./model/review-routes";
+import { toAgentConsole } from "./model/to-agent-console";
 import { isRunRecord } from "./ports/review-port";
+import { ReviewConsoleView } from "./ui/review-console-view";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
@@ -91,10 +95,22 @@ export async function ReviewIssueRunFeature({ n, id }: { n: string; id: string }
   const number = parsePrNumber(n);
   const issue = number === null ? null : await port.getIssue(number);
   const run = number === null ? null : await port.getRun(number, id);
-  if (issue === null || run === null || !isRunRecord(run)) notFound();
-  const showSampleNotice = await port.isPublicStandIn();
+  if (issue === null || run === null) notFound();
+  if (isRunRecord(run)) {
+    const showSampleNotice = await port.isPublicStandIn();
+    return (
+      <ReviewRunView issue={issue} run={run} copy={reviewsCopy} showSampleNotice={showSampleNotice} />
+    );
+  }
+  const mapped = toAgentConsole(run);
   return (
-    <ReviewRunView issue={issue} run={run} copy={reviewsCopy} showSampleNotice={showSampleNotice} />
+    <ReviewConsoleView
+      issueNumber={issue.number}
+      run={mapped.run}
+      items={mapped.items}
+      decision={mapped.decision ?? null}
+      copy={reviewsCopy}
+    />
   );
 }
 

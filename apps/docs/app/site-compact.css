@@ -81,7 +81,7 @@
 }
 
 /* Scroll targets clear the compact header at every width. */
-#nd-home-layout section[id] {
+#home-page section[id] {
   scroll-margin-top: calc(var(--zk-header-height) + 1rem);
 }
 [data-scroll-anchor] {

@@ -90,6 +90,29 @@ describe("animate CSS", () => {
     expect(motionCss).toContain("zk-word-roll-exit-up");
     expect(motionCss).not.toMatch(/\[data-animate[^\]]*\{[^}]*\b(top|height|width)\s*:/);
   });
+
+  it("stagger pending children follow the host preset direction", () => {
+    expect(motionCss).toMatch(
+      /\[data-animate-stagger\]\[data-animate-state="pending"\]\s*>\s*\*[^}]*translate:\s*0\s*var\(--zk-reveal-distance/s,
+    );
+    expect(motionCss).toMatch(
+      /\[data-animate="fade-down"\]\[data-animate-stagger\]\[data-animate-state="pending"\]\s*>\s*\*[^}]*translate:\s*0\s*calc\(var\(--zk-reveal-distance[^)]*\)\s*\*\s*-1\)/s,
+    );
+    expect(motionCss).toMatch(
+      /\[data-animate="fade-in"\]\[data-animate-stagger\]\[data-animate-state="pending"\]\s*>\s*\*[^}]*translate:\s*none/s,
+    );
+  });
+
+  it("hides stagger pending children from the tab order until revealed", () => {
+    expect(motionCss).toMatch(
+      /\[data-animate-stagger\]\[data-animate-state="pending"\]\s*>\s*\*[^}]*visibility:\s*hidden/s,
+    );
+    expect(motionCss).toMatch(
+      /\[data-animate-stagger\]\[data-animate-state="in"\]\s*>\s*\*[^}]*visibility:\s*visible/s,
+    );
+    expect(motionCss).toMatch(/prefers-reduced-motion:\s*reduce[\s\S]*visibility:\s*visible\s*!important/);
+    expect(motionCss).toMatch(/:root\[data-motion="reduce"\][\s\S]*visibility:\s*visible\s*!important/);
+  });
 });
 
 describe("Animate", () => {
