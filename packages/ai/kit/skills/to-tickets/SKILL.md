@@ -76,6 +76,8 @@ Do NOT close or modify any parent issue.
 
 **Status:** ready-for-agent
 
+**States:** N/A, or the UI states to capture (drawer open, selected segment, Copied).
+
 - [ ] Acceptance criterion 1
 - [ ] Acceptance criterion 2
 
@@ -96,10 +98,14 @@ The end-to-end behaviour this ticket makes work, from the user's perspective, no
 - [ ] Criterion 1
 - [ ] Criterion 2
 
+**States:** N/A, or the UI states to capture (drawer open, selected segment, Copied).
+
 ## Blocked by
 
 - A reference to each blocking ticket, or "None (can start immediately)". Omit this section when blockers were set as native edges.
 
 </issue-template>
+
+UI tickets carry a `States:` line so those states are captured.
 
 In either form, avoid specific file paths or code snippets: they go stale fast. Exception: if a prototype produced a snippet that encodes a decision more precisely than prose can (state machine, reducer, schema, type shape), inline it and note briefly that it came from a prototype. Trim to the decision-rich parts, not a working demo, just the important bits.

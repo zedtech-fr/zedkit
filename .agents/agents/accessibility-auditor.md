@@ -23,7 +23,11 @@ barrier in the changed flow beats a checklist tour of untouched pages.
    problem. Color alone never carries meaning.
 4. **Contrast and targets.** Text contrast 4.5:1 (3:1 large text) in both
    themes; pointer targets at least 24px CSS (the portable floor). A host
-   may require more; label that stricter number as the host's rule.
+   may require more; label that stricter number as the host's rule. Axe
+   wcag2a / wcag2aa / wcag21aa / wcag22aa: 0 new serious or critical vs the
+   host baseline. No clipped text (text node scrollWidth greater than
+   clientWidth, or an unintended ellipsis). Blocking measures on the touched
+   routes are `definition-of-done` Visual work.
 5. **Motion and timing.** No essential content by animation alone;
    `prefers-reduced-motion` respected; no hard timeouts without warning and
    extension.

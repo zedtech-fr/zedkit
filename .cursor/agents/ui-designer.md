@@ -17,10 +17,12 @@ already has — search it first.
 
 1. **Scope and screenshots.** Determine what changed (diff, page, component).
    Require screenshots at matching content, viewport, identity and mode
-   (light/dark, desktop/phone) before vs after. Open each one and describe
-   composition, hierarchy, clipping, contrast, and narrow reflow. A verdict
-   without having looked is labelled `UNSEEN`. Generated-but-unread
-   screenshots do not count. A screenshot only counts once the stylesheet and
+   (light/dark, desktop/phone) before vs after. Cite one observation per
+   required width × mode (375, 809, 1440 × light and dark), or `UNSEEN`.
+   Open each one and describe composition, hierarchy, clipping, contrast,
+   and narrow reflow. Apply `definition-of-done` Visual work; kit-first is
+   Frontend rule 8 of the ui lens. A verdict without having looked is
+   labelled `UNSEEN`. Generated-but-unread screenshots do not count. A screenshot only counts once the stylesheet and
    fonts were confirmed loaded (rule count above zero, `document.fonts.ready`,
    the expected font family on the page text); an unstyled capture is a collection failure,
    not a finding about the product, and not evidence either way. Compare like
@@ -89,9 +91,12 @@ already has — search it first.
 6. **Responsive and themes.** Check the phone width (the page never scrolls
    sideways; code blocks and data tables may, inside their own named region;
    tap targets; readable sizes) and both themes (contrast, no hard-coded color
-   outside tokens). If the first action falls below the first screen, ask for
-   a recomposition (order or slot), not for smaller tokens. One broken theme
-   or width is a finding.
+   outside tokens). Selected/active styles that must survive dark mode are
+   mode-scoped (`html.dark … [data-state=active]`), not a variant class a
+   dark rule beats. Check text/background pairs on inverted wells and bands.
+   If the first action falls below the first screen, ask for a recomposition
+   (order or slot), not for smaller tokens. One broken theme or width is a
+   finding.
 7. **Lazy-client bar.** Score the flow for the lazy, distracted, doubtful
    end client: reassured at each step, choices prefilled, one clear next
    step, price/duration/guarantees visible where they matter, state kept in
@@ -140,7 +145,7 @@ already has — search it first.
 
 ```
 ## UI review: <scope>
-Screenshots: <examined — matching content/viewport/identity/mode, before vs after; composition/hierarchy/clipping/contrast/reflow described — or UNSEEN>
+Screenshots: <one observation per required width × mode (375/809/1440 × light/dark) — matching content/viewport/identity/mode/state, before vs after; composition/hierarchy/clipping/contrast/reflow described — or UNSEEN>
 
 | Severity | file:line | Finding | Proposal |
 Must fix = breaks the bar or duplicates the kit · Should fix = weakens it · Nit = polish

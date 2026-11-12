@@ -55,8 +55,10 @@ Estimate files created or modified (exclude lockfiles and generated files) befor
 
 ## Visual work
 
-Applies when the change is a page, view, component, style or preview.
-Exception: a non-visual change (N/A).
+Applies when the diff touches a rendered surface: `**/*.tsx`, `**/*.css`,
+`packages/ui/**`, `apps/docs/**` (except tests), tokens/looks, or a rendered
+page. Proportion to **visual risk**, not diff size. Exception: a non-visual
+change (N/A).
 
 <!-- if:skill=compose-ui -->
 
@@ -64,9 +66,10 @@ Exception: a non-visual change (N/A).
 
 <!-- /if -->
 
-- [ ] The cheap loop and an opened render are necessary, not sufficient. Axe and screenshot diffs only when a spec you changed already has them, or when reproducing a failed CI smoke job.
-- [ ] A rendered-page critique names the strongest remaining weaknesses (composition, hierarchy, type roles, density, rhythm). A self-assigned score is not done.
-- [ ] Screenshots were opened and described (matching content/viewport/identity/mode, before vs after). `UNSEEN` if not looked at. Generated-but-unread shots do not count.
+- [ ] The cheap loop and an opened render are necessary, not sufficient. A rendered-page critique names the strongest remaining weaknesses (composition, hierarchy, type roles, density, rhythm). A self-assigned score is not done.
+- [ ] Evidence matrix on the touched routes, after the last change: **375, 809 and 1440 × light and dark**. Full looks grid (every shipped look × both modes) only when a shared token, primitive, or identity sheet changes. Required states come from the ticket's `States:` line when present.
+- [ ] Blocking measures on those routes: axe `wcag2a` / `wcag2aa` / `wcag21aa` / `wcag22aa` with **0 new** serious or critical vs the host baseline (contrast ≥ 4.5, or 3:1 for large text); no horizontal overflow (`scrollWidth` ≤ `innerWidth` / `clientWidth`); no clipped text (`scrollWidth` > `clientWidth` on the text node, or an unintended ellipsis); zero console errors and zero `pageerror`; a single `h1`; hit targets ≥ 24px (a host may be stricter); selected and focus states meet the contrast floor. Hero size is judged on the opened screenshots. If the host documents a visual-verify command, run it after the last change; otherwise perform the same checks on opened renders and record `UNSEEN` / `UNVERIFIED` where a capture is missing.
+- [ ] Contact sheet opened and described (one sentence per width and per mode). `UNSEEN` if not looked at. Generated-but-unread shots do not count. Screenshots count only when the stylesheet and fonts are confirmed loaded.
 
 <!-- if:agent=ui-designer -->
 
