@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
-import { componentPageHeaderMeta, componentPageSections } from "../lib/component-page-sections.mjs";
-import { declarationOrigin } from "../lib/declared-props.mjs";
-import { partitionPropsEntries } from "../lib/props-priority.mjs";
+import { componentPageHeaderMeta, componentPageSections } from "../features/docs/component-page-sections.mjs";
+import { declarationOrigin } from "../features/docs/declared-props.mjs";
+import { partitionPropsEntries } from "../features/docs/props-priority.mjs";
 import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
 import { docsLayoutTree } from "../lib/docs-layout-tree.mjs";
 import { kitUiSourceUrl, SITE_GITHUB_URL } from "../lib/site-links.mjs";
@@ -139,8 +139,8 @@ test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () =>
 
 test("expandFencePreviews inserts a live preview and optional import", () => {
   const source = '---\ntitle: "Demo"\n---\n\n```tsx preview="ButtonDemo"\n<Button />\n```\n';
-  const out = expandFencePreviews(source, "../../components/component-preview");
-  assert.match(out, /import \{ ComponentPreview \} from "\.\.\/\.\.\/components\/component-preview"/);
+  const out = expandFencePreviews(source, "../../features/docs/ui/component-preview");
+  assert.match(out, /import \{ ComponentPreview \} from "\.\.\/\.\.\/features\/docs\/ui\/component-preview"/);
   assert.match(out, /<ComponentPreview demo="ButtonDemo"/);
   assert.match(out, /```tsx\n<Button \/>/);
   assert.equal(out.includes('preview="ButtonDemo"'), false);

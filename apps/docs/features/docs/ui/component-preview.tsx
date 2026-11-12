@@ -4,9 +4,9 @@ import Link from "next/link";
 import { highlight } from "fumadocs-core/highlight";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Stack, Text } from "@zedtech/zedkit-ui";
-import { PreviewFrame } from "./preview-viewport";
-import { demoRegistry, type DemoEntry } from "./demos/registry";
-import { componentPreviewCopy } from "@/components/i18n/component-preview-copy";
+import { PreviewFrame } from "@/components/preview-viewport";
+import { demoRegistry, type DemoEntry } from "@/components/demos/registry";
+import { componentPreviewCopy } from "../i18n/component-preview-copy";
 
 interface ComponentPreviewProps {
   /** Registry key, e.g. `ButtonDemo`. */

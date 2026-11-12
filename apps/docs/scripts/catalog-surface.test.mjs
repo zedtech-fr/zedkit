@@ -18,7 +18,7 @@ function functionSource(src, name) {
 }
 
 test("catalog view reads as a catalog: lead, counters, filters, results, no identity form", () => {
-  const view = read("ui/catalog/catalog-view.tsx");
+  const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
   assert.match(view, /catalogCopy\.header\.lead\(entries\.length\)/);
   assert.match(view, /CatalogCounters/);
   assert.match(view, /CatalogFiltersToolbar/);
@@ -45,8 +45,8 @@ test("catalog view reads as a catalog: lead, counters, filters, results, no iden
 });
 
 test("catalog header is a muted band with a hairline; search sits in the next section", () => {
-  const view = read("ui/catalog/catalog-view.tsx");
-  const css = read("app/catalog-shell.css");
+  const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
   const headerAt = view.indexOf("data-catalog-header-band");
   const mutedAt = view.indexOf('tone="muted"');
   const toolbarAt = view.indexOf("<CatalogFiltersToolbar");
@@ -68,7 +68,7 @@ test("catalog header is a muted band with a hairline; search sits in the next se
 });
 
 test("selected chip uses site-action; chips and Stable only share one wrap row", () => {
-  const filters = read("ui/catalog/catalog-filters.tsx");
+  const filters = read("app/(site)/catalog/_catalog/catalog-filters.tsx");
   assert.match(filters, /data-site-action=\{selected \? "" : undefined\}/);
   assert.match(filters, /variant=\{selected \? "default" : "outline"\}/);
   assert.match(filters, /data-catalog-chip-row/);
@@ -84,13 +84,13 @@ test("selected chip uses site-action; chips and Stable only share one wrap row",
 });
 
 test("category chips override size=sm caption with text-dense", () => {
-  const chips = functionSource(read("ui/catalog/catalog-filters.tsx"), "CatalogCategoryChips");
+  const chips = functionSource(read("app/(site)/catalog/_catalog/catalog-filters.tsx"), "CatalogCategoryChips");
   assert.match(chips, /size="sm"/);
   assert.match(chips, /text-dense/);
 });
 
 test("Category group holds chips only; toolbar is a labelled group", () => {
-  const filters = read("ui/catalog/catalog-filters.tsx");
+  const filters = read("app/(site)/catalog/_catalog/catalog-filters.tsx");
   const chips = functionSource(filters, "CatalogCategoryChips");
   const stable = functionSource(filters, "CatalogStableOnly");
   const toolbar = functionSource(filters, "CatalogFiltersToolbar");
@@ -108,8 +108,8 @@ test("Category group holds chips only; toolbar is a labelled group", () => {
 });
 
 test("catalog search shadow is owned by the Input class, not catalog-shell.css", () => {
-  const search = functionSource(read("ui/catalog/catalog-filters.tsx"), "CatalogSearchField");
-  const css = read("app/catalog-shell.css");
+  const search = functionSource(read("app/(site)/catalog/_catalog/catalog-filters.tsx"), "CatalogSearchField");
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
   const start = css.indexOf("[data-catalog-filter-search]");
   assert.notEqual(start, -1);
   const open = css.indexOf("{", start);
@@ -119,20 +119,20 @@ test("catalog search shadow is owned by the Input class, not catalog-shell.css",
 });
 
 test("results status is a data hook, not a heading id", () => {
-  const view = read("ui/catalog/catalog-view.tsx");
+  const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
   assert.match(view, /data-catalog-results-heading/);
   assert.doesNotMatch(view, /id="catalog-results-heading"/);
 });
 
 test("catalog cells use compact padding", () => {
-  const results = read("ui/catalog/catalog-results.tsx");
+  const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
   assert.match(results, /surface-pad-compact/);
   assert.doesNotMatch(results, /surface-pad-md/);
 });
 
 test("catalog result cells lift on hover and focus; counters stay still", () => {
-  const results = read("ui/catalog/catalog-results.tsx");
-  const counters = read("ui/catalog/catalog-counters.tsx");
+  const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
+  const counters = read("app/(site)/catalog/_catalog/catalog-counters.tsx");
   const cell = functionSource(results, "CatalogCell");
   assert.match(cell, /data-catalog-cell=/);
   assert.match(cell, /hover-lift/);
@@ -143,8 +143,8 @@ test("catalog result cells lift on hover and focus; counters stay still", () => 
 });
 
 test("catalog ships no identity host module", () => {
-  assert.equal(existsSync(join(app, "ui/catalog/catalog-identity.tsx")), false);
-  const names = readdirSync(join(app, "ui/catalog")).map(String);
+  assert.equal(existsSync(join(app, "app/(site)/catalog/_catalog/catalog-identity.tsx")), false);
+  const names = readdirSync(join(app, "app/(site)/catalog/_catalog")).map(String);
   assert.equal(
     names.filter((name) => /identity/i.test(name)).length,
     0,
@@ -153,7 +153,7 @@ test("catalog ships no identity host module", () => {
 
 test("the identity form lives in the editor panel, not the catalog", () => {
   const panel = read("components/identity-editor-panel.tsx");
-  const view = read("ui/catalog/catalog-view.tsx");
+  const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
   assert.match(panel, /IdentityLookForm/);
   assert.match(panel, /defaultMode="expert"/);
   assert.match(panel, /bindLookLibrary/);

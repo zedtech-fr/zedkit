@@ -7,7 +7,7 @@ import { Stack } from "@zedtech/zedkit-ui";
 
 import { docsPageCopy } from "@/app/i18n/docs-page-copy";
 import { JsonLd } from "@/components/json-ld";
-import { mergeComponentPageToc } from "@/lib/component-page-toc";
+import { mergeComponentPageToc } from "@/features/docs/component-page-toc";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
 import { isFoundationsPath } from "@/lib/site-nav-data";

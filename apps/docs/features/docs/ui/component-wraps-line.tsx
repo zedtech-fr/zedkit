@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Text } from "@zedtech/zedkit-ui";
-import { componentWrapsLineCopy } from "@/components/i18n/component-wraps-line-copy";
-import { wrapTokenHref } from "./wrap-token-href.mjs";
+import { componentWrapsLineCopy } from "../i18n/component-wraps-line-copy";
+import { wrapTokenHref } from "../wrap-token-href.mjs";
 
 /** Catalog `wraps` field: backtick-separated npm names and plain notes. */
 export function parseWrapTokens(wraps: string): string[] {

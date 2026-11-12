@@ -49,8 +49,6 @@
     "components/use-creator-handoff.ts",
     "components/use-identity-dock-keyboard.ts",
     "lib/brief-specimen-domain.ts",
-    "lib/catalog-filter.mjs",
-    "lib/component-page-toc.ts",
     "lib/creator-handoff.ts",
     "lib/creator-session-brief.ts",
     "lib/docs-layout-tree.mjs",
@@ -82,7 +80,6 @@
   ],
   "globs": [
     "ui/home/**",
-    "ui/catalog/**",
     "ui/docs-main-content.tsx"
   ],
   "edges": [

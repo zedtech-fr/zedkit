@@ -13,6 +13,12 @@ packages; owns no component logic. Out of scope: kit components
 themselves (live in `packages/ui`), catalog content (lives in each
 package `CATALOG.md`).
 
+Rules:
+
+- Docs-page views (`ComponentPage`, `ComponentPreview`, props, adoption,
+  wraps) live in `features/docs/`. `preview-viewport.tsx` stays in
+  `components/` because kit demos cannot import a feature.
+
 ## Mental model
 
 Manifest-driven: `docs-manifest.json` maps catalog needs to demos;
@@ -31,14 +37,14 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
   `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
-  today's in-flight lots still live under `ui/home/**`, `ui/catalog/**`,
-  and `ui/docs-main-content.tsx`.
+  today's in-flight lots still live under `ui/home/**` and
+  `ui/docs-main-content.tsx`.
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
   is dissolving; do not add a fifth home there. Directory globs in
-  `REQUIRED_GLOBS` (`ui/home/**`, `ui/catalog/**`,
+  `REQUIRED_GLOBS` (`ui/home/**`,
   `ui/docs-main-content.tsx`) silently absorb new files; do not add under
   them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order: move
   the files, regen, drop the glob, regen again.
@@ -48,8 +54,7 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
 - One-way imports: `app → features → components/ui → lib`. A feature does
   not import another feature or app (compose in the route and pass props).
   A `_<name>` folder is imported only from its own route subtree.
-  Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features;
-  L8 `lib/component-page-toc.ts` may import `@/components`.
+  Temporary exceptions: L5 `ui/home/home-hero.tsx` may import features.
 - Kit previews stay in `components/demos/` (the placement checker skips
   dead and single-owner there). Unit tests live beside their module,
   including under `app/`; Playwright stays in `tests/`.

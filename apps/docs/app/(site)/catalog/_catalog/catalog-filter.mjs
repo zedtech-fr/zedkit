@@ -1,4 +1,4 @@
-/** @typedef {import("../content/catalog-index").CatalogIndexEntry} CatalogIndexEntry */
+/** @typedef {import("@/content/catalog-index").CatalogIndexEntry} CatalogIndexEntry */
 
 /** @typedef {{ id: "ui" | "backend" | "seo" | "agents"; label: string }} CatalogChipArea */
 

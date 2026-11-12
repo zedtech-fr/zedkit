@@ -122,8 +122,8 @@ test("primary centered surface is #example-qualified so it beats width:100%", ()
 });
 
 test("primary stage hooks are emitted by the page and preview", () => {
-  const page = read("components/component-page.tsx");
-  const preview = read("components/component-preview.tsx");
+  const page = read("features/docs/ui/component-page.tsx");
+  const preview = read("features/docs/ui/component-preview.tsx");
   const viewport = read("components/preview-viewport.tsx");
   assert.match(page, /data-component-page=/);
   assert.match(page, /id="example"/);
@@ -179,7 +179,7 @@ test("desktop docs chrome has search and GitHub and no version or theme toggle",
 });
 
 test("ComponentPage first-screen order is example, Use it, install, then guidance", () => {
-  const page = read("components/component-page.tsx");
+  const page = read("features/docs/ui/component-page.tsx");
   const example = page.indexOf('id="example"');
   const usage = page.indexOf('id="usage-and-states"');
   const install = page.indexOf('id="install-or-copy"');
@@ -299,7 +299,7 @@ test("component-page section H2 tokens are 22px / 500", () => {
 });
 
 test("component page owns breadcrumb, H1, lead, Source; wraps is off the header meta row", () => {
-  const page = read("components/component-page.tsx");
+  const page = read("features/docs/ui/component-page.tsx");
   const header = page.split("data-component-page-header")[1]?.split("id=\"example\"")[0] ?? "";
   assert.match(header, /data-component-page-breadcrumb/);
   assert.match(header, /<Heading level=\{1\}/);
@@ -315,12 +315,21 @@ test("generator hides the fumadocs title and passes source plus nav group", () =
   assert.match(generate, /source:\s*spec\.source/);
   assert.match(generate, /sourceFile=\{\$\{JSON\.stringify\(spec\.source\)\}/);
   assert.match(generate, /uiSidebarGroupFor\(need\.need, spec\.source\)/);
+  assert.match(generate, /from "\.\.\/\.\.\/\.\.\/features\/docs\/ui\/component-page"/);
+  assert.match(generate, /from "\.\.\/\.\.\/\.\.\/features\/docs\/ui\/component-preview"/);
+  assert.match(generate, /from "\.\.\/\.\.\/\.\.\/features\/docs\/ui\/props-table"/);
+  assert.match(generate, /from "\.\.\/\.\.\/\.\.\/features\/docs\/ui\/component-wraps-line"/);
+  assert.match(generate, /from "\.\.\/\.\.\/\.\.\/components\/maturity-badge"/);
+  assert.match(generate, /"\.\.\/\.\.\/features\/docs\/ui\/component-preview"/);
+  assert.doesNotMatch(generate, /from "\.\.\/\.\.\/\.\.\/components\/component-page"/);
 });
 
 test("primary preview toolbar is Preview, Code, Look, Dark inside the frame", () => {
   const viewport = read("components/preview-viewport.tsx");
-  const preview = read("components/component-preview.tsx");
+  const preview = read("features/docs/ui/component-preview.tsx");
   assert.match(preview, /quiet=\{Boolean\(a11yRoot\)\}/);
+  assert.match(preview, /from "@\/components\/preview-viewport"/);
+  assert.match(preview, /from "@\/components\/demos\/registry"/);
   const start = viewport.indexOf("function QuietPreviewToolbar");
   const end = viewport.indexOf("export function PreviewFrame");
   assert.ok(start >= 0 && end > start, "expected QuietPreviewToolbar before PreviewFrame");

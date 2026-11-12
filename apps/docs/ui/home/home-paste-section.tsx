@@ -58,7 +58,7 @@ function PasteLandsListing() {
                           <Text
                             as="span"
                             variant={accent ? undefined : "muted"}
-                            className={accent ? "font-mono text-accent" : "font-mono"}
+                            className="font-mono"
                           >
                             {note}
                           </Text>
@@ -93,9 +93,10 @@ function PasteLandsListing() {
  *   the repo.
  *   one bordered two-column well, AI then UI, because: neighbours must
  *   differ in shape and the ticket names that card.
- *   kit Badge chips (light fill, kit colour on the label), because: the
- *   ticket asks for the mockup badges; this ticket overrides the older
- *   "labels stay text" note.
+ *   kit Badge chips (light fill, inverted site-action ink), because:
+ *   a reader who switched look or dark mode still has to read AI|UI.
+ *   highlighted file note uses inverted foreground, because: paired
+ *   tokens beat a Glass-only accent hex on zinc.
  *   live skill/agent counts from same-idea kitCounts, because: the ticket
  *   says live counts and that constant is already the home inventory.
  *   named spacing (lg, blocks, surface-pad-lg), because: page-specific
