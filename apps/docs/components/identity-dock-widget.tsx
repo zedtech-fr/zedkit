@@ -1,49 +1,29 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo } from "react";
-import { tryCatch } from "@zedtech/zedkit-core";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   Drawer,
   DrawerContent,
   DrawerHandle,
+  IDENTITY_CHANGE_EVENT,
   Stack,
   Text,
-  identityPresets,
-  isPresetId,
-  parseIdentityTokens,
   useIdentity,
-  type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
 import { IdentityDock, IdentityDockSwatch, IdentityDockTrigger } from "@/components/identity-dock-chrome";
 import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
 import { IdentityDockAssistantPanel } from "@/components/identity-dock-assistant-panel";
-import { useIdentityDockPreview } from "@/components/use-identity-dock-preview";
 import { useCreatorHandoff } from "@/components/use-creator-handoff";
 import { useIdentityDockKeyboard } from "@/components/use-identity-dock-keyboard";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
-import { useIdentityAssistantStore } from "@/lib/identity-assistant-store";
+import { docsSiteDefaultTokens } from "@/lib/docs-site-default-tokens";
+import { readDockSiteTokens } from "@/lib/docs-site-look";
 import { consumeCreateArrival } from "@/lib/identity-create-arrival";
 import { IDENTITY_DOCK_OPEN } from "@/lib/identity-dock-open";
-import { docsSiteCustomStorageKey } from "@/lib/site-identity-storage";
-
-function readSiteTokens(identityId: string): IdentityTokens {
-  if (isPresetId(identityId)) return identityPresets[identityId];
-  if (typeof window !== "undefined") {
-    const raw = tryCatch(() => window.localStorage.getItem(docsSiteCustomStorageKey()));
-    const stored = raw.ok ? raw.value : null;
-    if (stored !== null && stored !== undefined) {
-      const json = tryCatch(() => JSON.parse(stored) as unknown);
-      if (json.ok) {
-        const parsed = parseIdentityTokens(json.value);
-        if (parsed.success) return parsed.data;
-      }
-    }
-  }
-  return identityPresets[isPresetId(DEFAULT_IDENTITY) ? DEFAULT_IDENTITY : "glass"];
-}
+import { useIdentityAssistantStore } from "@/lib/identity-assistant-store";
+import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 
 function useEditorDockAutoOpen(
   onEditor: boolean,
@@ -78,13 +58,27 @@ function useIdentityDockOpenRequest(setBrief: (value: string) => void, setExpand
   }, [setBrief, setExpanded]);
 }
 
+function useDockSiteTokens() {
+  const identityId = useIdentity(DEFAULT_IDENTITY);
+  const [tokens, setTokens] = useState(docsSiteDefaultTokens);
+  useLayoutEffect(() => {
+    const sync = () => setTokens(readDockSiteTokens(identityId));
+    sync();
+    window.addEventListener(IDENTITY_CHANGE_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(IDENTITY_CHANGE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, [identityId]);
+  return [tokens, setTokens] as const;
+}
+
 function IdentityDockWidget() {
   const pathname = usePathname();
   const onEditor = pathname === IDENTITY_EDITOR_HREF;
-  const identityId = useIdentity(DEFAULT_IDENTITY);
-  const baseTokens = useMemo(() => readSiteTokens(identityId), [identityId]);
+  const [tokens, setTokens] = useDockSiteTokens();
   const { expanded, setExpanded, setBrief } = useIdentityAssistantStore();
-  const { workingTokens, setPreviewTokens, resetPreview } = useIdentityDockPreview(baseTokens, identityId);
   const triggerRef = useIdentityDockKeyboard(expanded, setExpanded);
 
   useEditorDockAutoOpen(onEditor, pathname, setBrief, setExpanded);
@@ -119,7 +113,7 @@ function IdentityDockWidget() {
         >
           <DrawerHandle data-dock-handle="" className="trim-bottom w-handle shrink-0" aria-label="Drag to resize" />
           <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
-            <IdentityDockAssistantPanel previewTokens={workingTokens} onPreviewTokens={setPreviewTokens} onResetPreview={resetPreview} />
+            <IdentityDockAssistantPanel tokens={tokens} onTokens={setTokens} />
           </Stack>
         </DrawerContent>
       </Drawer>

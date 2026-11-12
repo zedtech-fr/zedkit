@@ -1,0 +1,81 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import test from "node:test";
+
+import { identityPresets } from "@zedtech/zedkit-ui";
+
+import { DEFAULT_IDENTITY } from "../lib/default-identity.ts";
+import { docsSiteDefaultTokens, docsSiteTokensEqual } from "../lib/docs-site-default-tokens.ts";
+import { colorInputHex } from "../lib/identity-simple-value.ts";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
+const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+function read(rel) {
+  return readFileSync(join(rel.startsWith("packages/") ? root : app, rel), "utf8");
+}
+
+function capture(css, pattern, label) {
+  const match = css.match(pattern);
+  assert.ok(match?.[1], `missing ${label}`);
+  return match[1].trim();
+}
+
+test("docsSiteDefaultTokens overlays every Classic field the docs shell pins, and keeps kit Glass for the rest", () => {
+  const shell = read("app/docs-shell-tokens.css");
+  const compact = read("app/site-compact.css");
+  const glassCss = read("packages/ui/src/identities/glass.css");
+  const glass = identityPresets[DEFAULT_IDENTITY];
+  const docs = docsSiteDefaultTokens();
+
+  const background = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--background:\s*([^;]+)/, "light --background");
+  const foreground = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--foreground:\s*([^;]+)/, "light --foreground");
+  const muted = capture(shell, /html\[data-docs-shell\]:not\(\.dark\)[^{]*\{[^}]*--muted-foreground:\s*([^;]+)/, "light --muted-foreground");
+  const sidebarBorder = capture(glassCss, /:root\[data-identity="glass"\][^{]*\{[\s\S]*?--sidebar-border:\s*([^;]+)/, "Glass --sidebar-border");
+  const radius = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--radius:\s*([^;]+)/, "chrome --radius");
+  const borderWidth = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--zk-border-width:\s*([^;]+)/, "chrome --zk-border-width");
+  const shadowSm = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--zk-shadow-sm:\s*([^;]+)/, "chrome --zk-shadow-sm");
+  const shadowMd = capture(shell, /:root\[data-identity\][^{]*\{[^}]*--zk-shadow-md:\s*([^;]+)/, "chrome --zk-shadow-md");
+  const spacing = capture(compact, /:root\[data-identity="glass"\][^{]*\{[^}]*--spacing:\s*([^;]+)/, "Glass site --spacing");
+
+  assert.equal(docs.light.background, background);
+  assert.equal(docs.light.foreground, foreground);
+  assert.equal(docs.light.mutedForeground, muted);
+  assert.equal(docs.light.border, sidebarBorder);
+  assert.equal(docs.radius, radius);
+  assert.equal(docs.borderWidth, borderWidth);
+  assert.equal(docs.shadowSm, shadowSm);
+  assert.equal(docs.shadowMd, shadowMd);
+  assert.equal(docs.spacing, spacing);
+
+  assert.equal(docs.light.primary, glass.light.primary);
+  assert.equal(docs.light.primaryForeground, glass.light.primaryForeground);
+  assert.equal(docs.light.accent, glass.light.accent);
+  assert.equal(docs.bodyLeading, glass.bodyLeading);
+  assert.equal(docs.fontSans, glass.fontSans);
+  assert.equal(docs.fontDisplay, glass.fontDisplay);
+  assert.equal(docs.headingLeading, glass.headingLeading);
+  assert.equal(docs.headingTracking, glass.headingTracking);
+  assert.equal(docs.labelTracking, glass.labelTracking);
+  assert.deepEqual(docs.dark, glass.dark);
+});
+
+test("Classic colour defaults match the measured site hexes", () => {
+  const docs = docsSiteDefaultTokens();
+  assert.equal(colorInputHex(docs.light.background), "#ffffff");
+  assert.equal(colorInputHex(docs.light.foreground), "#09090b");
+  assert.equal(colorInputHex(docs.light.primary), "#2b23c7");
+  assert.equal(colorInputHex(docs.light.accent), "#a171f4");
+  assert.equal(colorInputHex(docs.light.border), "#cbd4e6");
+});
+
+test("docsSiteTokensEqual is value equality, not object identity", () => {
+  const a = docsSiteDefaultTokens();
+  const b = docsSiteDefaultTokens();
+  assert.equal(a === b, false);
+  assert.equal(docsSiteTokensEqual(a, b), true);
+  assert.equal(docsSiteTokensEqual(a, { ...a, radius: "1rem" }), false);
+  assert.equal(docsSiteTokensEqual(a, { ...a, light: { ...a.light, background: "220 60% 97%" } }), false);
+});

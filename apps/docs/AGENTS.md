@@ -135,8 +135,9 @@ second fonts `pnpm add` next to that snippet.
   `[data-identity-look-control]`. User-facing editor copy is US spelling
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `i18n/identity-editor-copy.ts`.
-- Applying a look to the whole site is the visitor's explicit choice and
-  reversible (`lib/site-identity-storage.ts`: opt-in key, `clearDocsSiteIdentity`).
+- Classic edits in the floating dock restyle the whole site immediately and
+  persist in `lib/site-identity-storage.ts`. Reset restores the site default
+  look (`docsSiteDefaultTokens`). There is no Apply, Preview, or opt-in step.
   Quotas, references and cost controls are server rules; the client never
   works around them.
 - Secondary states (idle, loading, success, error, quota, resume) stay on
@@ -144,8 +145,7 @@ second fonts `pnpm add` next to that snippet.
   daily allowance. An unfinished brief is kept in `zk-identity-dock-v2`
   (`lib/identity-dock-persist.ts`) so a reload restores it. The floating dock
   opens with Control or Meta+I, closes with Escape, and on a phone is a bottom
-  sheet. Using a look
-  from the dock paints demo specimens only, never the site chrome. Brief-routed
+  sheet. Demo specimens keep their own ThemeScope look. Brief-routed
   specimens are commerce, saas-dashboard, editorial and service-booking.
   Proof: `tests/identity-state-matrix.spec.ts`. Export CSS applied to a blank
   page matches the editor specimen and the dock proposal:
