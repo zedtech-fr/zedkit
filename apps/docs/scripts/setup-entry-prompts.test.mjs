@@ -69,7 +69,8 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   assert.doesNotMatch(homeBand, /SetupEntryPrompt|SecretField|data-setup-entry/);
   assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
   assert.doesNotMatch(homeClosing, /SetupEntryPrompt|data-setup-entry/);
-  assert.match(homeClosing, /SecretField/);
+  assert.match(homeClosing, /HomeCopyCommandField/);
+  assert.doesNotMatch(homeClosing, /SecretField/);
   assert.match(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b/);
   assert.doesNotMatch(homeClosing, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
 

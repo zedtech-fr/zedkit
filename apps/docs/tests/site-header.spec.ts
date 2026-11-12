@@ -54,17 +54,20 @@ test.describe("site header navigation (#1034)", () => {
     await page.goto("/", { waitUntil: "networkidle" });
 
     const header = page.locator("#nd-mobile-nav");
-    await expect(header.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
-    await expect(header.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
-    await expect(header.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
+    await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+    const menu = header.getByRole("button", { name: "Menu", exact: true });
+    await menu.click();
+    const dialog = page.getByRole("dialog", { name: "Site navigation" });
+    await expect(dialog.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
+    await expect(dialog.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
+    await expect(dialog.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
     await expect(
-      header.getByRole("link", { name: "Catalog", exact: true }),
+      dialog.getByRole("link", { name: "Catalog", exact: true }),
     ).toHaveAttribute("href", "/catalog");
     await expect(header.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
     await expect(header.getByText("Guides", { exact: true })).toHaveCount(0);
     await expect(header.getByRole("link", { name: "Getting started", exact: true })).toHaveCount(0);
-    await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
-    await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
     await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveAttribute(
       "href",
       "#get-started",
