@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import {
-  Button,
   Heading,
   SecretField,
   Stack,
@@ -21,7 +20,6 @@ import { HOME_CARD_CONTENT_GAP, HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-
 import { HomeHeroIllustration } from "@/ui/home/home-hero-illustration";
 import { homeCopy } from "@/ui/home/i18n/home-copy";
 import type { HeroKitId } from "@/ui/home/i18n/home-hero-copy";
-import { OffPathLink } from "@/ui/off-path-link";
 
 const PROMPTS = {
   ai: AI_SETUP_MINI_PROMPT,
@@ -37,10 +35,10 @@ function isHeroKit(value: string): value is HeroKitId {
  * Métier:           Public TypeScript kit: npm packages plus a docs site, not a hosted app with accounts.
  * Client personas:  Integrating developers and coding agents who adopt from the home first screen; they already have an agent and want one paste.
  * Customers:        The same visitors on a laptop (1440) or a phone (390).
- * Customer personas: Rushed (want the promise and the prompt without a product tour); doubtful (will follow a quiet proof link if it does not shout). Assumed from the existing hero-actions comment and `.agents/product.md`, not from interviews.
- * UI decisions:     Two-column hero from `lg` (copy | glass illustration) because the 1440 crop is that composition; stack copy then illustration on a phone because the 390 crop is headline-first and does not raise the card. Display h1 with a muted third clause because the mockup greys "From the agent you already use." Editorial paragraph with emphasized AI / UI because that is the mockup supporting copy. Kit Tabs for AI / UI / AI + UI because they are sibling setup prompts, not a primary CTA row. SecretField for the prompt because copy-with-announce already exists. Static glass card because the mockup right column is an illustration, not a live console. Tertiary OffPathLink because doubtful visitors still need proof and #117 must not be dropped without cause. No in-hero identity form because the dock is the identity surface (#110).
+ * Customer personas: Rushed (want the promise and the prompt without a product tour). Assumed from `.agents/product.md`, not from interviews. Doubtful visitors still reach the public run history page, not from a hero link.
+ * UI decisions:     Two-column hero from `lg` (copy | glass illustration) because the 1440 crop is that composition; stack copy then illustration on a phone because the 390 crop is headline-first and does not raise the card. Display h1 with a muted third clause because the mockup greys "From the agent you already use." Editorial paragraph with emphasized AI / UI because that is the mockup supporting copy. Kit Tabs for AI / UI / AI + UI because they are sibling setup prompts, not a primary CTA row. SecretField for the prompt because copy-with-announce already exists. Static glass card because the mockup right column is an illustration, not a live console. No issues link in the hero because the mockup first screen has none and #247 supersedes #117 for that placement. No band glow discs because the mockup hero is a flat light band and the only colour is the purple stage. No in-hero identity form because the dock is the identity surface (#110).
  */
-export function HomeHeroLead({ issuesHref }: { issuesHref: string }) {
+export function HomeHeroLead() {
   const [kit, setKit] = useState<HeroKitId>("combined");
   const kits = homeCopy.heroKits;
   const caption = kit === "combined" ? homeCopy.hero.promptCaption : homeCopy.hero.promptCaptionSingle;
@@ -90,11 +88,6 @@ export function HomeHeroLead({ issuesHref }: { issuesHref: string }) {
           <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
             {caption}
           </Text>
-          <span data-home-hero-actions="">
-            <Button asChild variant="link" className="min-h-target px-control-tight">
-              <OffPathLink href={issuesHref}>{homeCopy.heroActions.seeARealIssue}</OffPathLink>
-            </Button>
-          </span>
         </Stack>
       </Stack>
       <HomeHeroIllustration kit={kit} />
