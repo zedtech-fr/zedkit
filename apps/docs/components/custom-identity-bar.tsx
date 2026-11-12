@@ -2,25 +2,15 @@
 
 import { useSyncExternalStore } from "react";
 import {
-  applyIdentity,
   Badge,
   Button,
-  discardCustomIdentity,
-  CUSTOM_IDENTITY_ID,
   IDENTITY_CHANGE_EVENT,
-  isNamedIdentityId,
   Stack,
   Text,
-  useIdentity,
 } from "@zedtech/zedkit-ui";
 
-import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import {
-  clearDocsSiteIdentity,
-  docsSiteCustomStorageKey,
-  DOCS_SITE_IDENTITY_STORAGE_KEY,
-  isDocsSiteIdentityOptIn,
-} from "@/lib/site-identity-storage";
+import { docsSiteLookDiffersFromDefaults } from "@/lib/site-identity-storage";
+import { resetDocsSiteLook } from "@/lib/docs-site-look";
 import { customIdentityBarCopy } from "@/components/i18n/custom-identity-bar-copy";
 
 function subscribe(onStoreChange: () => void) {
@@ -32,20 +22,13 @@ function subscribe(onStoreChange: () => void) {
   };
 }
 
-function readOptIn(): boolean {
-  return isDocsSiteIdentityOptIn();
-}
-
-function readHasSheet(): boolean {
-  return Boolean(window.localStorage.getItem(docsSiteCustomStorageKey()));
+function readDiffers(): boolean {
+  return docsSiteLookDiffersFromDefaults();
 }
 
 function CustomIdentityBar() {
-  const optedIn = useSyncExternalStore(subscribe, readOptIn, () => false);
-  const current = useIdentity();
-  const hasSheet = useSyncExternalStore(subscribe, readHasSheet, () => false);
-  if (!optedIn) return null;
-  if (isNamedIdentityId(current) || (current !== CUSTOM_IDENTITY_ID && !hasSheet)) return null;
+  const differs = useSyncExternalStore(subscribe, readDiffers, () => false);
+  if (!differs) return null;
   return (
     <Stack
       data-slot="custom-identity-bar"
@@ -61,13 +44,9 @@ function CustomIdentityBar() {
         size="sm"
         variant="outline"
         className="ms-auto shrink-0"
-        onClick={() => {
-          discardCustomIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY);
-          clearDocsSiteIdentity();
-          applyIdentity(DEFAULT_IDENTITY, DOCS_SITE_IDENTITY_STORAGE_KEY);
-        }}
+        onClick={() => resetDocsSiteLook()}
       >
-        {customIdentityBarCopy.backToDefault}
+        {customIdentityBarCopy.reset}
       </Button>
     </Stack>
   );

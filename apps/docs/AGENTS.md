@@ -135,20 +135,16 @@ second fonts `pnpm add` next to that snippet.
   `[data-identity-look-control]`. User-facing editor copy is US spelling
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `i18n/identity-editor-copy.ts`.
-- Applying a look to the whole site is the visitor's explicit choice and
-  reversible (`lib/site-identity-storage.ts`: opt-in key, `clearDocsSiteIdentity`).
+- Classic edits in the floating dock restyle the whole site immediately and
+  persist in `lib/site-identity-storage.ts`. Reset restores the site default
+  look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
+  has no Apply or Preview step and no opt-in key. The editor page still has
+  Preview dark (card only) and Suggest Apply (draft only).
   Quotas, references and cost controls are server rules; the client never
   works around them.
-- Secondary states (idle, loading, success, error, quota, resume) stay on
-  screen at 320, 390 and 1440. Quota copy names a real retry time, never a
-  daily allowance. An unfinished brief is kept in `zk-identity-dock-v2`
-  (`lib/identity-dock-persist.ts`) so a reload restores it. The floating dock
-  opens with Control or Meta+I, closes with Escape, and on a phone is a bottom
-  sheet. Using a look
-  from the dock paints demo specimens only, never the site chrome. Brief-routed
-  specimens are commerce, saas-dashboard, editorial and service-booking.
-  Proof: `tests/identity-state-matrix.spec.ts`. Export CSS applied to a blank
-  page matches the editor specimen and the dock proposal:
+- The floating dock opens with Control or Meta+I, closes with Escape, and on
+  a phone is a bottom sheet. Demo specimens keep their own ThemeScope look.
+  Export CSS applied to a blank page matches the editor specimen:
   `tests/identity-export-preview-parity.spec.ts`.
 
 ## ZedKit art direction (Product Atelier)
@@ -157,7 +153,7 @@ Read [VISUAL-CONTRACT.md](./VISUAL-CONTRACT.md) before changing home,
 chrome, previews or specimens (traps included). Type, motion,
 composition and elevation: [docs/design/signature.md](../../docs/design/signature.md)
 (named type roles and motions, not raw `font-size` or duration). Identity
-states: the matrix above. Skill `use-signature`.
+states: skill `use-signature`.
 
 Scope: this docs site and its specimens. Exception: a specimen that
 must match a kit primitive's own look.

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button, Container, Heading, Stack, Text } from "@zedtech/zedkit-ui";
-import { notFoundCopy } from "@/ui/not-found/i18n/not-found-copy";
+import { notFoundCopy } from "./i18n/not-found-copy";
 
 export function NotFoundView() {
   return (

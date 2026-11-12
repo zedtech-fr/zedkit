@@ -23,15 +23,12 @@ test.describe("IdentityDock", () => {
   const dock = (page: Page) => page.getByTestId("identity-dock");
   const brief = (page: Page) => page.locator("#identity-assistant-brief");
 
-  test("Try the demo editor opens the dock on the editor with no inline assistant", async ({ page }) => {
+  test("the demo editor opens the dock with no inline assistant", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#identities").scrollIntoViewIfNeeded();
-    await page.getByRole("link", { name: "Try the demo editor" }).click();
-    await page.waitForURL("**/features/identity-editor#create");
+    await page.goto("/features/identity-editor#create", { waitUntil: "networkidle" });
     await expect(page.locator("[data-slot='identity-assistant']")).toHaveCount(0);
-    await expect(brief(page)).toBeVisible();
     await expect(page.getByTestId("identity-dock")).toBeVisible();
+    await expect(page.getByRole("button", { name: "And yours?" })).toHaveAttribute("aria-expanded", "true");
   });
 
   test("brief persists across reload in zk-identity-dock-v2", async ({ page }) => {

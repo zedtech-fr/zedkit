@@ -42,13 +42,17 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
-  assert.match(hero, /HeroShapes/);
-  assert.match(hero, /publicIssueHref/);
+  assert.doesNotMatch(hero, /HeroShapes|data-hero-shapes|publicIssueHref|issuesHref/);
+  assert.doesNotMatch(firstScreen, /data-hero-shapes/);
   assert.match(lead, /\bTabs\b/);
   assert.match(lead, /TabsList/);
   assert.match(lead, /TabsTrigger/);
   assert.match(lead, /defaultValue="combined"|value=\{kit\}/);
-  assert.match(copy, /title: "Code that's checked\. Screens that match\."/);
+  assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
+  assert.match(
+    copy,
+    /subAi: "gives your coding agent a team\u2019s habits: a plan, a second pair of eyes, a definition of done\."/,
+  );
   assert.match(copy, /titleClause: "From the agent you already use\."/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
   assert.match(copy, /combined: "AI \+ UI"/);
@@ -69,15 +73,15 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
   assert.match(lead, /data-home-hero-prompt/);
   assert.doesNotMatch(lead, /SetupEntryPrompt/);
-  assert.doesNotMatch(lead, /\/issues\/108/);
+  assert.doesNotMatch(lead, /\/issues/);
   assert.doesNotMatch(firstScreen, /data-site-action/);
   assert.doesNotMatch(lead, /heroActions\.setup|heroActions\.getStarted|heroActions\.browseCatalog|#ai-setup|#get-started|\/catalog/);
-  assert.match(lead, /OffPathLink/);
-  assert.match(lead, /heroActions\.seeARealIssue/);
+  assert.doesNotMatch(lead, /OffPathLink|heroActions\.seeARealIssue|data-home-hero-actions/);
   assert.equal((lead.match(/<HomeLink[\s>]/g) ?? []).length, 0);
-  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 1);
-  assert.match(copy, /seeARealIssue: "See a real issue, end to end"/);
-  assert.doesNotMatch(copy, /seeARealIssue: ".*→/);
+  assert.equal((lead.match(/<OffPathLink[\s>]/g) ?? []).length, 0);
+  assert.doesNotMatch(copy, /seeARealIssue/);
+  assert.match(illustration, /data-hero-run-blob/);
+  assert.match(illustration, /data-hero-run-drift/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
@@ -513,6 +517,9 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   assert.match(facts, /IDENTITY_IDS = \["glass", "mist", "press", "maison"\]/);
   assert.match(copy, /title: "Every screen, the same product\."/);
   assert.match(copy, /tabsAriaLabel: "Looks"/);
+  assert.match(looks, /HomeIdentityLooksTabs/);
+  assert.doesNotMatch(looks, /HomeIdentityLooksLinks/);
+  assert.doesNotMatch(copy, /openEditor|seeInComponents|startWithoutCode/);
 });
 
 test("drawer demo save closes and toasts", () => {
