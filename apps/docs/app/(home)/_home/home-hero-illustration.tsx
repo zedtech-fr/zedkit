@@ -57,7 +57,7 @@ function PlaceholderRows() {
             {step.label}
           </Text>
           <div className="inline-flex flex-wrap items-center gap-icon">
-            {step.issue ? <Badge variant="soft-info">{copy.issueBadge}</Badge> : null}
+            {step.issue ? <Badge variant="soft-info">{copy.issueBadge({ count: 1 })}</Badge> : null}
             <Text as="span" variant="muted">
               {step.text}
             </Text>
@@ -73,6 +73,7 @@ function LiveRows({ run, paused, motionOk }: { run: HeroActiveRun; paused: boole
     <ol className="trim-margin flex list-none flex-col">
       {run.steps.map((step) => {
         const dot = STEP_DOT[step.status];
+        const statusText = copy.stepStatusWithSummary(STEP_STATUS_COPY[step.status], step.summary);
         return (
           <li
             key={step.key}
@@ -85,9 +86,14 @@ function LiveRows({ run, paused, motionOk }: { run: HeroActiveRun; paused: boole
             </Text>
             <div className="inline-flex content-shrink flex-wrap items-center gap-icon">
               <StatusDot tone={dot.tone} pulse={dot.pulse && !paused && motionOk} />
-              <Text as="span" variant="muted" className="line-clamp-1">
-                {STEP_STATUS_COPY[step.status]}
-                {step.summary === null ? "" : ` · ${step.summary}`}
+              <Text
+                as="span"
+                variant="muted"
+                data-hero-run-step-status=""
+                className="line-clamp-1"
+                title={statusText}
+              >
+                {statusText}
               </Text>
             </div>
           </li>
@@ -132,31 +138,41 @@ function LiveLinks({ run }: { run: HeroActiveRun }) {
   );
 }
 
-function useRestoreFocusOnLiveSwap(liveKey: string | null) {
+function useRestoreFocusOnLiveSwap(liveKey: string | null, showPause: boolean) {
   const cardRef = useRef<HTMLDivElement>(null);
   const pauseRef = useRef<HTMLButtonElement>(null);
-  const focusInside = useRef(false);
+  const lastFocus = useRef<"pause" | "link" | "other" | null>(null);
 
   useLayoutEffect(() => {
-    if (!focusInside.current) return;
     const root = cardRef.current;
     const pause = pauseRef.current;
-    if (root === null || pause === null) return;
+    if (root === null) return;
     const active = document.activeElement;
-    if (active instanceof Node && root.contains(active)) return;
-    pause.focus();
-  }, [liveKey]);
+    const contained = active instanceof Node && root.contains(active);
+    const onHiddenPause = !showPause && pause !== null && active === pause;
+    if (contained && !onHiddenPause) return;
+    if (lastFocus.current === null && !onHiddenPause) return;
+    if (lastFocus.current === "link" || onHiddenPause) {
+      const link = root.querySelector("a");
+      if (link instanceof HTMLElement) link.focus();
+      return;
+    }
+    if (lastFocus.current === "pause" && showPause) pause?.focus();
+  }, [liveKey, showPause]);
 
   return {
     cardRef,
     pauseRef,
-    onFocusCapture: () => {
-      focusInside.current = true;
+    onFocusCapture: (event: { target: EventTarget | null }) => {
+      const target = event.target;
+      if (target === pauseRef.current) lastFocus.current = "pause";
+      else if (target instanceof Element && target.closest("a") !== null) lastFocus.current = "link";
+      else lastFocus.current = "other";
     },
     onBlurCapture: (event: { currentTarget: HTMLElement; relatedTarget: EventTarget | null }) => {
       const next = event.relatedTarget;
       if (next instanceof Node && event.currentTarget.contains(next)) return;
-      focusInside.current = false;
+      if (next instanceof Node) lastFocus.current = null;
     },
   };
 }
@@ -175,10 +191,10 @@ function RunCard({
   onToggle: () => void;
 }) {
   const liveKey = live?.runId ?? null;
-  const focus = useRestoreFocusOnLiveSwap(liveKey);
   const showPause = motionOk || live !== null;
+  const focus = useRestoreFocusOnLiveSwap(liveKey, showPause);
   const pauseLabel = live === null ? (paused ? copy.playMotion : copy.pauseMotion) : paused ? copy.playLive : copy.pauseLive;
-  const control = paused ? copy.play : copy.pause;
+  const control = live === null ? (paused ? copy.play : copy.pause) : pauseLabel;
   const title = live === null ? copy.emptyStateTitle : heroRunTitle(live, copy);
   const caption =
     live === null ? copy.caption : paused ? copy.liveCaptionPaused : stale ? copy.liveCaptionStale : copy.liveCaption;
@@ -195,9 +211,14 @@ function RunCard({
       onBlurCapture={focus.onBlurCapture}
     >
       <Stack direction="horizontal" gap="sm" className="justify-between">
-        <Text data-hero-run-title="" className="line-clamp-2 font-semibold wrap-anywhere">
-          {title}
-        </Text>
+        <Stack direction="horizontal" gap="sm" className="min-w-0 flex-1 items-start">
+          {live === null ? null : (
+            <Badge variant={stale ? "soft-warning" : "soft-success"}>{stale ? copy.staleBadge : copy.liveBadge}</Badge>
+          )}
+          <Text data-hero-run-title="" className="line-clamp-2 font-semibold wrap-anywhere" title={title}>
+            {title}
+          </Text>
+        </Stack>
         <Button
           ref={focus.pauseRef}
           type="button"
@@ -241,6 +262,7 @@ function useActiveHeroRun(paused: boolean): { live: HeroActiveRun | null; stale:
         setLive(run);
       },
       onError: () => setStale(true),
+      isHidden: () => document.hidden,
       poll: (signal) =>
         fetchActiveHeroRun({
           ...(envValue === undefined ? {} : { envValue }),
@@ -266,7 +288,7 @@ export function HomeHeroIllustration() {
   const hadLive = useRef(false);
   if (live !== null) hadLive.current = true;
   const liveStatus =
-    live === null ? (hadLive.current ? copy.liveReverted : "") : liveUpdateMessage(live, copy, paused);
+    live === null ? (hadLive.current ? copy.liveReverted : "") : liveUpdateMessage(live, copy, paused, stale);
 
   return (
     <div

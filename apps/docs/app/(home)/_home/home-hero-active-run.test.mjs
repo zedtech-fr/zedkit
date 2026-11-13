@@ -10,6 +10,7 @@ import {
   liveUpdateMessage,
   nextLivePollMs,
   parseActiveRunsEnvelope,
+  parseHeroRun,
   resolveRunsApiBase,
   sanitizeHeroLiveUrl,
   selectActiveHeroRun,
@@ -111,6 +112,7 @@ test("browser origins fall back to the staging runs origin", () => {
   for (const hostname of ["zedkit.app", "dev.zedkit.app", "epic-73.dev.zedkit.app"]) {
     assert.equal(resolveRunsApiBase({ hostname }), "https://dev.zedkit.app", hostname);
   }
+  assert.equal(resolveRunsApiBase({ hostname: "Zedkit.APP" }), "https://dev.zedkit.app");
   assert.equal(resolveRunsApiBase({ hostname: "127.0.0.1" }), null);
   assert.equal(resolveRunsApiBase({ hostname: "localhost" }), null);
   assert.equal(resolveRunsApiBase({}), null);
@@ -210,6 +212,12 @@ test("inactive or stale rows skip parse so a malformed inactive row clears", () 
   assert.deepEqual(stale.value, []);
 });
 
+test("parseHeroRun rejects inactive or stale rows even if the envelope gate is skipped", () => {
+  assert.equal(parseHeroRun(runRow({ active: false })), null);
+  assert.equal(parseHeroRun(runRow({ stale: true })), null);
+  assert.equal(parseHeroRun(runRow())?.runId, "20261113T120000Z-hero1");
+});
+
 test("maps required steps by key and ignores extras and order", () => {
   const reordered = [...steps("build")].reverse();
   const extra = [...reordered, { key: "review", status: "done", summary: null }];
@@ -233,7 +241,7 @@ test("version 1 envelopes parse without a kind field", () => {
   assert.equal(parseActiveRunsEnvelope({ version: 2, runs: [] }).ok, false);
 });
 
-test("malformed envelopes are errors so the card can keep the placeholder", () => {
+test("malformed envelopes are errors so the card can keep the last live run", () => {
   assert.equal(parseActiveRunsEnvelope(null).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ runId: "../x" })])).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ steps: steps("build").slice(0, 4) })])).ok, false);
@@ -276,8 +284,16 @@ test("live status copy names the active or failed step", () => {
   const idleSteps = steps("build").map((row) => ({ ...row, status: "done", summary: `${row.key} finished` }));
   const idle = parseActiveRunsEnvelope(envelope([runRow({ steps: idleSteps })])).value[0];
   assert.equal(liveUpdateMessage(idle, copy), `Showing an active run: ${idle.title}`);
-  assert.ok(copy.playLive.includes(copy.play));
+  assert.match(liveUpdateMessage(run, copy, false, true), /Could not refresh/);
+  assert.match(liveUpdateMessage(run, copy, false, true), /Retrying automatically/);
+  assert.doesNotMatch(liveUpdateMessage(run, copy, false, true), /Build in progress/);
+  assert.ok(copy.playLive.includes("Resume"));
   assert.ok(copy.pauseLive.includes(copy.pause));
+  assert.ok(copy.playMotion.includes(copy.play));
+  assert.ok(copy.pauseMotion.includes(copy.pause));
+  assert.equal(copy.issueBadge({ count: 1 }), "1 issue");
+  assert.equal(copy.stepStatusWithSummary("Failed", "hand-made button"), "Failed · hand-made button");
+  assert.equal(copy.stepStatusWithSummary("Finished", null), "Finished");
 });
 
 test("fetch maps an active run and falls back when the list is empty", async () => {
@@ -353,6 +369,7 @@ test("live poll ticks immediately and reschedules after empty, error, throw, and
   await flushMicrotasks();
   assert.equal(live, null);
   assert.equal(queued.length, 1);
+  assert.equal(queued[0]?.ms, ACTIVE_HERO_POLL_MS * 2);
   assert.deepEqual(errors, [null]);
 
   queued.shift().fn();
@@ -361,6 +378,7 @@ test("live poll ticks immediately and reschedules after empty, error, throw, and
   await flushMicrotasks();
   assert.equal(live, null);
   assert.equal(queued.length, 1);
+  assert.equal(queued[0]?.ms, ACTIVE_HERO_POLL_MS * 4);
   assert.deepEqual(errors, [null, null]);
 
   queued.shift().fn();
@@ -368,6 +386,37 @@ test("live poll ticks immediately and reschedules after empty, error, throw, and
   settle.resolve({ ok: true, value: runRow() });
   await flushMicrotasks();
   assert.equal(live?.runId, "20261113T120000Z-hero1");
+  assert.equal(queued[0]?.ms, ACTIVE_HERO_POLL_MS);
+  stop();
+});
+
+test("live poll skips a fetch while the tab is hidden and re-arms at the base delay", async () => {
+  const calls = [];
+  const queued = [];
+  let hidden = true;
+  const stop = startHeroLivePoll({
+    delayMs: ACTIVE_HERO_POLL_MS,
+    setLive: () => undefined,
+    isHidden: () => hidden,
+    setTimeoutFn: (fn, ms) => {
+      queued.push({ fn, ms });
+      return queued.length;
+    },
+    clearTimeoutFn: () => {
+      queued.length = 0;
+    },
+    poll: async () => {
+      calls.push(calls.length);
+      return { ok: true, value: null };
+    },
+  });
+  assert.deepEqual(calls, []);
+  assert.equal(queued.length, 1);
+  assert.equal(queued[0]?.ms, ACTIVE_HERO_POLL_MS);
+  hidden = false;
+  queued.shift().fn();
+  await flushMicrotasks();
+  assert.deepEqual(calls, [0]);
   stop();
 });
 
@@ -393,7 +442,7 @@ test("live poll abort ignores an in-flight result", async () => {
   assert.equal(live, "unset");
 });
 
-test("fetch failure leaves the caller with an error to keep the placeholder", async () => {
+test("fetch failure leaves the caller with an error to keep the last live run", async () => {
   const rejected = await fetchActiveHeroRun({
     envValue: "https://dev.zedkit.app",
     fetch: async () => {
@@ -440,4 +489,13 @@ test("invalid timeout or retries fail closed without throwing", async () => {
     },
   });
   assert.equal(retries.ok, false);
+
+  const fractional = await fetchActiveHeroRun({
+    envValue: "https://dev.zedkit.app",
+    retries: 1.5,
+    fetch: async () => {
+      throw new Error("must not fetch");
+    },
+  });
+  assert.equal(fractional.ok, false);
 });

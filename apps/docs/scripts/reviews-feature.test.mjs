@@ -1118,6 +1118,8 @@ test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API so
   assert.match(contract, /Allowlisted hosted-console href/);
   assert.match(contract, /GitHub REST/);
   assert.match(contract, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.match(contract, /active=1&limit=1/);
+  assert.match(contract, /kind` is ignored/);
   assert.match(contract, /kind: public-github-runs/);
   assert.match(contract, /ErrorState with no Retry/);
   assert.match(contract, /10 pages × 100/);

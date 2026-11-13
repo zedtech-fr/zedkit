@@ -37,6 +37,7 @@ const STAGING_RUNS_ORIGIN = "https://dev.zedkit.app";
 const TITLE_MAX = 160;
 const SUMMARY_MAX = 160;
 
+/** Split so the public-hygiene denylist does not match a contiguous live-service token. */
 function liveServiceName(): string {
   return [["ze", "dos"].join(""), "bot"].join("-");
 }
@@ -80,7 +81,7 @@ export function sanitizeHeroLiveUrl(value: string | null): string | null {
   if (url.username !== "" || url.password !== "") return null;
   if (url.port !== "") return null;
   if (url.search !== "" || url.hash !== "") return null;
-  if (url.hostname !== prefixUrl.hostname) return null;
+  if (url.hostname.toLowerCase() !== prefixUrl.hostname.toLowerCase()) return null;
   if (!url.pathname.startsWith(prefixUrl.pathname)) return null;
   const rest = url.pathname.slice(prefixUrl.pathname.length);
   const runId = rest.endsWith("/") ? rest.slice(0, -1) : rest;
@@ -94,7 +95,7 @@ export function resolveRunsApiBase(input: {
 }): string | null {
   const fromEnv = parseHttpsOrigin(input.envValue);
   if (fromEnv !== null) return fromEnv;
-  const host = input.hostname?.trim() ?? "";
+  const host = (input.hostname?.trim() ?? "").toLowerCase();
   if (ORIGIN_FALLBACK_HOSTS.has(host)) return STAGING_RUNS_ORIGIN;
   return null;
 }
@@ -153,7 +154,7 @@ function parseSteps(value: unknown): HeroRunStep[] | null {
   return steps;
 }
 
-function parseHeroRun(value: unknown): HeroActiveRun | null {
+export function parseHeroRun(value: unknown): HeroActiveRun | null {
   if (!isRecord(value)) return null;
   if (typeof value.runId !== "string" || !RUN_ID_PATTERN.test(value.runId)) return null;
   const issue = asSafeInt(value.issue);
@@ -161,6 +162,7 @@ function parseHeroRun(value: unknown): HeroActiveRun | null {
   const title = asClippedText(value.title, TITLE_MAX);
   if (issue === undefined || pr === undefined || title === undefined) return null;
   if (typeof value.active !== "boolean" || typeof value.stale !== "boolean") return null;
+  if (value.active !== true || value.stale === true) return null;
   const steps = parseSteps(value.steps);
   if (steps === null) return null;
   const liveUrl =
@@ -239,10 +241,17 @@ export type HeroLiveCopy = HeroStepCopy & {
   liveStatus: (title: string, step: string) => string;
   liveStatusPaused: (title: string) => string;
   liveStatusFailed: (title: string, step: string) => string;
+  liveStatusStale: (title: string) => string;
 };
 
-export function liveUpdateMessage(run: HeroActiveRun, copy: HeroLiveCopy, paused = false): string {
+export function liveUpdateMessage(
+  run: HeroActiveRun,
+  copy: HeroLiveCopy,
+  paused = false,
+  stale = false,
+): string {
   const title = heroRunTitle(run, copy);
+  if (stale) return copy.liveStatusStale(title);
   const failed = run.steps.find((step) => step.status === "failed");
   if (failed !== undefined) return copy.liveStatusFailed(title, heroStepLabel(failed.key, copy));
   if (paused) return copy.liveStatusPaused(title);
@@ -257,33 +266,49 @@ export type HeroLivePollOptions = {
   poll: (signal: AbortSignal) => Promise<Result<HeroActiveRun | null, Error>>;
   setLive: (run: HeroActiveRun | null) => void;
   onError?: () => void;
+  isHidden?: () => boolean;
   setTimeoutFn?: (fn: () => void, ms: number) => HeroLivePollTimer;
   clearTimeoutFn?: (id: HeroLivePollTimer) => void;
 };
 
-/** Immediate tick, then re-arm after settle (empty, success, or error). Abort skips setLive. */
+const LIVE_POLL_BACKOFF_CAP = 8;
+
+/** Immediate tick, then re-arm after settle (empty, success, or error). Abort skips setLive. Hidden tabs skip the fetch. Consecutive errors back off. */
 export function startHeroLivePoll(options: HeroLivePollOptions): () => void {
   const setTimeoutFn = options.setTimeoutFn ?? ((fn, ms) => setTimeout(fn, ms));
   const clearTimeoutFn = options.clearTimeoutFn ?? ((id) => clearTimeout(id));
   const controller = new AbortController();
   let timer: HeroLivePollTimer | undefined;
   let cancelled = false;
+  let consecutiveErrors = 0;
 
   const schedule = () => {
     if (cancelled || controller.signal.aborted) return;
-    timer = setTimeoutFn(tick, options.delayMs);
+    const factor = consecutiveErrors === 0 ? 1 : Math.min(LIVE_POLL_BACKOFF_CAP, 2 ** consecutiveErrors);
+    timer = setTimeoutFn(tick, options.delayMs * factor);
   };
 
   const tick = () => {
+    if (cancelled || controller.signal.aborted) return;
+    if (options.isHidden?.() === true) {
+      schedule();
+      return;
+    }
     void options
       .poll(controller.signal)
       .then((result) => {
         if (cancelled || controller.signal.aborted) return;
-        if (result.ok) options.setLive(result.value);
-        else options.onError?.();
+        if (result.ok) {
+          consecutiveErrors = 0;
+          options.setLive(result.value);
+        } else {
+          consecutiveErrors += 1;
+          options.onError?.();
+        }
       })
       .catch(() => {
         if (cancelled || controller.signal.aborted) return;
+        consecutiveErrors += 1;
         options.onError?.();
       })
       .then(schedule, schedule);
@@ -320,7 +345,7 @@ export async function fetchActiveHeroRun(
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 60_000) {
     return err(new PermanentError("hero-runs: invalid timeout"));
   }
-  if (!Number.isFinite(retries) || retries < 0 || retries > 5) {
+  if (!Number.isInteger(retries) || retries < 0 || retries > 5) {
     return err(new PermanentError("hero-runs: invalid retries"));
   }
   const init: FetchJsonOptions = {

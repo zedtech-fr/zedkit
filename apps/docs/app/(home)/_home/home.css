@@ -125,7 +125,7 @@
   border-top: var(--zk-border-width, 1px) solid hsl(var(--border) / 0.6);
 }
 
-#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="failed"] {
+#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="failed"] [data-hero-run-step-status] {
   color: hsl(var(--destructive));
 }
 
