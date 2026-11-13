@@ -97,7 +97,9 @@ function dispositionOf(value: unknown): FindingDisposition | null {
 
 function findingsFromVerdict(verdict: LiveVerdict | null): MappedFinding[] {
   if (verdict === null) return [];
-  const rows = [...(verdict.blocking ?? []), ...(verdict.notes ?? [])];
+  const blocking = Array.isArray(verdict.blocking) ? verdict.blocking : [];
+  const notes = Array.isArray(verdict.notes) ? verdict.notes : [];
+  const rows = [...blocking, ...notes];
   const findings: MappedFinding[] = [];
   rows.forEach((row, index) => {
     const disposition = dispositionOf(row);

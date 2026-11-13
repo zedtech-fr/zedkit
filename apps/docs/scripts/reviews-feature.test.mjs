@@ -2469,6 +2469,7 @@ test("share URL merge keeps appearance query and hash together", () => {
 test("appearance share write keeps the selection hash", () => {
   const src = readFileSync(join(reviewsRoot, "ui", "review-console-appearance.tsx"), "utf8");
   assert.match(src, /mergeReviewShareUrl/);
+  assert.match(src, /writeConsoleShareSearch/);
   assert.match(src, /window\.location\.hash/);
   assert.doesNotMatch(
     readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8"),

@@ -26,7 +26,8 @@ the exception: the browser GETs `{base}/<live-service>/live/<runId>/api/run`
 with `credentials: omit`, no `t=` token, and optional `item` / `v`
 query params. `204` plus `X-Live-Version` means unchanged. Private runs
 are `401`. The client polls about every 2s while the run is `starting`
-or `running` (6s when the tab is hidden) and stops on a terminal status.
+or `running` (6s when the tab is hidden) and stops on a terminal status,
+`401`, `404`, invalid JSON, or a non-retryable error.
 
 `kind: public-github-runs` is the production merge. Fixture JSON for
 the snapshot parser (`public-stand-in`, `generated-run-index`) lives
@@ -39,7 +40,7 @@ do not need a rewrite. It is **not** the public-page feed.
 
 | Variable | Role |
 | --- | --- |
-| `NEXT_PUBLIC_ZEDOS_RUNS_API_BASE` | Origin for the runs list and the public live console. Unset at build → skip the list fetch. The console still uses `https://dev.zedkit.app` on `zedkit.app`, `dev.zedkit.app`, and `epic-73.dev.zedkit.app` (those last two do not proxy `/<live-service>/*`). |
+| `NEXT_PUBLIC_ZEDOS_RUNS_API_BASE` | Origin for the runs list and the public live console. Unset at build → skip the list fetch. The console defaults to `https://dev.zedkit.app` when that env is unset (`epic-73.dev.zedkit.app` and `zedkit.app` do not proxy `/<live-service>/*`, so the client must target that origin). |
 | `ZEDKIT_GITHUB_READ_TOKEN` / `GITHUB_TOKEN` | Optional, server/build only. |
 
 ## Failure policy
@@ -190,10 +191,12 @@ the public run history page. There is no `selected` field.
 
 The browser live console reads a different envelope from
 `GET {base}/<live-service>/live/<runId>/api/run`: `{ run, items, selected,
-verdict_json, decision, related }`. `items` are summaries; `selected` is
-the open item plus `entries` and `final_text`. Public responses have no
-`prompt`. The host maps that envelope with `toAgentConsole` (never copies
-`prompt` or `final_text`). Never send `t=` from the public site.
+verdict_json, decision, related }`. `items` and `selected` share one item
+parser; `items` are summaries, and `selected` adds `entries` and
+`final_text` for the open item. Malformed item rows are dropped. Public
+responses have no `prompt`. The host maps that envelope with
+`toAgentConsole` (never copies `prompt` or `final_text`). Never send `t=`
+from the public site.
 
 Optional join fields on `run` (safe integer or null / string or null;
 omit when unknown):
@@ -205,8 +208,8 @@ omit when unknown):
   `HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id. The public index
   stores the in-site console href (`/issues/run?id=<runId>`) so timeline
   rows stay on zedkit. `/issues/N/runs/<id>` and `/issues/pr/:n/runs/<id>`
-  mount the shared kit console and refresh from `/api/run` when the run
-  is active. New runs after a static export use `/issues/run?id=<runId>`
+  mount the shared kit console, fetch `/api/run` once, then poll while
+  the run is active. New runs after a static export use `/issues/run?id=<runId>`
   (`dynamicParams = false` cannot bake unknown ids). `review_url` is a
   GitHub review link and is **not** a console URL; the mapper never
   copies it to `liveUrl`.

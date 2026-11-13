@@ -23,6 +23,7 @@ import {
   LIVE_CONSOLE_PATH,
   parseLiveConsoleLocation,
   toLiveConsoleHref,
+  writeConsoleShareSearch,
   writeLiveConsoleSearch,
 } from "../features/reviews/model/live-console-href.ts";
 import { applyLiveRunResult, readyFromLive } from "../features/reviews/model/live-run-poll.ts";
@@ -126,6 +127,7 @@ function envelope(overrides = {}) {
 test("toLiveConsoleHref is the in-site console and never a token query", () => {
   assert.equal(toLiveConsoleHref("run-1"), `${LIVE_CONSOLE_PATH}?id=run-1`);
   assert.equal(toLiveConsoleHref("run-1", "main"), `${LIVE_CONSOLE_PATH}?id=run-1&item=main`);
+  assert.equal(toLiveConsoleHref(".."), LIVE_CONSOLE_PATH);
   assert.doesNotMatch(toLiveConsoleHref("run-1", "main"), /[?&]t=/);
 });
 
@@ -165,6 +167,27 @@ test("writeLiveConsoleSearch keeps appearance pins and drops t", () => {
   assert.doesNotMatch(search, /[?&]t=/);
 });
 
+test("writeConsoleShareSearch keeps id and item when appearance changes", () => {
+  const search = writeConsoleShareSearch({
+    appearanceSearch: "identity=volt&preview=dark",
+    currentSearch: "?id=run-1&item=main&identity=glass",
+    pathname: "/issues/run",
+  });
+  assert.match(search, /id=run-1/);
+  assert.match(search, /item=main/);
+  assert.match(search, /identity=volt/);
+  assert.match(search, /preview=dark/);
+  assert.doesNotMatch(search, /identity=glass/);
+  const baked = writeConsoleShareSearch({
+    appearanceSearch: "identity=volt",
+    currentSearch: "?item=lens-1",
+    pathname: "/issues/108/runs/run-1",
+  });
+  assert.match(baked, /item=lens-1/);
+  assert.match(baked, /identity=volt/);
+  assert.doesNotMatch(baked, /[?&]id=/);
+});
+
 test("liveRunApiUrl uses the assembled service path and never a token", () => {
   const url = liveRunApiUrl("https://dev.zedkit.app", "run-1", { item: "main", version: "abc" });
   assert.equal(
@@ -178,8 +201,7 @@ test("liveRunApiUrl uses the assembled service path and never a token", () => {
 test("liveRunsApiBase prefers the env origin and defaults to the hosted origin", () => {
   const name = ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
   assert.equal(liveRunsApiBase({ [name]: "https://example.com/runs/" }), "https://example.com/runs");
-  assert.equal(liveRunsApiBase({}, "epic-73.dev.zedkit.app"), "https://dev.zedkit.app");
-  assert.equal(liveRunsApiBase({}, "zedkit.app"), "https://dev.zedkit.app");
+  assert.equal(liveRunsApiBase({}), "https://dev.zedkit.app");
 });
 
 test("poll interval is slower when the tab is hidden", () => {
@@ -234,6 +256,20 @@ test("parseLiveRunEnvelope accepts a ticket run and null decision", () => {
 test("parseLiveRunEnvelope fails closed on a missing run", () => {
   const parsed = parseLiveRunEnvelope({ items: [], selected: null, decision: null, related: [] });
   assert.equal(parsed.ok, false);
+});
+
+test("parseLiveRunEnvelope drops a malformed item and keeps the rest", () => {
+  const parsed = parseLiveRunEnvelope(
+    envelope({
+      items: [item(), { id: "bad" }, item({ id: "lens-1", name: "Lens" })],
+      selected: { nope: true },
+    }),
+  );
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(
+    parsed.value.items.map((row) => row.id),
+    ["main", "lens-1"],
+  );
 });
 
 test("applyLiveRunResult keeps a baked snapshot on 404 and error", () => {

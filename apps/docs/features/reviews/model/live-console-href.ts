@@ -29,8 +29,10 @@ export function sanitizeLiveConsoleItemId(value: string | null | undefined): str
 }
 
 export function toLiveConsoleHref(runId: string, itemId?: string | null): string {
+  const id = sanitizeLiveConsoleRunId(runId);
+  if (id === null) return LIVE_CONSOLE_PATH;
   const params = new URLSearchParams();
-  params.set("id", runId);
+  params.set("id", id);
   const item = sanitizeLiveConsoleItemId(itemId);
   if (item !== null) params.set("item", item);
   return `${LIVE_CONSOLE_PATH}?${params.toString()}`;
@@ -88,4 +90,25 @@ export function writeLiveConsoleSearch(input: {
   else params.set("item", item);
   const qs = params.toString();
   return qs === "" ? "" : `?${qs}`;
+}
+
+/** Appearance share write: keep `id` / `item` on `/issues/run`, keep `item` on baked run URLs. */
+export function writeConsoleShareSearch(input: {
+  appearanceSearch: string;
+  currentSearch: string;
+  pathname: string;
+  hash?: string;
+}): string {
+  const current = new URLSearchParams(
+    input.currentSearch.startsWith("?") ? input.currentSearch.slice(1) : input.currentSearch,
+  );
+  const runId = sanitizeLiveConsoleRunId(current.get("id"));
+  const itemId = sanitizeLiveConsoleItemId(current.get("item")) ?? hashItemId(input.hash ?? "");
+  const pathname = input.pathname.replace(/\/$/, "") || "/";
+  return writeLiveConsoleSearch({
+    search: input.appearanceSearch,
+    runId: runId ?? "",
+    itemId,
+    includeId: pathname === LIVE_CONSOLE_PATH && runId !== null,
+  });
 }

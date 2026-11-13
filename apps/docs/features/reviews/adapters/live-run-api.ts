@@ -39,7 +39,6 @@ export {
 export const LIVE_VERSION_HEADER = "X-Live-Version";
 
 const DEFAULT_RUNS_API_BASE = "https://dev.zedkit.app";
-const BROWSER_RUNS_HOSTS = new Set(["dev.zedkit.app", "epic-73.dev.zedkit.app", "zedkit.app"]);
 
 export type FetchLiveRunApiOptions = {
   runId: string;
@@ -54,13 +53,9 @@ function runsApiBaseEnvName(): string {
   return ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
 }
 
-export function liveRunsApiBase(
-  env: Record<string, string | undefined> = process.env,
-  hostname?: string,
-): string {
+export function liveRunsApiBase(env: Record<string, string | undefined> = process.env): string {
   const fromEnv = env[runsApiBaseEnvName()]?.trim() ?? "";
   if (fromEnv !== "") return fromEnv.replace(/\/$/, "");
-  if (hostname !== undefined && BROWSER_RUNS_HOSTS.has(hostname)) return DEFAULT_RUNS_API_BASE;
   return DEFAULT_RUNS_API_BASE;
 }
 
@@ -69,7 +64,8 @@ export function liveRunApiUrl(
   runId: string,
   query: { item?: string | null | undefined; version?: string | null | undefined } = {},
 ): string {
-  const root = `${base.replace(/\/$/, "")}/${liveServiceName()}/live/${runId}/api/run`;
+  const id = sanitizeLiveConsoleRunId(runId) ?? "_";
+  const root = `${base.replace(/\/$/, "")}/${liveServiceName()}/live/${id}/api/run`;
   const params = new URLSearchParams();
   const item = sanitizeLiveConsoleItemId(query.item ?? null);
   if (item !== null) params.set("item", item);
@@ -377,16 +373,12 @@ export function parseLiveRunEnvelope(value: unknown): Result<PublicLiveRun, Erro
   const run = parseRunInfo(value.run);
   if (run === null) return err(new PermanentError("live run: malformed run"));
   if (!Array.isArray(value.items)) return err(new PermanentError("live run: missing items"));
-  const items: LiveItemDetail[] = [];
-  for (const row of value.items) {
+  const items = value.items.flatMap((row) => {
     const parsed = parseItem(row);
-    if (parsed === null) return err(new PermanentError("live run: malformed item"));
-    items.push(parsed);
-  }
-  const selected = value.selected === null || value.selected === undefined ? null : parseItem(value.selected);
-  if (value.selected !== null && value.selected !== undefined && selected === null) {
-    return err(new PermanentError("live run: malformed selected"));
-  }
+    return parsed === null ? [] : [parsed];
+  });
+  const selected =
+    value.selected === null || value.selected === undefined ? null : parseItem(value.selected);
   const decision = parseDecision(value.decision ?? null);
   if (decision === undefined) return err(new PermanentError("live run: malformed decision"));
   const verdictJson =
