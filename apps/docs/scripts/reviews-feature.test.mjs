@@ -1731,7 +1731,8 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
   assert.match(list, /copy\.type\[last\.type\]/);
   assert.match(list, /aria-label=\{copy\.list\.title\}/);
-  assert.doesNotMatch(list, /<nav aria-label=/);
+  assert.doesNotMatch(list, /<nav /);
+  assert.doesNotMatch(list, /<ul[^>]*aria-label=\{copy\.list\.unlinkedTitle\}/);
   assert.match(list, /SidebarNavGroup/);
   assert.match(list, /runCountLabel/);
   assert.match(timeline, /TimelineRow/);
@@ -1776,7 +1777,7 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /\/runs\/`/);
   assert.doesNotMatch(list, /\/runs\/\$\{/);
-  assert.match(css, /data-issues-workspace/);
+  assert.doesNotMatch(css, /\[data-issues-workspace\]/);
   assert.match(css, /min-width: 48rem/);
   assert.match(css, /100svh - var\(--zk-site-header-height\)/);
   assert.match(list, /SidebarNavItem/);
@@ -1792,7 +1793,10 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.match(list, /aria-labelledby=\{detailHeadingId\}/);
   assert.match(list, /id=\{detailHeadingId\}/);
   assert.match(list, /level=\{2\}/);
-  assert.match(list, /aria-live="polite"/);
+  assert.match(list, /sr-only" aria-live="polite"/);
+  assert.doesNotMatch(list, /<article[^>]*aria-live/);
+  assert.match(list, /shouldScrollSelectedIssue/);
+  assert.match(list, /DrawerTitle className="sr-only">\{copy\.list\.openList\}/);
   assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
   assert.doesNotMatch(list, /\?\? items\[0\]/);
 });

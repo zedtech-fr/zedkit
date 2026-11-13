@@ -35,7 +35,7 @@ function Timeline({
       {entries.length === 0 ? (
         <EmptyState description={empty} />
       ) : (
-        <ul aria-labelledby={headingId}>
+        <ul aria-labelledby={headingId} className="flex list-none flex-col gap-stack-sm">
           {entries.map((entry) => (
             <li key={entry.id}>
               <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />

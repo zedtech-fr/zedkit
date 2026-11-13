@@ -26,3 +26,10 @@ export function resolveIssueOpenId(
   if (target === null || target === "first") return first ?? null;
   return ids.includes(target) ? target : null;
 }
+
+/** Scroll the selected row only for a specific `#issue-n` / `#pr-n` on `md+`. */
+export function shouldScrollSelectedIssue(hash: string, desktop: boolean): boolean {
+  if (!desktop) return false;
+  const id = hash.startsWith("#") ? hash.slice(1) : hash;
+  return ISSUE_OR_PR_HASH.test(id);
+}

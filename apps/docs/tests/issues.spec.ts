@@ -141,6 +141,27 @@ test("desktop workspace is a two-pane layout with independent scrollports", asyn
   const detailOverflow = await detail.evaluate((node) => getComputedStyle(node).overflowY);
   expect(asideOverflow).toBe("auto");
   expect(detailOverflow).toBe("auto");
+  const noDocumentScroll = await page.evaluate(
+    () => document.documentElement.scrollHeight <= document.documentElement.clientHeight + 1,
+  );
+  expect(noDocumentScroll).toBe(true);
+  const heading = page.getByRole("heading", { name: reviewsCopy.list.title, exact: true });
+  expect((await heading.boundingBox())?.y ?? 0).toBeGreaterThan(0);
+});
+
+test("keyboard enter on a list row selects it", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/issues", { waitUntil: "networkidle" });
+  const rows = page.locator("main [data-issues-row]");
+  if ((await rows.count()) < 2) {
+    await expect(emptyListVisible(page)).toBeVisible();
+    return;
+  }
+  const second = rows.nth(1);
+  await second.focus();
+  await page.keyboard.press("Enter");
+  await expect(second).toHaveAttribute("aria-current", "page");
+  await expect(rows.first()).not.toHaveAttribute("aria-current");
 });
 
 async function expectNotSideBySide(a: Locator, b: Locator) {

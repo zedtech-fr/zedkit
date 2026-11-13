@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { GITHUB_REPO, githubIssueHref, githubPullHref } from "./github-hrefs.ts";
-import { issueOpenTarget, resolveIssueOpenId } from "./issue-open-target.ts";
+import { issueOpenTarget, resolveIssueOpenId, shouldScrollSelectedIssue } from "./issue-open-target.ts";
 
 test("GitHub hrefs point at the public zedkit repo", () => {
   assert.equal(GITHUB_REPO, "zedtech-fr/zedkit");
@@ -38,4 +38,13 @@ test("resolveIssueOpenId does not fall back when the hash names a missing row", 
   assert.equal(resolveIssueOpenId(ids, "", "#issue-999"), null);
   assert.equal(resolveIssueOpenId(ids, "open=first", "#pr-0"), null);
   assert.equal(resolveIssueOpenId([], "", "#issue-108"), null);
+});
+
+test("shouldScrollSelectedIssue only for a specific hash on desktop", () => {
+  assert.equal(shouldScrollSelectedIssue("#issue-108", true), true);
+  assert.equal(shouldScrollSelectedIssue("pr-54", true), true);
+  assert.equal(shouldScrollSelectedIssue("#issue-108", false), false);
+  assert.equal(shouldScrollSelectedIssue("#first", true), false);
+  assert.equal(shouldScrollSelectedIssue("", true), false);
+  assert.equal(shouldScrollSelectedIssue("#issue-x", true), false);
 });

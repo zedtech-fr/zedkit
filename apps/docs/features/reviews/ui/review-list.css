@@ -44,9 +44,4 @@
   [data-issues-column][data-issues-layout="workspace"] [data-slot="page-header"] {
     flex-shrink: 0;
   }
-
-  [data-issues-workspace] {
-    flex: 1 1 0;
-    min-height: 0;
-  }
 }

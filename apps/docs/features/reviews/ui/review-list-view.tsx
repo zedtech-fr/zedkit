@@ -21,7 +21,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { resolveIssueOpenId } from "../model/issue-open-target";
+import { resolveIssueOpenId, shouldScrollSelectedIssue } from "../model/issue-open-target";
 import { headlineOutcome, latestEntry } from "../model/latest-status";
 import { uniqueRunIds } from "../model/review-routes";
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
@@ -49,15 +49,9 @@ function listItems(
 }
 
 function IssueListRow({
-  issue,
-  active,
-  copy,
-  withIds,
+  issue, active, copy, withIds,
 }: {
-  issue: IssueRecord;
-  active: boolean;
-  copy: ReviewsCopy;
-  withIds: boolean;
+  issue: IssueRecord; active: boolean; copy: ReviewsCopy; withIds: boolean;
 }) {
   const outcome = headlineOutcome(issue.entries);
   const label = outcomeLabel(outcome, copy) ?? copy.state[issue.state];
@@ -76,15 +70,9 @@ function IssueListRow({
 }
 
 function UnlinkedListRow({
-  entry,
-  active,
-  copy,
-  withIds,
+  entry, active, copy, withIds,
 }: {
-  entry: UnlinkedPullRequest;
-  active: boolean;
-  copy: ReviewsCopy;
-  withIds: boolean;
+  entry: UnlinkedPullRequest; active: boolean; copy: ReviewsCopy; withIds: boolean;
 }) {
   const outcome = headlineOutcome(entry.entries);
   const last = latestEntry(entry.entries);
@@ -114,11 +102,7 @@ function UnlinkedListRow({
 }
 
 function IssueListNav({
-  issues,
-  unlinked,
-  selected,
-  copy,
-  withIds,
+  issues, unlinked, selected, copy, withIds,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
@@ -127,7 +111,7 @@ function IssueListNav({
   withIds: boolean;
 }) {
   return (
-    <nav className="flex flex-col gap-stack-sm surface-pad-md">
+    <div className="flex flex-col gap-stack-sm surface-pad-md">
       {issues.length === 0 ? null : (
         <ul className="flex list-none flex-col gap-stack-tight">
           {issues.map((issue) => (
@@ -145,7 +129,7 @@ function IssueListNav({
       {unlinked.length > 0 ? (
         <SidebarNavGroup label={copy.list.unlinkedTitle} open>
           <Text variant="muted">{copy.list.unlinkedDescription}</Text>
-          <ul className="flex list-none flex-col gap-stack-tight" aria-label={copy.list.unlinkedTitle}>
+          <ul className="flex list-none flex-col gap-stack-tight">
             {unlinked.map((entry) => (
               <li key={entry.number}>
                 <UnlinkedListRow
@@ -159,7 +143,7 @@ function IssueListNav({
           </ul>
         </SidebarNavGroup>
       ) : null}
-    </nav>
+    </div>
   );
 }
 
@@ -169,8 +153,10 @@ function useSelectedIssueId(ids: readonly string[]) {
     const apply = () => {
       const next = resolveIssueOpenId(ids, window.location.search, window.location.hash);
       setSelectedId(next);
-      if (next === null) return;
-      document.getElementById(next)?.scrollIntoView({ block: "nearest" });
+      const desktop = window.matchMedia("(min-width: 48rem)").matches;
+      if (next !== null && shouldScrollSelectedIssue(window.location.hash, desktop)) {
+        document.getElementById(next)?.scrollIntoView({ block: "nearest" });
+      }
     };
     apply();
     window.addEventListener("hashchange", apply);
@@ -180,15 +166,9 @@ function useSelectedIssueId(ids: readonly string[]) {
 }
 
 function IssuesPane({
-  sidebar,
-  drawerSidebar,
-  detail,
-  copy,
+  sidebar, drawerSidebar, detail, copy,
 }: {
-  sidebar: ReactNode;
-  drawerSidebar: ReactNode;
-  detail: ReactNode;
-  copy: ReviewsCopy;
+  sidebar: ReactNode; drawerSidebar: ReactNode; detail: ReactNode; copy: ReviewsCopy;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -206,11 +186,7 @@ function IssuesPane({
       </aside>
       <Drawer direction="left" mobile="side" open={open} onOpenChange={setOpen}>
         <Stack gap="tight" className="pane-shrink content-shrink flex-1">
-          <Stack
-            direction="horizontal"
-            data-issues-menu=""
-            className="p-app-shell-padding md:hidden"
-          >
+          <Stack direction="horizontal" data-issues-menu="" className="p-app-shell-padding md:hidden">
             <DrawerTrigger asChild>
               <Button type="button" variant="outline" size="sm" className="min-h-target">
                 {copy.list.openList}
@@ -221,7 +197,7 @@ function IssuesPane({
         </Stack>
         <DrawerContent>
           <DrawerHeader className="flex-row items-center justify-end">
-            <DrawerTitle className="sr-only">{copy.list.title}</DrawerTitle>
+            <DrawerTitle className="sr-only">{copy.list.openList}</DrawerTitle>
             <DrawerCloseButton />
           </DrawerHeader>
           <DrawerBody
@@ -240,11 +216,14 @@ function IssuesPane({
   );
 }
 
+function detailLiveName(selected: ListItem | null, copy: ReviewsCopy): string {
+  if (selected?.kind === "issue") return `#${selected.issue.number} ${selected.issue.title}`;
+  if (selected?.kind === "pr") return `${copy.unlinked.title} #${selected.pull.number}`;
+  return copy.list.missing;
+}
+
 function IssuesWorkspace({
-  issues,
-  unlinked,
-  selected,
-  copy,
+  issues, unlinked, selected, copy,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
@@ -252,22 +231,24 @@ function IssuesWorkspace({
   copy: ReviewsCopy;
 }) {
   const detailHeadingId = useId();
-  const nav = (withIds: boolean) => (
+  const list = (withIds: boolean) => (
     <IssueListNav issues={issues} unlinked={unlinked} selected={selected} copy={copy} withIds={withIds} />
   );
   return (
     <IssuesPane
       copy={copy}
-      sidebar={nav(true)}
-      drawerSidebar={nav(false)}
+      sidebar={list(true)}
+      drawerSidebar={list(false)}
       detail={
         <article
           data-issues-detail=""
           tabIndex={0}
           className="content-shrink p-app-shell-padding md:pane-shrink md:flex-1 md:overflow-y-auto md:p-app-shell-padding-md md:focus-ring"
-          aria-live="polite"
           aria-labelledby={detailHeadingId}
         >
+          <p className="sr-only" aria-live="polite">
+            {detailLiveName(selected, copy)}
+          </p>
           {selected?.kind === "issue" ? (
             <IssueDetail issue={selected.issue} copy={copy} headingId={detailHeadingId} />
           ) : selected?.kind === "pr" ? (
@@ -287,9 +268,7 @@ function IssuesWorkspace({
 }
 
 export function ReviewListView({
-  issues,
-  unlinked,
-  copy,
+  issues, unlinked, copy,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
