@@ -10,7 +10,9 @@ import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
  * still land in the content.
  *
  * Revealed with absolute positioning so Tab does not insert an in-flow
- * row and shift the flex-column body.
+ * row and shift the flex-column body. Unfocused it stays sr-only (1×1)
+ * with pointer-events-none so a pointer hit check does not treat the
+ * hidden skip as a 24px target; focus restores pointer events.
  */
 export function SkipLink() {
   return (
@@ -25,7 +27,7 @@ export function SkipLink() {
           target.focus();
         }
       }}
-      className="sr-only focus:not-sr-only focus:absolute! focus:top-float focus:left-float focus:z-overlay focus:inline-flex focus:min-h-overlay-touch-target focus:items-center focus:rounded-md focus:bg-foreground focus:px-touch focus:text-background"
+      className="pointer-events-none sr-only focus:pointer-events-auto focus:not-sr-only focus:absolute! focus:top-float focus:left-float focus:z-overlay focus:inline-flex focus:min-h-overlay-touch-target focus:items-center focus:rounded-md focus:bg-foreground focus:px-touch focus:text-background"
     >
       {siteChromeCopy.skipToContent}
     </a>

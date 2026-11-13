@@ -73,6 +73,24 @@ h1{font-size:24px}
 .scroll{width:80px;overflow:auto;white-space:nowrap}
 </style></head><body><h1>Scroller</h1><p class="scroll" tabindex="0">this text is much too long to fit</p></body></html>`;
 
+const SR_ONLY_CLIP = `<!doctype html><html lang="en"><head><title>SR only</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+</style></head><body><h1>Hidden copy</h1><p>Visible. <span class="sr-only">(opens in a new tab)</span></p></body></html>`;
+
+const LONG_INPUT = `<!doctype html><html lang="en"><head><title>Input</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+input{box-sizing:border-box;width:80px;min-width:24px;min-height:24px;overflow:clip}
+</style></head><body><h1>Input</h1><label>Font <input value="Inter Variable, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji"></label></body></html>`;
+
+const TRUNCATE_OK = `<!doctype html><html lang="en"><head><title>Truncate</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.truncate{width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style></head><body><h1>Truncate</h1><p class="truncate">this text is much too long to fit</p></body></html>`;
+
 const BARE = `<!doctype html><html lang="en"><head><title>Bare</title></head><body><h1>Bare</h1><p>No stylesheet.</p></body></html>`;
 
 const SMALL_TARGET = `<!doctype html><html lang="en"><head><title>Small</title><style>
@@ -188,6 +206,9 @@ function fixtureDir() {
   writeFileSync(join(dir, "low-contrast.html"), LOW_CONTRAST);
   writeFileSync(join(dir, "clipped.html"), CLIPPED);
   writeFileSync(join(dir, "scroller.html"), SCROLLER);
+  writeFileSync(join(dir, "sr-only.html"), SR_ONLY_CLIP);
+  writeFileSync(join(dir, "long-input.html"), LONG_INPUT);
+  writeFileSync(join(dir, "truncate.html"), TRUNCATE_OK);
   writeFileSync(join(dir, "bare.html"), BARE);
   writeFileSync(join(dir, "tabs.html"), TABS);
   writeFileSync(join(dir, "small.html"), SMALL_TARGET);
@@ -669,6 +690,15 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
     expect(result.value.ok).toBe(true);
     expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
+  });
+
+  it("does not treat sr-only, native inputs, or truncate as clipped text", async () => {
+    for (const route of ["/sr-only", "/long-input", "/truncate"]) {
+      const { result } = await runRoutes([route], { widths: [375], modes: ["light"] });
+      expect(result.ok, result.ok ? "" : `${route} ${result.error.message}`).toBe(true);
+      expect(result.value.ok, route).toBe(true);
+      expect(result.value.cells.every((c) => c.clipped === false), route).toBe(true);
+    }
   });
 
   it("fails collection with no CSS and writes no pass verdict", async () => {

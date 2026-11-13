@@ -74,7 +74,9 @@ screenshot on the **default** tree, then clicks:
 - `scrollWidth` ≤ `innerWidth` (1px tolerance)
 - no clipped text (`overflow: hidden|clip` with `scrollWidth` /
   `scrollHeight` past the box, or an unintended ellipsis; skip
-  `overflow: auto|scroll`)
+  `overflow: auto|scroll`, visually hidden sr-only / clip-path / 1×1
+  boxes, native `input`/`textarea`/`select`, and intended
+  `truncate` / `line-clamp-*`)
 - 0 `pageerror`, 0 console errors, 0 responses ≥ 400 (favicon 404s ignored)
 - axe `wcag2a` / `wcag2aa` / `wcag21aa` / `wcag22aa` with 0 **new**
   serious or critical vs the host baseline
