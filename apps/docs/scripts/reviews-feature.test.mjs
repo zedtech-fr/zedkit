@@ -2160,6 +2160,7 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
   assert.match(consoleView, /AgentConsole/);
   assert.match(feature, /toAgentConsole/);
   assert.match(feature, /ReviewConsoleView/);
+  assert.match(feature, /runId=\{id\}/);
   assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);
   assert.match(run, /copy\.run\.openLive/);
   assert.match(run, /copy\.run\.noLive/);
@@ -2173,6 +2174,51 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
   assert.doesNotMatch(layout, /SiteLayout/);
   assert.match(layout, /<main id="main-content"/);
   assert.match(siteLayout, /SiteLayout/);
+});
+
+test("live console host calms finding surfaces without restyling the kit specimen", () => {
+  const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+  const appearance = readFileSync(join(reviewsRoot, "ui/review-console-appearance.tsx"), "utf8");
+  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
+  const panes = readFileSync(join(here, "../../../packages/ui/src/layout/agent-console-panes.tsx"), "utf8");
+  const demo = readFileSync(join(here, "../components/demos/agent-console-demo.tsx"), "utf8");
+  const cssPath = join(reviewsRoot, "ui/review-console-surfaces.css");
+  const css = existsSync(cssPath) ? readFileSync(cssPath, "utf8") : "";
+  const hostCalm = `${consoleView}\n${appearance}\n${css}`;
+
+  assert.match(consoleView, /<AgentConsole/);
+  assert.match(consoleView, /decision=\{decision\}/);
+  assert.match(consoleView, /ReviewConsoleAppearanceFrame/);
+  assert.match(consoleView, /<Heading level=\{1\}/);
+  assert.match(consoleView, /copy\.run\.title/);
+  assert.match(consoleView, /pane-shrink/);
+  assert.match(consoleView, /min-h-floor/);
+  assert.match(consoleView, /runId/);
+  assert.match(appearance, /min-h-floor/);
+  assert.match(appearance, /data-review-console/);
+  assert.doesNotMatch(consoleView, /variant="glass"/);
+  assert.doesNotMatch(consoleView, /hover-lift/);
+  assert.doesNotMatch(consoleView, /IdentityLookForm/);
+  assert.doesNotMatch(consoleView, /\bCard\b/);
+  assert.doesNotMatch(consoleView, /data-surface="glass"/);
+  assert.match(panes, /data-slot="agent-console-decision"/);
+  assert.match(hostCalm, /data-slot=agent-console-decision|data-slot="agent-console-decision"/);
+  assert.match(hostCalm, /shadow-none|box-shadow:\s*none/);
+  assert.match(hostCalm, /bg-none|background-image:\s*none/);
+  assert.match(hostCalm, /data-review-console/);
+  assert.match(hostCalm, /overflow-wrap:\s*anywhere/);
+  assert.doesNotMatch(hostCalm, /!important/);
+  assert.doesNotMatch(hostCalm, /\[data-identity=["']glass["']\][\s\S]*box-shadow/);
+  if (css) {
+    assert.match(consoleView, /review-console-surfaces\.css/);
+    assert.match(css, /\[data-slot=["']agent-console["']\]/);
+    assert.doesNotMatch(css, /data-surface=["']glass["']/);
+  }
+  assert.doesNotMatch(demo, /review-console-surfaces/);
+  assert.doesNotMatch(demo, /agent-console-decision/);
+  const runBody = run.slice(run.indexOf("function RunBody"), run.indexOf("export function ReviewRunView"));
+  assert.match(runBody, /copy\.run\.noLive/);
+  assert.doesNotMatch(runBody, /AgentConsole/);
 });
 
 test("index-only and unlinked run summaries sit on a calm surface with a site action", () => {

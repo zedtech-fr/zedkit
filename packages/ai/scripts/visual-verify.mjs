@@ -173,6 +173,13 @@ export function routesFromFiles(files, manifest) {
         routes.add(`/${segs.join("/")}`);
       }
     }
+    if (
+      /(?:^|\/)apps\/docs\/features\/reviews\//u.test(n) ||
+      /(?:^|\/)apps\/docs\/app\/\(run-console\)\//u.test(n) ||
+      /(?:^|\/)apps\/docs\/app\/\([^/]+\)\/issues\//u.test(n)
+    ) {
+      routes.add("/issues");
+    }
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
     }
