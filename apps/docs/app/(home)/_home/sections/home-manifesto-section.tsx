@@ -6,7 +6,7 @@ import {
   HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
-import { homeManifestoCopy } from "@/ui/home/i18n/home-manifesto-copy";
+import { homeManifestoCopy } from "../i18n/home-manifesto-copy";
 import { OffPathLink } from "@/ui/off-path-link";
 
 /**

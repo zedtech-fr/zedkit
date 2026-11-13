@@ -6,7 +6,7 @@ import {
   HOME_SECTION_CONTENT_GAP,
   HOME_SIX_SENTENCES_GRID,
 } from "@/ui/home/home-rhythm";
-import { homeSixSentencesCopy } from "@/ui/home/i18n/home-six-sentences-copy";
+import { homeSixSentencesCopy } from "../i18n/home-six-sentences-copy";
 
 type SixSentencesCard = (typeof homeSixSentencesCopy.cards)[number];
 
