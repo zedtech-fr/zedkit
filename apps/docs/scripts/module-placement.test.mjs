@@ -311,6 +311,36 @@ describe("live docs tree", () => {
     assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 
+  it("imports home band sections from _home/sections and does not leave shims at the old paths", () => {
+    const bands = [
+      "home-same-idea-section.tsx",
+      "home-six-sentences-section.tsx",
+      "home-paste-section.tsx",
+      "home-identities-section.tsx",
+      "home-limits-section.tsx",
+      "home-manifesto-section.tsx",
+      "home-closing-section.tsx",
+      "home-link.tsx",
+    ];
+    const composer = readFileSync(join(docsRoot, "app/(home)/_home/home-below-hero.tsx"), "utf8");
+    assert.match(composer, /from ["']\.\/sections\/home-same-idea-section["']/);
+    assert.doesNotMatch(
+      composer,
+      /from "@\/ui\/home\/home-(?:same-idea|six-sentences|paste|identities|limits|manifesto|closing)-section"/,
+    );
+    for (const name of bands) {
+      assert.ok(existsSync(join(docsRoot, "app/(home)/_home/sections", name)), name);
+      assert.equal(existsSync(join(docsRoot, "ui/home", name)), false, `shim ${name}`);
+    }
+    const sameIdea = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-same-idea-section.tsx"),
+      "utf8",
+    );
+    assert.match(sameIdea, /from ["']\.\/home-link["']/);
+    assert.doesNotMatch(sameIdea, /from "@\/ui\/home\/home-link"/);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+  });
+
   it("does not leave shims at the old docs layout and search paths", () => {
     assert.equal(existsSync(join(docsRoot, "ui/docs-main-content.tsx")), false);
     assert.equal(existsSync(join(docsRoot, "lib/docs-layout-tree.mjs")), false);
