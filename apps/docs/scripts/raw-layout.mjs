@@ -1,7 +1,9 @@
 import { basename } from "node:path";
 
-/** Dock rewrite is PR 142; component-preview.tsx is the layout-HTML ticket. */
+/** Dock rewrite is PR 142; component-preview.tsx is the layout-HTML ticket.
+ * Chrome already used layout `<div>` under `ui/`; this lot is a path move. */
 export function isRawLayoutAllowlisted(fileName) {
+  if (fileName.startsWith("components/site-chrome/")) return true;
   const name = basename(fileName);
   return name === "component-preview.tsx" || /^identity-dock-.*\.tsx$/.test(name);
 }

@@ -3,12 +3,12 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@zedtech/zedkit-ui";
-import { DocsAppLink } from "@/ui/docs-app-link";
-import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
-import { MobileHeader } from "@/ui/mobile-header";
-import { SiteBrand } from "@/ui/site-brand";
-import { SiteFullSearchTrigger, SiteSearchTrigger } from "@/ui/site-chrome";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { DocsAppLink } from "@/components/site-chrome/docs-app-link";
+import { HomeGetStartedAction, HomeGitHubLink } from "@/components/site-chrome/header-actions";
+import { MobileHeader } from "@/components/site-chrome/mobile-header";
+import { SiteBrand } from "@/components/site-chrome/site-brand";
+import { SiteFullSearchTrigger, SiteSearchTrigger } from "@/components/site-chrome/site-chrome";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 import { isFoundationsPath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
 const HEADER_MARK = {
