@@ -183,9 +183,9 @@ export function AdminDashboardGuideDemo() {
   ];
 
   return (
-    <Stack data-demo-frame="" className="content-shrink overflow-hidden rounded-lg border border-border bg-background">
+    <Stack data-demo-frame="" className="content-shrink rounded-lg border border-border bg-background">
       <AppShell
-        className={cn("h-full pane-shrink [&>aside]:w-sidebar-compact", mobile && "[&>aside]:hidden")}
+        className={cn("h-full pane-shrink content-shrink [&>aside]:w-sidebar-compact", mobile && "[&>aside]:hidden")}
         sidebar={<Sidebar />}
         topbar={<TopBar />}
       >
