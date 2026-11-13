@@ -7,7 +7,7 @@ import { captureCreateArrival } from "@/features/identity/ui/identity-create-arr
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
 
 const IdentityDockLazyShell = dynamic(
-  () => import("@/features/identity/ui/identity-dock-lazy-shell").then((mod) => ({ default: mod.IdentityDockLazyShell })),
+  () => import("@/features/identity/dock/ui/identity-dock-lazy-shell").then((mod) => ({ default: mod.IdentityDockLazyShell })),
   { ssr: false },
 );
 
@@ -18,7 +18,7 @@ export function IdentityDockGate() {
     captureCreateArrival();
   }, []);
   useEffect(() => {
-    void import("@/features/identity/ui/identity-dock-lazy-shell");
+    void import("@/features/identity/dock/ui/identity-dock-lazy-shell");
   }, []);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

@@ -1,8 +1,8 @@
 import { tryCatch } from "@zedtech/zedkit-core";
 import type { IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { specimenDomainFromPersist, type SpecimenDomain } from "./brief-specimen-domain.ts";
-import { initialSession, type SessionState } from "./identity-creator-session.ts";
+import { specimenDomainFromPersist, type SpecimenDomain } from "@/features/identity/ui/brief-specimen-domain";
+import { initialSession, type SessionState } from "@/features/identity/ui/identity-creator-session";
 
 /** Current persisted dock state (localStorage). */
 export const IDENTITY_DOCK_STORAGE_KEY = "zk-identity-dock-v2";
@@ -37,7 +37,7 @@ export type IdentityDockPersistRead = Partial<Omit<IdentityDockPersist, "preview
 /** Validates persisted preview tokens; `null` when absent or invalid. */
 export async function parsePersistedPreviewTokens(raw: unknown): Promise<IdentityTokens | null> {
   if (raw === undefined || raw === null) return null;
-  const { parseIdentityTokens } = await import("./identity-tokens-parse.ts");
+  const { parseIdentityTokens } = await import("@/features/identity/ui/identity-tokens-parse");
   const tokens = parseIdentityTokens(raw);
   return tokens.success ? tokens.data : null;
 }
