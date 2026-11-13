@@ -125,7 +125,7 @@ run one review workflow, and check done-ness without loading the whole kit.
 **Setup preset (default for `setup`):** everything in starter, plus
 `domain-modeling`, `persona-review`, `compose-ui`, `visual-verify`, `code-review`,
 `ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
-`plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
+`plan`, `implement`, `pr`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
 `research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
 `handoff` (durable deliverables: persist plans and handoffs so a fresh session recovers scope), and
 `triage` (issue inbox: roles, verification, agent-ready briefs),
