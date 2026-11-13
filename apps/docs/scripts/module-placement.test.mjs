@@ -273,11 +273,6 @@ describe("live docs tree", () => {
         `baseline missing edge ${edge.from} -> ${edge.to}`,
       );
     }
-    assert.ok(
-      baseline.dead.includes("lib/review-appearance.ts") ||
-        baseline.singleOwner.includes("lib/review-appearance.ts"),
-      "baseline missing lib/review-appearance.ts",
-    );
     const result = checkPlacement(graph, baseline);
     const hint =
       "See apps/docs/AGENTS.md File placement; baseline apps/docs/scripts/module-placement.baseline.json. Move the file; never extend the baseline.";
@@ -506,7 +501,7 @@ describe("ESLint one-way imports", () => {
     );
   });
 
-  it("keeps the L5 exception on ui/home/home-hero.tsx", async () => {
+  it("needs no L5 exception on ui/home/home-hero.tsx", async () => {
     eslint ??= new ESLint({ cwd: repoRoot });
     const [result] = await eslint.lintFiles(["apps/docs/ui/home/home-hero.tsx"]);
     assert.equal(
@@ -514,6 +509,8 @@ describe("ESLint one-way imports", () => {
       0,
       result?.messages?.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
     );
+    const eslintConfig = readFileSync(join(repoRoot, "eslint.config.mjs"), "utf8");
+    assert.doesNotMatch(eslintConfig, /docs\/one-way-exception-l5-home-hero/);
   });
 
   it("keeps hexagonal feature-folder bans on note-list ui", async () => {

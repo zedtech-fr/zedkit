@@ -42,7 +42,6 @@
     "lib/identity-request-id.ts",
     "lib/identity-save-status.ts",
     "lib/identity-tokens-parse.ts",
-    "lib/review-appearance.ts",
     "lib/use-assistant-network.ts",
     "ui/route-scroll-reset.tsx",
     "ui/site-chrome-a11y.tsx",
