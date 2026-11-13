@@ -519,6 +519,136 @@ describe("syncKit: prune deprecated command stubs", () => {
     if (!result.ok) throw result.error;
     expect(existsSync(join(root, ".agents/commands"))).toBe(false);
   });
+
+  it("without prune:true keeps byte-identical deprecated stubs", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    const result = syncKit({ dest: root, providers: ["cursor"], kit });
+    if (!result.ok) throw result.error;
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(true);
+    expect(existsSync(join(root, ".cursor/commands/plan.md"))).toBe(true);
+    expect(existsSync(join(root, ".claude/commands/plan.md"))).toBe(true);
+    expect(result.value.some((action) => action.kind === "prune" && action.path.includes("commands/plan"))).toBe(
+      false,
+    );
+  });
+
+  it("keeps a cursor link that is not the kit command link", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    unlinkSync(join(root, ".cursor/commands/plan.md"));
+    symlinkSync("./other.md", join(root, ".cursor/commands/plan.md"));
+    writeFileSync(join(root, ".cursor/commands/other.md"), CUSTOM);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readlinkSync(join(root, ".cursor/commands/plan.md"))).toBe("./other.md");
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+  });
+
+  it("keeps a user-edited cursor file when the source still matches the kit", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    unlinkSync(join(root, ".cursor/commands/plan.md"));
+    writeFileSync(join(root, ".cursor/commands/plan.md"), CUSTOM);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".cursor/commands/plan.md"), "utf8")).toBe(CUSTOM);
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+    expect(existsSync(join(root, ".claude/commands/plan.md"))).toBe(false);
+  });
+
+  it("keeps a user-edited claude copy when the source still matches the kit", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    writeFileSync(join(root, ".claude/commands/plan.md"), CUSTOM);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".claude/commands/plan.md"), "utf8")).toBe(CUSTOM);
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+    expect(existsSync(join(root, ".cursor/commands/plan.md"))).toBe(false);
+  });
+
+  it("keeps a user-edited provider sidecar and prunes a kit-equal sidecar", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    writeFileSync(join(root, ".cursor/commands/plan.kit.md"), CUSTOM);
+    writeFileSync(join(root, ".claude/commands/plan.kit.md"), PLAN);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".cursor/commands/plan.kit.md"), "utf8")).toBe(CUSTOM);
+    expect(existsSync(join(root, ".claude/commands/plan.kit.md"))).toBe(false);
+  });
+
+  it("does not prune an .agents command sidecar", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    writeFileSync(join(root, ".agents/commands/plan.kit.md"), PLAN);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".agents/commands/plan.kit.md"), "utf8")).toBe(PLAN);
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+  });
+
+  it("does not prune through a parent .cursor symlink into another tree", () => {
+    const kit = stubKit();
+    const root = project();
+    put(root, ".agents/commands/plan.md", PLAN);
+    const outside = tempDir();
+    put(outside, "commands/plan.md", PLAN);
+    symlinkSync(outside, join(root, ".cursor"));
+    mkdirSync(join(root, ".claude/commands"), { recursive: true });
+    writeFileSync(join(root, ".claude/commands/plan.md"), PLAN);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(outside, "commands/plan.md"), "utf8")).toBe(PLAN);
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+  });
+
+  it("check:true with prune:true reports the prune and writes nothing", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, check: true, kit });
+    if (!result.ok) throw result.error;
+    expect(result.value.some((action) => action.kind === "prune" && action.path === ".agents/commands/plan.md")).toBe(
+      true,
+    );
+    expect(readFileSync(join(root, ".agents/commands/plan.md"), "utf8")).toBe(PLAN);
+    expect(existsSync(join(root, ".cursor/commands/plan.md"))).toBe(true);
+  });
+
+  it("broken kit.json is a no-op prune (no throw, no delete)", () => {
+    const kit = stubKit();
+    writeFileSync(join(kit, "kit.json"), "{");
+    const root = withCommands({ plan: PLAN });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".agents/commands/plan.md"), "utf8")).toBe(PLAN);
+    expect(result.value.some((action) => action.kind === "prune" && action.path.includes("commands/plan"))).toBe(
+      false,
+    );
+  });
+
+  it("skips a manifest stem that is not a command name", () => {
+    const kit = stubKit();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({
+        presets: { starter: ["plan"] },
+        agents: ["plain"],
+        commands: ["zedkit-ai", "plan", "../escape"],
+      }),
+    );
+    put(kit, "escape.md", PLAN);
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    put(root, ".agents/escape.md", PLAN);
+    put(root, ".cursor/escape.md", PLAN);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".cursor/escape.md"), "utf8")).toBe(PLAN);
+    expect(readFileSync(join(root, ".agents/escape.md"), "utf8")).toBe(PLAN);
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+  });
 });
 
 describe("syncKit: inputs", () => {

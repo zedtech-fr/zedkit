@@ -60,8 +60,10 @@ zedkit-ai <command>
       copy is replaced, any other file is kept (Muse does not write a
       sidecar). Generated files whose source agent is gone are removed
       (--no-prune keeps them); --prune with --provider also removes those of
-      a provider left out. --check writes nothing and exits 1 when anything
-      is out of date. --allow-fast writes a fast model id, and only when the
+      a provider left out, and leftover deprecated command stubs whose bytes
+      still match the current kit file (not user-edited provider copies).
+      --check writes nothing and exits 1 when anything is out of date.
+      --allow-fast writes a fast model id, and only when the
       user explicitly requested fast mode in this request; validate and
       init/setup take the same flag. Without --provider the layers are inferred from
       non-empty .cursor/ and .claude/ and from Muse-native marked files in

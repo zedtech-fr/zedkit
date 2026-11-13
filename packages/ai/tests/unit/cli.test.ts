@@ -27,7 +27,13 @@ function expectValidateOk(dest: string, allowDeprecationWarnings = false): void 
     expect(extra).toEqual([]);
     return;
   }
-  expect(extra.every((line) => /: warning: command "[^"]+" is deprecated; use \/zedkit-ai$/.test(line))).toBe(true);
+  expect(
+    extra.every((line) =>
+      /: warning: command "[^"]+" is deprecated; use \/zedkit-ai \(delete the file or run sync --prune --provider …\)$/.test(
+        line,
+      ),
+    ),
+  ).toBe(true);
 }
 
 describe("cli", () => {

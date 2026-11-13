@@ -290,13 +290,14 @@ function checkCommand(
   skills: Set<string>,
   issues: Issue[],
   deprecated: ReadonlySet<string>,
+  shipsEntry: boolean,
 ): void {
   const path = join("commands", file);
   const base = file.replace(/\.md$/, "");
-  if (deprecated.has(base)) {
+  if (deprecated.has(base) && shipsEntry) {
     issues.push({
       path,
-      message: `warning: command "${base}" is deprecated; use /zedkit-ai`,
+      message: `warning: command "${base}" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)`,
     });
   }
   if (!NAME.test(base) || base.length > MAX_NAME) {
@@ -609,8 +610,9 @@ function collect(root: string, kit: string): Issue[] {
   if (existsSync(commandsDir)) {
     const manifest = readManifest(kit);
     const deprecated = new Set(manifest.ok ? deprecatedCommandNames(manifest.value) : []);
+    const shipsEntry = manifest.ok && (manifest.value.commands ?? []).includes("zedkit-ai");
     for (const file of mdFiles(commandsDir)) {
-      checkCommand(root, file, skills, issues, deprecated);
+      checkCommand(root, file, skills, issues, deprecated, shipsEntry);
     }
   }
   checkManifest(root, issues);

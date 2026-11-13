@@ -30,7 +30,32 @@ function deprecationKit(): string {
 
 describe("validateKit", () => {
   it("accepts the bundled kit", () => {
-    expect(failingIssues(validateKit(kitDir()))).toEqual([]);
+    const issues = validateKit(kitDir());
+    expect(failingIssues(issues)).toEqual([]);
+    expect(
+      issues
+        .filter((issue) => issue.message.startsWith("warning: command"))
+        .map((issue) => issue.path)
+        .sort(),
+    ).toEqual([
+      "commands/audit.md",
+      "commands/challenge.md",
+      "commands/fix.md",
+      "commands/from-audit.md",
+      "commands/handoff.md",
+      "commands/implement.md",
+      "commands/improve-config.md",
+      "commands/improve-from-review.md",
+      "commands/orchestrate.md",
+      "commands/plan.md",
+      "commands/pr.md",
+      "commands/quick-wins.md",
+      "commands/research.md",
+      "commands/review.md",
+      "commands/setup-ai.md",
+      "commands/to-audit.md",
+      "commands/triage.md",
+    ]);
   });
 
   it("accepts a minimal valid layout", () => {
@@ -818,12 +843,14 @@ describe("validateKit: deprecated commands", () => {
     const issues = validateKit(root, kit);
     expect(issues).toContainEqual({
       path: "commands/plan.md",
-      message: 'warning: command "plan" is deprecated; use /zedkit-ai',
+      message:
+        'warning: command "plan" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)',
     });
     expect(issues.filter((issue) => issue.message.startsWith("warning: command"))).toEqual([
       {
         path: "commands/plan.md",
-        message: 'warning: command "plan" is deprecated; use /zedkit-ai',
+        message:
+          'warning: command "plan" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)',
       },
     ]);
   });
@@ -853,7 +880,37 @@ describe("validateKit: deprecated commands", () => {
     });
     expect(code).toBe(0);
     expect(errors).toEqual([]);
-    expect(out.join("\n")).toContain('commands/plan.md: warning: command "plan" is deprecated; use /zedkit-ai');
+    expect(out.join("\n")).toContain(
+      'commands/plan.md: warning: command "plan" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)',
+    );
     expect(out.join("\n")).toContain("ok — structural kit checks only");
+  });
+
+  it("does not warn when the kit manifest has no entry command", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({
+        presets: { starter: ["plan"] },
+        agents: ["plain"],
+        commands: ["plan"],
+      }),
+    );
+    put(kit, "commands/plan.md", COMMAND("plan"));
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/plan.md", COMMAND("alpha"));
+    expect(validateKit(root, kit).filter((issue) => issue.message.startsWith("warning: command"))).toEqual([]);
+  });
+
+  it("broken kit.json does not throw and does not emit deprecation warnings", () => {
+    const kit = deprecationKit();
+    put(kit, "kit.json", "{");
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/plan.md", COMMAND("alpha"));
+    expect(() => validateKit(root, kit)).not.toThrow();
+    expect(validateKit(root, kit).filter((issue) => issue.message.startsWith("warning: command"))).toEqual([]);
   });
 });

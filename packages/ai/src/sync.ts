@@ -316,6 +316,23 @@ function prunePath(ctx: Ctx, rel: string, note: string): void {
   ctx.actions.push({ kind: "prune", path: rel, note });
 }
 
+const KIT_COMMAND_LINK = (stem: string): string => `../../.agents/commands/${stem}.md`;
+
+/** Provider copy: kit command link or current kit bytes. Anything else is the user's. */
+function pruneDeprecatedCopy(ctx: Ctx, rel: string, stem: string, kitText: string, note: string): void {
+  const full = join(ctx.dest, rel);
+  const stat = lstatOf(full);
+  if (stat === undefined || stat.isDirectory()) return;
+  if (stat.isSymbolicLink()) {
+    const target = tryCatch(() => readlinkSync(full));
+    if (!target.ok || target.value !== KIT_COMMAND_LINK(stem)) return;
+  } else {
+    const text = readText(full);
+    if (text === undefined || lf(text) !== lf(kitText)) return;
+  }
+  prunePath(ctx, rel, note);
+}
+
 /** `--prune` only: drop a deprecated command whose bytes still equal the current kit file. */
 function pruneDeprecatedCommandStubs(ctx: Ctx): void {
   const manifest = readManifest(ctx.kit);
@@ -330,8 +347,8 @@ function pruneDeprecatedCommandStubs(ctx: Ctx): void {
     if (sourceText === undefined || kitText === undefined || lf(sourceText) !== lf(kitText)) continue;
     for (const dirRel of [join(".cursor", "commands"), join(".claude", "commands")]) {
       if (throughLink(ctx, dirRel) !== undefined) continue;
-      prunePath(ctx, join(dirRel, `${stem}.md`), note);
-      prunePath(ctx, join(dirRel, `${stem}.kit.md`), note);
+      pruneDeprecatedCopy(ctx, join(dirRel, `${stem}.md`), stem, kitText, note);
+      pruneDeprecatedCopy(ctx, join(dirRel, `${stem}.kit.md`), stem, kitText, note);
     }
     prunePath(ctx, sourceRel, note);
   }
@@ -425,7 +442,7 @@ function syncCommands(ctx: Ctx, names: readonly string[], source: (name: string)
   const known = new Set(names);
   for (const name of names) {
     const rel = join(dirRel, `${name}.md`);
-    const target = `../../.agents/commands/${name}.md`;
+    const target = KIT_COMMAND_LINK(name);
     const full = join(ctx.dest, rel);
     const stat = lstatOf(full);
     if (stat === undefined) {
