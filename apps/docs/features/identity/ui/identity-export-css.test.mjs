@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { identityPresets, tokensToCss } from "@zedtech/zedkit-ui";
 
-import { identityExportCss, IDENTITY_UI_INSTALL_COMMAND } from "../lib/identity-export-css.ts";
+import { identityExportCss, IDENTITY_UI_INSTALL_COMMAND } from "./identity-export-css.ts";
 
 test("identityExportCss matches editor export scope", () => {
   const tokens = identityPresets.mist;

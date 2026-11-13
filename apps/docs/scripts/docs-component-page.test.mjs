@@ -5,6 +5,13 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const repo = join(app, "../..");
+const identityDir = join(repo, "packages/ui/src/identities");
+const stylesPath = join(repo, "packages/ui/src/styles.css");
+const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"];
+const MODES = ["light", "dark"];
+const AA_TEXT = 4.5;
+const AA_NONTEXT = 3;
 
 function read(rel) {
   return readFileSync(join(app, rel), "utf8");
@@ -52,6 +59,63 @@ function tokenValue(css, name) {
   const match = css.match(new RegExp(`${name}:\\s*([^;]+);`));
   assert.ok(match, `missing token ${name}`);
   return match[1].trim();
+}
+
+function parseTriplet(value) {
+  const match = value.trim().match(/^([\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/);
+  assert.ok(match, `expected H S% L% triplet, got ${value}`);
+  return hslToRgb(Number(match[1]), Number(match[2]), Number(match[3]));
+}
+
+function stylesThemeBody(mode) {
+  const css = readFileSync(stylesPath, "utf8");
+  const parts = css.split(/\.dark\s*\{/);
+  const body = mode === "light" ? parts[0] : parts[1];
+  assert.ok(body, `styles.css ${mode} block missing`);
+  return body;
+}
+
+function identityPalette(id, mode) {
+  if (id === "mist") {
+    const body = stylesThemeBody(mode);
+    return {
+      mutedForeground: parseTriplet(tokenValue(body, "--muted-foreground")),
+      accentForeground: parseTriplet(tokenValue(body, "--accent-foreground")),
+      ring: parseTriplet(tokenValue(body, "--ring")),
+    };
+  }
+  const css = stripComments(readFileSync(join(identityDir, `${id}.css`), "utf8"));
+  let light;
+  let dark;
+  for (const { selector, body } of eachBlock(css)) {
+    if (!selector.includes(`data-identity="${id}"`)) continue;
+    if (!body.includes("--muted-foreground:")) continue;
+    if (selector.includes(".dark")) dark = body;
+    else light = body;
+  }
+  const body = mode === "dark" ? dark : light;
+  assert.ok(body, `missing ${id} ${mode} palette`);
+  const accentRaw = body.match(/--accent-foreground:\s*([^;]+);/)?.[1]?.trim();
+  const accentSource = accentRaw
+    ? parseTriplet(accentRaw)
+    : parseTriplet(tokenValue(body, "--foreground"));
+  return {
+    mutedForeground: parseTriplet(tokenValue(body, "--muted-foreground")),
+    accentForeground: accentSource,
+    ring: parseTriplet(tokenValue(body, "--ring")),
+  };
+}
+
+function wellFigurePinBody(css) {
+  for (const { selector, body } of eachBlock(css)) {
+    if (!body.includes("--muted-foreground:") || !body.includes("--zk-code-well-muted")) continue;
+    assert.match(selector, /#usage-and-states/);
+    assert.match(selector, /\[data-preview-code-panel\]/);
+    assert.match(selector, /figure\.shiki/);
+    assert.match(selector, /:not\(\[data-adoption-frame\]\)/);
+    return body;
+  }
+  assert.fail("well figures must pin --muted-foreground for .text-fd-muted-foreground");
 }
 
 function* eachBlock(css) {
@@ -151,17 +215,66 @@ test("usage well figure header muted meets WCAG AA against the well", () => {
   const css = stripComments(read("app/docs-component-page.css"));
   const well = parseHsl(`hsl(${tokenValue(css, "--zk-code-well")})`);
   const muted = parseHsl(`hsl(${tokenValue(css, "--zk-code-well-muted")})`);
-  const ratio = contrastRatio(muted, well);
-  assert.ok(ratio >= 4.5, `well muted on well is ${ratio.toFixed(2)}:1`);
-  let sawHeaderPin = false;
-  for (const { selector, body } of eachBlock(css)) {
-    if (!body.includes("--muted-foreground:") || !body.includes("--zk-code-well-muted")) continue;
-    sawHeaderPin = true;
-    assert.match(selector, /#usage-and-states/);
-    assert.match(selector, /\[data-preview-code-panel\]/);
-    assert.match(body, /--muted-foreground:\s*var\(--zk-code-well-muted\)/);
+  const wellForeground = parseHsl("hsl(0 0% 98%)");
+  const mutedRatio = contrastRatio(muted, well);
+  assert.ok(mutedRatio >= AA_TEXT, `well muted on well is ${mutedRatio.toFixed(2)}:1`);
+  assert.ok(
+    contrastRatio(wellForeground, well) >= AA_TEXT,
+    "well foreground on well must stay AA for Copy hover/Copied",
+  );
+  assert.ok(contrastRatio(muted, well) >= AA_NONTEXT, "well muted on well must stay 3:1 for the Copy ring");
+
+  const pin = wellFigurePinBody(css);
+  assert.match(pin, /--muted-foreground:\s*var\(--zk-code-well-muted\)/);
+  assert.match(pin, /--color-fd-muted-foreground:\s*hsl\(var\(--zk-code-well-muted\)\)/);
+  assert.match(pin, /--color-muted-foreground:\s*hsl\(var\(--zk-code-well-muted\)\)/);
+  assert.match(pin, /--accent-foreground:\s*0 0% 98%/);
+  assert.match(pin, /--color-fd-accent-foreground:\s*hsl\(var\(--accent-foreground\)\)/);
+  assert.match(pin, /--ring:\s*var\(--zk-code-well-muted\)/);
+  assert.match(pin, /--color-fd-ring:\s*hsl\(var\(--zk-code-well-muted\)\)/);
+
+  for (const id of IDENTITIES) {
+    for (const mode of MODES) {
+      const palette = identityPalette(id, mode);
+      const mutedLeak = contrastRatio(palette.mutedForeground, well);
+      const accentLeak = contrastRatio(palette.accentForeground, well);
+      const ringLeak = contrastRatio(palette.ring, well);
+      if (mode === "light") {
+        assert.ok(
+          mutedLeak < AA_TEXT,
+          `${id} ${mode} identity --muted-foreground on the well is ${mutedLeak.toFixed(2)}:1; a leak must fail AA`,
+        );
+        assert.ok(
+          accentLeak < AA_NONTEXT,
+          `${id} ${mode} identity --accent-foreground on the well is ${accentLeak.toFixed(2)}:1; a leak must fail Copy hover`,
+        );
+      }
+      if (id === "glass" && mode === "light") {
+        assert.ok(
+          ringLeak < AA_NONTEXT,
+          `glass light identity --ring on the well is ${ringLeak.toFixed(2)}:1; a leak must fail the Copy ring`,
+        );
+      }
+      assert.ok(
+        contrastRatio(muted, well) >= AA_TEXT,
+        `${id} ${mode}: pinned well muted must stay AA (identity leak would be ${mutedLeak.toFixed(2)}:1)`,
+      );
+      assert.ok(
+        contrastRatio(wellForeground, well) >= AA_NONTEXT,
+        `${id} ${mode}: pinned Copy hover must stay 3:1 (identity leak would be ${accentLeak.toFixed(2)}:1)`,
+      );
+      assert.ok(
+        contrastRatio(muted, well) >= AA_NONTEXT,
+        `${id} ${mode}: pinned Copy ring must stay 3:1 (identity leak would be ${ringLeak.toFixed(2)}:1)`,
+      );
+    }
   }
-  assert.equal(sawHeaderPin, true, "well figures must pin --muted-foreground for .text-fd-muted-foreground");
+
+  const shell = stripComments(read("app/docs-shell-tokens.css"));
+  const pasteFill = parseTriplet(tokenValue(shell, "--zk-site-action"));
+  const pasteInk = parseTriplet(tokenValue(shell, "--zk-site-action-foreground"));
+  const pasteRatio = contrastRatio(pasteInk, pasteFill);
+  assert.ok(pasteRatio >= AA_TEXT, `#paste --zk-site-action-foreground on --zk-site-action is ${pasteRatio.toFixed(2)}:1`);
 });
 
 test("component-page stage CSS does not restyle specimens with !important", () => {

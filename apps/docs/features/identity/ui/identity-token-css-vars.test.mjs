@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { identityPresets, tokensToCssVars } from "@zedtech/zedkit-ui";
 
-import { identityTokenCssVars } from "../lib/identity-token-css-vars.ts";
+import { identityTokenCssVars } from "./identity-token-css-vars.ts";
 
 const varsDump = tokensToCssVars(identityPresets.mist);
 

@@ -31,6 +31,23 @@ test("docs shell pins white page fill, 1200px measure, and 24px gutter", () => {
   assert.doesNotMatch(css, /--zk-container-default:\s*72\.5rem/);
 });
 
+test("docs shell dark reading tokens alias identity; action zinc is not remapped", () => {
+  const css = read("app/docs-shell-tokens.css");
+  const dark = css.match(
+    /html\[data-docs-shell\]\.dark\[data-identity\] \{([^}]+)\}/,
+  );
+  assert.ok(dark, "html.dark docs-shell identity reading aliases");
+  const body = dark[1];
+  assert.match(body, /--zk-site-page:\s*var\(--background\)/);
+  assert.match(body, /--zk-site-band:\s*var\(--muted\)/);
+  assert.match(body, /--zk-site-ink:\s*var\(--foreground\)/);
+  assert.match(body, /--zk-site-body:\s*var\(--muted-foreground\)/);
+  assert.match(body, /--zk-site-hairline:\s*var\(--border\)/);
+  assert.doesNotMatch(body, /--zk-site-action:/);
+  assert.doesNotMatch(body, /--zk-site-action-foreground:/);
+  assert.doesNotMatch(body, /--zk-site-action-hover:/);
+});
+
 test("docs shell display and section type match the mockup", () => {
   const css = read("app/docs-typography.css");
   assert.match(css, /--zk-type-h1-size:\s*3rem/);
@@ -145,7 +162,8 @@ test("docs shell 390 lead beats the kit 15px cap; home band-sub and persuasion m
   assert.match(phone[0], /--zk-home-band-sub-leading:\s*1\.55/);
   assert.match(phone[0], /--zk-home-persuasion-font-size:\s*0\.9375rem/);
   assert.match(phone[0], /--zk-home-persuasion-leading:\s*1\.55/);
-  assert.doesNotMatch(phone[0], /--zk-type-h1-size:\s*3rem/);
+  // #411: marketing H1 stays the #home-page clamp; 390 must not fork a size.
+  assert.doesNotMatch(phone[0], /--zk-type-h1-size/);
 });
 
 test("home display clamp scales at 375 / 809 / 1440; foundations stay 48px", () => {

@@ -2,8 +2,9 @@ export const homeHeroCopy = {
   hero: {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
     titleCategory: "Open source · MIT · by Zed Tech",
-    title: "Code that’s checked. Screens that match.",
-    sub: "AI brings the workflow rules and checks; UI brings the components and the look, from the agent you already use.",
+    /** First #411 fallback: at most 3 lines at ≤430 with the home 1rem gutter overlay. Owner grey-hairs line measured 4 during #411. */
+    title: "Want your next build twice as fast? Build something with zedkit.",
+    sub: "The second time is faster, easier and better than the first.",
     promptAriaLabel: "Setup prompt",
     promptCopyLabel: "Copy prompt",
   },

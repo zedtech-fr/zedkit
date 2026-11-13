@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 const footerLink = (page: Page, name: string) =>
   page.locator("footer").getByRole("link", { name, exact: true });
 
@@ -11,7 +13,7 @@ test.describe("site shell", () => {
     const header = page.locator("#nd-nav");
     await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
     await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
-    await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Guides" })).toHaveCount(0);
   });
 

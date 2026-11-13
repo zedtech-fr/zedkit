@@ -53,8 +53,22 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
+ * Dark reading tokens follow the look. Page/band/ink/body/hairline alias
+ * identity roles so foundations (and any other --zk-site-* reading surface)
+ * match html.dark. Action zinc stays inverted for #paste / same-idea.
+ */
+html[data-docs-shell].dark[data-identity] {
+  --zk-site-page: var(--background);
+  --zk-site-band: var(--muted);
+  --zk-site-ink: var(--foreground);
+  --zk-site-body: var(--muted-foreground);
+  --zk-site-hairline: var(--border);
+}
+
+/*
  * Mockup 1200px measure with 120px sides at 1440: drop the extra 24px
- * inside the box. Docs article keeps 24px. 390 stays 1.5rem above.
+ * inside the box. Docs article keeps 24px. 390 stays 1.5rem above, except
+ * home (1rem overlay in _home/home.css #411).
  */
 @media (min-width: 90rem) {
   #home-page,

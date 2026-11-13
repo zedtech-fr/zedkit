@@ -18,7 +18,7 @@ export function HomeIdentityLooksTabs() {
           key={id}
           value={id}
           data-look-tab=""
-          className="h-auto! min-h-target px-tab transition-none data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-none"
+          className="h-auto! min-h-target px-tab transition-none data-[state=active]:bg-foreground! data-[state=active]:text-background! data-[state=active]:shadow-none"
         >
           <Text as="span" data-tab-label="">
             {HOME_IDENTITY_FACTS[id].label}

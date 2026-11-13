@@ -3,7 +3,7 @@ import test from "node:test";
 
 process.env.TZ = "UTC";
 
-const { retryText, identityAssistantCopy } = await import("../components/i18n/identity-assistant-copy.ts");
+const { retryText, identityAssistantCopy } = await import("../features/identity/dock/i18n/identity-assistant-copy.ts");
 
 const now = new Date("2026-11-03T10:00:00.000Z");
 

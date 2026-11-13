@@ -271,7 +271,8 @@ test("hero LCP path paints at full opacity: no settle on the band, rise is trans
   assert.doesNotMatch(riseFrom, /opacity\s*:/);
   assert.match(riseFrom, /transform:\s*translateY\(/);
   const allowed = eachNoPreferenceBlock(css).join("\n");
-  assert.match(allowed, /\[data-home-hero-lead\]\s*>\s*\*/);
+  assert.doesNotMatch(allowed, /\[data-home-hero-lead\]\s*>\s*\*/);
+  assert.match(allowed, /\[data-home-hero-lead\]\s*>\s*:nth-child\(\s*n\s*\+\s*2\s*\)/);
   assert.match(allowed, /zk-home-hero-rise/);
 });
 

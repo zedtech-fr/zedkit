@@ -16,25 +16,25 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import { ContrastChips, DRAFT_SELECTOR, DraftCard } from "./identity-editor-fields";
 import { IdentityLookForm } from "./identity-look-form";
-import { IdentityEditorExport } from "@/components/identity-editor-export";
+import { IdentityEditorExport } from "./identity-editor-export";
 import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "./identity-editor-toolbar";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { IDENTITY_EDITOR_DRAFT_APPLY } from "./identity-editor-draft-apply";
-import { useDraftTokens, useIdentityTokenSheet } from "./identity-editor-draft";
-import { bindLookLibrary } from "./identity-look-bind";
-import { tokensForLook } from "./identity-look";
+import { IDENTITY_EDITOR_DRAFT_APPLY } from "@/features/identity/ui/identity-editor-draft-apply";
+import { useDraftTokens, useIdentityTokenSheet } from "@/features/identity/ui/identity-editor-draft";
+import { bindLookLibrary } from "@/features/identity/ui/identity-look-bind";
+import { tokensForLook } from "@/features/identity/ui/identity-look";
 import {
   namedIdentityOptions,
   readLibrarySnapshot,
   readNamedIdentities,
   subscribeNamedIdentities,
   type NamedIdentity,
-} from "./named-identities";
-import { type SaveStatus } from "./identity-save-status";
-import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "./identity-editor-search";
+} from "@/features/identity/ui/named-identities";
+import { type SaveStatus } from "@/features/identity/ui/identity-save-status";
+import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "@/features/identity/ui/identity-editor-search";
 
 type EditorBodyProps = {
   identity: string;

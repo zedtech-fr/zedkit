@@ -25,30 +25,27 @@ export function ConsoleNotice({
 }) {
   return (
     <ReviewConsoleAppearanceFrame>
-      {(panel) => (
-        <Stack gap="md" className="surface-pad-md">
-          <Heading level={1} typeRole="title">
-            {reviewsCopy.run.title}
-          </Heading>
-          {panel}
-          <ErrorState
-            title={title}
-            description={description}
-            actions={
-              <>
-                {retry ? (
-                  <Button type="button" variant="outline" onClick={retry}>
-                    {liveConsoleCopy.retry}
-                  </Button>
-                ) : null}
-                <Button asChild variant="outline">
-                  <Link href="/issues">{reviewsCopy.run.backToList}</Link>
+      <Stack gap="md" className="surface-pad-md">
+        <Heading level={1} typeRole="title">
+          {reviewsCopy.run.title}
+        </Heading>
+        <ErrorState
+          title={title}
+          description={description}
+          actions={
+            <>
+              {retry ? (
+                <Button type="button" variant="outline" onClick={retry}>
+                  {liveConsoleCopy.retry}
                 </Button>
-              </>
-            }
-          />
-        </Stack>
-      )}
+              ) : null}
+              <Button asChild variant="outline">
+                <Link href="/issues">{reviewsCopy.run.backToList}</Link>
+              </Button>
+            </>
+          }
+        />
+      </Stack>
     </ReviewConsoleAppearanceFrame>
   );
 }
@@ -56,16 +53,13 @@ export function ConsoleNotice({
 export function ConsoleLoading() {
   return (
     <ReviewConsoleAppearanceFrame>
-      {(panel) => (
-        <Stack gap="md" className="surface-pad-md" role="status" aria-label={liveConsoleCopy.loading}>
-          <Heading level={1} typeRole="title">
-            {reviewsCopy.run.title}
-          </Heading>
-          {panel}
-          <Skeleton className="h-skeleton-line w-skeleton-bar" />
-          <DetailPanelSkeleton label={liveConsoleCopy.loading} rows={4} />
-        </Stack>
-      )}
+      <Stack gap="md" className="surface-pad-md" role="status" aria-label={liveConsoleCopy.loading}>
+        <Heading level={1} typeRole="title">
+          {reviewsCopy.run.title}
+        </Heading>
+        <Skeleton className="h-skeleton-line w-skeleton-bar" />
+        <DetailPanelSkeleton label={liveConsoleCopy.loading} rows={4} />
+      </Stack>
     </ReviewConsoleAppearanceFrame>
   );
 }
