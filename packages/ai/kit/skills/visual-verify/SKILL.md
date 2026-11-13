@@ -19,9 +19,9 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   `HEAD`.
 - **Routes:** `--changed` or `--routes auto` (diff via the route map: App
   Router `page` files, optional `--manifest` `source` → `/docs/ui/<slug>`)
-  union `--routes`. Unknown files add no extra route. A host fixed set is
-  passed by the host `visual:verify` script (or equivalent), not invented
-  here.
+  union `--routes`. Omitted `--routes` implies `--changed`. Unknown files
+  add no extra route. A host fixed set is passed by the host
+  `visual:verify` script (or equivalent), not invented here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
   dark. Full **looks grid** (every shipped look × both modes) only when a
   token, a primitive, or a shared identity sheet (`identities.css`)
@@ -88,7 +88,8 @@ screenshot on the **default** tree, then clicks:
 - hit targets ≥ 24px on visible `a`/`button`/`input`/`select`/`textarea`
   and button/link/tab/menuitem/checkbox/radio/switch/combobox roles.
   Skip `display:inline`, `pointer-events:none`, `disabled`,
-  `visibility:hidden`, `display:none`, and zero-size boxes. Union the
+  `visibility:hidden`, `display:none`, zero-size boxes, and
+  `aria-hidden="true"` with `tabIndex < 0` (Radix native select). Union the
   border box with an **overlapping** `::before` / `::after` (distant
   pseudos do not count). This host is intentionally stricter than SC
   2.5.8 (inline only; no equivalent/essential/user-agent/Spacing). If a

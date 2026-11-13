@@ -57,6 +57,18 @@ export function slugNeed(heading) {
   return heading.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
 }
 
+/** Host public-review files. Lockstep with packages/ai/scripts/visual-verify.mjs. */
+export function isPublicReviewPath(file) {
+  const n = file.replaceAll("\\", "/");
+  return (
+    /(?:^|\/)apps\/docs\/features\/reviews\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/app\/\(run-console\)\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/app\/\([^/]+\)\/issues\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/tests\/evidence\/issues\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/scripts\/issues-evidence-artifacts\.test\.mjs$/u.test(n)
+  );
+}
+
 export function routesFromFiles(files, manifest) {
   const routes = new Set();
   const sources = [];
@@ -78,13 +90,7 @@ export function routesFromFiles(files, manifest) {
         routes.add(`/${segs.join("/")}`);
       }
     }
-    if (
-      /(?:^|\/)apps\/docs\/features\/reviews\//u.test(n) ||
-      /(?:^|\/)apps\/docs\/app\/\(run-console\)\//u.test(n) ||
-      /(?:^|\/)apps\/docs\/app\/\([^/]+\)\/issues\//u.test(n)
-    ) {
-      routes.add("/issues");
-    }
+    if (isPublicReviewPath(n)) routes.add("/issues");
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
     }

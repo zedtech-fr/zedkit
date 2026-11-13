@@ -120,9 +120,17 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(skip, /siteChromeCopy\.skipToContent/);
   assert.match(skip, /pointer-events-none/);
   assert.match(skip, /focus:pointer-events-auto/);
+  assert.doesNotMatch(skip, /(?:^|\s)sr-only(?:\s|$)/u);
+  assert.match(skip, /min-h-overlay-touch-target/);
+  assert.match(skip, /data-skip-link/);
+  const shell = read("app/docs-shell-tokens.css");
+  assert.match(shell, /\[data-skip-link\]/);
+  assert.match(shell, /bottom:\s*100%/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
   const offPath = read("ui/off-path-link.tsx");
   const a11y = read("ui/site-chrome-a11y.tsx");
+  assert.match(a11y, /inert/);
+  assert.match(a11y, /aria-hidden/);
   assert.match(offPath, /siteChromeCopy\.nav\.opensInNewTab/);
   assert.match(offPath, /target="_blank"/);
   assert.match(offPath, /rel="noopener noreferrer"/);

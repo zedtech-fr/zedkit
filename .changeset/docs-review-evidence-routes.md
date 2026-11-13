@@ -2,4 +2,4 @@
 "@zedtech/zedkit-ai": patch
 ---
 
-Map docs reviews feature files and dynamic issue App Router paths to `/issues` so `zedkit-ai evidence --changed` has a route.
+Map docs reviews feature files, dynamic issue App Router paths, and public review evidence files to `/issues`, treat omitted `--routes` as `--changed`, and skip `aria-hidden` tabindex -1 hit targets so `zedkit-ai evidence --changed` can finish on the issues pages.
