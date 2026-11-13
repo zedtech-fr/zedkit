@@ -92,7 +92,8 @@ export function commandsForPreset(manifest: KitManifest, preset: string): string
   return manifest.presetCommands?.[preset] ?? manifest.commands ?? [];
 }
 
-const ENTRY_COMMAND = "zedkit-ai";
+/** Installed slash command on every preset. Closure and deprecation share this stem. */
+export const ENTRY_COMMAND = "zedkit-ai";
 /** Same pattern as `NAME` in `validate.ts`: only these stems are joined into command paths. */
 const COMMAND_STEM = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

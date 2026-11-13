@@ -150,24 +150,9 @@
     ]
   },
   "presetCommands": {
-    "starter": ["setup-ai", "review", "zedkit-ai"],
-    "setup": [
-      "setup-ai",
-      "review",
-      "plan",
-      "challenge",
-      "implement",
-      "pr",
-      "orchestrate",
-      "improve-config",
-      "research",
-      "from-audit",
-      "to-audit",
-      "fix",
-      "improve-from-review",
-      "quick-wins",
-      "triage",
-      "zedkit-ai"
-    ]
+    "starter": ["zedkit-ai"],
+    "setup": ["zedkit-ai"],
+    "core": ["zedkit-ai"],
+    "full": ["zedkit-ai"]
   }
 }

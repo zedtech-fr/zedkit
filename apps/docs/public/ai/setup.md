@@ -4,7 +4,7 @@ Agent-executable onboarding. Follow these steps in order in the **current repo r
 
 ## Goal
 
-Install `@zedtech/zedkit-ai`, wire your coding agent tool with adopt mode, run `/setup-ai` to tailor `AGENTS.md` to this repo, then validate.
+Install `@zedtech/zedkit-ai`, wire your coding agent tool with adopt mode, run `/zedkit-ai` (or the `setup-ai` skill) to tailor `AGENTS.md` to this repo, then validate.
 
 This walkthrough targets `@zedtech/zedkit-ai` **1.2.0** (the current published version). Every command below pins it with `@1.2.0`; drop the suffix to float (not reproducible).
 
@@ -32,7 +32,7 @@ This walkthrough targets `@zedtech/zedkit-ai` **1.2.0** (the current published v
 
 3. **Run setup-ai** (repo audit, discovery interview, plan, and tailored instructions):
 
-   - **Cursor:** In Cursor, run **`/setup-ai`** (or ask the agent to run the `setup-ai` skill). Read the skill, then print its intro first — before any repo reads, inventory, or writes — and **continue in the same turn** straight into phase A without waiting for a reply. The only stop points are the phase B batched interview, plan approval before writes, and the final report.
+   - **Cursor:** In Cursor, run **`/zedkit-ai set up this repo from what it contains`** (or ask the agent to run the `setup-ai` skill). Read the skill, then print its intro first — before any repo reads, inventory, or writes — and **continue in the same turn** straight into phase A without waiting for a reply. The only stop points are the phase B batched interview, plan approval before writes, and the final report.
    - **Muse:** Open Muse for this repo and paste a message that runs the `setup-ai` skill end to end (same phases as above).
    - **Claude Code / Codex / other agent:** Paste the same intent: run the `setup-ai` skill from the kit through verify, following its intro and phases (no skipping the batched interview).
 
@@ -63,9 +63,9 @@ This walkthrough targets `@zedtech/zedkit-ai` **1.2.0** (the current published v
 ## Rules
 
 - Use **`setup`**, not bare `init`, when the repo may already have agent files — adopt keeps user content.
-- Do not skip **`/setup-ai`** — install alone is not a finished setup.
+- Do not skip **`/zedkit-ai`** (or the `setup-ai` skill) — install alone is not a finished setup.
 - During setup-ai, follow **evidence only** (`ground-truth`): commands and paths must be verified, not guessed.
 
 ## Workspace roots
 
-If this folder holds **several git checkouts** (multi-repo workspace), run **`/setup-ai` in workspace mode** at the root; run a separate setup inside each app repo the inventory lists.
+If this folder holds **several git checkouts** (multi-repo workspace), run **`/zedkit-ai` in workspace mode** at the root (or the `setup-ai` skill); run a separate setup inside each app repo the inventory lists.
