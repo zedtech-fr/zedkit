@@ -135,7 +135,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(offPath, /target="_blank"/);
   assert.match(offPath, /rel="noopener noreferrer"/);
   assert.match(offPath, /data-external-mark/);
-  assert.match(offPath, /inline-flex items-center gap-icon/);
+  assert.match(offPath, /hit-target inline-flex items-center gap-icon/);
   assert.match(offPath, /` \(\$\{opens\}\)`/);
   assert.match(offPath, /labelled === undefined/);
   assert.match(a11y, /siteChromeCopy\.nav\.opensInNewTab/);
