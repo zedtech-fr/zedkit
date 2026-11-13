@@ -78,7 +78,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
 - Look up before you search: read the row for your topic in
   [.agents/atlas.md](.agents/atlas.md) (where things live, words, commands,
-  why), open its Entry, widen only if it does not hold. A search that cost 3+
+  why), open its Entry — including `.agents/atlas/<topic>.md` when the row
+  names one — and widen only if it does not hold. A search that cost 3+
   reads, a correction, or a moved file or changed command fixes that row in the
   same turn. `zedkit-ai validate` fails on a path that is gone.
 - Each package PR updates the root README package table, adds a

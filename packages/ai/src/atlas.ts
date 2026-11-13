@@ -1,11 +1,21 @@
 // Original work by the same author.
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { tryCatch } from "@zedtech/zedkit-core";
 import type { Issue } from "./validate.js";
 
 /** Above this the atlas stops being a lookup: merge rows or drop the ones one search finds. */
 export const ATLAS_MAX_LINES = 150;
+/**
+ * Soft byte cap on `.agents/atlas.md`. Over it is `warning:` (validate exit 0)
+ * so a fat consumer atlas does not fail on upgrade. This repo stays under it.
+ */
+export const ATLAS_MAX_BYTES = 24_000;
+/**
+ * Soft cap on a Where table data row in `.agents/atlas.md` (characters).
+ * Over it is `warning:`. Long traps belong in `.agents/atlas/<topic>.md`.
+ */
+export const ATLAS_MAX_ROW_CHARS = 280;
 const MIN_WHERE_ROWS = 3;
 
 /** Spaces, globs, and placeholder markup. Next.js `(group)` / `_private` segments are real paths. */
@@ -245,14 +255,19 @@ function splitRow(line: string): string[] {
   return cells;
 }
 
+/** Data rows of the Where table, as source lines (header and separator dropped). */
+function whereDataLines(text: string): string[] {
+  const section = text.split(/^## /mu).find((s) => s.startsWith("Where")) ?? "";
+  return section.split("\n").filter((line) => {
+    if (!line.startsWith("|")) return false;
+    const topic = splitRow(line).slice(1, -1)[0]?.trim() ?? "";
+    return topic !== "Topic" && !/^:?-{3,}:?$/u.test(topic);
+  });
+}
+
 /** Rows of the table under `## Where`, as cells; header and separator dropped. */
 function whereRows(text: string): string[][] {
-  const section = text.split(/^## /mu).find((s) => s.startsWith("Where")) ?? "";
-  return section
-    .split("\n")
-    .filter((l) => l.startsWith("|"))
-    .map((l) => splitRow(l).slice(1, -1).map((c) => c.trim()))
-    .filter((c) => c[0] !== "Topic" && !/^:?-{3,}:?$/u.test(c[0] ?? ""));
+  return whereDataLines(text).map((line) => splitRow(line).slice(1, -1).map((c) => c.trim()));
 }
 
 /** A token is path-like when it names a file or folder: no spaces, globs or placeholder markup, not a url or a package. */
@@ -285,10 +300,102 @@ function entryRefs(cell: string): { token: string; ref: EntryRef | undefined; ma
   return refs;
 }
 
+/** A linked `.agents/atlas/<topic>.md` file, not the index itself. */
+function atlasTopicAbs(projectRoot: string, agentsDir: string, rel: string): string | undefined {
+  const abs = join(projectRoot, rel);
+  if (dirname(abs) !== join(agentsDir, "atlas")) return undefined;
+  if (!rel.endsWith(".md")) return undefined;
+  return abs;
+}
+
+/**
+ * Every path in the Entry column of **Where** must exist. Linked topic files
+ * under `.agents/atlas/` are followed so extracted traps keep the same check.
+ */
+function checkWhereTable(
+  projectRoot: string,
+  agentsDir: string,
+  reportPath: string,
+  text: string,
+  issues: Issue[],
+  seen: Set<string>,
+): void {
+  for (const cells of whereRows(text)) {
+    const topic = cells[0] ?? "";
+    for (const { token, ref, malformed } of entryRefs(cells[1] ?? "")) {
+      if (malformed || ref === undefined) {
+        issues.push({ path: reportPath, message: `stale row "${topic}": ${token} is not a valid anchor (expected path#Symbol[#excerpt])` });
+        continue;
+      }
+      if (!existsSync(join(projectRoot, ref.path))) {
+        issues.push({ path: reportPath, message: `stale row "${topic}": ${token} does not exist (fix the row or delete it)` });
+        continue;
+      }
+      const topicFile = atlasTopicAbs(projectRoot, agentsDir, ref.path);
+      if (topicFile !== undefined && !seen.has(topicFile)) {
+        seen.add(topicFile);
+        const nested = tryCatch(() => readFileSync(topicFile, "utf8"));
+        if (nested.ok) {
+          checkWhereTable(projectRoot, agentsDir, topicFile, nested.value, issues, seen);
+        } else {
+          issues.push({
+            path: reportPath,
+            message: `stale row "${topic}": ${token} cannot be read from ${ref.path}; reference left unresolved`,
+          });
+        }
+      }
+      if (ref.kind === "path") continue;
+      const body = tryCatch(() => readFileSync(join(projectRoot, ref.path), "utf8"));
+      if (!body.ok) {
+        const st = tryCatch(() => statSync(join(projectRoot, ref.path)));
+        if (st.ok && st.value.isDirectory()) {
+          issues.push({ path: reportPath, message: `stale row "${topic}": ${token} points at a directory (${ref.path}); anchors need a file` });
+        } else {
+          issues.push({ path: reportPath, message: `stale row "${topic}": ${token} cannot be read from ${ref.path}; reference left unresolved` });
+        }
+        continue;
+      }
+      const numbered = body.value.split(/\r?\n/u);
+      if (numbered.length > 0 && numbered.at(-1) === "") numbered.pop();
+      if (ref.kind === "line") {
+        if (ref.start > numbered.length || ref.end > numbered.length) {
+          issues.push({ path: reportPath, message: `stale row "${topic}": ${token} points past the end of ${ref.path} (${numbered.length} lines)` });
+          continue;
+        }
+        const target = (numbered[ref.start - 1] ?? "").trim();
+        if (target === "" || (ref.path.endsWith(".md") && /^#{1,6}\s/u.test(target))) {
+          issues.push({ path: reportPath, message: `warning: row "${topic}": ${token} points at an indicative line in ${ref.path}; line numbers drift, resolve the anchor instead` });
+        }
+        continue;
+      }
+      const hitLines = symbolHitLines(numbered, ref.symbol);
+      if (hitLines.length === 0) {
+        issues.push({ path: reportPath, message: `stale row "${topic}": symbol "${ref.symbol}" from ${token} not found in ${ref.path}` });
+        continue;
+      }
+      const excerpt = ref.excerpt;
+      if (excerpt === undefined) {
+        if (hitLines.length > 1) {
+          issues.push({ path: reportPath, message: `warning: row "${topic}": symbol "${ref.symbol}" from ${token} matches ${hitLines.length} lines in ${ref.path} — disambiguate with an excerpt` });
+        }
+        continue;
+      }
+      const candidates = hitLines.filter((h) => excerptBelongs(numbered, h, excerpt, ref.path));
+      if (candidates.length === 1) continue;
+      if (candidates.length === 0) {
+        issues.push({ path: reportPath, message: `stale row "${topic}": excerpt from ${token} has no symbol hit sitting with it in ${ref.path}` });
+        continue;
+      }
+      issues.push({ path: reportPath, message: `warning: row "${topic}": excerpt from ${token} sits with ${candidates.length} symbol hits in ${ref.path} — reference left ambiguous` });
+    }
+  }
+}
+
 /**
  * The project atlas (`.agents/atlas.md`): a bounded lookup of where things live.
  * Every path in the Entry column of **Where** must exist, and the file stays under
- * a line cap. `required` (setup) also needs the file and a first real set of rows.
+ * a line cap. Byte size and row length over the soft caps warn (validate exit 0).
+ * `required` (setup) also needs the file and a first real set of rows.
  */
 export function checkAtlas(projectRoot: string, agentsDir: string, options: { required?: boolean } = {}): Issue[] {
   const path = join(agentsDir, "atlas.md");
@@ -302,64 +409,25 @@ export function checkAtlas(projectRoot: string, agentsDir: string, options: { re
   if (lines > ATLAS_MAX_LINES) {
     issues.push({ path, message: `atlas has ${lines} lines (cap ${ATLAS_MAX_LINES}): merge rows, drop the ones a single search finds` });
   }
-  const rows = whereRows(raw.value);
-  for (const cells of rows) {
-    for (const { token, ref, malformed } of entryRefs(cells[1] ?? "")) {
-      const topic = cells[0] ?? "";
-      if (malformed || ref === undefined) {
-        issues.push({ path, message: `stale row "${topic}": ${token} is not a valid anchor (expected path#Symbol[#excerpt])` });
-        continue;
-      }
-      if (!existsSync(join(projectRoot, ref.path))) {
-        issues.push({ path, message: `stale row "${topic}": ${token} does not exist (fix the row or delete it)` });
-        continue;
-      }
-      if (ref.kind === "path") continue;
-      const text = tryCatch(() => readFileSync(join(projectRoot, ref.path), "utf8"));
-      if (!text.ok) {
-        const st = tryCatch(() => statSync(join(projectRoot, ref.path)));
-        if (st.ok && st.value.isDirectory()) {
-          issues.push({ path, message: `stale row "${topic}": ${token} points at a directory (${ref.path}); anchors need a file` });
-        } else {
-          issues.push({ path, message: `stale row "${topic}": ${token} cannot be read from ${ref.path}; reference left unresolved` });
-        }
-        continue;
-      }
-      const numbered = text.value.split(/\r?\n/u);
-      if (numbered.length > 0 && numbered.at(-1) === "") numbered.pop();
-      if (ref.kind === "line") {
-        if (ref.start > numbered.length || ref.end > numbered.length) {
-          issues.push({ path, message: `stale row "${topic}": ${token} points past the end of ${ref.path} (${numbered.length} lines)` });
-          continue;
-        }
-        const target = (numbered[ref.start - 1] ?? "").trim();
-        if (target === "" || (ref.path.endsWith(".md") && /^#{1,6}\s/u.test(target))) {
-          issues.push({ path, message: `warning: row "${topic}": ${token} points at an indicative line in ${ref.path}; line numbers drift, resolve the anchor instead` });
-        }
-        continue;
-      }
-      const hitLines = symbolHitLines(numbered, ref.symbol);
-      if (hitLines.length === 0) {
-        issues.push({ path, message: `stale row "${topic}": symbol "${ref.symbol}" from ${token} not found in ${ref.path}` });
-        continue;
-      }
-      const excerpt = ref.excerpt;
-      if (excerpt === undefined) {
-        if (hitLines.length > 1) {
-          issues.push({ path, message: `warning: row "${topic}": symbol "${ref.symbol}" from ${token} matches ${hitLines.length} lines in ${ref.path} — disambiguate with an excerpt` });
-        }
-        continue;
-      }
-      const candidates = hitLines.filter((h) => excerptBelongs(numbered, h, excerpt, ref.path));
-      if (candidates.length === 1) continue;
-      if (candidates.length === 0) {
-        issues.push({ path, message: `stale row "${topic}": excerpt from ${token} has no symbol hit sitting with it in ${ref.path}` });
-        continue;
-      }
-      issues.push({ path, message: `warning: row "${topic}": excerpt from ${token} sits with ${candidates.length} symbol hits in ${ref.path} — reference left ambiguous` });
-    }
+  const bytes = Buffer.byteLength(raw.value, "utf8");
+  if (bytes > ATLAS_MAX_BYTES) {
+    issues.push({
+      path,
+      message: `warning: atlas is ${bytes} bytes (soft cap ${ATLAS_MAX_BYTES}): shrink the index file, or move Where traps into .agents/atlas/<topic>.md`,
+    });
   }
-  if (options.required === true && rows.length < MIN_WHERE_ROWS) {
+  for (const line of whereDataLines(raw.value)) {
+    const chars = [...line].length;
+    if (chars <= ATLAS_MAX_ROW_CHARS) continue;
+    const topic = splitRow(line).slice(1, -1)[0]?.trim() ?? "";
+    issues.push({
+      path,
+      message: `warning: row "${topic}" is ${chars} characters (soft cap ${ATLAS_MAX_ROW_CHARS}): move detail to .agents/atlas/<topic>.md and point Entry at that file`,
+    });
+  }
+  const seen = new Set<string>([path]);
+  checkWhereTable(projectRoot, agentsDir, path, raw.value, issues, seen);
+  if (options.required === true && whereRows(raw.value).length < MIN_WHERE_ROWS) {
     issues.push({ path, message: `atlas Where table has fewer than ${MIN_WHERE_ROWS} rows: fill it from the reading log's entry points and folder notes` });
   }
   return issues;
