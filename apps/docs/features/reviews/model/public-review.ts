@@ -10,6 +10,8 @@ import type {
   TimelineEntryStatus,
   TimelineEntryType,
 } from "../ports/review-port";
+import { toLiveConsoleHref } from "./live-console-href.ts";
+
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
 const INDEX_SECRET_KEY_PATTERN =
@@ -71,7 +73,7 @@ export function sanitizeLiveUrl(value: string | null): string | null {
 }
 
 function sanitizeEntry(entry: TimelineEntry): TimelineEntry {
-  return { ...entry, liveUrl: sanitizeLiveUrl(entry.liveUrl) };
+  return { ...entry, liveUrl: toLiveConsoleHref(entry.runId) };
 }
 
 export type GatedIssue = PublicIssueIndex["issues"][number] & {
@@ -204,7 +206,7 @@ function entryFromLive(live: PublicLiveRun): TimelineEntry {
     durationMs,
     models,
     verdict: mapLiveVerdict(live.decision?.verdict ?? live.run.verdict),
-    liveUrl: sanitizeLiveUrl(live.run.live_url ?? null),
+    liveUrl: toLiveConsoleHref(live.run.run_id),
   };
 }
 
@@ -222,7 +224,7 @@ function entryFromRelated(related: LiveRelatedRun): TimelineEntry {
     durationMs,
     models: engine === "" ? [] : [engine],
     verdict: mapLiveVerdict(related.verdict),
-    liveUrl: null,
+    liveUrl: toLiveConsoleHref(related.run_id),
   };
 }
 

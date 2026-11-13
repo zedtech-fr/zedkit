@@ -41,7 +41,6 @@ import {
   listIssueRunParamsFrom,
   listIssueSitemapPathsFrom,
   listReviewPrParamsFrom,
-  listIssueRunRedirectsFrom,
   listReviewRedirectsFrom,
   listReviewRunParamsFrom,
   listReviewSitemapPathsFrom,
@@ -49,11 +48,11 @@ import {
   listUnlinkedRunParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
-  runRedirectTarget,
   RETIRED_REVIEW_PR_NUMBERS,
   unlinkedPrPath,
   unlinkedRunPath,
 } from "../features/reviews/model/review-routes.ts";
+import { toLiveConsoleHref } from "../features/reviews/model/live-console-href.ts";
 import { toAgentConsole } from "../features/reviews/model/to-agent-console.ts";
 import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
 
@@ -303,7 +302,7 @@ test("sanitizeLiveUrl drops an extra path segment", () => {
   assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}/extra`), null);
 });
 
-test("toPublicIndex keeps an allowlisted liveUrl and drops a reserved host", () => {
+test("toPublicIndex points timeline rows at the in-site live console", () => {
   const gated = toPublicIndex(
     parsedIndex([
       issue({
@@ -317,8 +316,8 @@ test("toPublicIndex keeps an allowlisted liveUrl and drops a reserved host", () 
       }),
     ]),
   );
-  assert.equal(gated.issues[0].entries[0].liveUrl, hostedLiveHref("ok"));
-  assert.equal(gated.issues[0].entries[1].liveUrl, null);
+  assert.equal(gated.issues[0].entries[0].liveUrl, toLiveConsoleHref("run-108-impl"));
+  assert.equal(gated.issues[0].entries[1].liveUrl, toLiveConsoleHref("run-108-impl"));
 });
 
 test("sanitizeLiveUrl drops home-path URLs on every call", () => {
@@ -1229,7 +1228,7 @@ test("inventory-scale timeline keeps plan and implement as two rows of one run",
   const run = await port.getRun(108, "run-108-impl");
   assert.equal(run?.runId, "run-108-impl");
   assert.equal(run?.entries.length, 2);
-  assert.equal(run?.liveUrl, `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`);
+  assert.equal(run?.liveUrl, toLiveConsoleHref("run-108-impl"));
   assert.equal(await port.getRun(108, "missing-run"), null);
 });
 
@@ -1454,7 +1453,7 @@ test("issue pages use generateStaticParams; review pages redirect", () => {
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
   const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
-  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesRunAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [issuePage, issueRun, unlinked, unlinkedRun]) {
     assert.match(source, /generateStaticParams/);
     assert.match(source, /dynamicParams = false/);
@@ -1484,7 +1483,7 @@ test("not-found segments use per-tree copy through one shared body", () => {
   const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
   assert.match(unlinked, /ReviewMissingFeature/);
   assert.match(unlinked, /unlinked\.missing/);
-  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesRunAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
   assert.match(unlinkedRun, /ReviewMissingFeature/);
   assert.match(unlinkedRun, /run\.missing/);
   const reviews = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
@@ -1553,7 +1552,7 @@ test("found /issues pages pass issuesIndexRobots", () => {
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
   const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
-  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesRunAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [list, issuePage, issueRun, unlinked, unlinkedRun]) {
     assert.match(source, /issuesIndexRobots/);
   }
@@ -1776,28 +1775,32 @@ function liveMappedEntry(overrides = {}) {
   return { index, entry: index.pullRequests[0].entries[0] };
 }
 
-test("a GitHub review_url is not a hosted live console URL", () => {
+test("a GitHub review_url is not a live console URL", () => {
   const { entry } = liveMappedEntry({
     run: { ...liveSample().run, review_url: GITHUB_REVIEW_URL },
   });
-  assert.equal(entry.liveUrl, null);
+  assert.equal(entry.liveUrl, toLiveConsoleHref("run-71"));
+  assert.notEqual(entry.liveUrl, GITHUB_REVIEW_URL);
 });
 
-test("hosted live_url is kept; http, token, userinfo, and home paths are dropped", () => {
-  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, HOSTED_LIVE_URL);
-  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl, null);
+test("timeline liveUrl is the in-site console even when hosted live_url is missing or unsafe", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, toLiveConsoleHref("run-71"));
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl,
+    toLiveConsoleHref("run-71"),
+  );
   assert.equal(
     liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/live/abc?token=secret" } }).entry
       .liveUrl,
-    null,
+    toLiveConsoleHref("run-71"),
   );
   assert.equal(
     liveMappedEntry({ run: { ...liveSample().run, live_url: "https://user:pass@example.test/live/abc" } }).entry.liveUrl,
-    null,
+    toLiveConsoleHref("run-71"),
   );
   assert.equal(
     liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/home/alice/live" } }).entry.liveUrl,
-    null,
+    toLiveConsoleHref("run-71"),
   );
 });
 
@@ -2310,21 +2313,27 @@ test("appearance share write keeps the selection hash", () => {
   );
 });
 
-test("live-backed issue runs mount AgentConsole; index-only runs redirect", () => {
+test("issue and unlinked run pages mount the in-site live console", () => {
   const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+  const liveConsole = readFileSync(join(reviewsRoot, "ui/review-live-console.tsx"), "utf8");
+  const compose = readFileSync(join(reviewsRoot, "compose.tsx"), "utf8");
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
   const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
+  const searchPage = readFileSync(join(issuesRunAppRoot, "run/page.tsx"), "utf8");
   assert.match(consoleView, /AgentConsole/);
-  assert.match(feature, /toAgentConsole/);
-  assert.match(feature, /ReviewConsoleView/);
+  assert.match(liveConsole, /subscribe/);
+  assert.match(liveConsole, /ReviewConsoleView/);
+  assert.match(compose, /subscribeLiveRun/);
+  assert.match(feature, /ReviewLiveConsole/);
   assert.match(feature, /runId=\{id\}/);
-  assert.match(feature, /runRedirectTarget\(run\.liveUrl/);
+  assert.doesNotMatch(feature, /runRedirectTarget/);
   assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);
   assert.doesNotMatch(feature, /ReviewRunView/);
   assert.doesNotMatch(feature, /UnlinkedRunView/);
   assert.equal(existsSync(join(reviewsRoot, "ui/review-run-view.tsx")), false);
+  assert.match(searchPage, /ReviewLiveConsoleSearchFeature/);
   assert.match(row, /target="_blank"/);
   assert.match(row, /rel="noreferrer"/);
   assert.doesNotMatch(row, /ReviewConsole/);
@@ -2377,9 +2386,7 @@ test("live console host calms finding surfaces without restyling the kit specime
   assert.doesNotMatch(row, /AgentConsole/);
 });
 
-test("index-only run URLs redirect to the hosted console or the issue page", async () => {
-  assert.equal(runRedirectTarget(hostedLiveHref("run-108-impl"), "/issues/108"), hostedLiveHref("run-108-impl"));
-  assert.equal(runRedirectTarget(null, "/issues/108"), "/issues/108");
+test("index run URLs keep in-site console hrefs instead of hosted redirects", async () => {
   const port = createSnapshotReviewPort(
     writeSnapshot(
       [issue()],
@@ -2402,15 +2409,11 @@ test("index-only run URLs redirect to the hosted console or the issue page", asy
       ],
     ),
   );
-  const redirects = await listIssueRunRedirectsFrom(port);
-  assert.ok(
-    redirects.some(
-      (row) => row.from === "/issues/108/runs/run-108-impl" && row.to === hostedLiveHref("run-108-impl"),
-    ),
-  );
-  assert.ok(
-    redirects.some((row) => row.from === "/issues/pr/54/runs/run-54-review" && row.to === "/issues/pr/54"),
-  );
+  const issueRun = await port.getRun(108, "run-108-impl");
+  const unlinkedRun = await port.getUnlinkedRun(54, "run-54-review");
+  assert.equal(issueRun && "liveUrl" in issueRun ? issueRun.liveUrl : null, toLiveConsoleHref("run-108-impl"));
+  assert.equal(unlinkedRun?.liveUrl, toLiveConsoleHref("run-54-review"));
+  assert.equal(existsSync(join(here, "../app/(run-console)/issues/run/page.tsx")), true);
 });
 
 test("toAgentConsole keeps confidence on /10 and converts durations to milliseconds", () => {
@@ -2542,7 +2545,7 @@ test("optional reviews on an index snapshot feed getRun for that run id", async 
   assert.equal(indexRun && "runId" in indexRun ? indexRun.runId : null, "run-108-impl");
   assert.equal(
     indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null,
-    `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
+    toLiveConsoleHref("run-108-impl"),
   );
   assert.equal(await port.getRun(99, recordedId), null);
   assert.equal(await port.getRun(133, recordedId), null);

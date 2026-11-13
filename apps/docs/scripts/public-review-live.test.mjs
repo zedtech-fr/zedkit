@@ -16,6 +16,7 @@ import {
 import { fetchRunsIndex, parseRunsEnvelope, runsListUrl } from "../features/reviews/adapters/runs-api.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
 import { mergePublicIndex } from "../features/reviews/model/merge-public-index.ts";
+import { toLiveConsoleHref } from "../features/reviews/model/live-console-href.ts";
 import { HOSTED_LIVE_HREF_PREFIX } from "../features/reviews/model/public-review.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -417,8 +418,8 @@ test("merge keeps allowlisted live URLs and drops others; GitHub-only issues sta
   });
   assert.equal(index.issues.some((row) => row.number === 1), false);
   const urls = index.issues[0].entries.map((row) => row.liveUrl);
-  assert.ok(urls.includes(null));
-  assert.ok(urls.includes(HOSTED));
+  assert.ok(urls.includes(toLiveConsoleHref("20261112T144757Z-54233175")));
+  assert.ok(urls.includes(toLiveConsoleHref("run-ok")));
 });
 
 test("merge titles a missing GitHub issue as Issue #N", () => {

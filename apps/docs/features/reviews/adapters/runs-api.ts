@@ -31,7 +31,7 @@ const ENTRY_TYPES = new Set<TimelineEntryType>([
 const ENTRY_STATUSES = new Set<TimelineEntryStatus>(["running", "completed", "failed"]);
 const VERDICTS = new Set<ReviewVerdict>(["approve", "request-changes", "comment"]);
 
-function liveServiceName(): string {
+export function liveServiceName(): string {
   return [["ze", "dos"].join(""), "bot"].join("-");
 }
 
