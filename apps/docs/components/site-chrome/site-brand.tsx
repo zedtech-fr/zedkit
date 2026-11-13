@@ -1,5 +1,5 @@
 import { Logo } from "@zedtech/zedkit-ui";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 
 /** Header brand: the mark (decorative, the name sits beside it) and the wordmark. */
 export function SiteBrand() {

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { SiteMaintainerFooter } from "@/ui/site-footer";
+import { SiteMaintainerFooter } from "@/components/site-chrome/site-footer";
 
 /** Wraps page content so the maintainer footer sits at the bottom of the viewport. */
 export function SitePageShell({

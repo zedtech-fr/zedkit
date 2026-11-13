@@ -5,7 +5,13 @@ import { Container, Stack, ThemeScope } from "@zedtech/zedkit-ui";
 
 import { useReviewAppearanceScope } from "./use-review-appearance-scope";
 
-export function ReviewAppearanceFrame({ children }: { children: ReactNode }) {
+export function ReviewAppearanceFrame({
+  children,
+  layout = "page",
+}: {
+  children: ReactNode;
+  layout?: "page" | "workspace";
+}) {
   const { scopeRef, identity, mode } = useReviewAppearanceScope();
 
   return (
@@ -18,6 +24,7 @@ export function ReviewAppearanceFrame({ children }: { children: ReactNode }) {
       <Container
         width="full"
         data-issues-column=""
+        {...(layout === "workspace" ? { "data-issues-layout": "workspace" } : {})}
         className="max-w-(--zk-header-max-width) py-section-sm pb-section-lg"
       >
         <Stack gap="lg">{children}</Stack>
