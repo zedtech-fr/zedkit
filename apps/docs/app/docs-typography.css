@@ -201,6 +201,16 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   letter-spacing: var(--zk-heading-tracking, -0.02em);
 }
 
+/*
+ * Fumadocs heading copy uses `p-1` and svg `size-4`. Dense looks
+ * (Press 0.2rem, Volt 0.225rem) shrink that box under the 24px
+ * evidence floor. The visible icon stays; the control box does not.
+ */
+#nd-page :is(h2, h3, h4, h5, h6) > button {
+  min-width: max(24px, var(--zk-tap-min, 0px));
+  min-height: max(24px, var(--zk-tap-min, 0px));
+}
+
 @media (width < 48rem) {
   #nd-page {
     --zk-type-doc-h1-leading: 2.125rem;

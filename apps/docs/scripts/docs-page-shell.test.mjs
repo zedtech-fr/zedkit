@@ -186,3 +186,11 @@ test("home mobile page height budget allows mockup air", () => {
   const src = read("app/(home)/_home/home-rhythm.ts");
   assert.match(src, /HOME_MOBILE_PAGE_MAX_SCROLL_PX = 10200/);
 });
+
+test("fumadocs heading copy buttons keep a 24px floor under dense looks", () => {
+  const css = read("app/docs-typography.css");
+  const rule = css.match(/#nd-page :is\(h2, h3, h4, h5, h6\) > button \{([^}]+)\}/);
+  assert.ok(rule, "heading copy button rule");
+  assert.match(rule[1], /min-width:\s*max\(24px,\s*var\(--zk-tap-min,\s*0px\)\)/);
+  assert.match(rule[1], /min-height:\s*max\(24px,\s*var\(--zk-tap-min,\s*0px\)\)/);
+});
