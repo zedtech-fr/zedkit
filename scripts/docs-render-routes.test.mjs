@@ -161,7 +161,7 @@ test("docs home route-group files map to / when there is no page.tsx", () => {
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({
-      files: ["apps/docs/app/globals.css", "apps/docs/ui/site-layout.tsx"],
+      files: ["apps/docs/app/globals.css", "apps/docs/components/site-chrome/site-layout.tsx"],
       manifest: buttonManifest,
     }),
     DOCS_RENDER_FALLBACK_ROUTES,

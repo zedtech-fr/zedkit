@@ -15,6 +15,7 @@ const stylesPath = join(root, "packages/ui/src/styles.css");
 const identitiesCssPath = join(root, "packages/ui/src/identities.css");
 const shellPath = join(app, "app/docs-shell-tokens.css");
 const homeCssPath = join(app, "app/(home)/_home/home.css");
+const homeLookTabsPath = join(app, "app/(home)/_home/home-identity-looks-tabs.tsx");
 
 function read(path) {
   return readFileSync(path, "utf8");
@@ -357,12 +358,14 @@ const DOCS_TABLISTS = [
 test("look tabs selected chip keeps 4.5:1 inverted ink on fill", () => {
   const shell = loadShell();
   assert.doesNotMatch(shell.css, /#home-page \[data-slot="tabs-trigger"\]\[data-state="active"\]/);
-  const looks = read(join(app, "app/(home)/_home/home-identity-looks-tabs.tsx"));
-  // Evidence emulateMedia reducedMotion=reduce; a CSS snap inside the
-  // no-preference gate never applies, so the kit color fade is measured.
+  // Evidence emulates reducedMotion=reduce. A snap inside the no-preference
+  // gate never applies, so the kit color fade is measured; ungated
+  // transition: none in home.css fails the motion-gate test.
+  const looks = read(homeLookTabsPath);
+  assert.match(looks, /data-look-tab=""[\s\S]*?transition-none/);
   assert.match(looks, /className="[^"]*\btransition-none\b/);
   const homeCss = stripComments(read(homeCssPath));
-  assert.doesNotMatch(homeCss, /#home-page \[data-look-tab\][^{]*\{[^}]*transition\s*:/);
+  assert.doesNotMatch(homeCss, /\[data-look-tab\][^{]*\{[^}]*transition\s*:/);
   const rule = ruleBody(
     homeCss,
     /^#home-page \[data-look-tab\]\[data-state="active"\]$/,

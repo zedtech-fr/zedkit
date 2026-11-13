@@ -685,11 +685,11 @@ test("admin dashboard guide demo wires save and delete to state", () => {
 });
 
 test("docs phone chrome keeps search; home chrome does not", () => {
-  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
-  const siteHeaders = readFileSync(join(app, "ui/site-headers.tsx"), "utf8");
-  const actions = readFileSync(join(app, "ui/home-header-actions.tsx"), "utf8");
+  const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
+  const siteHeaders = readFileSync(join(app, "components/site-chrome/site-headers.tsx"), "utf8");
+  const actions = readFileSync(join(app, "components/site-chrome/header-actions.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
-  const layout = readFileSync(join(app, "ui/site-layout.tsx"), "utf8");
+  const layout = readFileSync(join(app, "components/site-chrome/site-layout.tsx"), "utf8");
   assert.match(header, /siteHeaderChrome/);
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /aria-label=\{siteChromeCopy\.nav\.siteNavigation\}/);
@@ -747,7 +747,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
 });
 
 test("phone header is one compact row with a kit Drawer site menu", () => {
-  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /flex min-h-phone-bar flex-nowrap items-center/);
