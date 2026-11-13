@@ -49,16 +49,11 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' '195.154.208.75 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPESq5xmwyuPt3alDGhEe9fE3oOmCDPBt70I8hhylnE' > ~/.ssh/known_hosts
           printf 'Host zed-dev\n  HostName 195.154.208.75\n  User zed\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' > ~/.ssh/config
-      # Gate imports dist-only @zedtech/zedkit-core. postinstall builds seo
-      # only; docs prebuild (^... deps) runs after ingest.
-      - name: Build core for ingest gate
-        run: pnpm --filter @zedtech/zedkit-core build
-      - name: Ingest generated run index
+      - name: Build docs
         env:
-          PUBLIC_REVIEWS_SNAPSHOT: ${{ vars.PUBLIC_REVIEWS_SNAPSHOT }}
-          PUBLIC_REVIEWS_SNAPSHOT_REMOTE: ${{ vars.PUBLIC_REVIEWS_SNAPSHOT_REMOTE }}
-        run: bash deploy/ingest-public-reviews.sh
-      - run: pnpm --filter @zedtech/zedkit-docs build
+          NEXT_PUBLIC_ZEDOS_RUNS_API_BASE: https://dev.zedkit.app
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm --filter @zedtech/zedkit-docs build
       - name: Publish static export
         run: bash deploy/publish-dev-static.sh zed-dev
       - name: Verify dev build stamp

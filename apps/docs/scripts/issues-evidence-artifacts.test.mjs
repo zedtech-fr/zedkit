@@ -17,6 +17,12 @@ const EVIDENCE_FILES = [
   "issues-108-run-20261111T065452Z-bc07a1a9-390.png",
   "issues-93-run-impl-1440.png",
   "issues-93-run-impl-390.png",
+  "issues-load-error-375-light.png",
+  "issues-load-error-375-dark.png",
+  "issues-load-error-809-light.png",
+  "issues-load-error-809-dark.png",
+  "issues-load-error-1440-light.png",
+  "issues-load-error-1440-dark.png",
 ];
 
 test("issue list, issue 108, and run-page evidence PNGs exist under the artefact cap", () => {

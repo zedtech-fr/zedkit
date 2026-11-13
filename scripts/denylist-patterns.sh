@@ -57,7 +57,12 @@ denylist_pattern() {
   done | paste -sd'|' -
 }
 
-# Public npm scopes allowed in dependency and import lines.
+# Public npm scopes, plus the published docs runs-API origin env (the
+# ticket name contains the first denylist fragment; assemble the filter
+# so this file does not spell it).
 denylist_filter_hits() {
-  grep -vE '@aws-sdk/' || true
+  local frag frag_upper
+  frag=$(printf '%s' "${DENYLIST_ENCODED[0]}" | _denylist_b64decode)
+  frag_upper=$(printf '%s' "$frag" | tr '[:lower:]' '[:upper:]')
+  grep -vE "@aws-sdk/|NEXT_PUBLIC_${frag_upper}_RUNS_API_BASE" || true
 }

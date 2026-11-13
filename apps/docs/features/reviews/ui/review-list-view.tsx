@@ -25,7 +25,6 @@ import {
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
-import { ReviewSampleNotice } from "./review-sample-notice";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
   return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
@@ -60,7 +59,13 @@ function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
       title={
         <>
           <Button asChild variant="link" className="min-h-target w-fit">
-            <Link href={last ? issueRunPath(issue.number, last.runId) : issuePath(issue.number)}>
+            <Link
+              href={
+                last
+                  ? issueRunPath(issue.number, last.runId)
+                  : issuePath(issue.number)
+              }
+            >
               #{issue.number} {issue.title}
             </Link>
           </Button>
@@ -104,13 +109,21 @@ function UnlinkedRow({
       title={
         <>
           <Button asChild variant="link" className="min-h-target w-fit">
-            <Link href={last ? unlinkedRunPath(entry.number, last.runId) : unlinkedPrPath(entry.number)}>
+            <Link
+              href={
+                last
+                  ? unlinkedRunPath(entry.number, last.runId)
+                  : unlinkedPrPath(entry.number)
+              }
+            >
               #{entry.number}
             </Link>
           </Button>
           {last ? (
             <Button asChild variant="link" className="min-h-target w-fit">
-              <Link href={unlinkedPrPath(entry.number)}>{copy.issue.timeline}</Link>
+              <Link href={unlinkedPrPath(entry.number)}>
+                {copy.issue.timeline}
+              </Link>
             </Button>
           ) : null}
         </>
@@ -137,21 +150,18 @@ export function ReviewListView({
   issues,
   unlinked,
   copy,
-  showSampleNotice = false,
 }: {
   issues: readonly IssueRecord[];
   unlinked: readonly UnlinkedPullRequest[];
   copy: ReviewsCopy;
-  showSampleNotice?: boolean;
 }) {
   const unlinkedHeadingId = useId();
   return (
     <ReviewAppearanceFrame>
-      {showSampleNotice ? <ReviewSampleNotice copy={copy} /> : null}
       <PageHeader title={copy.list.title} description={copy.list.description} />
-      {issues.length === 0 ? (
+      {issues.length === 0 && unlinked.length === 0 ? (
         <EmptyState description={copy.list.empty} />
-      ) : (
+      ) : issues.length === 0 ? null : (
         <ul aria-label={copy.list.title}>
           {issues.map((issue) => (
             <li key={issue.number}>
