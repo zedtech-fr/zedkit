@@ -176,6 +176,9 @@ export function routesFromFiles(files, manifest) {
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
     }
+    if (/(?:^|\/)apps\/docs\/features\/identity\//u.test(n) && !/\.(?:test|spec)\./u.test(n)) {
+      routes.add("/features/identity-editor");
+    }
   }
   return [...routes];
 }
