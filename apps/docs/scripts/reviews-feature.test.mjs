@@ -1826,6 +1826,7 @@ test("timeline rows show score, superseded, and endedAt-aware UpdatedAgo", () =>
   assert.match(row, /score=\{entry\.score \?\? null\}/);
   assert.match(row, /entry\.superseded !== true/);
   assert.match(row, /copy\.issue\.replaced/);
+  assert.match(row, /copy\.issue\.failedReplaced/);
   assert.match(row, /entryUpdatedAt\(entry\)/);
   assert.doesNotMatch(row, /new Date\(entry\.startedAt\)/);
   assert.match(list, /summedDurationMs/);

@@ -34,6 +34,8 @@ describe("ci hygiene job", () => {
     const src = readFileSync(join(root, "scripts/check-no-private-refs.sh"), "utf8");
     assert.match(src, /git grep -IinE/);
     assert.match(src, /':!\*\.png'/);
+    assert.match(src, /git ls-files -z --others --exclude-standard/);
+    assert.match(src, /xargs -0 grep -IHinE/);
   });
 });
 
