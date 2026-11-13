@@ -45,7 +45,7 @@ export function IdentityDockAssistantPanel({
 }) {
   const { setExpanded } = useIdentityAssistantStore();
   const [status, setStatus] = useState("");
-  const warningCount = identityContrastWarnings(tokens).filter((warning) => warning.min === 4.5).length;
+  const warningCount = identityContrastWarnings(tokens).length;
 
   useEffect(() => {
     const message =

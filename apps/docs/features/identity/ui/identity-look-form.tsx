@@ -47,7 +47,8 @@ function IdentityLookForm({
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
-  defaultMode: "simple" | "expert";
+  /** Owned tabs only. Ignored when `tabs="embedded"` — the parent `Tabs` owns the default. */
+  defaultMode?: "simple" | "expert";
   onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
   onPatchMany: PatchMany;
   afterForm?: ReactNode;
@@ -78,7 +79,7 @@ function IdentityLookForm({
   }
   return (
     <Stack gap="md">
-      <Tabs defaultValue={defaultMode}>
+      <Tabs defaultValue={defaultMode ?? "simple"}>
         <TabsList aria-label={copy.label}>
           <TabsTrigger value="simple">{copy.simple}</TabsTrigger>
           <TabsTrigger value="expert">{copy.expert}</TabsTrigger>

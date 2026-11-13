@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-import { identityPresets } from "@zedtech/zedkit-ui";
+import { identityContrastWarnings, identityPresets } from "@zedtech/zedkit-ui";
 
 import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 
@@ -63,6 +63,12 @@ test("docsSiteDefaultTokens overlays every Classic field the docs shell pins, an
   assert.equal(docs.headingTracking, glass.headingTracking);
   assert.equal(docs.labelTracking, glass.labelTracking);
   assert.deepEqual(docs.dark, glass.dark);
+});
+
+test("docs defaults still fail the 3:1 light border check, so the dock footer must count every warning", () => {
+  const warnings = identityContrastWarnings(docsSiteDefaultTokens());
+  assert.equal(warnings.filter((warning) => warning.min === 4.5).length, 0);
+  assert.equal(warnings.filter((warning) => warning.min === 3 && warning.token === "border" && warning.scheme === "light").length, 1);
 });
 
 test("Classic colour defaults match the measured site hexes", () => {

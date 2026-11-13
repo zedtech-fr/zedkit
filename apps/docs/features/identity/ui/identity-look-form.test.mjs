@@ -81,6 +81,8 @@ test("the editor owns Classic/Expert tabs; the dock embeds panels in the drawer 
   const form = read("features/identity/ui/identity-look-form.tsx");
   assert.match(form, /tabs = "owned"/);
   assert.match(form, /tabs === "embedded"/);
+  assert.match(form, /defaultMode\?: "simple" \| "expert"/);
+  assert.match(form, /defaultValue=\{defaultMode \?\? "simple"\}/);
   assert.doesNotMatch(form, /stickyTabs/);
   assert.doesNotMatch(form, /sticky pin-top z-header/);
 });
