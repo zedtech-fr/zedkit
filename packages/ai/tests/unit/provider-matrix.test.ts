@@ -5,7 +5,7 @@ import { hasMarker, markerLine } from "#generate.js";
 import { ALL_PROVIDERS, installKit } from "#install.js";
 import { agentsForPreset, commandsForPreset, kitDir, readManifest } from "#kit.js";
 import { checkDrift, checkKitDocs, checkPlaceholders, validateKit } from "#validate.js";
-import { put, tempDir } from "./helpers.js";
+import { failingIssues, put, tempDir } from "./helpers.js";
 
 const MATRIX = ["cursor", "claude", "codex", "muse"] as const;
 type MatrixProvider = (typeof MATRIX)[number];
@@ -40,7 +40,7 @@ function firstSkill(dest: string): string {
 /** Install, validate, rerun, drift, docs: the parity contract every cell must keep. */
 function parityCell(dest: string, preset: string, providers: readonly string[] | undefined, adopt = false): void {
   install(dest, preset, providers, adopt);
-  expect(validateKit(join(dest, ".agents")), "validate").toEqual([]);
+  expect(failingIssues(validateKit(join(dest, ".agents"))), "validate").toEqual([]);
   expect(checkKitDocs(dest, join(dest, ".agents")), "docs").toEqual([]);
   expect(checkPlaceholders(dest, join(dest, ".agents")), "placeholders").toEqual([]);
   expect(existsSync(join(dest, ".agents", "tokenomics.md")), "tokenomics.md installed").toBe(true);

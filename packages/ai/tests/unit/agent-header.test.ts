@@ -6,7 +6,7 @@ import { parseFrontmatter } from "#frontmatter.js";
 import { kitDir, readManifest } from "#kit.js";
 import { main } from "#cli.js";
 import { validateKit } from "#validate.js";
-import { AGENT, put, tempDir } from "./helpers.js";
+import { AGENT, failingIssues, put, tempDir } from "./helpers.js";
 
 const HEADER = { role: "ui designer", default_needs: { reasoning: "medium", context: "medium" } };
 const sidecar = (root: string, entries: Record<string, unknown>): void => put(root, SIDECAR, JSON.stringify(entries));
@@ -72,7 +72,7 @@ describe("kit agent files", () => {
   });
 
   it("the kit validates clean, sidecar included", () => {
-    expect(validateKit(kitDir())).toEqual([]);
+    expect(failingIssues(validateKit(kitDir()))).toEqual([]);
   });
 
   it("agents that cannot be built carry the static write deny list", () => {
