@@ -3,10 +3,10 @@ import { badgeCopy } from "@/components/demos/i18n/badge-copy";
 
 export function BadgeLinkDemo() {
   return (
-    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center rounded-lg bg-card surface-pad-compact">
       <Text>{badgeCopy.link.platform}</Text>
-      <Badge asChild variant="secondary">
-        <a href="#status" id="status">{badgeCopy.link.status}</a>
+      <Badge asChild>
+        <a href="#example">{badgeCopy.link.status}</a>
       </Badge>
     </Stack>
   );

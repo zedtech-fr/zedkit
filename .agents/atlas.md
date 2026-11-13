@@ -55,6 +55,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Home hero lead | `.agents/atlas/home.md` | Copy in the hero module; right column is a live active-run card after mount. | `home-hero-active-run.test.mjs` | 2026-11-13 |
 | Home hero motion | `.agents/atlas/home.md` | Lead rise is transform-only; `HomeHero` does not use `motion-settle`. | `home-motion-gate.test.mjs` | 2026-11-13 |
 | Home/catalog card hover and per-band appear | `.agents/atlas/home.md` | Kit `hover-lift` owns lift/shadow; title links keep `hit-target`. | `motion-toggle-css.test.ts` | 2026-11-13 |
+| Catalog demo hrefs | `.agents/atlas/docs-site.md` | Hashes use `COMPONENT_PAGE_SECTION_IDS`; `href={var}` fails closed; no `id=` in AppShell sidebars. | `demo-hrefs.test.mjs` | 2026-11-13 |
 | Registry component page order | `.agents/atlas/docs-site.md` | Example, Use it, install-or-copy, guidance; Preview is the violet stage. | `ComponentPage` | 2026-11-13 |
 | Docs UI sidebar groups | `.agents/atlas/docs-site.md` | Job headings are Fumadocs separators, not nested `ui/<group>/` dirs. | `check.mjs` | 2026-11-12 |
 | Docs App Router files | `.agents/atlas/docs-site.md` | `/` is `(home)`; catch-all folder must be the last segment. | `apps/docs/app/` | 2026-11-13 |
@@ -84,10 +85,10 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Stored choice factory | `.agents/atlas/ui-primitives.md` | SSR-safe listed localStorage choice; one factory per key. | `use-stored-choice.test.tsx` | 2026-11-13 |
 | Identity contrast repair | `.agents/atlas/identity.md` | Bounded three-pass AA nudge; public `repairContrast`. | `identity-contrast-repair.test.ts` | 2026-11-13 |
 | SSE frame parser | `.agents/atlas/ui-primitives.md` | Blank line is two WHATWG endings; CRLF tried first. | `consumeSseStream` | 2026-11-11 |
-| AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-10 |
+| AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. Sidebar mounts twice: no ids in demo sidebars. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-13 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
-| Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP. | `agent-console.test.tsx` | 2026-11-13 |
+| Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP; label is `Started (UTC)`. | `agent-console.test.tsx` | 2026-11-13 |
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |

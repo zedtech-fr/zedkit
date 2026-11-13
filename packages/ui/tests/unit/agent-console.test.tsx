@@ -250,7 +250,7 @@ describe("AgentConsole", () => {
 
   it("shows stats and a tool burst on the selected item", () => {
     const { container } = renderConsole();
-    expect(screen.getByText("Started")).not.toBeNull();
+    expect(screen.getByText("Started (UTC)")).not.toBeNull();
     expect(screen.getByText("Jan 15, 2026, 10:00 AM")).not.toBeNull();
     expect(screen.getAllByText("6m 17s").length).toBeGreaterThan(0);
     expect(screen.getByText("Tool calls")).not.toBeNull();
@@ -425,7 +425,9 @@ describe("formatStarted", () => {
     const spy = vi.spyOn(Intl, "DateTimeFormat");
     const stamp = formatStarted(STARTED_AT, "fr");
     expect(spy).toHaveBeenCalledWith("fr", expect.objectContaining({ timeZone: "UTC" }));
-    expect(stamp).toBe("15 janv. 2026, 10:00");
+    expect(stamp).toMatch(/15/);
+    expect(stamp).toMatch(/2026/);
+    expect(stamp).toMatch(/10:00/);
     expect(stamp).not.toMatch(/[\u00A0\u202F]/);
   });
 

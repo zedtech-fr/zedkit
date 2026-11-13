@@ -79,6 +79,19 @@ describe("AppShell", () => {
     expect(within(dialog).getByRole("button", { name: "Close" })).not.toBeNull();
   });
 
+  it("clones sidebar into the drawer, so ids on sidebar nodes duplicate when it opens", async () => {
+    stubDrawerJsdom(true);
+    const user = userEvent.setup();
+    render(
+      <AppShell sidebar={<nav><a href="#runs" id="runs">Runs</a></nav>}>
+        <p>Content</p>
+      </AppShell>,
+    );
+    expect(document.querySelectorAll("#runs")).toHaveLength(1);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    expect(document.querySelectorAll("#runs")).toHaveLength(2);
+  });
+
   it("closes the drawer when a sidebar link is activated", async () => {
     stubDrawerJsdom(true);
     const user = userEvent.setup();

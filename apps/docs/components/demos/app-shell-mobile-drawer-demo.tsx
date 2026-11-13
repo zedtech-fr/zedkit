@@ -15,7 +15,7 @@ export function AppShellMobileDrawerDemo() {
   return (
     <AppShell
       className={cn(
-        "h-frame pane-shrink overflow-hidden rounded-lg border",
+        "h-frame pane-shrink overflow-y-auto rounded-lg border bg-background",
         mobile && "[&_[data-slot=app-shell-menu]]:flex [&>aside]:hidden",
       )}
       fixedHeight
@@ -28,8 +28,7 @@ export function AppShellMobileDrawerDemo() {
               {NAV.map((item, index) => (
                 <a
                   key={item}
-                  href={`#drawer-${item.toLowerCase()}`}
-                  id={`drawer-${item.toLowerCase()}`}
+                  href="#example"
                   aria-current={index === 0 ? "page" : undefined}
                   className={linkClassName}
                 >

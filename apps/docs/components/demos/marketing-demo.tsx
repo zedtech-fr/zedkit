@@ -127,7 +127,7 @@ export function LocaleSwitchDemo() {
   return (
     <LocaleSwitch
       current="en"
-      locales={[...chrome.locales]}
+      locales={chrome.locales.map((locale) => ({ ...locale, href: "#example" }))}
     />
   );
 }
