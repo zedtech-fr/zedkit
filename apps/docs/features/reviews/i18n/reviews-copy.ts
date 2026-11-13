@@ -2,7 +2,7 @@ export const reviewsCopy = {
   metadata: {
     list: {
       title: "Issues",
-      description: "Public issues with exportable runs on zedkit.",
+      description: "Public work log of how each issue was planned, built, and reviewed.",
     },
     issue: {
       title: "Issue",
@@ -37,22 +37,27 @@ export const reviewsCopy = {
   },
   list: {
     title: "Issues",
-    description: "Public issues with at least one exportable run.",
+    description: "Public work log: open a row to see how each issue was planned, built, and reviewed.",
     empty: "No public runs yet",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
-    githubIssue: "GitHub issue",
-    githubPull: "GitHub pull request",
+    githubIssue: "Issue",
+    githubPull: "PR",
     unlinkedTitle: "Unlinked pull requests",
     unlinkedDescription:
       "These runs are not joined to a GitHub issue yet. They stay reachable here and from old review URLs.",
     run: "run",
     runs: "runs",
+    took: "Took",
+    finished: "Finished",
+    opensInNewTab: "opens in a new tab",
   },
   issue: {
     back: "All issues",
     timeline: "Timeline",
-    superseded: "Superseded",
+    replaced: "Replaced by newer run",
+    failedReplaced: "Didn't finish — replaced by a later review",
+    viewLog: "View log",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
     missing: "This issue is not on the public list.",
@@ -81,19 +86,19 @@ export const reviewsCopy = {
   },
   type: {
     plan: "Plan",
-    implement: "Implement",
+    implement: "Implementation",
     review: "Review",
-    improve: "Improve from review",
+    improve: "Follow-up after review",
     "dry-run": "Dry run",
   },
   status: {
     running: "Running",
     completed: "Completed",
-    failed: "Failed",
+    failed: "Didn't finish",
   },
   verdict: {
-    approve: "Approve",
-    "request-changes": "Request changes",
+    approve: "Approved",
+    "request-changes": "Changes requested",
     comment: "Comment",
   },
   state: {

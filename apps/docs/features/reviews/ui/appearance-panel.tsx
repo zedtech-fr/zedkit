@@ -34,7 +34,11 @@ export function ReviewAppearanceFrame({ children }: { children: ReactNode }) {
       mode={pin ? appearance.mode : undefined}
       className="bg-background text-foreground"
     >
-      <Container width="wide" className="py-section-sm">
+      <Container
+        width="full"
+        data-issues-column=""
+        className="max-w-(--zk-header-max-width) py-section-sm pb-section-lg"
+      >
         <Stack gap="lg">{children}</Stack>
       </Container>
     </ThemeScope>

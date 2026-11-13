@@ -1,6 +1,7 @@
 import { Badge } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import type { HeadlineOutcome } from "../model/latest-status";
 import type { LatestStatus } from "../ports/review-port";
 import { latestStatusBadge, STATUS_BADGE, VERDICT_BADGE } from "./review-badges";
 
@@ -23,6 +24,22 @@ export function LatestStatusMark({
   }
   if (mark.status !== undefined) {
     return <Badge variant={STATUS_BADGE[mark.status]}>{copy.status[mark.status]}</Badge>;
+  }
+  return null;
+}
+
+export function OutcomeMark({
+  outcome,
+  copy,
+}: {
+  outcome: HeadlineOutcome;
+  copy: ReviewsCopy;
+}) {
+  if (outcome.kind === "verdict" && outcome.verdict !== undefined) {
+    return <LatestStatusMark status={outcome.verdict} copy={copy} score={outcome.score} />;
+  }
+  if (outcome.status !== undefined) {
+    return <LatestStatusMark status={outcome.status} copy={copy} />;
   }
   return null;
 }
