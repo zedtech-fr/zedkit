@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { commandsFromPlan, shownInstallCommands } from "../apps/docs/lib/adoption-shown-commands.mjs";
+import { commandsFromPlan, shownInstallCommands } from "../apps/docs/scripts/adoption-shown-commands.mjs";
 import { CASES, isSiteRegistryToken, localizeCommand, packedTarball, pinVersion, runLocalized, smokePort } from "./adoption-smoke.mjs";
 
 const MARKER = "pwned-adoption-smoke";

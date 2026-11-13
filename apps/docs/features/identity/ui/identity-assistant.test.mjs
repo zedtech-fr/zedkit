@@ -107,7 +107,7 @@ test("a report is read as far as it is believed: at most the links that were sen
 });
 
 test("a reason is worded from a closed list: nothing the service sends can name a property of Object", async () => {
-  const { referenceReason } = await import(new URL("../../../components/i18n/identity-assistant-copy.ts", import.meta.url).href);
+  const { referenceReason } = await import(new URL("../dock/i18n/identity-assistant-copy.ts", import.meta.url).href);
   for (const reason of ["constructor", "__proto__", "toString", "status-99999", "status-abc", undefined]) {
     assert.equal(referenceReason(reason), "it could not be read", String(reason));
   }

@@ -90,7 +90,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |
-| Docs module-placement ratchet | `.agents/atlas/ci-gates.md` | Import graph baseline may only shrink; `--write-baseline` refuses growth. | `module-placement.test.mjs` | 2026-11-13 |
+| Docs module-placement ratchet | `.agents/atlas/ci-gates.md` | Empty baseline is the success state; `--write-baseline` may write empty arrays and still refuses growth. | `module-placement.test.mjs` | 2026-11-13 |
 | Catalog page filters and results | `.agents/atlas/docs-site.md` | Default area is UI; empty URL = UI; `size=sm` chips need `text-dense`. | `catalog-filter.test.mjs` | 2026-11-12 |
 | Site-only text roles | `.agents/atlas/design-system.md` | Specimen/demo/home roles live with the site, not in the package. | `apps/docs/` | 2026-11-08 |
 | Adoption smoke dev server port | `.agents/atlas/setup-ai.md` | Next.js refuses 3659 inside 3400–3799. | `pnpm adoption:smoke` | 2026-11-13 |

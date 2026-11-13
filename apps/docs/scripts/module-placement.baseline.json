@@ -1,15 +1,6 @@
 {
-  "dead": [
-    "lib/adoption-shown-commands.mjs",
-    "lib/registry-smoke-urls.ts"
-  ],
-  "singleOwner": [
-    "components/i18n/identity-assistant-copy.ts",
-    "components/site-chrome/route-scroll-reset.tsx",
-    "components/site-chrome/site-chrome-a11y.tsx",
-    "components/site-chrome/skip-link.tsx",
-    "components/site-chrome/theme-color-meta.tsx"
-  ],
+  "dead": [],
+  "singleOwner": [],
   "globs": [],
   "edges": []
 }

@@ -2,7 +2,7 @@
 
 import { Stack, Text, identityContrastWarnings, type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { identityAssistantCopy as copy } from "@/components/i18n/identity-assistant-copy";
+import { identityAssistantCopy as copy } from "@/features/identity/dock/i18n/identity-assistant-copy";
 import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import { ContrastChips } from "@/features/identity/editor/ui/identity-editor-fields";
 import { IdentityLookForm } from "@/features/identity/editor/ui/identity-look-form";
