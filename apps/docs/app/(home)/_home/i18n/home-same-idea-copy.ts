@@ -52,11 +52,8 @@ export const homeSameIdeaCopy = {
     },
   },
   lands: {
-    heading: "What lands in your repo",
-    skills: "skills",
-    agents: "agents",
-    components: "components",
-    looks: "looks",
-    mit: "MIT",
+    heading: "A working kit in your repo on day one.",
+    proof: (skills: number, agents: number, components: number, looks: number) =>
+      `The agent can plan, review and ship with ${skills} skills, ${agents} agents, ${components} components and ${looks} looks. MIT.`,
   },
 } as const;

@@ -254,7 +254,9 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sameIdeaCopy, /href: "\/docs\/ai\/setup"/);
   assert.match(sameIdeaCopy, /href: "\/catalog"/);
   assert.match(sameIdeaCopy, /href: "\/map\.md"/);
-  assert.match(sameIdeaCopy, /heading: "What lands in your repo"/);
+  assert.match(sameIdeaCopy, /heading: "A working kit in your repo on day one\."/);
+  assert.doesNotMatch(sameIdeaCopy, /What lands in your repo/);
+  assert.match(sameIdeaCopy, /proof: \(skills: number, agents: number, components: number, looks: number\)/);
   assert.match(sameIdeaCopy, /link: "AI setup guide"/);
   assert.match(sameIdeaCopy, /link: "Browse the catalog"/);
   assert.match(sameIdeaCopy, /link: "Read map\.md"/);
@@ -265,6 +267,11 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sameIdea, /WINDOW_CHIP =\s*"rounded-md bg-primary-foreground\/20 px-code-inline/);
   assert.match(sameIdea, /pointer-events-none text-primary-foreground/);
   assert.match(sameIdea, /<Heading level=\{3\} typeRole="body">\s*\{lands\.heading\}/);
+  assert.match(
+    sameIdea,
+    /lands\.proof\(kitCounts\.skills, kitCounts\.agents, componentCount, kitCounts\.looks\)/,
+  );
+  assert.doesNotMatch(sameIdea, /lands\.skills|lands\.mit|label: lands\./);
   assert.match(sameIdea, /data-home-same-idea-lands/);
   assert.match(sameIdea, /data-home-same-idea-window/);
   assert.match(sameIdea, /aria-hidden/);
@@ -335,7 +342,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   );
   assert.doesNotMatch(sixSentencesCopy, /\d+ components that already agree/);
   assert.match(sameIdeaCopy, /stack: "React 19 and Tailwind CSS 4, from npm or as source"/);
-  assert.match(sameIdeaCopy, /mit: "MIT"/);
+  assert.match(sameIdeaCopy, /\$\{looks\} looks\. MIT\.`/);
   assert.doesNotMatch(sixSentencesCopy, /What you see is MIT/);
   const heroCss = readFileSync(join(homePrivate, "home.css"), "utf8");
   const signatureCss = readFileSync(join(app, "app/docs-signature.css"), "utf8");
