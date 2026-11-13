@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
-import { readFileSync, statSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const evidenceDir = join(dirname(fileURLToPath(import.meta.url)), "../tests/evidence/issues");
-const ARTIFACT_CAP = 200 * 1024;
+const docsRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = join(docsRoot, "../..");
+const evidenceDir = join(docsRoot, "tests/evidence/issues");
+/** Capture set for `zedkit-ai evidence --routes` + `critical-states.json`. Do not commit the PNGs. */
 const EVIDENCE_FILES = [
   "issues-list-375.png",
   "issues-list-809.png",
@@ -33,14 +36,19 @@ const EVIDENCE_FILES = [
   "issues-load-error-1440-dark.png",
 ];
 
-test("issue list and issue 108 evidence PNGs exist under the artefact cap", () => {
-  for (const name of EVIDENCE_FILES) {
-    const path = join(evidenceDir, name);
-    const stat = statSync(path);
-    assert.ok(stat.isFile(), path);
-    assert.ok(stat.size > 0, `${name} is empty`);
-    assert.ok(stat.size < ARTIFACT_CAP, `${name} is ${stat.size} bytes`);
-  }
+test("critical capture PNG names are unique", () => {
+  assert.equal(new Set(EVIDENCE_FILES).size, EVIDENCE_FILES.length);
+});
+
+test("generated evidence PNGs are not gittracked", () => {
+  const tracked = execFileSync("git", ["ls-files", "--", "apps/docs/tests/evidence"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n")
+    .filter((f) => f.endsWith(".png"));
+  assert.deepEqual(tracked, []);
 });
 
 test("critical-states first-issue-open click matches the list row", () => {

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Fails if build artifacts, caches, or oversized files are tracked by git.
-# Mirrors .gitignore's build section so the two cannot drift silently: if you
-# extend one, extend the other.
+# Fails if build artifacts, caches, oversized files, or generated evidence
+# PNGs are tracked by git. Mirrors .gitignore's build section so the two
+# cannot drift silently: if you extend one, extend the other.
 set -uo pipefail
 
 fail=0
 
 # 1. Known build-output / cache paths must never be tracked.
 artifact_dirs='(node_modules|\.next|dist|build|coverage|\.vitest|\.turbo|\.pnpm-store|\.vercel|test-results|playwright-report|blob-report|temp|\.agent-logs)'
-artifact_files='(\.tsbuildinfo|\.pack(\.gz)?)$|(^|/)next-env\.d\.ts$|chromium-darwin\.png$|^conversation-.*\.txt$'
+artifact_files='(\.tsbuildinfo|\.pack(\.gz)?)$|(^|/)next-env\.d\.ts$|chromium-darwin\.png$|(^|/)apps/docs/tests/evidence/.*\.png$|^conversation-.*\.txt$'
 artifacts=$(git ls-files | grep -E "(^|/)${artifact_dirs}/|${artifact_files}" || true)
 if [ -n "$artifacts" ]; then
   echo "tracked build artifacts (see .gitignore):"
