@@ -129,6 +129,9 @@ function parseRun(value: unknown): RunsApiRun | null {
   const kind = asKind(value.kind);
   const status = asStatus(value.status);
   const startedAt = asIso(value.startedAt);
+  const endedAt =
+    value.endedAt === undefined || value.endedAt === null ? null : asIso(value.endedAt);
+  if (value.endedAt !== undefined && value.endedAt !== null && endedAt === null) return null;
   const durationMs = asDuration(value.durationMs);
   const models = asModels(value.models);
   const verdict = asVerdict(value.verdict);
@@ -154,6 +157,7 @@ function parseRun(value: unknown): RunsApiRun | null {
     phase,
     status,
     startedAt,
+    endedAt,
     durationMs,
     models,
     verdict,

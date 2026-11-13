@@ -7,6 +7,7 @@ import type {
   TimelineEntry,
   UnlinkedPullRequest,
 } from "../ports/review-port";
+import { summedDurationMs } from "./latest-status.ts";
 
 function copyIssue(issue: IssueRecord): IssueRecord {
   return structuredClone(issue);
@@ -32,17 +33,6 @@ function uniqueModels(entries: readonly TimelineEntry[]): string[] {
   return out;
 }
 
-function summedDuration(entries: readonly TimelineEntry[]): number | null {
-  let total = 0;
-  let any = false;
-  for (const entry of entries) {
-    if (entry.durationMs === null) continue;
-    total += entry.durationMs;
-    any = true;
-  }
-  return any ? total : null;
-}
-
 function firstLiveUrl(entries: readonly TimelineEntry[]): string | null {
   for (const entry of entries) {
     if (entry.liveUrl !== null) return entry.liveUrl;
@@ -61,7 +51,7 @@ export function runRecordFromEntries(runId: string, entries: readonly TimelineEn
     status: last.status,
     verdict: last.verdict,
     models: uniqueModels(matched),
-    durationMs: summedDuration(matched),
+    durationMs: summedDurationMs(matched),
     liveUrl: firstLiveUrl(matched),
     startedAt: first.startedAt,
   };

@@ -111,6 +111,9 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
   assert.doesNotMatch(copy, /heroKits:|promptCaption:|promptCaptionSingle:|HeroKitId|dueDatesTitle:|aiPlan:|settingsTitle:/);
   assert.match(copy, /emptyStateTitle: "Add an empty state to the tasks list"/);
+  assert.match(copy, /viewPublicRun: "View a public run"/);
+  assert.match(illustration, /\/issues\?open=first/);
+  assert.match(illustration, /copy\.viewPublicRun/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
   assert.match(copy, /Check/);

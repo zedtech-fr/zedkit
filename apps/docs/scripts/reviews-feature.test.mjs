@@ -13,7 +13,12 @@ import {
   listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
-import { latestEntry, latestStatus } from "../features/reviews/model/latest-status.ts";
+import {
+  entryUpdatedAt,
+  latestEntry,
+  latestStatus,
+  summedDurationMs,
+} from "../features/reviews/model/latest-status.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
@@ -560,6 +565,35 @@ test("latest status uses the last entry; a review verdict wins", () => {
 
 test("latestEntry returns null on empty entries", () => {
   assert.equal(latestEntry([]), null);
+});
+
+test("summedDurationMs adds known step durations and ignores running nulls", () => {
+  assert.equal(summedDurationMs([]), null);
+  assert.equal(
+    summedDurationMs([
+      entry({ durationMs: 1_200_000 }),
+      entry({ id: "impl", type: "implement", durationMs: 402_000 }),
+      entry({ id: "run", type: "review", status: "running", durationMs: null }),
+    ]),
+    1_602_000,
+  );
+});
+
+test("entryUpdatedAt uses endedAt for completed steps and startedAt while running", () => {
+  assert.equal(
+    entryUpdatedAt(entry({ status: "completed", endedAt: "2026-11-10T16:07:00.000Z" })),
+    "2026-11-10T16:07:00.000Z",
+  );
+  assert.equal(
+    entryUpdatedAt(entry({ status: "completed" })),
+    "2026-11-10T16:00:00.000Z",
+  );
+  assert.equal(
+    entryUpdatedAt(
+      entry({ status: "running", durationMs: null, endedAt: "2026-11-10T16:07:00.000Z" }),
+    ),
+    "2026-11-10T16:00:00.000Z",
+  );
 });
 
 test("latestEntry returns the later startedAt runId when they differ", () => {
@@ -1261,6 +1295,9 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
   assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
   assert.equal(reviewsCopy.issue.timeline, "Timeline");
+  assert.equal(reviewsCopy.issue.superseded, "Superseded");
+  assert.equal(reviewsCopy.list.githubIssue, "GitHub issue");
+  assert.equal(reviewsCopy.list.githubPull, "GitHub pull request");
   assert.equal(
     reviewsCopy.loadError.description,
     "GitHub or the runs API did not answer. This page updates when the site is next published.",
@@ -1444,7 +1481,7 @@ test("found /issues pages pass issuesIndexRobots", () => {
 test("list and timeline views read from issue records, not a PR console", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  assert.match(list, /issuePath/);
+  assert.match(list, /githubIssueHref/);
   assert.match(list, /copy\.list\.unlinkedTitle/);
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
   assert.match(list, /copy\.type\[last\.type\]/);
@@ -1459,7 +1496,7 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.doesNotMatch(timeline, /ReviewConsole/);
 });
 
-test("list rows are closed native details; steps and Timeline stay in the panel", () => {
+test("list rows are closed native details; GitHub links stay in the panel", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   assert.match(list, /<details data-issues-row=""/);
   assert.match(list, /<summary className="flex min-h-target cursor-pointer list-none/);
@@ -1468,10 +1505,13 @@ test("list rows are closed native details; steps and Timeline stay in the panel"
   assert.doesNotMatch(list, /Accordion/);
   assert.doesNotMatch(list, /issueRunPath/);
   assert.doesNotMatch(list, /unlinkedRunPath/);
-  assert.match(list, /unlinkedPrPath/);
-  assert.match(list, /copy\.issue\.timeline/);
-  assert.match(list, /<StepsPanel[\s\S]*timelineHref=\{issuePath\(issue\.number\)\}/);
-  assert.match(list, /<StepsPanel[\s\S]*timelineHref=\{unlinkedPrPath\(entry\.number\)\}/);
+  assert.doesNotMatch(list, /unlinkedPrPath/);
+  assert.doesNotMatch(list, /timelineHref/);
+  assert.doesNotMatch(list, /timelineLabel/);
+  assert.match(list, /aria-label=\{copy\.issue\.timeline\}/);
+  assert.match(list, /githubIssueHref\(issue\.number\)/);
+  assert.match(list, /githubPullHref/);
+  assert.match(list, /copy\.issue\.timelineEmpty/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /\/runs\/`/);
   assert.doesNotMatch(list, /\/runs\/\$\{/);
@@ -1521,9 +1561,23 @@ test("list stays in the shared wide frame and stacks title then meta below md", 
   assert.doesNotMatch(frame, /pathname/);
   assert.equal([...list.matchAll(/<details /g)].length, 2);
   assert.match(list, /<RowSummary[\s\S]*meta=\{[\s\S]*UpdatedAgo/);
-  assert.match(list, /<StepsPanel[\s\S]*copy\.issue\.timeline/);
+  assert.match(list, /<StepsPanel[\s\S]*copy\.issue\.timelineEmpty/);
+  assert.match(list, /issueOpenTarget/);
+  assert.match(list, /addEventListener\("hashchange"/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
+});
+
+test("timeline rows show score, superseded, and endedAt-aware UpdatedAgo", () => {
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  assert.match(row, /score=\{entry\.score \?\? null\}/);
+  assert.match(row, /entry\.superseded === true/);
+  assert.match(row, /entryUpdatedAt\(entry\)/);
+  assert.doesNotMatch(row, /new Date\(entry\.startedAt\)/);
+  assert.match(list, /summedDurationMs/);
+  assert.match(list, /formatDuration/);
+  assert.doesNotMatch(list, /from "next\/link"/);
 });
 
 test("verdict and status tones live in one shared module", () => {

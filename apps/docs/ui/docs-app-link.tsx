@@ -1,18 +1,17 @@
 "use client";
 
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
 import type { ComponentProps, FC } from "react";
 
 type DocsAppLinkProps = ComponentProps<"a"> & { prefetch?: boolean };
 
 /**
- * Fumadocs chrome uses this as its framework `Link`. On `/`, skip App Router prefetch so
- * header links do not queue RSC payloads during home first paint.
+ * Fumadocs chrome uses this as its framework `Link`. Prefetch is off unless
+ * the caller passes `prefetch` — static hosts serve HTML for `/?_rsc=` without
+ * `.txt` and would poison the client RSC cache.
  */
 export const DocsAppLink: FC<DocsAppLinkProps> = ({ prefetch, href, children, ...props }) => {
-  const onHome = usePathname() === "/";
-  const resolved = prefetch ?? !onHome;
+  const resolved = prefetch ?? false;
   if (href == null || href === "") {
     return (
       <a href={href} {...props}>

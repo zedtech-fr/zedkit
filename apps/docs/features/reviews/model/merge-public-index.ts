@@ -42,6 +42,7 @@ export type RunsApiRun = {
   readonly phase: string | null;
   readonly status: TimelineEntryStatus;
   readonly startedAt: string;
+  readonly endedAt: string | null;
   readonly durationMs: number | null;
   readonly models: readonly string[];
   readonly verdict: ReviewVerdict | null;
@@ -95,6 +96,7 @@ function toEntry(run: RunsApiRun, split: boolean): TimelineEntry {
     type,
     status: run.status,
     startedAt: run.startedAt,
+    endedAt: run.endedAt,
     durationMs: run.durationMs,
     models: [...run.models],
     verdict: run.verdict,

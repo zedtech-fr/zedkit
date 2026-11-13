@@ -10,6 +10,7 @@ export type TimelineEntry = {
   readonly type: TimelineEntryType;
   readonly status: TimelineEntryStatus;
   readonly startedAt: string;
+  readonly endedAt?: string | null;
   readonly durationMs: number | null;
   readonly models: readonly string[];
   readonly verdict: ReviewVerdict | null;

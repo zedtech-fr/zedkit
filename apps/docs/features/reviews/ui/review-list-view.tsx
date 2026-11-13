@@ -1,7 +1,6 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
-import Link from "next/link";
+import { useEffect, useId, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import {
   Badge,
@@ -12,11 +11,14 @@ import {
   Stack,
   Text,
   UpdatedAgo,
+  formatDuration,
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { latestEntry, latestStatus } from "../model/latest-status";
-import { issuePath, uniqueRunIds, unlinkedPrPath } from "../model/review-routes";
+import { githubIssueHref, githubPullHref } from "../model/github-hrefs";
+import { issueOpenTarget } from "../model/issue-open-target";
+import { latestEntry, latestStatus, summedDurationMs } from "../model/latest-status";
+import { uniqueRunIds } from "../model/review-routes";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
@@ -59,21 +61,30 @@ function RowSummary({
   );
 }
 
+function GithubRefLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Button asChild variant="link" className="min-h-target w-fit">
+      <a href={href} target="_blank" rel="noreferrer">
+        {children}
+      </a>
+    </Button>
+  );
+}
+
 function StepsPanel({
   entries,
-  timelineHref,
-  timelineLabel,
+  links,
   empty,
   copy,
 }: {
   entries: readonly TimelineEntry[];
-  timelineHref: string;
-  timelineLabel: string;
+  links: ReactNode;
   empty: string;
   copy: ReviewsCopy;
 }) {
   return (
     <Stack gap="sm" className="pl-control-inline">
+      {links}
       {entries.length === 0 ? (
         <EmptyState description={empty} />
       ) : (
@@ -85,15 +96,13 @@ function StepsPanel({
           ))}
         </ul>
       )}
-      <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={timelineHref}>{timelineLabel}</Link>
-      </Button>
     </Stack>
   );
 }
 
 function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
   const status = latestStatus(issue.entries);
+  const durationMs = summedDurationMs(issue.entries);
   return (
     <details data-issues-row="" id={`issue-${issue.number}`} className="group border-b border-border">
       <RowSummary
@@ -113,14 +122,29 @@ function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
                   .join(", ")}`}
               </Text>
             ) : null}
+            {durationMs !== null ? (
+              <Text variant="muted" typeRole="caption">
+                {formatDuration(durationMs)}
+              </Text>
+            ) : null}
             <UpdatedAgo date={new Date(issue.lastRunAt)} />
           </>
         }
       />
       <StepsPanel
         entries={issue.entries}
-        timelineHref={issuePath(issue.number)}
-        timelineLabel={copy.issue.timeline}
+        links={
+          <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+            <GithubRefLink href={githubIssueHref(issue.number)}>
+              {`${copy.list.githubIssue} #${issue.number}`}
+            </GithubRefLink>
+            {issue.pullRequests.map((n) => (
+              <GithubRefLink key={n} href={githubPullHref(n)}>
+                {`${copy.list.githubPull} #${n}`}
+              </GithubRefLink>
+            ))}
+          </Stack>
+        }
         empty={copy.issue.timelineEmpty}
         copy={copy}
       />
@@ -138,6 +162,7 @@ function UnlinkedRow({
   const status = latestStatus(entry.entries);
   const last = latestEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
+  const durationMs = summedDurationMs(entry.entries);
   return (
     <details data-issues-row="" id={`pr-${entry.number}`} className="group border-b border-border">
       <RowSummary
@@ -153,14 +178,22 @@ function UnlinkedRow({
             <Text variant="muted" typeRole="caption">
               {runCountLabel(runCount, copy)}
             </Text>
+            {durationMs !== null ? (
+              <Text variant="muted" typeRole="caption">
+                {formatDuration(durationMs)}
+              </Text>
+            ) : null}
             <UpdatedAgo date={new Date(entry.lastRunAt)} />
           </>
         }
       />
       <StepsPanel
         entries={entry.entries}
-        timelineHref={unlinkedPrPath(entry.number)}
-        timelineLabel={copy.issue.timeline}
+        links={
+          <GithubRefLink href={githubPullHref(entry.number)}>
+            {`${copy.list.githubPull} #${entry.number}`}
+          </GithubRefLink>
+        }
         empty={copy.unlinked.timelineEmpty}
         copy={copy}
       />
@@ -178,6 +211,23 @@ export function ReviewListView({
   copy: ReviewsCopy;
 }) {
   const unlinkedHeadingId = useId();
+  useEffect(() => {
+    const apply = () => {
+      const target = issueOpenTarget(window.location.search, window.location.hash);
+      if (target === null) return;
+      const rows = document.querySelectorAll("main details[data-issues-row]");
+      const el =
+        target === "first" ? rows[0] : document.getElementById(target);
+      if (!(el instanceof HTMLDetailsElement)) return;
+      for (const row of rows) {
+        if (row instanceof HTMLDetailsElement && row !== el) row.open = false;
+      }
+      el.open = true;
+    };
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
   return (
     <ReviewAppearanceFrame>
       <PageHeader title={copy.list.title} description={copy.list.description} />
