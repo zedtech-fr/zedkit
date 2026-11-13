@@ -19,6 +19,14 @@ export function latestStatus(entries: readonly TimelineEntry[]): LatestStatus | 
   return last.status;
 }
 
+/** Copy sorted newest-first for the `/issues` accordion; does not mutate input. */
+export function entriesNewestFirst(entries: readonly TimelineEntry[]): TimelineEntry[] {
+  return [...entries].sort((a, b) => {
+    if (a.startedAt !== b.startedAt) return a.startedAt > b.startedAt ? -1 : 1;
+    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+  });
+}
+
 /** Sum of known step durations; `null` when every step is still running. */
 export function summedDurationMs(entries: readonly TimelineEntry[]): number | null {
   let total = 0;

@@ -14,6 +14,7 @@ import {
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
 import {
+  entriesNewestFirst,
   entryUpdatedAt,
   latestEntry,
   latestStatus,
@@ -636,6 +637,83 @@ test("latestEntry uses one runId when plan and implement share it", () => {
   assert.equal(last?.type, "implement");
 });
 
+test("entriesNewestFirst returns empty for no steps", () => {
+  assert.deepEqual(entriesNewestFirst([]), []);
+});
+
+test("entriesNewestFirst keeps a single step", () => {
+  const row = entry({ id: "only" });
+  assert.deepEqual(
+    entriesNewestFirst([row]).map((item) => item.id),
+    ["only"],
+  );
+});
+
+test("entriesNewestFirst lists later startedAt first", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+      entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+    ]).map((item) => item.id),
+    ["late", "early"],
+  );
+});
+
+test("entriesNewestFirst keeps id ascending when startedAt ties", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "z", startedAt: "2026-11-10T16:00:00.000Z" }),
+      entry({ id: "a", startedAt: "2026-11-10T16:00:00.000Z" }),
+    ]).map((item) => item.id),
+    ["a", "z"],
+  );
+});
+
+test("entriesNewestFirst sorts unsorted input by startedAt descending", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "mid", startedAt: "2026-11-10T17:00:00.000Z" }),
+      entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+      entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+    ]).map((item) => item.id),
+    ["late", "mid", "early"],
+  );
+});
+
+test("entriesNewestFirst does not mutate the input array", () => {
+  const rows = [
+    entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+  ];
+  entriesNewestFirst(rows);
+  assert.deepEqual(
+    rows.map((item) => item.id),
+    ["early", "late"],
+  );
+});
+
+test("listIssues stays oldest-first; entriesNewestFirst of those rows is newest-first", async () => {
+  const port = createFixtureReviewPort(
+    wrapper([
+      issue({
+        entries: [
+          entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+          entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+        ],
+      }),
+    ]),
+  );
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed[0].entries.map((item) => item.id),
+    ["early", "late"],
+  );
+  assert.deepEqual(
+    entriesNewestFirst(listed[0].entries).map((item) => item.id),
+    ["late", "early"],
+  );
+});
+
 test("issue and unlinked run paths format /issues/:n/runs/:id", () => {
   assert.equal(issueRunPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
   assert.equal(unlinkedRunPath(54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
@@ -1137,6 +1215,10 @@ test("inventory-scale timeline keeps plan and implement as two rows of one run",
     issue108.entries.map((row) => row.type),
     ["plan", "implement", "review", "improve"],
   );
+  assert.deepEqual(
+    entriesNewestFirst(issue108.entries).map((row) => row.type),
+    ["improve", "review", "implement", "plan"],
+  );
   assert.equal(issue108.entries[0].runId, "run-108-impl");
   assert.equal(issue108.entries[1].runId, "run-108-impl");
   assert.equal(issue108.entries[0].id, "108-plan");
@@ -1517,6 +1599,13 @@ test("list rows are closed native details; GitHub links stay in the panel", () =
   assert.doesNotMatch(list, /\/runs\/\$\{/);
 });
 
+test("detail timelines keep port order and do not import entriesNewestFirst", () => {
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.doesNotMatch(timeline, /entriesNewestFirst/);
+  assert.match(timeline, /<Timeline entries=\{issue\.entries\}/);
+  assert.match(timeline, /<Timeline[\s\S]*entries=\{pullRequest\.entries\}/);
+});
+
 test("unlinked and timeline links take their accessible name from visible title text", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
@@ -1562,6 +1651,7 @@ test("list stays in the shared wide frame and stacks title then meta below md", 
   assert.equal([...list.matchAll(/<details /g)].length, 2);
   assert.match(list, /<RowSummary[\s\S]*meta=\{[\s\S]*UpdatedAgo/);
   assert.match(list, /<StepsPanel[\s\S]*copy\.issue\.timelineEmpty/);
+  assert.match(list, /entriesNewestFirst\(entries\)/);
   assert.match(list, /issueOpenTarget/);
   assert.match(list, /addEventListener\("hashchange"/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
