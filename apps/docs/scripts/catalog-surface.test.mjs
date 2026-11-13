@@ -130,6 +130,18 @@ test("catalog cells use compact padding", () => {
   assert.doesNotMatch(results, /surface-pad-md/);
 });
 
+test("catalog title links floor the 24px hit target without shrinking to zero", () => {
+  const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
+  const cell = functionSource(results, "CatalogCell");
+  const titleClass = cell.match(/data-catalog-title=""\s+className="([^"]+)"/);
+  assert.equal(titleClass !== null, true);
+  assert.match(titleClass[1], /hit-target/);
+  assert.doesNotMatch(titleClass[1], /content-shrink/);
+  assert.match(css, /\[data-catalog-title\]/);
+  assert.match(css, /min-width:\s*24px/);
+});
+
 test("catalog result cells lift on hover and focus; counters stay still", () => {
   const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
   const counters = read("app/(site)/catalog/_catalog/catalog-counters.tsx");

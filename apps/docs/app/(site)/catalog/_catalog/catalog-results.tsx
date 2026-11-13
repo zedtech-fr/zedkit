@@ -8,7 +8,11 @@ function CatalogCell({ entry }: { entry: CatalogIndexEntry }) {
   return (
     <Stack gap="tight" data-catalog-cell="" className="content-shrink hover-lift surface-pad-compact">
       <Stack direction="horizontal" gap="sm" className="items-start justify-between">
-        <Link href={entry.href} className="content-shrink font-medium link-offset focus-ring hover:underline">
+        <Link
+          href={entry.href}
+          data-catalog-title=""
+          className="hit-target font-medium link-offset focus-ring hover:underline"
+        >
           {entry.title}
         </Link>
         <MaturityBadge status={entry.status} />
