@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+import { siteChromeCopy } from "../ui/i18n/site-chrome-copy";
 
 const HOME_NAME = siteChromeCopy.brand.homeAriaLabel;
 

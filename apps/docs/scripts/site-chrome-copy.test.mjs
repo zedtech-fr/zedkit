@@ -11,19 +11,19 @@ import {
 } from "../lib/site-links.mjs";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
-const { siteChromeCopy } = await import("../components/site-chrome/i18n/site-chrome-copy.ts");
+const { siteChromeCopy } = await import("../ui/i18n/site-chrome-copy.ts");
 
 const CONSUMERS = [
-  "components/site-chrome/mobile-header.tsx",
-  "components/site-chrome/site-headers.tsx",
-  "components/site-chrome/header-actions.tsx",
-  "components/site-chrome/site-footer.tsx",
+  "ui/mobile-header.tsx",
+  "ui/site-headers.tsx",
+  "ui/home-header-actions.tsx",
+  "ui/site-footer.tsx",
   "lib/site-links.mjs",
-  "components/site-chrome/skip-link.tsx",
-  "components/site-chrome/site-brand.tsx",
-  "components/site-chrome/off-path-link.tsx",
-  "components/site-chrome/site-chrome-a11y.tsx",
-  "components/site-chrome/docs-sidebar.tsx",
+  "ui/skip-link.tsx",
+  "ui/site-brand.tsx",
+  "ui/off-path-link.tsx",
+  "ui/site-chrome-a11y.tsx",
+  "ui/docs-sidebar.tsx",
 ];
 
 function read(rel) {
@@ -85,27 +85,27 @@ test("footer link specs are the mockup short list from shared URL constants", ()
 });
 
 test("listed chrome files read catalog keys instead of English literals", () => {
-  const catalog = read("components/site-chrome/i18n/site-chrome-copy.ts");
+  const catalog = read("ui/i18n/site-chrome-copy.ts");
   assert.match(catalog, /English copy for site chrome\. Keys only; no markup\./);
   assert.doesNotMatch(catalog, /<[a-zA-Z]/);
 
-  const header = read("components/site-chrome/mobile-header.tsx");
-  const siteHeaders = read("components/site-chrome/site-headers.tsx");
-  const homeActions = read("components/site-chrome/header-actions.tsx");
-  const footer = read("components/site-chrome/site-footer.tsx");
-  const skip = read("components/site-chrome/skip-link.tsx");
-  const brand = read("components/site-chrome/site-brand.tsx");
+  const header = read("ui/mobile-header.tsx");
+  const siteHeaders = read("ui/site-headers.tsx");
+  const homeActions = read("ui/home-header-actions.tsx");
+  const footer = read("ui/site-footer.tsx");
+  const skip = read("ui/skip-link.tsx");
+  const brand = read("ui/site-brand.tsx");
 
   assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.menu/);
   assert.doesNotMatch(header, /siteChromeCopy\.nav\.docsPages/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
-  const docsSidebar = read("components/site-chrome/docs-sidebar.tsx");
+  const docsSidebar = read("ui/docs-sidebar.tsx");
   assert.match(docsSidebar, /siteChromeCopy\.nav\.docsPages/);
   assert.match(docsSidebar, /siteChromeCopy\.nav\.docsNavigation/);
   assert.doesNotMatch(docsSidebar, /"Docs pages"|"Documentation"/);
-  const searchTrigger = read("components/site-chrome/site-chrome.tsx");
+  const searchTrigger = read("ui/site-chrome.tsx");
   assert.match(searchTrigger, /siteChromeCopy\.search\.triggerAriaLabel/);
   assert.doesNotMatch(searchTrigger, /"Search documentation"|"Search the documentation"/);
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
@@ -127,8 +127,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(shell, /\[data-skip-link\]/);
   assert.match(shell, /bottom:\s*100%/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
-  const offPath = read("components/site-chrome/off-path-link.tsx");
-  const a11y = read("components/site-chrome/site-chrome-a11y.tsx");
+  const offPath = read("ui/off-path-link.tsx");
+  const a11y = read("ui/site-chrome-a11y.tsx");
   assert.match(a11y, /inert/);
   assert.match(a11y, /aria-hidden/);
   assert.match(offPath, /siteChromeCopy\.nav\.opensInNewTab/);

@@ -21,6 +21,7 @@
     "features",
     "components",
     "lib",
+    "ui",
     "content/gallery.ts",
     "content/catalog-index.ts",
     "source.config.ts",

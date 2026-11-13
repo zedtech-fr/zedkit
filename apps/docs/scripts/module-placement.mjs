@@ -13,7 +13,7 @@ export const REQUIRED_GLOBS = [];
 // features stay banned.
 export const REQUIRED_EDGES = [];
 
-const GRAPH_DIRS = ["app", "features", "components", "lib"];
+const GRAPH_DIRS = ["app", "features", "components", "lib", "ui"];
 const SOURCE_EXT = new Set([".ts", ".tsx", ".mjs", ".js", ".jsx", ".mdx"]);
 const RESOLVE_EXT = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".mdx"];
 const ROUTE_STEMS = new Set(["page", "layout", "route", "not-found", "opengraph-image", "sitemap", "robots"]);
@@ -41,7 +41,7 @@ function isDemoFile(file) {
 function isSharedCheck(file) {
   const n = posixPath(file);
   if (isDemoFile(n) || isTestFile(n)) return false;
-  return n.startsWith("components/") || n.startsWith("lib/");
+  return n.startsWith("components/") || n.startsWith("lib/") || n.startsWith("ui/");
 }
 
 function stem(file) {

@@ -51,15 +51,15 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list, docs, identity). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
-  `components/` (chrome in `components/site-chrome/`). `ui/` is dissolved;
-  do not add files there. `REQUIRED_GLOBS` is empty
+  `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
+  is dissolving; do not add a fifth home there. `REQUIRED_GLOBS` is empty
   after the home lot. Directory globs silently absorb new files; do not add
   under them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order:
   move the files, regen, drop the glob, regen again.
 - Pure helpers used by two or more domains (and `.mjs` shared with
   `scripts/generate.mjs`): `lib/`.
 - Domain-free code: a zedkit package (check zedkit first).
-- One-way imports: `app → features → components → lib`. A feature does
+- One-way imports: `app → features → components/ui → lib`. A feature does
   not import another feature or app (compose in the route and pass props).
   A `_<name>` folder is imported only from its own route subtree.
   `prose/guides/` may import `features/docs` (docs-domain guides composing
@@ -144,14 +144,16 @@ reject dead `/r/<name>.json` links.
   is local-only, never a merge gate. A new spec must be listed in the
   `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
   or `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
-  `test-results/`. Intended truncation that is not `truncate` /
-  `line-clamp-*` uses `data-allow-clip` plus a `CLIP_EXCEPTIONS` row in
-  `tests/a11y-exceptions.mjs` (owner and `removeBy`, same as axe excludes).
+  `test-results/`. Generated evidence PNGs under `tests/evidence/` are
+  gitignored; attach them on the PR, never commit. Intended truncation
+  that is not `truncate` / `line-clamp-*` uses `data-allow-clip` plus a
+  `CLIP_EXCEPTIONS` row in `tests/a11y-exceptions.mjs` (owner and
+  `removeBy`, same as axe excludes).
   The overflow detector already skips visually-hidden nodes (sr-only, clip /
   clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
   ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
   Home smoke exact-text must quote a string from
-  `app/(home)/_home/i18n/*-copy.ts` or `components/site-chrome/i18n/site-chrome-copy.ts`; do not
+  `app/(home)/_home/i18n/*-copy.ts` or `ui/i18n/site-chrome-copy.ts`; do not
   invent a sentence in the spec.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set

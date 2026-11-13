@@ -47,8 +47,8 @@ const MOCKUP_SWATCHES = [
   { id: "page", name: "Page", hex: "#FFFFFF", token: "--zk-site-page", hsl: "0 0% 100%" },
   { id: "band", name: "Band", hex: "#FAFAFA", token: "--zk-site-band", hsl: "0 0% 98%" },
   { id: "hairline", name: "Hairline", hex: "#E4E4E7", token: "--zk-site-hairline", hsl: "240 5.9% 90%" },
-  { id: "body", name: "Body text", hex: "#4E4E56", token: "--muted-foreground", hsl: "240 5% 32%" },
-  { id: "ink", name: "Ink", hex: "#09090B", token: "--foreground", hsl: "240 10% 3.9%" },
+  { id: "body", name: "Body text", hex: "#4E4E56", token: "--zk-site-body", hsl: "240 5% 32%" },
+  { id: "ink", name: "Ink", hex: "#09090B", token: "--zk-site-ink", hsl: "240 10% 3.9%" },
   { id: "action", name: "Action", hex: "#18181B", token: "--zk-site-action", hsl: "240 5.9% 10%" },
   { id: "indigo", name: "Indigo", hex: "#2B23C7", token: "--primary", hsl: "243 70% 46%" },
   { id: "violet", name: "Violet", hex: "#A171F4", token: "--accent", hsl: "262 85% 70%" },
@@ -191,9 +191,10 @@ test("guide wires Color and Type only and does not import dropped bands", () => 
   }
   const color = readApp(`${FOUNDATIONS_UI}/foundations-color.tsx`);
   assert.doesNotMatch(color, /data-site-action/);
-  assert.match(color, /ThemeScope identity="glass"/);
-  assert.match(color, /<ThemeScope identity="glass">\{chip\}<\/ThemeScope>/);
-  assert.doesNotMatch(color, /<ThemeScope identity="glass">\{mark\}/);
+  assert.match(color, /ThemeScope identity="glass" mode="light"/);
+  assert.match(color, /<ThemeScope identity="glass" mode="light">\{chip\}<\/ThemeScope>/);
+  assert.doesNotMatch(color, /<ThemeScope identity="glass" mode="light">\{mark\}/);
+  assert.doesNotMatch(color, /<ThemeScope[\s\S]*typeRole="label"[\s\S]*<\/ThemeScope>/);
   assert.doesNotMatch(color, /variant="glass"/);
   assert.doesNotMatch(color, /#[0-9A-Fa-f]{3,8}/);
   assert.match(color, /data-foundations-swatch/);
@@ -246,17 +247,33 @@ test("hero is a grey band with 40px title overlay, intro, and glass callout", ()
     typography,
     /\[data-foundations-hero\][\s\S]{0,200}--zk-type-h1-size:\s*var\(--zk-foundations-title-size\)/,
   );
-  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,500}--foreground:\s*240 10% 3\.9%/);
-  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,500}--muted-foreground:\s*240 5% 32%/);
+  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,500}--foreground:\s*var\(--zk-site-ink\)/);
+  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,500}--muted-foreground:\s*var\(--zk-site-body\)/);
   assert.match(typography, /\[data-foundations-hero\][\s\S]{0,600}color:\s*hsl\(var\(--foreground\)\)/);
   assert.match(typography, /\[data-palette-dots\][\s\S]{0,300}repeat\(auto-fit, minmax\(/);
+  assert.match(
+    typography,
+    /@media \(min-width:\s*90rem\)[\s\S]*?\[data-palette-dots\][\s\S]*?repeat\(8,\s*minmax\(0,\s*1fr\)\)/,
+  );
+  assert.match(
+    typography,
+    /@media \(min-width:\s*90rem\)[\s\S]*?\[data-palette-dots\][\s\S]*?min-width:\s*0/,
+  );
+  assert.match(
+    typography,
+    /\[data-foundations-swatch="body"\][\s\S]{0,80}background-color:\s*hsl\(var\(--zk-site-body\)\)/,
+  );
+  assert.match(
+    typography,
+    /\[data-foundations-swatch="ink"\][\s\S]{0,80}background-color:\s*hsl\(var\(--zk-site-ink\)\)/,
+  );
 });
 
 test("foundations chrome skips docs article chrome and keeps search", () => {
   const page = readApp("app/docs/[[...slug]]/page.tsx");
   const layout = readApp("app/docs/[[...slug]]/layout.tsx");
-  const headers = readApp("components/site-chrome/site-headers.tsx");
-  const mobile = readApp("components/site-chrome/mobile-header.tsx");
+  const headers = readApp("ui/site-headers.tsx");
+  const mobile = readApp("ui/mobile-header.tsx");
   const nav = readApp("lib/site-nav-data.ts");
   const mdxComponents = readApp("mdx-components.tsx");
   const typography = readApp("app/docs-typography.css");
@@ -312,4 +329,202 @@ test("guide-only modules left components/ and lib/", () => {
     new RegExp(`import \\{ ZedkitShadcnFaq \\} from "@/${ZEDKIT_SHADCN}/ui/zedkit-shadcn-faq"`),
   );
   assert.match(faqMdx, /<ZedkitShadcnFaq \/>/);
+});
+
+const AA = 4.5;
+const IDENTITIES = ["mist", "press", "tide", "volt", "maison", "glass"];
+const MODES = ["light", "dark"];
+const IDENTITY_DIR = join(ROOT, "packages/ui/src/identities");
+const STYLES_PATH = join(ROOT, "packages/ui/src/styles.css");
+
+function stripComments(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+function parseTriplet(value) {
+  const match = value.trim().match(/^([\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/);
+  if (!match) throw new Error(`not an H S% L% triplet: ${value}`);
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function hslToRgb(h, s, l) {
+  s /= 100;
+  l /= 100;
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [f(0), f(8), f(4)];
+}
+
+function luminance([r, g, b]) {
+  const linear = [r, g, b].map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+}
+
+function contrast(fg, bg) {
+  const [a, b] = [luminance(hslToRgb(...fg)), luminance(hslToRgb(...bg))];
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+
+function ruleBody(css, selectorRe, label) {
+  for (const match of stripComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selector = (match[1] ?? "").replace(/\s+/g, " ").trim();
+    if (selectorRe.test(selector)) return match[2] ?? "";
+  }
+  throw new Error(`missing rule ${label}`);
+}
+
+function tokenValue(body, name, label) {
+  const match = body.match(new RegExp(`--${name}:\\s*([^;]+);`));
+  if (!match) throw new Error(`--${name} missing from ${label}`);
+  return match[1].trim();
+}
+
+function stylesThemeBody(theme) {
+  const css = readFileSync(STYLES_PATH, "utf8");
+  const parts = css.split(/\.dark\s*\{/);
+  const body = theme === "light" ? parts[0] : parts[1];
+  if (!body) throw new Error(`styles.css ${theme} block missing`);
+  return body;
+}
+
+function identityPalette(id, mode) {
+  if (id === "mist") {
+    const body = stylesThemeBody(mode);
+    const label = `mist ${mode} styles.css`;
+    return {
+      background: parseTriplet(tokenValue(body, "background", label)),
+      foreground: parseTriplet(tokenValue(body, "foreground", label)),
+      muted: parseTriplet(tokenValue(body, "muted", label)),
+      mutedForeground: parseTriplet(tokenValue(body, "muted-foreground", label)),
+    };
+  }
+  const css = readFileSync(join(IDENTITY_DIR, `${id}.css`), "utf8");
+  let light;
+  let dark;
+  for (const match of stripComments(css).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selector = (match[1] ?? "").replace(/\s+/g, " ").trim();
+    const body = match[2] ?? "";
+    if (!selector.includes(`data-identity="${id}"`)) continue;
+    if (!body.includes("--muted-foreground:")) continue;
+    if (selector.includes(".dark")) dark = body;
+    else light = body;
+  }
+  const body = mode === "dark" ? dark : light;
+  const label = `${id} ${mode}`;
+  if (!body) throw new Error(`missing ${label} palette`);
+  return {
+    background: parseTriplet(tokenValue(body, "background", label)),
+    foreground: parseTriplet(tokenValue(body, "foreground", label)),
+    muted: parseTriplet(tokenValue(body, "muted", label)),
+    mutedForeground: parseTriplet(tokenValue(body, "muted-foreground", label)),
+  };
+}
+
+function siteShellTokens() {
+  const css = readApp("app/docs-shell-tokens.css");
+  const site = ruleBody(css, /^html\[data-docs-shell\]\[data-identity\]$/, "html docs-shell identity");
+  return {
+    band: parseTriplet(tokenValue(site, "zk-site-band", "site-band")),
+    ink: parseTriplet(tokenValue(site, "zk-site-ink", "site-ink")),
+    body: parseTriplet(tokenValue(site, "zk-site-body", "site-body")),
+  };
+}
+
+function lightShellPage() {
+  const css = readApp("app/docs-shell-tokens.css");
+  const lightPage = ruleBody(
+    css,
+    /^html\[data-docs-shell\]:not\(\.dark\):not\(\[data-identity="custom"\]\)$/,
+    "light docs-shell page",
+  );
+  return {
+    background: parseTriplet(tokenValue(lightPage, "background", "light page")),
+    foreground: parseTriplet(tokenValue(lightPage, "foreground", "light page foreground")),
+    muted: parseTriplet(tokenValue(lightPage, "muted", "light muted")),
+    mutedForeground: parseTriplet(tokenValue(lightPage, "muted-foreground", "light muted-foreground")),
+  };
+}
+
+function pageTokens(id, mode) {
+  if (mode === "light") return lightShellPage();
+  return identityPalette(id, mode);
+}
+
+test("foundations hero heading and intro contrast against the band in every look", () => {
+  const site = siteShellTokens();
+  const h1 = contrast(site.ink, site.band);
+  const intro = contrast(site.body, site.band);
+  assert.ok(h1 >= AA, `hero h1 vs band ${h1.toFixed(2)}`);
+  assert.ok(intro >= AA, `hero intro vs band ${intro.toFixed(2)}`);
+  const typography = readApp("app/docs-typography.css");
+  const hero = ruleBody(
+    stripComments(typography),
+    /\[data-foundations-hero\]$/,
+    "foundations hero",
+  );
+  assert.equal(tokenValue(hero, "foreground", "hero foreground"), "var(--zk-site-ink)");
+  assert.equal(tokenValue(hero, "muted-foreground", "hero muted"), "var(--zk-site-body)");
+  assert.match(hero, /color:\s*hsl\(var\(--foreground\)\)/);
+  for (const id of IDENTITIES) {
+    for (const mode of MODES) {
+      identityPalette(id, mode);
+      assert.ok(h1 >= AA, `${id} ${mode} h1 still uses site ink`);
+      assert.ok(intro >= AA, `${id} ${mode} intro still uses site body`);
+    }
+  }
+});
+
+test("foundations Color labels contrast against the page in dark in every look", () => {
+  for (const id of IDENTITIES) {
+    const page = pageTokens(id, "dark");
+    const nameRatio = contrast(page.foreground, page.background);
+    const hexRatio = contrast(page.mutedForeground, page.background);
+    assert.ok(
+      nameRatio >= AA,
+      `${id} dark Color name ${nameRatio.toFixed(2)}:1 vs page background`,
+    );
+    assert.ok(
+      hexRatio >= AA,
+      `${id} dark Color hex ${hexRatio.toFixed(2)}:1 vs page background`,
+    );
+  }
+});
+
+test("catalog and component-page leads meet 4.5 on their own surfaces", () => {
+  for (const id of IDENTITIES) {
+    for (const mode of MODES) {
+      const page = pageTokens(id, mode);
+      const catalogLead = contrast(page.mutedForeground, page.muted);
+      const catalogH1 = contrast(page.foreground, page.muted);
+      const componentLead = contrast(page.mutedForeground, page.background);
+      const componentH1 = contrast(page.foreground, page.background);
+      assert.ok(
+        catalogLead >= AA,
+        `catalog lead ${id} ${mode} ${catalogLead.toFixed(2)}:1 vs muted`,
+      );
+      assert.ok(
+        catalogH1 >= AA,
+        `catalog h1 ${id} ${mode} ${catalogH1.toFixed(2)}:1 vs muted`,
+      );
+      assert.ok(
+        componentLead >= AA,
+        `component lead ${id} ${mode} ${componentLead.toFixed(2)}:1 vs page`,
+      );
+      assert.ok(
+        componentH1 >= AA,
+        `component h1 ${id} ${mode} ${componentH1.toFixed(2)}:1 vs page`,
+      );
+    }
+  }
+});
+
+test("hero copy stays the outcome sentence and Color Type stay proof", () => {
+  const hero = readApp(`${FOUNDATIONS_UI}/foundations-hero.tsx`);
+  assert.doesNotMatch(hero, /want Color and Type on the first screens/);
+  assert.match(hero, /Color \/ Type stay below as proof/);
+  assert.equal(
+    foundationsCopy.hero.intro,
+    "White pages, zinc text, black actions. Color lives in panels, and glass sits on top of them.",
+  );
 });

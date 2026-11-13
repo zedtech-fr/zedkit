@@ -96,8 +96,8 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   /* Band is the light shell surface; identity dark --foreground is pale on it.
    * Pin the variables and `color`: inherited computed color from html.dark
    * would ignore the variable. */
-  --foreground: 240 10% 3.9%;
-  --muted-foreground: 240 5% 32%;
+  --foreground: var(--zk-site-ink);
+  --muted-foreground: var(--zk-site-body);
   color: hsl(var(--foreground));
   background-color: hsl(var(--zk-site-band));
   border-bottom: var(--zk-border-width, 1px) solid hsl(var(--zk-site-hairline));
@@ -115,6 +115,15 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   gap: calc(var(--spacing) * 4);
+}
+
+@media (min-width: 90rem) {
+  #nd-page[data-foundations-page] [data-palette-dots] {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  #nd-page[data-foundations-page] [data-palette-dots] > * {
+    min-width: 0;
+  }
 }
 
 #nd-page[data-foundations-page] [data-foundations-swatch] {
@@ -139,11 +148,11 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 }
 
 #nd-page[data-foundations-page] [data-foundations-swatch="body"] {
-  background-color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--zk-site-body));
 }
 
 #nd-page[data-foundations-page] [data-foundations-swatch="ink"] {
-  background-color: hsl(var(--foreground));
+  background-color: hsl(var(--zk-site-ink));
 }
 
 #nd-page[data-foundations-page] [data-foundations-swatch="action"] {
