@@ -689,7 +689,8 @@ jobs:
 
   # Overflow, axe (serious/critical) and clipped-text on routes the diff
   # touches. Reuses docs-out. Skip when `docs` is false (same detector as
-  # docs-smoke). Not an E2E journey suite.
+  # docs-smoke). Looks grid when the mapper trigger is on (token, primitive,
+  # or identity sheet). Not an E2E journey suite.
   docs-render:
     runs-on: ubuntu-latest
     timeout-minutes: 6
@@ -738,6 +739,11 @@ jobs:
             exit 1
           fi
           echo "DOCS_ROUTES=$DOCS_ROUTES"
+          DOCS_LOOKS="$(printf '%s\n' "$files" | node scripts/docs-render-routes.mjs --looks)"
+          if [ -n "$DOCS_LOOKS" ]; then
+            export DOCS_LOOKS
+            echo "DOCS_LOOKS=$DOCS_LOOKS"
+          fi
           pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
           echo $! > /tmp/docs.pid
           trap 'kill "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
