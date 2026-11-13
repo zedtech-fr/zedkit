@@ -64,7 +64,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`. | `identity-look-form.test.mjs` | 2026-11-13 |
-| Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
+| Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. Lives in `features/identity/ui/`, not `lib/`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |
 | Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/dock/ui/`; persist key `zk-identity-dock-v2`. | `*.test.mjs` | 2026-11-13 |
 | Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
@@ -91,7 +91,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |
-| Docs module-placement ratchet | `.agents/atlas/ci-gates.md` | Import graph baseline may only shrink; `--write-baseline` refuses growth. | `module-placement.test.mjs` | 2026-11-13 |
+| Docs module-placement ratchet | `.agents/atlas/ci-gates.md` | Empty baseline is the success state; `--write-baseline` may write empty arrays and still refuses growth. | `module-placement.test.mjs` | 2026-11-13 |
 | Catalog page filters and results | `.agents/atlas/docs-site.md` | Default area is UI; empty URL = UI; `size=sm` chips need `text-dense`. | `catalog-filter.test.mjs` | 2026-11-12 |
 | Site-only text roles | `.agents/atlas/design-system.md` | Specimen/demo/home roles live with the site, not in the package. | `apps/docs/` | 2026-11-08 |
 | Adoption smoke dev server port | `.agents/atlas/setup-ai.md` | Next.js refuses 3659 inside 3400–3799. | `pnpm adoption:smoke` | 2026-11-13 |

@@ -187,7 +187,7 @@
   padding-inline: 0;
 }
 
-/* Phones: one 24px gutter for the site (no extra inset stacked inside the bands or the hero example). */
+/* Phones: 24px gutter for the site (no extra inset stacked inside the bands or the hero example). Home at ≤430 is 16px via a higher-specificity #home-page overlay in _home/home.css (#411). */
 @media (max-width: 40rem) {
   :root[data-identity] {
     --zk-page-gutter: 1.5rem;

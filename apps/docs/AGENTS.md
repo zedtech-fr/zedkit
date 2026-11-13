@@ -60,7 +60,10 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   do not add files there. `REQUIRED_GLOBS` is empty
   after the home lot. Directory globs silently absorb new files; do not add
   under them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order:
-  move the files, regen, drop the glob, regen again.
+  move the files, regen, drop the glob, regen again. A `components/` or
+  `lib/` file whose only owner is `app/layout.tsx` is site chrome (the root
+  layout wraps every route). Nested layouts (`app/(home)/layout.tsx`) stay
+  single-owner. If it is not site-wide, do not import it from the root layout.
 - Pure helpers used by two or more domains (and `.mjs` shared with
   `scripts/generate.mjs`): `lib/`.
 - Domain-free code: a zedkit package (check zedkit first).
@@ -81,10 +84,11 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   copy the inline data: URL resolver). `#*` maps to `app/`; `#scripts/*`
   is the dedicated subpath.
 - Baseline `apps/docs/scripts/module-placement.baseline.json` may only
-  shrink. Move the file; never extend the baseline.
-  `node apps/docs/scripts/module-placement.mjs --write-baseline`
-  regenerates from the live tree and refuses growth; it drops stale
-  entries after a move — do not add entries by hand.
+  shrink. Empty arrays are the success state. Move the file; never extend
+  the baseline. `node apps/docs/scripts/module-placement.mjs --write-baseline`
+  regenerates from the live tree, may write empty arrays, and refuses
+  growth; it drops stale entries after a move — do not add entries by hand.
+  `pnpm --filter @zedtech/zedkit-docs lint` runs `--check` against that file.
 
 ## Demo rules (blocking — the `ui` lens fails the review otherwise)
 

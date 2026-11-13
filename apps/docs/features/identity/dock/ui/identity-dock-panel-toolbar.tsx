@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconButton, Stack, Text } from "@zedtech/zedkit-ui";
 
-import { identityAssistantCopy as copy } from "@/components/i18n/identity-assistant-copy";
+import { identityAssistantCopy as copy } from "@/features/identity/dock/i18n/identity-assistant-copy";
 import { identityDockCopy } from "@/features/identity/dock/i18n/identity-dock-copy";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";

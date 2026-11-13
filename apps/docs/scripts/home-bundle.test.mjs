@@ -102,7 +102,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(lead, /\bTabs\b|TabsList|TabsTrigger|TabsContent|useState|HeroKitId|isHeroKit|heroKits/);
   assert.match(lead, /data-home-hero=/);
   assert.match(lead, /<HomeHeroIllustration\s*\/>/);
-  assert.match(copy, /title: "Can zedkit save you half your grey hairs\? Build something and find out\."/);
+  assert.match(copy, /title: "Want your next build twice as fast\? Build something with zedkit\."/);
   assert.match(
     copy,
     /sub: "The second time is faster, easier and better than the first\."/,
@@ -358,6 +358,11 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(heroCss, /max-width:\s*48rem/);
   assert.match(heroCss, /#home-page \[data-home-hero-sub\]/);
   assert.match(heroCss, /max-width:\s*32\.5rem/);
+  const homePhoneGutter = heroCss.match(
+    /@media \(width\s*<=\s*430px\) \{\s*#home-page \{([^}]*--zk-page-gutter:\s*1rem;[^}]*)\}/,
+  );
+  assert.ok(homePhoneGutter, "home ≤430 overlay sets --zk-page-gutter 1rem");
+  assert.doesNotMatch(homePhoneGutter[1], /--zk-type-h1-size/);
   assert.match(heroCss, /#home-page \[data-home-hero-band\]/);
   assert.match(heroCss, /padding-top:\s*var\(--zk-section-md\)/);
   assert.doesNotMatch(signatureCss, /\[data-home-hero-lead\] h1/);
