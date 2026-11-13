@@ -15,7 +15,7 @@ function SwatchMark({ swatch }: { swatch: FoundationsSwatch }) {
   );
   return (
     <Stack gap="tight">
-      {swatch.scope === "panel" ? <ThemeScope identity="glass">{chip}</ThemeScope> : chip}
+      {swatch.scope === "panel" ? <ThemeScope identity="glass" mode="light">{chip}</ThemeScope> : chip}
       <Text typeRole="label">{copy.swatches[swatch.id]}</Text>
       <Text typeRole="small" variant="muted" className="font-mono">
         {swatch.hex}

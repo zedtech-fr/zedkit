@@ -11,7 +11,7 @@ import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 registerDocsAlias(import.meta.url);
 
 const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
-const { colorInputHex } = await import("@/lib/identity-simple-value");
+const { colorInputHex } = await import("./identity-simple-value.ts");
 const { docsSiteDefaultTokens, docsSiteTokensEqual } = await import("./docs-site-default-tokens.ts");
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../../../..");
