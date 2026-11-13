@@ -1832,7 +1832,7 @@ test("unlinked and timeline links take their accessible name from visible title 
   assert.match(timeline, /href=\{entry\.liveUrl\}/);
   assert.match(row, /copy\.type\[entry\.type\]/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
-  assert.match(row, /ariaLabel=\{`\$\{copy\.issue\.viewLog\}/);
+  assert.doesNotMatch(row, /ariaLabel=\{`\$\{copy\.issue\.viewLog\}/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
 });
 
@@ -1858,10 +1858,7 @@ test("timeline step cells are one log link with a View log button", () => {
   const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  assert.match(
-    row,
-    /CompactLogLink[\s\S]*href=\{logHref\}[\s\S]*copy=\{copy\}[\s\S]*className=\{logCellClass\}/,
-  );
+  assert.match(row, /CompactLogLink href=\{logHref\} copy=\{copy\} className=\{logCellClass\}/);
   assert.match(row, /href !== null && href\.startsWith\("\/"\)/);
   assert.match(row, /log=\{false\}/);
   assert.match(row, /focus-ring-control/);
@@ -1880,9 +1877,11 @@ test("timeline step cells are one log link with a View log button", () => {
   assert.doesNotMatch(row, /function TimelineRowLink/);
   assert.match(detail, /<TimelineRow entry=\{entry\} href=\{entry\.liveUrl\}/);
   assert.match(timeline, /<TimelineRow entry=\{entry\} href=\{entry\.liveUrl\}/);
+  assert.match(detail, /CompactLogLink href=\{href\} copy=\{copy\}/);
   assert.match(detail, /githubIssueHref/);
   assert.match(detail, /githubPullHref/);
-  assert.match(detail, /<DetailPanel variant="grid"/);
+  const metaThenRows = /DetailMeta[\s\S]*TimelineRow/;
+  assert.match(detail, metaThenRows);
   assert.doesNotMatch(row, /githubIssueHref|githubPullHref/);
 });
 
