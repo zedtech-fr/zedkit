@@ -19,7 +19,7 @@ const source = readFileSync(
   "utf8",
 );
 
-test("primary nav is AI, UI, Docs, Catalog with those hrefs", () => {
+test("primary nav is AI, UI, Docs, Catalog, Issues with those hrefs", () => {
   assert.deepEqual(
     sitePrimaryNavLinks().map((link) => ({ text: link.text, href: link.href, active: link.active })),
     [
@@ -27,18 +27,22 @@ test("primary nav is AI, UI, Docs, Catalog with those hrefs", () => {
       { text: "UI", href: "/docs/foundations", active: "url" },
       { text: "Docs", href: "/docs", active: "url" },
       { text: "Catalog", href: "/catalog", active: "url" },
+      { text: "Issues", href: "/issues", active: "nested-url" },
     ],
   );
 });
 
-test("primary nav texts do not include Reviews or Issues", () => {
-  const texts = sitePrimaryNavLinks().map((link) => link.text);
+test("primary nav texts include Issues and never Reviews", () => {
+  const links = sitePrimaryNavLinks();
+  const texts = links.map((link) => link.text);
   assert.equal(texts.includes("Reviews"), false);
-  assert.equal(texts.includes("Issues"), false);
-  assert.equal(
-    sitePrimaryNavLinks().some((link) => link.external === true),
-    false,
+  assert.deepEqual(
+    links.find((link) => link.text === "Issues"),
+    { text: "Issues", href: "/issues", active: "nested-url" },
   );
+  assert.equal(links.some((link) => link.external === true), false);
+  const hrefs = links.map((link) => link.href);
+  assert.equal(new Set(hrefs).size, hrefs.length);
 });
 
 test("changelog is not a primary or desktop header item", () => {
@@ -62,7 +66,7 @@ test("desktop header links are the primary list only", () => {
   const header = siteHeaderLinks();
   assert.deepEqual(
     header.map((item) => item.text),
-    ["AI", "UI", "Docs", "Catalog"],
+    ["AI", "UI", "Docs", "Catalog", "Issues"],
   );
   assert.deepEqual(
     header.map((item) => ({ text: item.text, url: item.url, active: item.active })),
@@ -97,7 +101,7 @@ test("isFoundationsPath is only the foundations guide URL", () => {
   assert.equal(isFoundationsPath("/catalog"), false);
 });
 
-const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog"];
+const PRIMARY_LINK_TEXTS = ["AI", "UI", "Docs", "Catalog", "Issues"];
 
 test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav disclosure never", () => {
   assert.match(source, /GitHub is always mounted/);
@@ -106,7 +110,7 @@ test("siteHeaderChrome policy is GitHub always; theme, version, and a site-nav d
   assert.doesNotMatch(source, /github:\s*true|theme:\s*false|siteNavDisclosure:\s*false/);
 });
 
-test("home phone chrome exposes the four links, GitHub, and Get started — no search, theme, version, or site-nav disclosure", () => {
+test("home phone chrome exposes the five links, GitHub, and Get started — no search, theme, version, or site-nav disclosure", () => {
   const chrome = siteHeaderChrome("/");
   assert.deepEqual(
     chrome.links.map((link) => ({ text: link.text, href: link.href })),
@@ -115,6 +119,7 @@ test("home phone chrome exposes the four links, GitHub, and Get started — no s
       { text: "UI", href: "/docs/foundations" },
       { text: "Docs", href: "/docs" },
       { text: "Catalog", href: "/catalog" },
+      { text: "Issues", href: "/issues" },
     ],
   );
   assert.equal(chrome.search, false);
@@ -125,7 +130,7 @@ test("home phone chrome exposes the four links, GitHub, and Get started — no s
     false,
   );
   assert.equal(
-    chrome.links.some((link) => /reviews|issues/i.test(link.text)),
+    chrome.links.some((link) => /reviews/i.test(link.text)),
     false,
   );
 });
@@ -175,5 +180,23 @@ test("exact url matching does not current-state Docs on an AI or UI page", () =>
   ];
   for (const [pathname, link, expected] of cases) {
     assert.equal(isSiteNavLinkActive(pathname, link), expected, `${pathname} vs ${link.href} (${link.active ?? "none"})`);
+  }
+});
+
+test("Issues nested-url is current on public run history paths, not sibling prefixes", () => {
+  const issues = { text: "Issues", href: "/issues", active: "nested-url" };
+  const cases = [
+    ["/", false],
+    ["/issues", true],
+    ["/issues/", true],
+    ["/issues/108", true],
+    ["/issues/108/runs/x", true],
+    ["/issues/pr/54", true],
+    ["/issues-foo", false],
+    ["/catalog", false],
+    ["/docs", false],
+  ];
+  for (const [pathname, expected] of cases) {
+    assert.equal(isSiteNavLinkActive(pathname, issues), expected, pathname);
   }
 });

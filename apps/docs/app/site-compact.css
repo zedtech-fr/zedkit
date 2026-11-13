@@ -164,7 +164,8 @@
   gap: 1.5rem;
 }
 :root[data-identity] :is(#nd-nav[data-home-header] nav ul, #nd-nav[data-catalog-header] nav ul, #nd-nav[data-docs-header] nav ul) {
-  gap: 1.5rem;
+  /* Five primary items (#303 Issues) must stay one 3.5rem row at 809. */
+  gap: 1rem;
 }
 :root[data-identity] :is(#nd-nav[data-home-header], #nd-nav[data-catalog-header], #nd-nav[data-docs-header], #nd-mobile-nav) [data-header-actions] {
   gap: 1rem;

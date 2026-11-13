@@ -79,7 +79,7 @@ function MarketingDesktopNav({
  * Client personas: integrating developers who own the consuming app.
  * Customers: those same developers (this site is the product surface).
  * Customer personas: first visit on `/` — next action is Get started or Docs, not search or a version chip.
- * UI decisions: home header is brand + AI/UI/Docs/Catalog + GitHub text + Get started, because customer = first-visit integrator on `/`.
+ * UI decisions: home header is brand + AI/UI/Docs/Catalog/Issues + GitHub text + Get started, because customer = first-visit integrator on `/`.
  */
 function HomeDesktopHeader() {
   return (
