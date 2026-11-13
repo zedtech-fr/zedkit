@@ -80,6 +80,9 @@ reject dead `/r/<name>.json` links.
   `test-results/`. Intended truncation that is not `truncate` /
   `line-clamp-*` uses `data-allow-clip` plus a `CLIP_EXCEPTIONS` row in
   `tests/a11y-exceptions.mjs` (owner and `removeBy`, same as axe excludes).
+  The overflow detector already skips visually-hidden nodes (sr-only, clip /
+  clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
+  ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set
   `DOCS_E2E_BASE_URL` to the port `serve` actually bound:

@@ -51,8 +51,15 @@ for (const route of routes) {
         problems.push(`${route} ${view.theme} @${view.width}: status ${response?.status()}`);
         continue;
       }
-      await page.evaluate(() =>
-        Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
+      // View timelines and infinite loops never settle; cap so / cannot hang.
+      await page.evaluate(
+        () =>
+          Promise.race([
+            Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
+            new Promise((resolve) => {
+              setTimeout(resolve, 2000);
+            }),
+          ]),
       );
       const wantDark = view.theme === "dark";
       const themeApplied = await page
@@ -71,24 +78,42 @@ for (const route of routes) {
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
       if (sideways > 1) problems.push(`${route} @${view.width}/${view.theme}: ${sideways}px sideways scroll`);
-      const metrics = await page.evaluate(() =>
-        [...document.querySelectorAll("*")].map((node) => {
+      // Skip 1×1 and non-overflowing nodes before getComputedStyle / text.
+      // Walking textContent on every * is quadratic and times out on /.
+      const metrics = await page.evaluate(() => {
+        const out = [];
+        for (const node of document.querySelectorAll("*")) {
+          const clientWidth = node.clientWidth;
+          const clientHeight = node.clientHeight;
+          if (clientWidth <= 1 && clientHeight <= 1) continue;
+          const scrollWidth = node.scrollWidth;
+          const scrollHeight = node.scrollHeight;
+          if (scrollWidth <= clientWidth + 1 && scrollHeight <= clientHeight + 1) continue;
           const style = getComputedStyle(node);
-          return {
+          let text = "";
+          for (const child of node.childNodes) {
+            if (child.nodeType === Node.TEXT_NODE) text += child.nodeValue ?? "";
+          }
+          out.push({
             tag: node.tagName,
             className: typeof node.className === "string" ? node.className : "",
-            text: (node.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 40),
+            text: text.replace(/\s+/g, " ").trim().slice(0, 40),
             overflowX: style.overflowX,
             overflowY: style.overflowY,
             textOverflow: style.textOverflow,
-            scrollWidth: node.scrollWidth,
-            clientWidth: node.clientWidth,
-            scrollHeight: node.scrollHeight,
-            clientHeight: node.clientHeight,
+            lineClamp: style.getPropertyValue("-webkit-line-clamp") || style.getPropertyValue("line-clamp"),
+            clip: style.clip,
+            clipPath: style.clipPath,
+            scrollWidth,
+            clientWidth,
+            scrollHeight,
+            clientHeight,
             allowClip: node.hasAttribute("data-allow-clip"),
-          };
-        }),
-      );
+            scrollViewport: node.hasAttribute("data-radix-scroll-area-viewport"),
+          });
+        }
+        return out;
+      });
       for (const hit of clippedTextHits(metrics)) {
         const where = hit.locator ? ` ${hit.locator}` : "";
         problems.push(`${route} @${view.width}/${view.theme}: clipped ${hit.kind} <${hit.tag}>${where}`);

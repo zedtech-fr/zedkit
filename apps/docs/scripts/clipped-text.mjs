@@ -1,16 +1,36 @@
 /** Pure clipped-text check for UI DoD v2. Metrics in, hits out. No Playwright.
- * `allowClip` is `data-allow-clip`; register the node in CLIP_EXCEPTIONS. */
+ * `allowClip` is `data-allow-clip`; register the node in CLIP_EXCEPTIONS.
+ * Visually-hidden (sr-only, clip/clip-path hide, 1×1 boxes) is not a hit. */
 
-const SKIP_TAGS = new Set(["HTML", "BODY", "PRE", "CODE"]);
+const SKIP_TAGS = new Set(["HTML", "BODY", "PRE", "CODE", "INPUT", "TEXTAREA", "SELECT"]);
 const SCROLL = new Set(["auto", "scroll"]);
 const CLIP = new Set(["hidden", "clip"]);
+const SR_ONLY = /(?:^|\s)sr-only(?:\s|$)/u;
+const CLIP_RECT_ZERO = /^rect\((?:0|0px),(?:0|0px),(?:0|0px),(?:0|0px)\)$/u;
+const CLIP_PATH_HIDE = /^(?:inset\((?:50%|100%)(?:(?:50%|100%)){0,3}\)|circle\(0(?:px)?\))$/u;
 
 function intendedTruncate(el) {
   if (el.allowClip) return true;
   const cls = el.className ?? "";
   if (/(?:^|\s)truncate(?:\s|$)/u.test(cls)) return true;
   if (/(?:^|\s)line-clamp-/u.test(cls)) return true;
-  return false;
+  const clamp = Number.parseFloat(el.lineClamp);
+  return Number.isFinite(clamp) && clamp > 0;
+}
+
+function intendedScroll(el) {
+  if (SCROLL.has(el.overflowX) || SCROLL.has(el.overflowY)) return true;
+  // Radix ScrollArea viewport keeps overflow:hidden and still scrolls.
+  return Boolean(el.scrollViewport);
+}
+
+function visuallyHidden(el) {
+  if ((el.clientWidth ?? 0) <= 1 && (el.clientHeight ?? 0) <= 1) return true;
+  if (SR_ONLY.test(el.className ?? "")) return true;
+  const clip = (el.clip ?? "").replace(/\s+/gu, "").toLowerCase();
+  if (CLIP_RECT_ZERO.test(clip)) return true;
+  const clipPath = (el.clipPath ?? "").replace(/\s+/gu, "").toLowerCase();
+  return CLIP_PATH_HIDE.test(clipPath);
 }
 
 function hitLocator(el) {
@@ -31,11 +51,15 @@ function overflows(el) {
  *   overflowX?: string,
  *   overflowY?: string,
  *   textOverflow?: string,
+ *   lineClamp?: string | number,
+ *   clip?: string,
+ *   clipPath?: string,
  *   scrollWidth?: number,
  *   clientWidth?: number,
  *   scrollHeight?: number,
  *   clientHeight?: number,
  *   allowClip?: boolean,
+ *   scrollViewport?: boolean,
  * }>} elements
  */
 export function clippedTextHits(elements) {
@@ -43,7 +67,8 @@ export function clippedTextHits(elements) {
   for (const el of elements) {
     const tag = (el.tag ?? "").toUpperCase();
     if (SKIP_TAGS.has(tag)) continue;
-    if (SCROLL.has(el.overflowX) || SCROLL.has(el.overflowY)) continue;
+    if (visuallyHidden(el)) continue;
+    if (intendedScroll(el)) continue;
     if (intendedTruncate(el)) continue;
     const locator = hitLocator(el);
     const wide = CLIP.has(el.overflowX) && el.scrollWidth > el.clientWidth + 1;
