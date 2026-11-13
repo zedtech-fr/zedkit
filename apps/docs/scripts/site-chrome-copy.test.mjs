@@ -113,8 +113,12 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(icon, /siteChromeCopy\.search\.triggerAriaLabel/);
   assert.match(icon, /label=\{label\}/);
   assert.doesNotMatch(full, /triggerAriaLabel/);
-  assert.doesNotMatch(full, /aria-label/);
-  assert.doesNotMatch(full, /\btitle=/);
+  const spread = full.indexOf("{...props}");
+  const ariaOmit = full.indexOf("aria-label={undefined}");
+  const titleOmit = full.indexOf("title={undefined}");
+  assert.notEqual(spread, -1);
+  assert.ok(ariaOmit > spread, "full Search must drop slot aria-label after spread");
+  assert.ok(titleOmit > spread, "full Search must drop slot title after spread");
   assert.match(full, /focus-ring-control/);
   assert.doesNotMatch(searchTrigger, /"Search documentation"|"Search the documentation"/);
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
