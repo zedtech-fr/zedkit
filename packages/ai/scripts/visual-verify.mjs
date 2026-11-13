@@ -209,10 +209,13 @@ export function parseVisualVerifyArgs(args) {
       allowPositionals: false,
       options: {
         url: { type: "string" },
+        "base-url": { type: "string" },
         dir: { type: "string" },
         changed: { type: "boolean" },
         base: { type: "string" },
         routes: { type: "string" },
+        widths: { type: "string" },
+        modes: { type: "string" },
         identities: { type: "string" },
         baseline: { type: "string" },
         out: { type: "string" },
@@ -226,17 +229,24 @@ export function parseVisualVerifyArgs(args) {
   );
   if (!parsed.ok) return err(parsed.error);
   const v = parsed.value.values;
+  if (v.url && v["base-url"]) return err(new Error("pass only one of --url and --base-url"));
   const split = (value) =>
     String(value ?? "")
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
+  const routeTokens = split(v.routes);
+  const auto = routeTokens.includes("auto");
+  const widths = split(v.widths).map(Number).filter((n) => Number.isFinite(n) && n > 0);
+  const modes = split(v.modes);
   return ok({
-    url: v.url,
+    url: v.url ?? v["base-url"],
     dir: v.dir,
-    changed: v.changed === true,
+    changed: v.changed === true || auto,
     base: v.base,
-    routes: split(v.routes),
+    routes: routeTokens.filter((r) => r !== "auto"),
+    widths: widths.length > 0 ? widths : WIDTHS,
+    modes: modes.length > 0 ? modes : MODES,
     identities: v.identities === undefined ? undefined : split(v.identities),
     baseline: v.baseline,
     out: v.out,
@@ -248,11 +258,13 @@ export function parseVisualVerifyArgs(args) {
   });
 }
 
-export function usageVisualVerify() {
+export function usageVisualVerify(command = "visual-verify") {
+  const name = command === "evidence" ? "evidence" : "visual-verify";
+  const fallback = `zedkit-ai ${name} [--url <origin> | --dir <static-export>]`;
   const read = tryCatch(() => readFileSync(new URL("../kit/usage.txt", import.meta.url), "utf8"));
-  if (!read.ok) return "zedkit-ai visual-verify [--url <origin> | --dir <static-export>]";
-  const block = /(?:^|\n) {2}(visual-verify [\s\S]*?)(?=\n {2}[a-z-]|$)/u.exec(read.value)?.[1]?.trim();
-  return block ? `zedkit-ai ${block}` : "zedkit-ai visual-verify [--url <origin> | --dir <static-export>]";
+  if (!read.ok) return fallback;
+  const block = new RegExp(`(?:^|\\n) {2}(${name} [\\s\\S]*?)(?=\\n {2}[a-z-]|$)`, "u").exec(read.value)?.[1]?.trim();
+  return block ? `zedkit-ai ${block}` : fallback;
 }
 
 function git(cwd, gitArgs) {
@@ -417,7 +429,21 @@ async function readPageFacts(page) {
         frame: fr ? { left: fr.left, right: fr.right, top: fr.top, bottom: fr.bottom } : null,
       };
     });
-    return { overflow, h1: h1Facts, copy };
+    const clippedNodes = [];
+    for (const el of document.body.querySelectorAll("*")) {
+      const cs = getComputedStyle(el);
+      const ox = cs.overflowX;
+      const oy = cs.overflowY;
+      if (ox === "auto" || ox === "scroll" || oy === "auto" || oy === "scroll") continue;
+      const xOver = el.scrollWidth > el.clientWidth + 1;
+      const yOver = el.scrollHeight > el.clientHeight + 1;
+      const hiddenX = ox === "hidden" || ox === "clip";
+      const hiddenY = oy === "hidden" || oy === "clip";
+      if ((hiddenX && xOver) || (hiddenY && yOver) || (cs.textOverflow === "ellipsis" && (xOver || yOver))) {
+        clippedNodes.push(el);
+      }
+    }
+    return { overflow, h1: h1Facts, copy, clipped: clippedNodes.length > 0, clippedCount: clippedNodes.length };
   });
 }
 
@@ -441,6 +467,7 @@ async function selectedContrast(page) {
 function cellFailed(cell) {
   if (cell.collection !== "ok") return true;
   if (cell.overflow) return true;
+  if (cell.clipped) return true;
   if (cell.pageerror > 0 || cell.consoleErrors > 0 || cell.httpErrors > 0) return true;
   if (cell.axeNew.length > 0) return true;
   if (cell.selectedContrast?.fail) return true;
@@ -539,6 +566,8 @@ async function runOneCell({ context, origin, route, width, mode, identity, outDi
         identity,
         collection: "ok",
         overflow: facts.overflow,
+        clipped: facts.clipped,
+        clippedCount: facts.clippedCount,
         ...extras,
         axeNew,
         axeIds,
@@ -597,10 +626,13 @@ export async function runVisualVerify(options, deps = {}) {
   const mockupRel = visualReferencePath(ticketText);
   const mockup = mockupRel && existsSync(resolve(cwd, mockupRel)) ? resolve(cwd, mockupRel) : null;
 
+  const widths = options.widths ?? WIDTHS;
+  const modes = options.modes ?? MODES;
+
   let origin = options.url;
   let server = null;
   if (!origin) {
-    if (!options.dir) return err(new Error("pass --url or --dir"));
+    if (!options.dir) return err(new Error("pass --url, --base-url, or --dir"));
     const served = await serveDir(resolve(cwd, options.dir));
     server = served.server;
     origin = served.origin;
@@ -626,8 +658,8 @@ export async function runVisualVerify(options, deps = {}) {
   const run = await tryCatchAsync(async () => {
     for (const route of routes) {
       const shots = [];
-      for (const width of WIDTHS) {
-        for (const mode of MODES) {
+      for (const width of widths) {
+        for (const mode of modes) {
           for (const identity of identities) {
             const one = await runOneCell({
               context,
@@ -675,7 +707,10 @@ export async function runVisualVerify(options, deps = {}) {
     contactSheets,
     ok: okRun,
   };
-  writeFileSync(join(outDir, "manifest.json"), `${JSON.stringify(report, null, 2)}\n`);
+  const recordPath = join(outDir, "manifest.json");
+  writeFileSync(recordPath, `${JSON.stringify(report, null, 2)}\n`);
+  const table = markdownTable(report);
+  writeFileSync(join(outDir, "summary.md"), `${table}\n\n${okRun ? "pass" : "fail"}\n${recordPath}\n`);
   return ok(report);
 }
 
@@ -684,19 +719,20 @@ function isPeerFailure(error) {
 }
 
 export async function visualVerifyMain(args, sinks, deps) {
+  const command = deps?.command === "evidence" ? "evidence" : "visual-verify";
   const parsed = parseVisualVerifyArgs(args);
   if (!parsed.ok) {
     sinks.err(`error: ${parsed.error.message}`);
-    sinks.err(usageVisualVerify());
+    sinks.err(usageVisualVerify(command));
     return 2;
   }
   if (parsed.value.help) {
-    sinks.out(usageVisualVerify());
+    sinks.out(usageVisualVerify(command));
     return 0;
   }
   if (!parsed.value.url && !parsed.value.dir) {
-    sinks.err("error: pass --url or --dir");
-    sinks.err(usageVisualVerify());
+    sinks.err("error: pass --url, --base-url, or --dir");
+    sinks.err(usageVisualVerify(command));
     return 2;
   }
   const result = await runVisualVerify(parsed.value, deps);

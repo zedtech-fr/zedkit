@@ -37,7 +37,7 @@ describe("pr skill Evidence contract", () => {
     expect(section).toContain(CANONICAL);
   });
 
-  it("does not cite a nonexistent evidence command or a producer-less summary.md", () => {
+  it("does not retarget Evidence paste to zedkit-ai evidence", () => {
     expect(pr).not.toContain("zedkit-ai evidence");
     expect(pr).not.toContain("summary.md");
     expect(pr).not.toContain("published PNGs");
@@ -99,8 +99,10 @@ describe("pr skill Evidence contract", () => {
   it("keeps the atlas row as a pointer plus traps, not a copy of the rule", () => {
     expect(atlas).toContain("packages/ai/kit/skills/pr/SKILL.md");
     expect(atlas).not.toContain(CANONICAL);
-    expect(atlas).toContain("No `zedkit-ai evidence` command");
-    expect(atlas).toContain("no `summary.md` producer");
+    expect(atlas).toContain("`zedkit-ai evidence`");
+    expect(atlas).toContain("summary.md");
+    expect(atlas).not.toContain("No `zedkit-ai evidence` command");
+    expect(atlas).not.toContain("no `summary.md` producer");
     expect(atlas).toContain("Not Visual work evidence");
     expect(atlas).toContain('Do not call the run record a "manifest"');
     expect(atlas).toContain("`evidence/` is gitignored");

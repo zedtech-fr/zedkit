@@ -1,29 +1,32 @@
 ---
 name: visual-verify
-description: "Run zedkit-ai visual-verify and read the run record. Use when finishing visual work, filling a contact sheet, checking overflow or axe on renders, or when definition-of-done Visual work applies."
+description: "Run zedkit-ai evidence (alias: visual-verify) and read the run record. Use when finishing visual work, filling a contact sheet, checking overflow, axe or clipped text, or when definition-of-done Visual work applies."
 ---
 
 # Visual verify
 
-The host command for definition-of-done Visual work. Run it; do not
-improvise a second Playwright crawl. Open that skill for the bar (matrix,
-blocking measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
+The host command for definition-of-done Visual work. Run
+`zedkit-ai evidence` (or `zedkit-ai visual-verify`); do not improvise a
+second Playwright crawl. Open that skill for the bar (matrix, blocking
+measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
 
 ## 1. Gather inputs
 
-- **Base:** `--url` (already-served origin) or `--dir` (static export;
-  served on `127.0.0.1`). `--cwd` is the git and path root (default:
-  process cwd). `--base` defaults to origin/dev, else origin/main, else
-  `HEAD~1`, else `HEAD`.
-- **Routes:** `--changed` (diff via the route map: App Router `page`
-  files, optional `--manifest` `source` → `/docs/ui/<slug>`) union
-  `--routes`. Unknown files add no extra route. A host fixed set is
+- **Base:** `--base-url` or `--url` (already-served origin) or `--dir`
+  (static export; served on `127.0.0.1`). Pass only one of `--url` and
+  `--base-url`. `--cwd` is the git and path root (default: process cwd).
+  `--base` defaults to origin/dev, else origin/main, else `HEAD~1`, else
+  `HEAD`.
+- **Routes:** `--changed` or `--routes auto` (diff via the route map: App
+  Router `page` files, optional `--manifest` `source` → `/docs/ui/<slug>`)
+  union `--routes`. Unknown files add no extra route. A host fixed set is
   passed by the host `visual:verify` script (or equivalent), not invented
   here.
-- **Matrix:** widths 375, 809, 1440 × modes light, dark. Full **looks
-  grid** (every shipped look × both modes) only when a token, a
-  primitive, or `identities*.css` changed. `--identities` names the looks;
-  omitted, the looks grid uses mist, press, tide, volt, maison, glass.
+- **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
+  dark. Full **looks grid** (every shipped look × both modes) only when a
+  token, a primitive, or `identities*.css` changed. `--identities` names
+  the looks; omitted, the looks grid uses mist, press, tide, volt,
+  maison, glass.
 - **Baseline:** `--baseline` path to a previous run record. Missing: this
   run is the baseline (0 new means 0 serious or critical).
 - **Ticket:** `--ticket` with a `Visual reference:` path, when the image
@@ -34,8 +37,9 @@ Done when: every flag you will pass is a real path, URL, or route.
 ## 2. Run the command
 
 ```sh
+zedkit-ai evidence --base-url <origin> --routes auto
+zedkit-ai evidence --dir ./out --routes /,/docs --out evidence/run
 zedkit-ai visual-verify --url <origin> --changed
-zedkit-ai visual-verify --dir ./out --routes /,/docs --md table.md
 ```
 
 Missing `@playwright/test` or `@axe-core/playwright` is exit 2: install
@@ -51,6 +55,9 @@ Per cell, when collection succeeded, in this order: axe and the
 screenshot on the **default** tree, then clicks:
 
 - `scrollWidth` ≤ `innerWidth` (1px tolerance)
+- no clipped text (`overflow: hidden|clip` with `scrollWidth` /
+  `scrollHeight` past the box, or an unintended ellipsis; skip
+  `overflow: auto|scroll`)
 - 0 `pageerror`, 0 console errors, 0 responses ≥ 400 (favicon 404s ignored)
 - axe `wcag2a` / `wcag2aa` / `wcag21aa` / `wcag22aa` with 0 **new**
   serious or critical vs the host baseline
@@ -65,6 +72,8 @@ Done when: you have read the run record, not guessed the numbers.
 ## 4. Outputs
 
 - Run record: `evidence/<branch>/manifest.json` (or `--out`)
+- `summary.md` next to the run record (table, then `pass`/`fail`, then
+  the run-record path)
 - One contact-sheet PNG per route (3×2, plus the Visual reference file
   when it exists)
 - Markdown table on stdout and `--md`, then `pass`/`fail` and the run
