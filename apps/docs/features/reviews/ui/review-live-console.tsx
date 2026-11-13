@@ -48,7 +48,7 @@ function writeItemLocation(runId: string, itemId: string) {
   );
 }
 
-function useConsoleItemId(runId: string, itemIdProp?: string | null) {
+function useConsoleItemId(itemIdProp?: string | null) {
   const [itemId, setItemId] = useState<string | null>(itemIdProp ?? null);
   const [locationReady, setLocationReady] = useState(itemIdProp !== undefined);
   useEffect(() => {
@@ -59,9 +59,7 @@ function useConsoleItemId(runId: string, itemIdProp?: string | null) {
         setLocationReady(true);
         return;
       }
-      setItemId(
-        parseLiveConsoleLocation(window.location.search, window.location.hash, runId).itemId,
-      );
+      setItemId(parseLiveConsoleLocation(window.location.search, window.location.hash).itemId);
       setLocationReady(true);
     };
     read();
@@ -72,7 +70,7 @@ function useConsoleItemId(runId: string, itemIdProp?: string | null) {
       window.removeEventListener("popstate", read);
       window.removeEventListener("hashchange", read);
     };
-  }, [itemIdProp, runId]);
+  }, [itemIdProp]);
   return { itemId, setItemId, locationReady };
 }
 
@@ -89,7 +87,7 @@ function useLiveConsole({
   runsBase: string | undefined;
   subscribe: LiveRunSubscribe;
 }) {
-  const { itemId, setItemId, locationReady } = useConsoleItemId(runId, itemIdProp);
+  const { itemId, setItemId, locationReady } = useConsoleItemId(itemIdProp);
   const [status, setStatus] = useState<LiveConsoleStatus>(() =>
     initial === null ? { kind: "loading" } : readyFromLive(initial),
   );

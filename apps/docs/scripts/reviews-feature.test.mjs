@@ -2655,7 +2655,7 @@ test("toAgentConsole maps first-pass findings from verdict_json and second_pass.
   );
   assert.equal(mapped.decision?.secondPass?.blocksMerge, true);
   assert.equal(mapped.decision?.secondPass?.model, "docs-reviewer");
-  assert.equal(mapped.decision?.postedReviewHref, "javascript:alert(1)");
+  assert.equal(mapped.decision?.postedReviewHref, null);
 });
 
 test("toAgentConsole still folds first pass when findings are empty", () => {
@@ -2669,7 +2669,10 @@ test("toAgentConsole marks running items from live status and ignores live_url a
   const mapped = toAgentConsole(
     liveSample({
       run: { ...liveSample().run, live_url: "https://example.test/live/abc", review_url: null },
-      decision: { ...liveSample().decision, review_url: null },
+      decision: {
+        ...liveSample().decision,
+        review_url: "https://github.com/zedtech-fr/zedkit/pull/1",
+      },
       items: [
         liveItem({ status: "starting" }),
         liveItem({ id: "lens-1", status: "Running" }),
@@ -2681,8 +2684,8 @@ test("toAgentConsole marks running items from live status and ignores live_url a
     mapped.items.map((item) => item.running),
     [true, true, false],
   );
-  assert.equal(mapped.run.postedReviewHref, null);
-  assert.equal(mapped.decision?.postedReviewHref, null);
+  assert.equal(mapped.run.postedReviewHref, "https://github.com/zedtech-fr/zedkit/pull/1");
+  assert.equal(mapped.decision?.postedReviewHref, "https://github.com/zedtech-fr/zedkit/pull/1");
 });
 
 test("optional reviews on an index snapshot feed getRun for that run id", async () => {

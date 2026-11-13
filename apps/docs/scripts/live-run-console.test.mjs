@@ -154,6 +154,11 @@ test("parseLiveConsoleLocation reads id, item, and hash item", () => {
     itemId: "lens-1",
     reason: "ok",
   });
+  assert.deepEqual(parseLiveConsoleLocation("?item=lens-1"), {
+    runId: null,
+    itemId: "lens-1",
+    reason: "missing-id",
+  });
   assert.equal(parseLiveConsoleLocation("").reason, "missing-id");
   assert.equal(parseLiveConsoleLocation("?id=..").reason, "invalid-id");
   assert.equal(parseLiveConsoleLocation("?id=run-1&item=" + "x".repeat(81)).itemId, null);
@@ -389,6 +394,18 @@ test("fetchLiveRunApi maps 200 JSON, 204 version, 401, 404, and 500", async () =
   });
   assert.equal(broken.kind, "error");
   assert.equal(broken.retryable, true);
+
+  const longVersion = await fetchLiveRunApi({
+    runId: "20261113T145002Z-45319b18",
+    fetch: async () =>
+      new Response(JSON.stringify(payload), {
+        status: 200,
+        headers: headers({ [LIVE_VERSION_HEADER]: "v".repeat(129) }),
+      }),
+    base: "https://dev.zedkit.app",
+  });
+  assert.equal(longVersion.kind, "ok");
+  assert.equal(longVersion.version, null);
 });
 
 test("subscribeLiveRun sends v= after the first version and skips 204 emits", async () => {
@@ -470,6 +487,9 @@ test("live console UI uses kit states and does not duplicate AgentConsole", () =
   assert.match(view, /window\.location\.search/);
   assert.match(view, /addEventListener\("popstate"/);
   assert.match(view, /addEventListener\("hashchange"/);
+  assert.match(view, /removeEventListener\("popstate"/);
+  assert.match(view, /removeEventListener\("hashchange"/);
+  assert.doesNotMatch(view, /parseLiveConsoleLocation\([^)]+runId/);
   assert.match(view, /live\.status\.kind === "invalid"/);
   assert.match(view, /liveConsoleCopy\.error/);
   assert.match(states, /liveConsoleCopy\.retry/);

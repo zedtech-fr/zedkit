@@ -58,11 +58,11 @@ export function parseLiveConsoleLocation(
   const fromQuery = sanitizeLiveConsoleRunId(params.get("id"));
   const rawId = pathRunId ?? params.get("id");
   const runId = fromPath ?? fromQuery;
+  const itemId = sanitizeLiveConsoleItemId(params.get("item")) ?? hashItemId(hash);
   if (runId === null) {
     const missing = rawId === null || rawId === undefined || rawId.trim() === "";
-    return { runId: null, itemId: null, reason: missing ? "missing-id" : "invalid-id" };
+    return { runId: null, itemId, reason: missing ? "missing-id" : "invalid-id" };
   }
-  const itemId = sanitizeLiveConsoleItemId(params.get("item")) ?? hashItemId(hash);
   return { runId, itemId, reason: "ok" };
 }
 

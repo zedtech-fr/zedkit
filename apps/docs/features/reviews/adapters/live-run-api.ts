@@ -102,9 +102,12 @@ function asBoolean(value: unknown): boolean | null | undefined {
   return typeof value === "boolean" ? value : undefined;
 }
 
+const LIVE_VERSION_MAX = 128;
+
 function versionOf(headers: Headers): string | null {
   const value = headers.get(LIVE_VERSION_HEADER)?.trim() ?? "";
-  return value === "" ? null : value;
+  if (value === "" || value.length > LIVE_VERSION_MAX) return null;
+  return value;
 }
 
 function parseArgs(value: unknown): Record<string, string> | undefined {

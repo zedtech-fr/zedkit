@@ -1,3 +1,5 @@
+import { tryCatch } from "@zedtech/zedkit-core";
+
 import type {
   LiveDecision,
   LiveEntry,
@@ -201,8 +203,13 @@ function mapItem(item: LiveItemDetail): MappedItem {
 }
 
 function postedReviewHref(decision: LiveDecision | null, run: LiveRunInfo): string | null {
-  const href = decision?.review_url ?? run.review_url ?? null;
-  return href ?? null;
+  const href = (decision?.review_url ?? run.review_url ?? "").trim();
+  if (href === "") return null;
+  const parsed = tryCatch(() => new URL(href));
+  if (!parsed.ok) return null;
+  const protocol = parsed.value.protocol;
+  if (protocol !== "http:" && protocol !== "https:") return null;
+  return href;
 }
 
 function mapRun(live: PublicLiveRun): MappedRun {
