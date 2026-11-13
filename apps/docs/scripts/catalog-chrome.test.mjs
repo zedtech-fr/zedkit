@@ -24,7 +24,8 @@ test("catalog desktop header is marketing chrome: search and GitHub, no version 
   assert.doesNotMatch(headers, /ThemeSwitch|SiteThemeSwitch|data-theme-toggle/);
 
   const shared = functionSource(headers, "SearchGitHubDesktopHeader");
-  assert.match(shared, /SiteFullSearchTrigger/);
+  assert.match(shared, /SiteSearchTrigger className="lg:hidden"/);
+  assert.match(shared, /SiteFullSearchTrigger className="max-lg:hidden"/);
   assert.match(shared, /HomeGitHubLink/);
   assert.doesNotMatch(shared, /HomeGetStartedAction/);
   assert.doesNotMatch(shared, /KitVersionLabel/);

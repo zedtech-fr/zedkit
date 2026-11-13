@@ -96,7 +96,7 @@ function HomeDesktopHeader() {
 
 /**
  * Customer personas: hunting a component on `/catalog`, often at 1440, hurried.
- * UI decisions: catalog header is brand + primary nav + Search ⌘K + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started.
+ * UI decisions: catalog header is brand + primary nav + search + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started. Icon search below lg so the bar fits 809.
  */
 function SearchGitHubDesktopHeader({ mark }: { mark: "catalog" | "docs" }) {
   return (
@@ -104,7 +104,8 @@ function SearchGitHubDesktopHeader({ mark }: { mark: "catalog" | "docs" }) {
       mark={mark}
       actions={
         <>
-          <SiteFullSearchTrigger />
+          <SiteSearchTrigger className="lg:hidden" />
+          <SiteFullSearchTrigger className="max-lg:hidden" />
           <HomeGitHubLink />
         </>
       }
@@ -162,7 +163,7 @@ export function MarketingSiteHeader() {
 
 /**
  * Customer personas: integrating developer on a docs page at 1440, hurried.
- * UI decisions: docs header is brand + primary nav + Search ⌘K + GitHub text, because the customer already uses that bar on Home and Catalog.
+ * UI decisions: docs header is brand + primary nav + search + GitHub text, because the customer already uses that bar on Catalog. Icon search below lg, Search ⌘K from lg, so the five-item row fits 809 under Tide.
  */
 export function DocsDesktopHeader() {
   return <SearchGitHubDesktopHeader mark="docs" />;
