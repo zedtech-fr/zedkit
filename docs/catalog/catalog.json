@@ -3833,6 +3833,41 @@
           ]
         },
         {
+          "need": "Remember a listed choice across visits",
+          "import": "`@zedtech/zedkit-ui` — `createStoredChoice`",
+          "wraps": "`(none)`",
+          "status": "alpha",
+          "shortName": "createStoredChoice",
+          "audience": "Developers persisting a tab or similar listed choice in the browser.",
+          "purpose": "Keep a listed localStorage choice that hydrates with the default so server HTML and the first paint always agree.",
+          "whenToUse": "For a fixed list of strings shared by every control that reads the same key (package manager, install path).",
+          "whenNotToUse": "For identity look persistence — use `IdentityScript`. For motion — use `useMotionPreference`.",
+          "derivedFrom": null,
+          "example": "import { createStoredChoice } from \"@zedtech/zedkit-ui\";\n\nconst colorScheme = createStoredChoice(\"color-scheme\", [\"light\", \"dark\"] as const);\n\nexport function SchemeToggle() {\n  const [scheme, setScheme] = colorScheme.useChoice();\n  return <button type=\"button\" onClick={() => setScheme(\"dark\")}>{scheme}</button>;\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "import { createStoredChoice } from \"@zedtech/zedkit-ui\";\n\nconst colorScheme = createStoredChoice(\"color-scheme\", [\"light\", \"dark\"] as const);\n\nexport function SchemeToggle() {\n  const [scheme, setScheme] = colorScheme.useChoice();\n  return <button type=\"button\" onClick={() => setScheme(\"dark\")}>{scheme}</button>;\n}"
+            }
+          ],
+          "adoption": {
+            "kind": "js",
+            "modules": [
+              {
+                "from": "@zedtech/zedkit-ui",
+                "exports": [
+                  "createStoredChoice"
+                ]
+              }
+            ]
+          },
+          "a11y": "Returns a tuple. The caller owns the control; persist only listed values so a tab cannot store an unnamed option.",
+          "troubleshooting": "First paint is the default even when storage holds another allowed value — that is hydration, not a bug. Blocked storage still follows `set` for the session. Create one factory per key at module scope; two factories on the same key split in-memory state.",
+          "seeAlso": [
+            "Flag offline state with a live note"
+          ]
+        },
+        {
           "need": "Flag offline state with a live note",
           "import": "`@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`",
           "wraps": "`(none)`",
@@ -5889,7 +5924,7 @@
         },
         {
           "need": "Switch the visual identity with one attribute",
-          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`",
+          "import": "`@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`",
           "wraps": "`zod` (token schema); CSS variables in `identities.css`",
           "status": "beta",
           "shortName": "Identities",
@@ -5958,7 +5993,8 @@
                   "identityContrastTokenLabel",
                   "withIdentityDarkPair",
                   "keepIdentityDarkKeys",
-                  "IdentityContrastWarning"
+                  "IdentityContrastWarning",
+                  "repairContrast"
                 ]
               }
             ]
@@ -5971,7 +6007,7 @@
         },
         {
           "need": "Design your identity",
-          "import": "`@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`",
+          "import": "`@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`",
           "wraps": "`zod` (token schema); CSS variables from `applyIdentityTokenSheet`",
           "status": "beta",
           "shortName": "Draft look",
@@ -6007,7 +6043,8 @@
                   "identityContrastTokenLabel",
                   "withIdentityDarkPair",
                   "keepIdentityDarkKeys",
-                  "IdentityContrastWarning"
+                  "IdentityContrastWarning",
+                  "repairContrast"
                 ]
               }
             ]

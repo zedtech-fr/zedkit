@@ -746,6 +746,31 @@ formatDuration(3_720_000); // "1h 02m"
 formatDuration({ start: 0, end: 377_000 }, "fr"); // "6m 17s"
 ```
 
+## Remember a listed choice across visits
+
+- Import: `@zedtech/zedkit-ui` — `createStoredChoice`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: createStoredChoice
+- Audience: Developers persisting a tab or similar listed choice in the browser.
+- Purpose: Keep a listed localStorage choice that hydrates with the default so server HTML and the first paint always agree.
+- When to use: For a fixed list of strings shared by every control that reads the same key (package manager, install path).
+- When not to use: For identity look persistence — use `IdentityScript`. For motion — use `useMotionPreference`.
+- See also: `Flag offline state with a live note`
+- A11y: Returns a tuple. The caller owns the control; persist only listed values so a tab cannot store an unnamed option.
+- Troubleshooting: First paint is the default even when storage holds another allowed value — that is hydration, not a bug. Blocked storage still follows `set` for the session. Create one factory per key at module scope; two factories on the same key split in-memory state.
+
+```ts
+import { createStoredChoice } from "@zedtech/zedkit-ui";
+
+const colorScheme = createStoredChoice("color-scheme", ["light", "dark"] as const);
+
+export function SchemeToggle() {
+  const [scheme, setScheme] = colorScheme.useChoice();
+  return <button type="button" onClick={() => setScheme("dark")}>{scheme}</button>;
+}
+```
+
 ## Flag offline state with a live note
 
 - Import: `@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`
@@ -2293,7 +2318,7 @@ const plans = [
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: beta
 - Short name: Identities
@@ -2373,7 +2398,7 @@ void css;
 
 ## Design your identity
 
-- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
 - Status: beta
 - Short name: Draft look

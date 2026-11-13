@@ -468,16 +468,16 @@ describe("live docs tree", () => {
   it("imports use-package-manager from features/docs", () => {
     const blocks = readFileSync(join(docsRoot, "features/docs/ui/adoption-blocks.tsx"), "utf8");
     const panel = readFileSync(join(docsRoot, "features/docs/ui/adoption-panel.tsx"), "utf8");
-    assert.match(blocks, /from "\.\.\/use-package-manager"/);
-    assert.match(panel, /from "\.\.\/use-package-manager"/);
+    assert.match(blocks, /from "\.\/use-package-manager"/);
+    assert.match(panel, /from "\.\/use-package-manager"/);
     assert.doesNotMatch(blocks, /from "@\/lib\/use-package-manager"/);
     assert.doesNotMatch(panel, /from "@\/lib\/use-package-manager"/);
   });
 
   it("keeps the fumadocs package-manager storage key on the docs-feature hook", () => {
-    const hook = readFileSync(join(docsRoot, "features/docs/use-package-manager.ts"), "utf8");
+    const hook = readFileSync(join(docsRoot, "features/docs/ui/use-package-manager.ts"), "utf8");
     assert.match(hook, /createStoredChoice\("package-manager"/);
-    assert.match(hook, /from "@\/lib\/use-stored-choice"/);
+    assert.match(hook, /from "@zedtech\/zedkit-ui"/);
     assert.match(hook, /from "@\/lib\/package-manager-commands"/);
   });
 });
