@@ -9,7 +9,8 @@
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
  * - Public run history list stays in the shared appearance-frame Container (width wide) — because: a hurried visitor at 1440 expects the same centered column as an issue detail page.
  * - Issue and unlinked summary rows are two bands below md (title, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per issue without chasing wrapped fragments. Accordion panels stay closed until opened.
- * - Timeline is chronological stacked rows with type, models, duration, verdict/score, superseded, status — because: hurried visitor follows plan → implement → review → improve.
+ * - `/issues` accordion lists steps newest first — because: hurried visitor sees the latest state without scrolling.
+ * - `/issues/N` and `/issues/pr/:n` timelines stay chronological stacked rows with type, models, duration, verdict/score, superseded, status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
  * - Index-only `/issues/N/runs/<id>` (and unlinked run URLs) redirect to the allowlisted hosted-console href, or to the issue / unlinked page when that href is missing — because: bot comments still resolve, and the public runs API has no transcript to render here. Static export overwrites those HTML files with the same stub writer as `/reviews`.

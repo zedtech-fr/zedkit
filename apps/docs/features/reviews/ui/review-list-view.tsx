@@ -17,7 +17,12 @@ import {
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { githubIssueHref, githubPullHref } from "../model/github-hrefs";
 import { issueOpenTarget } from "../model/issue-open-target";
-import { latestEntry, latestStatus, summedDurationMs } from "../model/latest-status";
+import {
+  entriesNewestFirst,
+  latestEntry,
+  latestStatus,
+  summedDurationMs,
+} from "../model/latest-status";
 import { uniqueRunIds } from "../model/review-routes";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
@@ -89,7 +94,7 @@ function StepsPanel({
         <EmptyState description={empty} />
       ) : (
         <ul aria-label={copy.issue.timeline}>
-          {entries.map((entry) => (
+          {entriesNewestFirst(entries).map((entry) => (
             <li key={entry.id}>
               <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
             </li>
