@@ -1,9 +1,10 @@
 // Original work by the same author.
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_LOOKS,
   PEER_HINT,
   PEER_MISSING,
   baselineAxeIds,
@@ -11,19 +12,23 @@ import {
   collectionFailedRecord,
   copySitsWithBlock,
   escapeHtml,
+  identitiesFromChangedFiles,
   isAllowedRequest,
   isFaviconRequest,
   isSafeGitRef,
   looksGridTriggered,
   markdownTable,
   newAxeIds,
+  parseStatesFile,
   parseVisualVerifyArgs,
   peerHint,
+  resolveMockupForWidth,
   resolveStaticFile,
   routeStem,
   routesFromFiles,
   runVisualVerify,
   sanitizeBranch,
+  ticketStateNames,
   unionRoutes,
   unwrapPeerModule,
   usageVisualVerify,
@@ -69,10 +74,50 @@ h1{font-size:24px}
 
 const BARE = `<!doctype html><html lang="en"><head><title>Bare</title></head><body><h1>Bare</h1><p>No stylesheet.</p></body></html>`;
 
+const SMALL_TARGET = `<!doctype html><html lang="en"><head><title>Small</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button.tiny{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;font-size:10px;line-height:16px}
+</style></head><body><h1>Small</h1><button class="tiny" type="button">x</button></body></html>`;
+
+const INLINE_LINK = `<!doctype html><html lang="en"><head><title>Inline</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+a{color:#00e}
+</style></head><body><h1>Inline</h1><p>See the <a href="#more">inline link</a> here.</p><p id="more">More.</p></body></html>`;
+
+const PADDED_TARGET = `<!doctype html><html lang="en"><head><title>Padded</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button.pad{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;position:relative;font-size:10px;line-height:16px}
+button.pad::before{content:"";position:absolute;left:0;top:0;width:24px;height:24px}
+</style></head><body><h1>Padded</h1><button class="pad" type="button">x</button></body></html>`;
+
+const STATES = `<!doctype html><html lang="en"><head><title>States</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button{min-width:32px;min-height:32px}
+[hidden]{display:none}
+</style></head><body>
+<h1>States</h1>
+<button type="button" id="open">Open</button>
+<div id="panel" hidden><p>Revealed panel.</p></div>
+<script>
+document.getElementById("open").addEventListener("click", () => {
+  document.getElementById("panel").hidden = false;
+});
+</script>
+</body></html>`;
+
+const TINY_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64",
+);
+
 const TABS = `<!doctype html><html lang="en"><head><title>Tabs</title><style>
 html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px}
-[role=tab]{color:#111;background:#fff;border:1px solid #111}
+[role=tab]{color:#111;background:#fff;border:1px solid #111;min-width:24px;min-height:24px}
 .bad{color:#eee;background:#fff}
 [hidden]{display:none}
 </style></head><body>
@@ -105,6 +150,10 @@ function fixtureDir() {
   writeFileSync(join(dir, "scroller.html"), SCROLLER);
   writeFileSync(join(dir, "bare.html"), BARE);
   writeFileSync(join(dir, "tabs.html"), TABS);
+  writeFileSync(join(dir, "small.html"), SMALL_TARGET);
+  writeFileSync(join(dir, "inline.html"), INLINE_LINK);
+  writeFileSync(join(dir, "padded.html"), PADDED_TARGET);
+  writeFileSync(join(dir, "states.html"), STATES);
   return dir;
 }
 
@@ -135,6 +184,66 @@ describe("visual-verify helpers", () => {
     expect(looksGridTriggered(["packages/ui/src/button/button.tsx"])).toBe(true);
     expect(looksGridTriggered(["packages/ui/src/button/button.test.tsx"])).toBe(false);
     expect(looksGridTriggered(["README.md"])).toBe(false);
+  });
+
+  it("treats identities/<id>.css as the touched look, not the six-look grid", () => {
+    expect(looksGridTriggered(["packages/ui/src/identities/glass.css"])).toBe(true);
+    expect(identitiesFromChangedFiles(["packages/ui/src/identities/glass.css"])).toEqual(["glass"]);
+    expect(identitiesFromChangedFiles(["packages\\ui\\src\\identities\\press.css"])).toEqual(["press"]);
+    expect(
+      identitiesFromChangedFiles([
+        "packages/ui/src/identities/glass.css",
+        "packages/ui/src/identities/press.css",
+      ]),
+    ).toEqual(["glass", "press"]);
+    expect(identitiesFromChangedFiles(["packages/ui/src/identities.css"])).toEqual(DEFAULT_LOOKS);
+    expect(identitiesFromChangedFiles(["packages/ui/src/styles.css"])).toEqual(DEFAULT_LOOKS);
+    expect(identitiesFromChangedFiles(["packages/ui/src/button/button.tsx"])).toEqual(DEFAULT_LOOKS);
+    expect(
+      identitiesFromChangedFiles(["packages/ui/src/identities/glass.css", "packages/ui/src/identities.css"]),
+    ).toEqual(DEFAULT_LOOKS);
+    expect(identitiesFromChangedFiles(["README.md"])).toEqual([]);
+  });
+
+  it("parses --states as a JSON array of {name, click?}", () => {
+    const empty = parseStatesFile("[]");
+    expect(empty.ok).toBe(true);
+    expect(empty.ok && empty.value).toEqual([]);
+    const one = parseStatesFile('[{"name":"open panel","click":"#open"}]');
+    expect(one.ok && one.value).toEqual([{ name: "open panel", click: "#open" }]);
+    const nameless = parseStatesFile('[{"click":"#open"}]');
+    expect(nameless.ok).toBe(false);
+    const notArray = parseStatesFile("{}");
+    expect(notArray.ok).toBe(false);
+    const junk = parseStatesFile("not json");
+    expect(junk.ok).toBe(false);
+  });
+
+  it("reads ticket States: names as unverified, and skips no transient states", () => {
+    expect(ticketStateNames("# T\nStates: no transient states\n")).toEqual({ skip: true, unverified: [] });
+    expect(ticketStateNames("States: open drawer, tab Two\n")).toEqual({
+      skip: false,
+      unverified: ["open drawer", "tab Two"],
+    });
+    expect(ticketStateNames("Visual reference: shots/home.png\n")).toEqual({ skip: false, unverified: [] });
+  });
+
+  it("resolves --mockup as a file, then {stem}-{width}.png, then {width}.png, then the only PNG", () => {
+    const dir = mkdtempSync(join(tmpdir(), "mockup-"));
+    const file = join(dir, "ref.png");
+    writeFileSync(file, TINY_PNG);
+    expect(resolveMockupForWidth(file, "/", 375, dir)).toBe(file);
+    const nested = join(dir, "shots");
+    mkdirSync(nested);
+    writeFileSync(join(nested, "home-809.png"), TINY_PNG);
+    writeFileSync(join(nested, "375.png"), TINY_PNG);
+    expect(resolveMockupForWidth(nested, "/", 809, dir)).toBe(join(nested, "home-809.png"));
+    expect(resolveMockupForWidth(nested, "/docs", 375, dir)).toBe(join(nested, "375.png"));
+    const single = join(dir, "one");
+    mkdirSync(single);
+    writeFileSync(join(single, "only.png"), TINY_PNG);
+    expect(resolveMockupForWidth(single, "/", 1440, dir)).toBe(join(single, "only.png"));
+    expect(resolveMockupForWidth(join(dir, "missing.png"), "/", 375, dir)).toBeNull();
   });
 
   it("treats overlapping or header Copy buttons as sitting with the block", () => {
@@ -221,7 +330,7 @@ describe("visual-verify helpers", () => {
 
   it("documents the visual-verify flags", () => {
     const text = usageVisualVerify();
-    for (const flag of ["--url", "--dir", "--changed", "--base", "--cwd", "--routes", "--identities", "--baseline", "--out", "--md", "--ticket", "--manifest"]) {
+    for (const flag of ["--url", "--dir", "--changed", "--base", "--cwd", "--routes", "--identities", "--baseline", "--out", "--md", "--ticket", "--manifest", "--states", "--mockup"]) {
       expect(text).toContain(flag);
     }
     expect(text).toContain("evidence/<branch>/manifest.json");
@@ -243,6 +352,9 @@ describe("visual-verify helpers", () => {
     expect(mixed.ok && mixed.value.routes).toEqual(["/docs"]);
     const both = parseVisualVerifyArgs(["--url", "http://127.0.0.1:9", "--base-url", "http://127.0.0.1:8"]);
     expect(both.ok).toBe(false);
+    const extras = parseVisualVerifyArgs(["--states", "states.json", "--mockup", "mockups/"]);
+    expect(extras.ok && extras.value.states).toBe("states.json");
+    expect(extras.ok && extras.value.mockup).toBe("mockups/");
   });
 
   it("defaults widths and modes to the Visual work matrix", () => {
@@ -277,6 +389,8 @@ describe("visual-verify CLI", () => {
     expect(text).toContain("--base-url");
     expect(text).toContain("--routes");
     expect(text).toContain("--out");
+    expect(text).toContain("--states");
+    expect(text).toContain("--mockup");
   });
 
   it("rejects --url and --base-url together before launch", async () => {
@@ -305,6 +419,26 @@ describe("visual-verify CLI", () => {
     }, { loadPlaywright: async () => ({ ok: false, error: new Error(PEER_HINT) }) });
     expect(code).toBe(2);
     expect(errors.join("\n")).toContain(PEER_HINT);
+  });
+
+  it("exits 2 on a malformed --states file before launch", async () => {
+    const dir = fixtureDir();
+    writeFileSync(join(dir, "states.json"), "{not json");
+    let launched = false;
+    const errors = [];
+    const code = await visualVerifyMain(
+      ["--dir", dir, "--routes", "/", "--states", join(dir, "states.json")],
+      { out: () => undefined, err: (l) => errors.push(l) },
+      {
+        loadPlaywright: async () => {
+          launched = true;
+          return { ok: true, value: { chromium: {} } };
+        },
+      },
+    );
+    expect(code).toBe(2);
+    expect(launched).toBe(false);
+    expect(errors.join("\n")).toMatch(/states/i);
   });
 
   it("exits 2 on a tagged peer failure whose message does not contain install", async () => {
@@ -418,5 +552,96 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     });
     expect(corrupt.ok).toBe(false);
     expect(corrupt.error.message).toContain("unreadable baseline");
+  });
+
+  it("fails on a planted 16px button and skips an inline sentence link", async () => {
+    const small = await runRoutes(["/small"], { widths: [375], modes: ["light"] });
+    expect(small.result.ok, small.result.ok ? "" : small.result.error.message).toBe(true);
+    expect(small.result.value.ok).toBe(false);
+    expect(small.result.value.cells.some((c) => c.hitTargets?.fail === true && c.hitTargets.min < 24)).toBe(true);
+    const inline = await runRoutes(["/inline"], { widths: [375], modes: ["light"] });
+    expect(inline.result.ok, inline.result.ok ? "" : inline.result.error.message).toBe(true);
+    expect(inline.result.value.ok).toBe(true);
+    expect(inline.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
+    const padded = await runRoutes(["/padded"], { widths: [375], modes: ["light"] });
+    expect(padded.result.ok, padded.result.ok ? "" : padded.result.error.message).toBe(true);
+    expect(padded.result.value.ok).toBe(true);
+    expect(padded.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
+  });
+
+  it("captures --states clicks as extra cells and skips no transient states", async () => {
+    const dir = fixtureDir();
+    const out = mkdtempSync(join(tmpdir(), "vv-out-"));
+    const statesPath = join(dir, "states.json");
+    writeFileSync(statesPath, JSON.stringify([{ name: "open panel", click: "#open" }]));
+    const withStates = await runVisualVerify({
+      dir,
+      routes: ["/states"],
+      out,
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      states: statesPath,
+    });
+    expect(withStates.ok, withStates.ok ? "" : withStates.error.message).toBe(true);
+    expect(withStates.value.ok).toBe(true);
+    expect(withStates.value.cells).toHaveLength(2);
+    expect(withStates.value.cells[0].state).toBeUndefined();
+    expect(withStates.value.cells[1].state).toBe("open panel");
+    expect(withStates.value.cells[1].screenshot).toBeTruthy();
+    expect(existsSync(withStates.value.cells[1].screenshot)).toBe(true);
+    const ticket = join(dir, "ISSUE.md");
+    writeFileSync(ticket, "# T\nStates: no transient states\n");
+    const none = await runVisualVerify({
+      dir,
+      routes: ["/states"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      ticket,
+    });
+    expect(none.ok, none.ok ? "" : none.error.message).toBe(true);
+    expect(none.value.cells).toHaveLength(1);
+    expect(none.value.cells[0].state).toBeUndefined();
+  });
+
+  it("records English States: names as unverified without failing a clean page", async () => {
+    const dir = fixtureDir();
+    const ticket = join(dir, "ISSUE.md");
+    writeFileSync(ticket, "# T\nStates: open drawer, tab Two\n");
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      ticket,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(result.value.cells).toHaveLength(1);
+    expect(result.value.statesUnverified).toEqual(["open drawer", "tab Two"]);
+  });
+
+  it("writes a non-blocking mockup pair PNG when --mockup is a file", async () => {
+    const dir = fixtureDir();
+    const mockup = join(dir, "ref.png");
+    writeFileSync(mockup, TINY_PNG);
+    const out = mkdtempSync(join(tmpdir(), "vv-out-"));
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out,
+      cwd: dir,
+      widths: [375, 809, 1440],
+      modes: ["light"],
+      mockup,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(existsSync(join(out, "pair-home.png"))).toBe(true);
+    expect(result.value.pairs?.some((p) => p.route === "/" && p.path.endsWith("pair-home.png"))).toBe(true);
   });
 });

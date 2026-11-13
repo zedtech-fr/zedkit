@@ -24,13 +24,23 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
   dark. Full **looks grid** (every shipped look × both modes) only when a
-  token, a primitive, or `identities*.css` changed. `--identities` names
-  the looks; omitted, the looks grid uses mist, press, tide, volt,
-  maison, glass.
+  token, a primitive, or a shared identity sheet (`identities.css`)
+  changed. A look file `identities/<id>.css` adds that look only.
+  `--identities` names the looks; omitted, the looks grid uses mist,
+  press, tide, volt, maison, glass.
 - **Baseline:** `--baseline` path to a previous run record. Missing: this
   run is the baseline (0 new means 0 serious or critical).
 - **Ticket:** `--ticket` with a `Visual reference:` path, when the image
   exists on disk. The contact sheet includes that whole file, not a crop.
+  `States: no transient states` adds no extra cells. English `States:`
+  names without `--states` are recorded as unverified.
+- **States:** `--states <file>` JSON `[{ "name": "...", "click": "..." }]`.
+  After the default tree's axe and screenshot, each `click` (2s timeout)
+  becomes another cell at the same width × mode × look.
+- **Mockup:** `--mockup <file-or-dir>` (wins over `Visual reference:`).
+  A file is reused at every width; a directory looks for
+  `{route}-{width}.png`, else `{width}.png`, else the only PNG. Writes a
+  side-by-side PNG per route. Pixel differences do not fail the run.
 
 Done when: every flag you will pass is a real path, URL, or route.
 
@@ -38,7 +48,7 @@ Done when: every flag you will pass is a real path, URL, or route.
 
 ```sh
 zedkit-ai evidence --base-url <origin> --routes auto
-zedkit-ai evidence --dir ./out --routes /,/docs --out evidence/run
+zedkit-ai evidence --dir ./out --routes /,/docs --states states.json --mockup mockups --out evidence/run
 zedkit-ai visual-verify --url <origin> --changed
 ```
 
@@ -66,6 +76,10 @@ screenshot on the **default** tree, then clicks:
   within 48px of the block header)
 - one `h1` (fail when count is not 1 or `font-size` is 0); record
   font-size, line count, and share of the first screen
+- hit targets ≥ 24px on visible `a`/`button`/`input`/`select`/`textarea`
+  and button/link/tab/menuitem/checkbox/radio/switch/combobox roles.
+  Skip `display:inline`, `aria-hidden`, `disabled`, `visibility:hidden`,
+  `display:none`. Union the border box with `::before` / `::after`
 
 Done when: you have read the run record, not guessed the numbers.
 
@@ -74,8 +88,10 @@ Done when: you have read the run record, not guessed the numbers.
 - Run record: `evidence/<branch>/manifest.json` (or `--out`)
 - `summary.md` next to the run record (table, then `pass`/`fail`, then
   the run-record path)
-- One contact-sheet PNG per route (3×2, plus the Visual reference file
-  when it exists)
+- One contact-sheet PNG per route (3×2, plus the Visual reference or
+  `--mockup` file when it exists)
+- One side-by-side PNG per route when `--mockup` or `Visual reference:`
+  is set (`pair-<route>.png`); not a fail
 - Markdown table on stdout and `--md`, then `pass`/`fail` and the run
   record path
 

@@ -229,7 +229,7 @@
           "status": "alpha",
           "shortName": "EvidenceCli",
           "audience": "Agents finishing Visual work who need one host command for screenshots and blocking measures.",
-          "purpose": "Screenshot a route matrix, run axe, overflow and clipped-text checks, and write a run record plus summary.md.",
+          "purpose": "Screenshot a route matrix, run axe, overflow, clipped-text and 24px hit-target checks; optional --states and --mockup.",
           "whenToUse": "After Visual work, before pasting the PR Evidence table, on a served origin or a static export.",
           "whenNotToUse": "For a docs-site e2e journey — use the host Playwright specs instead. Playwright and axe stay optional peers.",
           "derivedFrom": null,

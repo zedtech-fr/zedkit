@@ -112,10 +112,10 @@ npx @zedtech/zedkit-ai stakes PLAN.md --base origin/main  # stakes, kind, needs 
 npx @zedtech/zedkit-ai sync --provider cursor,claude --kit /path/to/kit  # local kit; omit = bundled; --check in CI
 npx @zedtech/zedkit-ai evidence --base-url http://127.0.0.1:3100 --routes auto --widths 375,809,1440 --modes light,dark --out evidence/run
 npx @zedtech/zedkit-ai visual-verify --url http://127.0.0.1:3100 --changed
-npx @zedtech/zedkit-ai visual-verify --dir ./out --routes /,/docs --identities mist,press --baseline evidence/run/manifest.json --out evidence/run --md table.md --ticket ISSUE.md --base origin/dev --cwd . --manifest docs-manifest.json
+npx @zedtech/zedkit-ai visual-verify --dir ./out --routes /,/docs --identities mist,press --baseline evidence/run/manifest.json --out evidence/run --md table.md --ticket ISSUE.md --states states.json --mockup mockups --base origin/dev --cwd . --manifest docs-manifest.json
 ```
 
-Writes `evidence/<branch>/manifest.json`, `summary.md`, and one contact-sheet PNG per route. Exit 0 pass, 1 fail (collection, overflow, clipped text, page/console/HTTP, new serious axe, contrast, Copy, h1), 2 missing peers or bad flags. `--routes auto` is `--changed`. `--base-url` is `--url`.
+Writes `evidence/<branch>/manifest.json`, `summary.md`, one contact-sheet PNG per route, and a side-by-side PNG when `--mockup` or `Visual reference:` is set. Exit 0 pass, 1 fail (collection, overflow, clipped text, hit targets under 24px, page/console/HTTP, new serious axe, contrast, Copy, h1), 2 missing peers or bad flags. `--routes auto` is `--changed`. `--base-url` is `--url`. `--states` is a JSON `{name, click?}[]`. `--mockup` does not fail the run.
 
 **Starter (default for `init`):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
 `orchestrate` (so setup can hand off bigger work), `parallel-work`, `tdd`, and
