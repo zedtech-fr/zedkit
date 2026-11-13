@@ -229,6 +229,21 @@ describe("visual-verify helpers", () => {
     ]);
   });
 
+  it("maps docs identity feature modules to the editor route", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/features/identity/ui/identity-look.ts",
+        "apps/docs/features/identity/ui/identity-editor-panel.tsx",
+        "apps/docs/features/identity/ui/identity-look.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/features/identity-editor"]);
+    expect(
+      routesFromFiles(["apps\\docs\\features\\identity\\ui\\identity-editor-draft.ts"]),
+    ).toEqual(["/features/identity-editor"]);
+    expect(routesFromFiles(["apps/docs/features/identity/ui/identity-look.test.mjs"])).toEqual([]);
+  });
+
   it("turns the looks grid on for tokens, primitives, and identity sheets", () => {
     expect(looksGridTriggered(["packages/ui/src/identities.css"])).toBe(true);
     expect(looksGridTriggered(["packages/ui/src/styles.css"])).toBe(true);

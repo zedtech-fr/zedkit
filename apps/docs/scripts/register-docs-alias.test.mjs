@@ -14,6 +14,7 @@ const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const IDENTITY_ALIAS_TESTS = [
   "features/identity/ui/docs-site-default-tokens.test.mjs",
+  "features/identity/ui/identity-editor-patch.test.mjs",
   "features/identity/ui/site-identity-storage.test.mjs",
 ];
 

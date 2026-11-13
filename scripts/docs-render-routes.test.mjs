@@ -68,6 +68,23 @@ test("reviews diffs also add published index-only run pages when they are in the
   );
 });
 
+test("docs identity feature modules map to the editor route", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/features/identity/ui/identity-look.ts",
+      "apps/docs/features/identity/ui/identity-editor-panel.tsx",
+      "apps/docs/features/identity/ui/identity-look.test.mjs",
+      ".agents/atlas.md",
+    ]),
+    ["/features/identity-editor"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps\\docs\\features\\identity\\ui\\identity-editor-draft.ts"]),
+    ["/features/identity-editor"],
+  );
+  assert.deepEqual(routesFromFiles(["apps/docs/features/identity/ui/identity-look.test.mjs"]), []);
+});
+
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({

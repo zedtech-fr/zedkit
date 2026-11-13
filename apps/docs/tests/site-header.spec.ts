@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("site header navigation (#1034)", () => {
-  test("desktop header links AI, UI, Docs, and Catalog", async ({ page }) => {
+  test("desktop header links AI, UI, Docs, Catalog, and Issues", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
 
@@ -12,6 +12,7 @@ test.describe("site header navigation (#1034)", () => {
     await expect(
       header.getByRole("link", { name: "Catalog", exact: true }),
     ).toHaveAttribute("href", "/catalog");
+    await expect(header.getByRole("link", { name: "Issues", exact: true })).toHaveAttribute("href", "/issues");
     await expect(header.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
     await expect(page.getByLabel("Try another identity")).toHaveCount(0);
   });
@@ -33,7 +34,7 @@ test.describe("site header navigation (#1034)", () => {
     await expect(header.getByRole("button", { name: "Guides" })).toHaveCount(0);
     await expect(header.getByRole("link", { name: "Guides", exact: true })).toHaveCount(0);
     await expect(header.getByRole("link", { name: "Reviews" })).toHaveCount(0);
-    await expect(header.getByRole("link", { name: "Issues", exact: true })).toHaveCount(0);
+    await expect(header.getByRole("link", { name: "Issues", exact: true })).toHaveAttribute("href", "/issues");
     await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toHaveAttribute(
       "href",
       "https://github.com/zedtech-fr/zedkit",
@@ -49,7 +50,7 @@ test.describe("site header navigation (#1034)", () => {
     await expect(page.getByRole("heading", { name: "Getting started" })).toBeVisible();
   });
 
-  test("phone header lists AI, UI, Docs, and Catalog", async ({ page }) => {
+  test("phone header lists AI, UI, Docs, Catalog, and Issues", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.goto("/", { waitUntil: "networkidle" });
 
@@ -64,6 +65,7 @@ test.describe("site header navigation (#1034)", () => {
     await expect(
       dialog.getByRole("link", { name: "Catalog", exact: true }),
     ).toHaveAttribute("href", "/catalog");
+    await expect(dialog.getByRole("link", { name: "Issues", exact: true })).toHaveAttribute("href", "/issues");
     await expect(header.getByRole("link", { name: "UI changelog" })).toHaveCount(0);
     await expect(header.getByText("Guides", { exact: true })).toHaveCount(0);
     await expect(header.getByRole("link", { name: "Getting started", exact: true })).toHaveCount(0);
