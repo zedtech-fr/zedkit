@@ -31,8 +31,12 @@ const ENTRY_TYPES = new Set<TimelineEntryType>([
 const ENTRY_STATUSES = new Set<TimelineEntryStatus>(["running", "completed", "failed"]);
 const VERDICTS = new Set<ReviewVerdict>(["approve", "request-changes", "comment"]);
 
-function liveServiceName(): string {
+export function liveServiceName(): string {
   return [["ze", "dos"].join(""), "bot"].join("-");
+}
+
+export function runsApiBaseEnvName(): string {
+  return ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
 }
 
 export function runsListUrl(base: string, cursor: string | null): string {

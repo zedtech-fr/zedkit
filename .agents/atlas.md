@@ -66,7 +66,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |
 | Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/ui/`; persist key `zk-identity-dock-v2`. | `*.test.mjs` | 2026-11-13 |
-| Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
+| Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
 | UI tokens, scales, container sizing | `.agents/atlas/ui-primitives.md` | Declared scales; new `:root` colour roles must copy into the mist reset. | `packages/ui/CATALOG.md` | 2026-11-11 |
 | Registry copy theme (shadcn path) | `.agents/atlas/registry.md` | cssVars are colour HSL roles only; do not double-wrap `color-*`. | `scripts/registry/theme-tokens.mjs` | 2026-11-11 |
 | Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. | `resolve-ui-source.mjs` | 2026-11-08 |

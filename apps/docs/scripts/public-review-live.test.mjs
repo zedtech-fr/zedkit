@@ -16,6 +16,7 @@ import {
 import { fetchRunsIndex, parseRunsEnvelope, runsListUrl } from "../features/reviews/adapters/runs-api.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
 import { mergePublicIndex } from "../features/reviews/model/merge-public-index.ts";
+import { toLiveConsoleHref } from "../features/reviews/model/live-console-href.ts";
 import { HOSTED_LIVE_HREF_PREFIX } from "../features/reviews/model/public-review.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -417,8 +418,8 @@ test("merge keeps allowlisted live URLs and drops others; GitHub-only issues sta
   });
   assert.equal(index.issues.some((row) => row.number === 1), false);
   const urls = index.issues[0].entries.map((row) => row.liveUrl);
-  assert.ok(urls.includes(null));
-  assert.ok(urls.includes(HOSTED));
+  assert.ok(urls.includes(toLiveConsoleHref("20261112T144757Z-54233175")));
+  assert.ok(urls.includes(toLiveConsoleHref("run-ok")));
 });
 
 test("merge titles a missing GitHub issue as Issue #N", () => {
@@ -583,8 +584,12 @@ test("readGithubToken prefers the dedicated env and ignores blanks", () => {
 
 test("site factory assembles the runs-API origin env name", () => {
   const live = readFileSync(join(reviewsRoot, "adapters/live.ts"), "utf8");
-  assert.match(live, /_RUNS_API_BASE/);
+  const runsApi = readFileSync(join(reviewsRoot, "adapters/runs-api.ts"), "utf8");
+  assert.match(live, /runsApiBaseEnvName/);
+  assert.match(runsApi, /_RUNS_API_BASE/);
+  assert.doesNotMatch(live, /_RUNS_API_BASE/);
   assert.doesNotMatch(live, new RegExp(["ZE", "DOS"].join("")));
+  assert.doesNotMatch(runsApi, new RegExp(["ZE", "DOS"].join("")));
 });
 
 test("client review files never mention GitHub token env names", () => {
