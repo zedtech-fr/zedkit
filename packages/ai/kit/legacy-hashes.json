@@ -169,7 +169,7 @@
       "f6bb87e699cdbf18",
       "fd7c66aeafd45326"
     ],
-    "test-runner": ["7dede3a37254ad3e", "9b0f3818b406ffa2"]
+    "test-runner": ["7dede3a37254ad3e", "8ebc0ef81228d9d2", "9b0f3818b406ffa2"]
   },
   "commands": {
     "audit": ["252973e51b544c59", "776962bba5762b2d", "7bed3f6352c3a796"],
@@ -716,10 +716,12 @@
       "3330364b305e78df",
       "3b07acca0143018b",
       "3f0ef947067dea65",
+      "a6e46eb7dcd273d6",
       "aca5b5da590ee90a",
       "b03405c19aba6a88",
       "b099fdf43d1df00a",
       "b6765720efd2cb31",
+      "e0bc6a137658d8ed",
       "e5bce5b4a3018268"
     ],
     "zedkit-ai/SKILL.md": ["2744d7819af35a89"],

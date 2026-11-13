@@ -23,6 +23,7 @@
     "lint": "turbo run lint",
     "build": "turbo run build",
     "test": "turbo run test",
+    "agent": "node scripts/agent/run.mjs",
     "changeset": "changeset",
     "changeset:status": "changeset status --verbose",
     "changeset:version": "changeset version && node scripts/catalog.mjs build && node scripts/doc-pins.mjs write",
@@ -33,7 +34,7 @@
     "registry:smoke": "bash scripts/registry/smoke-shadcn-add.sh && bash scripts/registry/smoke-ui-quickstart.sh",
     "quickstart:smoke": "bash scripts/quickstart-smoke.sh",
     "adoption:smoke": "node scripts/adoption-smoke.mjs",
-    "test:registry:nodeploy": "node --test \"scripts/*.test.mjs\" \"scripts/registry/*.test.mjs\" \"apps/docs/scripts/*.test.mjs\" \"apps/docs/{app,features,components,lib}/**/*.test.mjs\" \"packages/ai/scripts/*.test.mjs\"",
+    "test:registry:nodeploy": "node --test \"scripts/*.test.mjs\" \"scripts/agent/*.test.mjs\" \"scripts/registry/*.test.mjs\" \"apps/docs/scripts/*.test.mjs\" \"apps/docs/{app,features,components,lib}/**/*.test.mjs\" \"packages/ai/scripts/*.test.mjs\"",
     "test:registry": "pnpm test:registry:nodeploy && node --test \"deploy/*.test.mjs\" \"deploy/suggest/*.test.mjs\"",
     "knip": "pnpm dlx knip@5.88.0",
     "test:coverage": "vitest run --coverage"

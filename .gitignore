@@ -54,3 +54,7 @@ evidence/
 
 # Cursor chat exports (keep outside the repo when possible)
 conversation-*.txt
+
+# Compact agent runner logs (scripts/agent/run.mjs). *.log already covers
+# the text files; this directory also holds Playwright JSON dumps.
+.agent-logs/
