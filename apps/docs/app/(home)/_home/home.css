@@ -1,14 +1,18 @@
 /*
- * Home hero: the proposition beside a static glass illustration of one run.
+ * Home hero: the proposition beside a glass illustration of one run
+ * (live when an active run exists, otherwise the static placeholder).
  *
  * Below `lg` the lead comes first and the illustration follows at the full measure. From `lg` they sit in two
  * columns. The page scrolls normally: nothing is pinned.
  *
  * Motion, all off under `prefers-reduced-motion` and `data-motion="reduce"`:
  *   1. load: the lead rises block by block, then the glass stage enters;
- *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop; Pause sets animation-play-state;
+ *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop unless
+ *      the card is live (`[data-hero-run-live]` sets `animation: none`); Pause sets
+ *      animation-play-state on steps and the drift blob; live StatusDot pulse is off while paused;
  *   3. one decorative blob on the purple stage drifts (`zk-home-float`).
- * Reduced motion shows the final card, no Pause control, no displacement.
+ * Reduced motion shows the final card, no displacement. Pause stays mounted
+ * invisible on the placeholder (hydration); it is visible for a live run.
  */
 #home-page [data-home-hero] {
   min-width: 0;
@@ -121,9 +125,18 @@
   border-top: var(--zk-border-width, 1px) solid hsl(var(--border) / 0.6);
 }
 
+#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="failed"] [data-hero-run-step-status] {
+  color: hsl(var(--destructive));
+}
+
 #home-page [data-hero-run-stage] > [data-slot="surface"] {
   position: relative;
   z-index: 1;
+}
+
+/* Two-line title slot so a live swap does not grow the card. */
+#home-page [data-hero-run-title] {
+  min-height: 2lh;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -164,6 +177,10 @@
 
   #home-page [data-hero-run-step][data-hero-run-beat="done"] {
     animation: zk-home-run-done 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step] {
+    animation: none;
   }
 
   #home-page [data-hero-run-drift] {
