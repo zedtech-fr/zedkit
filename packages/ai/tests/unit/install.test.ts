@@ -82,15 +82,15 @@ describe("installKit", () => {
     ).toContain("alwaysApply: true");
   });
 
-  it("starter preset stays small: eight skills, three subagents, two commands", () => {
+  it("starter preset stays small: nine skills, three subagents, three commands", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const starter = manifest.value.presets.starter;
     if (!Array.isArray(starter))
       throw new Error("starter preset must list skills");
-    expect(starter).toHaveLength(8);
+    expect(starter).toHaveLength(9);
     expect(agentsForPreset(manifest.value, "starter")).toHaveLength(3);
-    expect(commandsForPreset(manifest.value, "starter")).toHaveLength(2);
+    expect(commandsForPreset(manifest.value, "starter")).toHaveLength(3);
   });
 
   it("starter lenses.md marks uninstalled runners planned and installed ones exists", () => {
@@ -1201,7 +1201,7 @@ describe("installKit", () => {
         "utf8",
       );
       const lines = text.trimEnd().split("\n").length;
-      const maxLines = name === "setup-ai" ? 12 : 6;
+      const maxLines = name === "setup-ai" || name === "zedkit-ai" ? 12 : 6;
       expect(lines, `${name} is ${lines} lines`).toBeGreaterThanOrEqual(3);
       expect(lines, `${name} is ${lines} lines`).toBeLessThanOrEqual(maxLines);
       expect(text).toContain(`\`${name}\``);
@@ -1307,7 +1307,8 @@ describe("installKit", () => {
     // 32 for `fix`, `improve-from-review` and `quick-wins` (short path, review punchlist, two-mode topic).
     // 33 for `triage` (issue inbox on setup and core, not only full).
     // 34 for `visual-verify` (host command for Visual work).
-    expect(core.length).toBeLessThanOrEqual(34);
+    // 35 for `zedkit-ai` (entry command that classifies onto the others).
+    expect(core.length).toBeLessThanOrEqual(35);
   });
 
   it("core-installed skills only name skills and agents that core installs", () => {
