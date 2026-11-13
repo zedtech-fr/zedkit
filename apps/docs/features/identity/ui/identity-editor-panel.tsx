@@ -20,7 +20,7 @@ import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { ContrastChips, DRAFT_SELECTOR, DraftCard } from "@/components/identity-editor-fields";
 import { IdentityLookForm } from "@/components/identity-look-form";
 import { IdentityEditorExport } from "@/components/identity-editor-export";
-import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "@/components/identity-editor-toolbar";
+import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "./identity-editor-toolbar";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 import { IDENTITY_EDITOR_DRAFT_APPLY } from "./identity-editor-draft-apply";
 import { useDraftTokens, useIdentityTokenSheet } from "./identity-editor-draft";
@@ -33,7 +33,7 @@ import {
   subscribeNamedIdentities,
   type NamedIdentity,
 } from "./named-identities";
-import { type SaveStatus } from "@/lib/identity-save-status";
+import { type SaveStatus } from "./identity-save-status";
 import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "@/lib/identity-editor-search";
 
 type EditorBodyProps = {

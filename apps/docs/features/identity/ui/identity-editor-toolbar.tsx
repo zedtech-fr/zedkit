@@ -14,7 +14,7 @@ import {
   type IdentityOption,
 } from "@zedtech/zedkit-ui";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import type { SaveStatus } from "@/lib/identity-save-status";
+import type { SaveStatus } from "./identity-save-status";
 
 function LookSelect({
   identity,

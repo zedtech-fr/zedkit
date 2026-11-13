@@ -118,6 +118,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(footer, /https:\/\//);
   assert.doesNotMatch(footer, /changelogHref/);
   assert.match(skip, /siteChromeCopy\.skipToContent/);
+  assert.match(skip, /pointer-events-none/);
+  assert.match(skip, /focus:pointer-events-auto/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
   const offPath = read("ui/off-path-link.tsx");
   const a11y = read("ui/site-chrome-a11y.tsx");

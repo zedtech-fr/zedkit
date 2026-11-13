@@ -11,7 +11,7 @@ import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 registerDocsAlias(import.meta.url);
 
 const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
-const { LIBRARY_KEY } = await import("@/lib/identity-library");
+const { LIBRARY_KEY } = await import("@/features/identity/ui/identity-library");
 const { restoreNamedIdentity } = await import("./named-identities.ts");
 const { docsSiteDefaultTokens } = await import("./docs-site-default-tokens.ts");
 const {

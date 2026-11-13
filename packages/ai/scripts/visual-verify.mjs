@@ -588,8 +588,32 @@ async function readPageFacts(page) {
       };
     });
     const clippedNodes = [];
+    const SKIP_CLIP_TAGS = new Set(["HTML", "BODY", "PRE", "CODE", "INPUT", "TEXTAREA", "SELECT"]);
+    const SR_ONLY = /(?:^|\s)sr-only(?:\s|$)/u;
+    const CLIP_RECT_ZERO = /^rect\((?:0|0px),(?:0|0px),(?:0|0px),(?:0|0px)\)$/u;
+    const CLIP_PATH_HIDE = /^(?:inset\((?:50%|100%)(?:(?:50%|100%)){0,3}\)|circle\(0(?:px)?\))$/u;
+    const visuallyHidden = (el, cs) => {
+      if (el.clientWidth <= 1 && el.clientHeight <= 1) return true;
+      const cls = el.getAttribute("class") ?? "";
+      if (SR_ONLY.test(cls)) return true;
+      const clip = (cs.clip ?? "").replace(/\s+/gu, "").toLowerCase();
+      if (CLIP_RECT_ZERO.test(clip)) return true;
+      const clipPath = (cs.clipPath ?? "").replace(/\s+/gu, "").toLowerCase();
+      return CLIP_PATH_HIDE.test(clipPath);
+    };
+    const intendedTruncate = (el, cs) => {
+      if (el.hasAttribute("data-allow-clip")) return true;
+      const cls = el.getAttribute("class") ?? "";
+      if (/(?:^|\s)truncate(?:\s|$)/u.test(cls)) return true;
+      if (/(?:^|\s)line-clamp-/u.test(cls)) return true;
+      const clamp = Number.parseFloat(cs.webkitLineClamp);
+      return Number.isFinite(clamp) && clamp > 0;
+    };
     for (const el of document.body.querySelectorAll("*")) {
       const cs = getComputedStyle(el);
+      if (SKIP_CLIP_TAGS.has(el.tagName.toUpperCase())) continue;
+      if (visuallyHidden(el, cs)) continue;
+      if (intendedTruncate(el, cs)) continue;
       const ox = cs.overflowX;
       const oy = cs.overflowY;
       if (ox === "auto" || ox === "scroll" || oy === "auto" || oy === "scroll") continue;
