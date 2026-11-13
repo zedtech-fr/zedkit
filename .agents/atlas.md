@@ -29,6 +29,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Rules with IDs, tests and checkers | `.agents/atlas/ai-kit.md` | A-xx, H-xx, P-xx, S-xx live under `.agents/domain/`. | `AGENTS.md` | 2026-11-07 |
 | Evidence of the last setup run | `.agents/atlas/setup-ai.md` | One-shot reading log; not maintained. | nothing: read-only history | 2026-11-07 |
 | Public hygiene checks | `.agents/atlas/ci-gates.md` | CI `hygiene` runs the three scripts; skip `*.png`; never spell a banned term. | `hygiene` | 2026-11-13 |
+| Compact agent gates | `.agents/atlas/ci-gates.md` | Summaries on stdout; full logs in gitignored `.agent-logs/`. | root `AGENTS.md` Commands | 2026-11-13 |
 | CI scope and branch rules | `.agents/atlas/ci-gates.md` | PRs into `dev` are affected-only; `main` is full CI. | which CI jobs run for a PR | 2026-11-07 |
 | CI registry-deps for test:registry | `.agents/atlas/ci-gates.md` | Unconditional dist build for registry-imported packages. | `scripts/ci-hygiene.test.mjs` | 2026-11-13 |
 | docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-13 |
@@ -119,6 +120,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Kit loop | `pnpm --filter @zedtech/zedkit-ai typecheck && pnpm --filter @zedtech/zedkit-ai lint && pnpm --filter @zedtech/zedkit-ai build && pnpm --filter @zedtech/zedkit-ai test` | Run each separately; then `pnpm catalog:check`; a fresh clone builds sibling packages first |
 | Route a spawn, sync, validate | `node packages/ai/dist/bin.js route <agent> --kind <k> --stakes <s> --provider <active-tool>` | Always `--provider` for the running tool (repo default misroutes); build first only from zedkit sources, else the installed locked CLI. `npx zedkit-ai` 404s |
 | Regenerate provider agents | `node packages/ai/dist/bin.js sync` | Then `validate`; after any kit markdown edit (agents, skills, even a prettier rewrap): `pnpm --filter @zedtech/zedkit-ai build` then `node packages/ai/scripts/legacy-hashes.mjs` (unions with valid `kit/legacy-hashes.json` plus `tests/fixtures/skills-v*` published installs; exits if JSON is corrupt or a hash would drop; shallow git OK when prior file is valid; never hand-copy agents) |
+| Compact agent gates | `pnpm agent test\|node-test\|e2e\|lint\|typecheck\|diff\|status\|pr` | Full logs in `.agent-logs/`; `node scripts/agent/run.mjs` is the same entry |
 | Hygiene before a PR | `bash scripts/check-no-private-refs.sh && bash scripts/check-tone.sh && bash scripts/check-no-artifacts.sh` | `git status` and `git diff --stat` first; no `git add -A` |
 | Rewrite / check doc pins | `node scripts/doc-pins.mjs write\|check` | `write` is in `changeset:version`; `check` is in the hygiene job |
 | Open a PR | `gh pr create --base dev` | Base is `dev`, not `main` |
