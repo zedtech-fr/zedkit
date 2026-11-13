@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { filterPublishedRoutes } from "../scripts/docs-routes-env.mjs";
+
 /** Extra routes the sitemap sweep should cover even if they are not listed yet. */
 export const EXTRA_SITEMAP_ROUTES = [
   "/features/identity-editor",
@@ -27,4 +29,9 @@ export function publishedRoutes(): string[] {
   const xml = readFileSync(sitemapPath, "utf8");
   const paths = [...xml.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((m) => m[1]!.replace(/\/$/, "") || "/");
   return [...new Set([...paths, ...EXTRA_SITEMAP_ROUTES])].sort();
+}
+
+/** Sitemap routes, restricted to `DOCS_ROUTES` when that env is set. */
+export function routesForSweep(): string[] {
+  return filterPublishedRoutes(publishedRoutes(), process.env.DOCS_ROUTES);
 }

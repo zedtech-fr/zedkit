@@ -3,28 +3,31 @@ import { expect, test } from "@playwright/test";
 
 import { A11Y_AXE_EXCLUDES } from "./a11y-exceptions.mjs";
 import { gotoStaticRoute } from "./goto-static-route.js";
-import { publishedRoutes } from "./published-routes.js";
+import { routesForSweep } from "./published-routes.js";
 
 /**
- * Axe on every published route, phone and desktop, light and dark. The route
- * list comes from the sitemap. Serious and critical violations fail; the
- * documented exclude list is the only escape hatch.
+ * Axe on touched (or all) published routes, DoD v2 widths × light/dark. The
+ * route list comes from the sitemap, then `DOCS_ROUTES`. Serious and critical
+ * violations fail; the documented exclude list is the only escape hatch.
  *
  * One Playwright test per route so `fullyParallel` + `DOCS_E2E_SHARD` can
  * balance the sweep across runners.
  */
 const VIEWS = [
   { width: 375, height: 800, theme: "light" },
+  { width: 375, height: 800, theme: "dark" },
+  { width: 809, height: 900, theme: "light" },
+  { width: 809, height: 900, theme: "dark" },
   { width: 1440, height: 900, theme: "light" },
   { width: 1440, height: 900, theme: "dark" },
 ] as const;
 
-const routes = publishedRoutes();
+const routes = routesForSweep();
 
 test.describe.configure({ mode: "parallel" });
 
 for (const route of routes) {
-  test(`${route} passes axe at phone and desktop width, light and dark`, async ({ page }) => {
+  test(`${route} passes axe at phone, tablet and desktop width, light and dark`, async ({ page }) => {
     const problems: string[] = [];
     // Axe reads colours mid-fade otherwise: scroll scenes animate opacity on entry.
     await page.emulateMedia({ reducedMotion: "reduce" });

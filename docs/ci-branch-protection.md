@@ -41,7 +41,7 @@ self-hosted path landed in `ci.yml`.
 
 | Check | Role |
 | --- | --- |
-| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + quickstart-smoke + adoption-smoke + docs-build + docs-smoke |
+| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + quickstart-smoke + adoption-smoke + docs-build + docs-smoke + docs-render |
 | `hygiene` | Artifact, tone, private-refs, changeset |
 | `checks` | typecheck, lint, build, tests, catalog, pack, API reports |
 | `ui-smoke` | UI gallery console, overflow and visibility on ubuntu-latest |
@@ -50,6 +50,7 @@ self-hosted path landed in `ci.yml`.
 | `adoption-smoke` | Shown install recipes; packed runtime workspace closure, not npm |
 | `docs-build` | One docs static export, shared with Playwright smoke |
 | `docs-smoke` | Critical docs journeys (home, search, catalog, a component page) |
+| `docs-render` | Overflow, axe, clipped text on routes the diff touches (static export) |
 
 `deploy-docs` and `release` run on `main` after merge; they are **not**
 required for merging PRs.

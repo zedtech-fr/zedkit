@@ -66,10 +66,11 @@ reject dead `/r/<name>.json` links.
   `pnpm --filter @zedtech/zedkit-docs visual:verify` (alias of
   `zedkit-ai visual-verify`; the script already passes `--changed` and the
   fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
-- **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
-  component page, getting-started). Unit tests, `catalog:check`, the SEO
-  export check and the first-load budget cover the rest. `pnpm e2e` is
-  local-only, never a merge gate. A new spec must be listed in the
+- **PR / CI:** merge-gate browsers are `smoke` (home, search, catalog, a
+  component page, getting-started) plus `docs-render` (overflow, axe,
+  clipped text on routes the diff touches). Unit tests, `catalog:check`,
+  the SEO export check and the first-load budget cover the rest. `pnpm e2e`
+  is local-only, never a merge gate. A new spec must be listed in the
   `smoke` or `e2e` script; specs must not embed `127.0.0.1` or
   `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
   `test-results/`.

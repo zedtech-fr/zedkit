@@ -632,8 +632,8 @@ jobs:
           retention-days: 1
 
   # Critical browser journeys only (home, search, catalog, a component
-  # page, getting-started). Visual matrices and the sitemap axe sweep are
-  # not a merge gate: catalog:check, SEO export and first-load cover the rest.
+  # page, getting-started). Touched-route overflow, axe and clipped-text
+  # run in docs-render. The local Playwright e2e script is not a merge gate.
   docs-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -681,6 +681,70 @@ jobs:
           path: apps/docs/test-results/*.png
           if-no-files-found: ignore
 
+  # Overflow, axe (serious/critical) and clipped-text on routes the diff
+  # touches. Reuses docs-out. Skip when `docs` is false (same detector as
+  # docs-smoke). Not an E2E journey suite.
+  docs-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [changes, docs-build]
+    if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter="@zedtech/zedkit-docs..."
+      - uses: actions/download-artifact@v8
+        with:
+          name: docs-out
+          path: apps/docs/out
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm exec playwright install chromium
+      - run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}"
+            base="origin/${{ github.base_ref }}"
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            base="${{ github.event.before }}"
+          elif git rev-parse --verify --quiet HEAD~1 >/dev/null; then
+            base="HEAD~1"
+          else
+            base=""
+          fi
+          if [ -n "$base" ]; then
+            files=$(git diff --name-only --no-renames "$base"...HEAD)
+          else
+            files=$(git ls-tree -r --name-only HEAD)
+          fi
+          DOCS_ROUTES="$(printf '%s\n' "$files" | node scripts/docs-render-routes.mjs)"
+          export DOCS_ROUTES
+          if [ -z "$DOCS_ROUTES" ]; then
+            echo "docs-render: DOCS_ROUTES empty; refusing to sweep all routes" >&2
+            exit 1
+          fi
+          echo "DOCS_ROUTES=$DOCS_ROUTES"
+          pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
+          echo $! > /tmp/docs.pid
+          trap 'kill "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
+          for _ in $(seq 1 24); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
+            [ "$code" = "200" ] && break
+            sleep 5
+          done
+          curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
+          pnpm --filter @zedtech/zedkit-docs run e2e:routes
+        env:
+          DOCS_E2E_PROJECT: chromium
+
   # Stable check name for branch protection. Require this one job instead of
   # listing every CI job.
   # Selected jobs must succeed. Skipped is allowed only when `changes`
@@ -688,7 +752,7 @@ jobs:
   ci-required:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [changes, hygiene, workflow-lint, checks, ui-smoke, registry-smoke, quickstart-smoke, adoption-smoke, docs-build, docs-smoke]
+    needs: [changes, hygiene, workflow-lint, checks, ui-smoke, registry-smoke, quickstart-smoke, adoption-smoke, docs-build, docs-smoke, docs-render]
     if: always()
     steps:
       - uses: actions/checkout@v7
@@ -704,6 +768,7 @@ jobs:
           ADOPTION_SMOKE: ${{ needs.adoption-smoke.result }}
           DOCS_BUILD: ${{ needs.docs-build.result }}
           DOCS_SMOKE: ${{ needs.docs-smoke.result }}
+          DOCS_RENDER: ${{ needs.docs-render.result }}
           WORKFLOWS: ${{ needs.changes.outputs.workflows }}
           DOCS: ${{ needs.changes.outputs.docs }}
           REGISTRY_SCOPE: ${{ needs.changes.outputs.registry }}
