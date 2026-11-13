@@ -16,8 +16,8 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { DEPTH_OPTIONS, FONT_PAIRS, depthId, fontPairId, parsePx } from "./identity-classic-options";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
+import { DEPTH_OPTIONS, FONT_PAIRS, depthId, fontPairId, parsePx } from "@/features/identity/ui/identity-classic-options";
 import {
   RADIUS_MAX,
   RADIUS_MIN,
@@ -27,7 +27,7 @@ import {
   colorInputHex,
   formatCssLengthRem,
   hexToHslTriplet,
-} from "./identity-simple-value";
+} from "@/features/identity/ui/identity-simple-value";
 
 const COLOR_GROUPS = [
   ["surface", ["background", "foreground", "mutedForeground"]],

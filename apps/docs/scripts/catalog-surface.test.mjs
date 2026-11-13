@@ -164,7 +164,7 @@ test("catalog ships no identity host module", () => {
 });
 
 test("the identity form lives in the editor panel, not the catalog", () => {
-  const panel = read("features/identity/ui/identity-editor-panel.tsx");
+  const panel = read("features/identity/editor/ui/identity-editor-panel.tsx");
   const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
   assert.match(panel, /IdentityLookForm/);
   assert.match(panel, /defaultMode="expert"/);
@@ -214,14 +214,14 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(panel, /dispatchIdentityEditorDraftApply/);
   assert.doesNotMatch(read("features/identity/ui/identity-editor-draft-apply.ts"), /Use this look/);
   assert.doesNotMatch(read("features/identity/dock/ui/use-creator-handoff.ts"), /placed in the form|form is filled/);
-  assert.doesNotMatch(read("components/i18n/identity-assistant-copy.ts"), /preview above/);
+  assert.doesNotMatch(read("features/identity/dock/i18n/identity-assistant-copy.ts"), /preview above/);
 });
 
 test("the dock footer is Reset only, not Apply or Preview", () => {
   const panel = read("features/identity/dock/ui/identity-dock-assistant-panel.tsx");
   const bar = read("features/identity/dock/ui/identity-dock-action-bar.tsx");
   const copy = read("features/identity/dock/i18n/identity-dock-copy.ts");
-  const editorCopy = read("components/i18n/identity-editor-copy.ts");
+  const editorCopy = read("features/identity/editor/i18n/identity-editor-copy.ts");
   assert.match(panel, /const warningCount = identityContrastWarnings\(tokens\)\.length/);
   assert.doesNotMatch(panel, /warning\.min === 4\.5/);
   assert.match(panel, /IdentityDockActionBar/);

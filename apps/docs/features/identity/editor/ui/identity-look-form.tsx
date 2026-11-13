@@ -3,7 +3,7 @@
 import { type ReactNode } from "react";
 import { Stack, Tabs, TabsContent, TabsList, TabsTrigger, type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import { SimpleFields, type PatchMany } from "./identity-classic-fields";
 import { EditorFields } from "./identity-editor-fields";
 

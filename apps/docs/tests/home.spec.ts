@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
 import { homeManifestoCopy } from "../app/(home)/_home/i18n/home-manifesto-copy";
+import { homeSameIdeaCopy } from "../app/(home)/_home/i18n/home-same-idea-copy";
 import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+import { uiGalleryStats } from "../content/gallery";
 
 const homeHeroHeading = homeHeroCopy.hero.title;
 
@@ -139,7 +141,13 @@ test("home hero has no facts line; same-idea holds MIT and React 19 proof (#118)
   await expect(
     page.locator("[data-home-hero-lead]").getByText(/React 19/),
   ).toHaveCount(0);
-  await expect(page.locator("[data-home-same-idea-lands]").getByText("MIT", { exact: true })).toBeVisible();
+  const landsProof = homeSameIdeaCopy.lands.proof(
+    homeSameIdeaCopy.kitCounts.skills,
+    homeSameIdeaCopy.kitCounts.agents,
+    uiGalleryStats.components,
+    homeSameIdeaCopy.kitCounts.looks,
+  );
+  await expect(page.locator("[data-home-same-idea-lands]").getByText(landsProof)).toBeVisible();
   const stackLine = page.getByText("React 19 and Tailwind CSS 4, from npm or as source");
   await stackLine.scrollIntoViewIfNeeded();
   await expect(stackLine).toBeVisible();
@@ -181,6 +189,31 @@ test("home hero at 390 is headline-first; the glass card follows (#118)", async 
     return lead.compareDocumentPosition(stage) & Node.DOCUMENT_POSITION_FOLLOWING;
   });
   expect(order).toBeTruthy();
+});
+
+test("home hero h1 fits in at most 3 lines at 390, 393, and 412 after fonts (#411)", async ({ page }) => {
+  const heading = page.getByRole("heading", { name: homeHeroHeading, level: 1 });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.evaluate(() => document.fonts.ready);
+  await expect(heading).toBeVisible();
+  const family = await heading.evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(family).toContain("Inter Variable");
+  for (const width of [390, 393, 412] as const) {
+    await page.setViewportSize({ width, height: 844 });
+    const metrics = await heading.evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      // Drop zero-width / collapsed rects from the line box list.
+      const lines = [...range.getClientRects()].filter((box) => box.width > 1).length;
+      return {
+        lines,
+        overflow: el.scrollWidth > el.clientWidth + 1,
+      };
+    });
+    expect(metrics.lines, `h1 lines at ${width}`).toBeLessThanOrEqual(3);
+    expect(metrics.overflow, `h1 overflow at ${width}`).toBe(false);
+  }
 });
 
 test("home extra bands stay gone at 390 and 1440; the dock remains (#210)", async ({ page }) => {
