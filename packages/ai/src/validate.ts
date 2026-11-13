@@ -19,7 +19,7 @@ import {
   sourceNames,
   syncAgents,
 } from "./sync.js";
-import { adoptRel, kitDir, kitUniverse, readManifest } from "./kit.js";
+import { adoptRel, deprecatedCommandNames, kitDir, kitUniverse, readManifest } from "./kit.js";
 import { parseFrontmatter } from "./frontmatter.js";
 import {
   HEADER_KEYS,
@@ -289,9 +289,16 @@ function checkCommand(
   file: string,
   skills: Set<string>,
   issues: Issue[],
+  deprecated: ReadonlySet<string>,
 ): void {
   const path = join("commands", file);
   const base = file.replace(/\.md$/, "");
+  if (deprecated.has(base)) {
+    issues.push({
+      path,
+      message: `warning: command "${base}" is deprecated; use /zedkit-ai`,
+    });
+  }
   if (!NAME.test(base) || base.length > MAX_NAME) {
     issues.push({
       path,
@@ -600,8 +607,10 @@ function collect(root: string, kit: string): Issue[] {
   checkSidecar(root, strictHeaders(root), issues, kit);
   const commandsDir = join(root, "commands");
   if (existsSync(commandsDir)) {
+    const manifest = readManifest(kit);
+    const deprecated = new Set(manifest.ok ? deprecatedCommandNames(manifest.value) : []);
     for (const file of mdFiles(commandsDir)) {
-      checkCommand(root, file, skills, issues);
+      checkCommand(root, file, skills, issues, deprecated);
     }
   }
   checkManifest(root, issues);

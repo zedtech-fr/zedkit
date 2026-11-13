@@ -5,6 +5,7 @@ import { main } from "#cli.js";
 import { hasMarker } from "#generate.js";
 import { kitDir } from "#kit.js";
 import { installKit, type Action } from "#install.js";
+import { isKitCopy, shortHash } from "#legacy.js";
 import { inSync, syncKit, type SyncOptions } from "#sync.js";
 import { AGENT, COMMAND, put, tempDir } from "./helpers.js";
 
@@ -405,6 +406,118 @@ describe("syncKit: prune", () => {
   it("refuses --prune without an explicit provider list", () => {
     const result = syncKit({ dest: project(), prune: true });
     expect(result.ok ? "ok" : result.error.message).toContain("--prune needs an explicit --provider");
+  });
+});
+
+describe("syncKit: prune deprecated command stubs", () => {
+  const PLAN = COMMAND("plan");
+  const ENTRY = COMMAND("zedkit-ai");
+  const CUSTOM = "---\ndescription: my plan\n---\n\nKeep this body.\n";
+  const LEGACY_BODY = "---\ndescription: old plan\n---\n\nRun the `plan` skill on `$ARGUMENTS`.\n";
+
+  function stubKit(): string {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({
+        presets: { starter: ["plan"] },
+        agents: ["plain"],
+        commands: ["zedkit-ai", "plan"],
+      }),
+    );
+    put(kit, "commands/zedkit-ai.md", ENTRY);
+    put(kit, "commands/plan.md", PLAN);
+    put(kit, "tokenomics.defaults.md", readFileSync(join(kitDir(), "tokenomics.defaults.md"), "utf8"));
+    put(
+      kit,
+      "legacy-hashes.json",
+      JSON.stringify({ agents: {}, commands: { plan: [shortHash(LEGACY_BODY)] } }),
+    );
+    return kit;
+  }
+
+  function withCommands(bodies: Record<string, string>): string {
+    const root = project();
+    for (const [stem, body] of Object.entries(bodies)) {
+      put(root, `.agents/commands/${stem}.md`, body);
+    }
+    mkdirSync(join(root, ".cursor/commands"), { recursive: true });
+    mkdirSync(join(root, ".claude/commands"), { recursive: true });
+    for (const stem of Object.keys(bodies)) {
+      symlinkSync(`../../.agents/commands/${stem}.md`, join(root, `.cursor/commands/${stem}.md`));
+      writeFileSync(join(root, `.claude/commands/${stem}.md`), bodies[stem] ?? "");
+    }
+    return root;
+  }
+
+  it("deletes a deprecated command whose bytes match the current kit file, and its provider copies", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, "zedkit-ai": ENTRY });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+    expect(existsSync(join(root, ".cursor/commands/plan.md"))).toBe(false);
+    expect(existsSync(join(root, ".claude/commands/plan.md"))).toBe(false);
+    expect(existsSync(join(root, ".agents/commands/zedkit-ai.md"))).toBe(true);
+    expect(result.value.some((action) => action.kind === "prune" && action.path === ".agents/commands/plan.md")).toBe(
+      true,
+    );
+  });
+
+  it("keeps a customized leftover", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: CUSTOM, "zedkit-ai": ENTRY });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".agents/commands/plan.md"), "utf8")).toBe(CUSTOM);
+    expect(existsSync(join(root, ".cursor/commands/plan.md"))).toBe(true);
+  });
+
+  it("keeps a leftover that only matches a legacy hash, not current kit bytes", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: LEGACY_BODY, "zedkit-ai": ENTRY });
+    expect(isKitCopy("commands", "plan", LEGACY_BODY, PLAN, kit)).toBe(true);
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(readFileSync(join(root, ".agents/commands/plan.md"), "utf8")).toBe(LEGACY_BODY);
+  });
+
+  it("keeps a user command whose stem is not in the kit", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN, mine: "user command\n" });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+    expect(readFileSync(join(root, ".agents/commands/mine.md"), "utf8")).toBe("user command\n");
+  });
+
+  it("dry-run reports the prune and writes nothing", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, dryRun: true, kit });
+    if (!result.ok) throw result.error;
+    expect(result.value.some((action) => action.kind === "prune" && action.path === ".agents/commands/plan.md")).toBe(
+      true,
+    );
+    expect(readFileSync(join(root, ".agents/commands/plan.md"), "utf8")).toBe(PLAN);
+    expect(existsSync(join(root, ".cursor/commands/plan.md"))).toBe(true);
+  });
+
+  it("normalizes CRLF before comparing current kit bytes", () => {
+    const kit = stubKit();
+    const root = withCommands({ plan: PLAN.replace(/\n/g, "\r\n") });
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(existsSync(join(root, ".agents/commands/plan.md"))).toBe(false);
+  });
+
+  it("does not throw when the commands directory is missing", () => {
+    const kit = stubKit();
+    const root = project();
+    const result = syncKit({ dest: root, providers: ["cursor"], prune: true, kit });
+    if (!result.ok) throw result.error;
+    expect(existsSync(join(root, ".agents/commands"))).toBe(false);
   });
 });
 

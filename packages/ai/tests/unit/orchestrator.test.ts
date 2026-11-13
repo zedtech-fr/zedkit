@@ -7,7 +7,7 @@ import { installKit } from "#install.js";
 import { MUSE_NAME_ALIAS } from "#generate.js";
 import { readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { tempDir } from "./helpers.js";
+import { failingIssues, tempDir } from "./helpers.js";
 
 function kitRoot(): string {
   return fileURLToPath(new URL("../../kit/", import.meta.url));
@@ -62,7 +62,7 @@ describe("orchestrator agent", () => {
     expect(existsSync(join(dest, ".agents/agents/orchestrator.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(hasOrchestrate);
     expect(existsSync(join(dest, `.${provider}/agents/orchestrator.md`))).toBe(true);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("ships frontmatter guards on the orchestrator agent", () => {

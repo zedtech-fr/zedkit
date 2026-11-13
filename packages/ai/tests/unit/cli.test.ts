@@ -13,6 +13,23 @@ function run(...argv: string[]): { code: number; text: string; errors: string } 
   return { code, text: out.join("\n"), errors: errors.join("\n") };
 }
 
+const VALIDATE_OK =
+  "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate";
+
+function expectValidateOk(dest: string, allowDeprecationWarnings = false): void {
+  const result = run("validate", dest);
+  expect(result.code).toBe(0);
+  expect(result.errors).toBe("");
+  const lines = result.text.split("\n");
+  expect(lines.at(-1)).toBe(VALIDATE_OK);
+  const extra = lines.slice(0, -1).filter((line) => line !== "");
+  if (!allowDeprecationWarnings) {
+    expect(extra).toEqual([]);
+    return;
+  }
+  expect(extra.every((line) => /: warning: command "[^"]+" is deprecated; use \/zedkit-ai$/.test(line))).toBe(true);
+}
+
 describe("cli", () => {
   it("prints usage with no arguments (exit 0) and for unknown commands (exit 2)", () => {
     expect(run().code).toBe(0);
@@ -99,7 +116,7 @@ describe("cli", () => {
     expect(run("setup", dest, "--provider", "cursor").code).toBe(0);
     expect(existsSync(join(dest, ".agents/skills/domain-modeling/SKILL.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/product-director.md"))).toBe(true);
-    expect(run("validate", dest)).toEqual({ code: 0, text: "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate", errors: "" });
+    expectValidateOk(dest, true);
     const again = run("setup", dest, "--provider", "cursor");
     expect(again.code).toBe(0);
     const writes = again.text.split("\n").filter((line) => /^(copy|link|write)\s/u.test(line));
@@ -134,7 +151,7 @@ describe("cli", () => {
     expect(readFileSync(join(dest, ".cursor/skills/team-own/SKILL.md"), "utf8")).toBe("team\n");
     expect(readFileSync(join(dest, ".cursor/agents/explorer.md"), "utf8")).toBe("custom explorer\n");
     expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe("custom review\n");
-    expect(run("validate", dest)).toEqual({ code: 0, text: "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate", errors: "" });
+    expectValidateOk(dest, true);
   });
 
   it("init wires cursor when asked", () => {
@@ -232,7 +249,7 @@ describe("cli", () => {
   it("validate exits 0 on a good dir and 1 on a bad one", () => {
     const good = tempDir();
     put(good, "skills/alpha/SKILL.md", SKILL("alpha"));
-    expect(run("validate", good)).toEqual({ code: 0, text: "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate", errors: "" });
+    expectValidateOk(good);
     const bad = tempDir();
     put(bad, "skills/alpha/SKILL.md", SKILL("wrong"));
     const result = run("validate", bad);
@@ -284,7 +301,7 @@ describe("cli", () => {
     put(root, ".agents/commands/run.md", COMMAND("alpha"));
     mkdirSync(join(root, ".cursor/commands"), { recursive: true });
     symlinkSync("../../.agents/commands/run.md", join(root, ".cursor/commands/run.md"));
-    expect(run("validate", root)).toEqual({ code: 0, text: "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate", errors: "" });
+    expectValidateOk(root);
     unlinkSync(join(root, ".cursor/commands/run.md"));
     put(root, ".cursor/commands/run.md", COMMAND("alpha", "Edited."));
     for (const dir of [root, join(root, ".agents")]) {
@@ -306,7 +323,7 @@ describe("cli", () => {
       expect(result.text, dir).toContain("1 problem");
     }
     put(root, "AGENTS.md", "# Rules\n\nUse gpt-5 for reviews. <!-- zk:model-ok -->\n");
-    expect(run("validate", root)).toEqual({ code: 0, text: "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate", errors: "" });
+    expectValidateOk(root);
   });
 
   it("validate --setup reports a partial setup as failing, never ok (P2.5)", () => {

@@ -92,6 +92,13 @@ export function commandsForPreset(manifest: KitManifest, preset: string): string
   return manifest.presetCommands?.[preset] ?? manifest.commands ?? [];
 }
 
+const ENTRY_COMMAND = "zedkit-ai";
+
+/** Kit command stems other than the entry command. Internal; not in `src/index.ts`. */
+export function deprecatedCommandNames(manifest: KitManifest): string[] {
+  return (manifest.commands ?? []).filter((name) => name !== ENTRY_COMMAND);
+}
+
 export type KitUniverse = { skills: Set<string>; agents: Set<string>; commands: Set<string> };
 
 /** Every installable name in a kit dir: skill folders, agent/command stems. Missing dirs read as empty (minimal foreign kits). */

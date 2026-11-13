@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { hasMarker, MUSE_NAME_ALIAS } from "#generate.js";
 import { kitDir } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
+import { failingIssues } from "./helpers.js";
 
 const root = fileURLToPath(new URL("../../../../", import.meta.url));
 const real = (rel: string): string => realpathSync(join(root, rel));
@@ -57,7 +58,7 @@ describe("this repo's own provider wiring", () => {
   });
 
   it("validates the repo's .agents folder", () => {
-    expect(validateKit(join(root, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(root, ".agents")))).toEqual([]);
   });
 
   it("dogfood commands match the kit bytes", () => {
