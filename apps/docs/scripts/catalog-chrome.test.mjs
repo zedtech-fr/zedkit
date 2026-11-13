@@ -45,9 +45,22 @@ test("home desktop header still has Get started and no docs search", () => {
 test("issues and other marketing routes keep the fumadocs Header", () => {
   const headers = read("ui/site-headers.tsx");
   const marketing = functionSource(headers, "MarketingSiteHeader");
-  assert.match(marketing, /isHomePath/);
+  assert.doesNotMatch(marketing, /isHomePath/);
   assert.match(marketing, /isCatalogPath/);
   assert.match(marketing, /<Header className="max-md:hidden" \/>/);
+});
+
+test("home desktop header is the home layout slot, not an isHomePath branch", () => {
+  const headers = read("ui/site-headers.tsx");
+  const homeHeader = functionSource(headers, "HomeMarketingHeader");
+  assert.match(homeHeader, /MobileHeader/);
+  assert.match(homeHeader, /HomeDesktopHeader/);
+  const homeLayout = read("app/(home)/layout.tsx");
+  assert.match(homeLayout, /header=\{HomeMarketingHeader\}/);
+  const siteLayout = read("ui/site-layout.tsx");
+  assert.match(siteLayout, /header = MarketingSiteHeader/);
+  const siteGroup = read("app/(site)/layout.tsx");
+  assert.doesNotMatch(siteGroup, /header=\{/);
 });
 
 test("docs desktop header is the marketing pattern: search and GitHub, no version, theme, or Get started", () => {
