@@ -7,7 +7,7 @@ import {
   HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
-import { homeClosingCopy } from "@/ui/home/i18n/home-closing-copy";
+import { homeClosingCopy } from "../i18n/home-closing-copy";
 
 /**
  * After manifesto: one ask that copies the same AI-and-UI map prompt as the hero.

@@ -7,6 +7,8 @@ export const siteChromeCopy = {
   nav: {
     siteNavigation: "Site navigation",
     menu: "Menu",
+    docsPages: "Docs pages",
+    docsNavigation: "Documentation",
     github: "GitHub",
     opensInNewTab: "opens in a new tab",
   },

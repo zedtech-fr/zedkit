@@ -43,9 +43,10 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
   `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`, `sections/`
-  for the seven `home-*-section.tsx` files and `home-link.tsx`). Remaining
-  home files (hero, identity looks, i18n, rhythm, copy-command) still live
-  under `ui/home/**` until those move lots.
+  for the seven `home-*-section.tsx` files and `home-link.tsx`, `i18n/`
+  for band copy catalogs). Remaining home files (hero, identity looks,
+  leftover hero i18n, rhythm, copy-command) still live under `ui/home/**`
+  until those move lots.
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
@@ -70,8 +71,11 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   dead and single-owner there). Unit tests live beside their module,
   including under `app/` and `features/`; Playwright stays in `tests/`.
   `node --test` does not resolve tsconfig `@/` paths: a colocated test that
-  imports a `.ts` module using `@/` must register the alias first
-  (`features/reviews/model/review-appearance.test.mjs`).
+  imports a `.ts` module using `@/` must call `registerDocsAlias` from
+  `#scripts/register-docs-alias.mjs` first, then `await import()` the `@/`
+  module (a static `import` is hoisted and runs before the loader; do not
+  copy the inline data: URL resolver). `#*` maps to `app/`; `#scripts/*`
+  is the dedicated subpath.
 - Baseline `apps/docs/scripts/module-placement.baseline.json` may only
   shrink. Move the file; never extend the baseline.
   `node apps/docs/scripts/module-placement.mjs --write-baseline`
@@ -148,8 +152,8 @@ reject dead `/r/<name>.json` links.
   clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
   ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
   Home smoke exact-text must quote a string from
-  `ui/home/i18n/*-copy.ts` or `ui/i18n/site-chrome-copy.ts`; do not
-  invent a sentence in the spec.
+  `app/(home)/_home/i18n/*-copy.ts`, leftover `ui/home/i18n/*-copy.ts`,
+  or `ui/i18n/site-chrome-copy.ts`; do not invent a sentence in the spec.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set
   `DOCS_E2E_BASE_URL` to the port `serve` actually bound:

@@ -30,3 +30,12 @@ test("the tree draws connectors and marks the Cursor link", () => {
   assert.ok(installed.some((row) => row.kind === "link" && row.text.endsWith("skills -> ../.agents/skills")));
   assert.match(installed.at(-1).text, /^ {3}└─ rules\/project\.mdc$/);
 });
+
+test("committed generated kit matches the live setup preset", () => {
+  const generated = readFileSync(
+    join(dirname(fileURLToPath(import.meta.url)), "..", "lib", "ai-setup-onboarding.generated.ts"),
+    "utf8",
+  );
+  const kit = readAiSetupKit();
+  assert.ok(generated.includes(JSON.stringify(kit, null, 2)), "ai-setup-onboarding.generated.ts drifted from kit.json");
+});

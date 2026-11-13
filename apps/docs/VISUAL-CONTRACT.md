@@ -99,6 +99,8 @@ Compose by priority, not by stacking desktop. The first screen reaches the examp
 
 **#73 adjustment (#261, #303):** at 390 the quiet-glass mockup wraps the header onto two rows. The shipped phone bar is one compact row (wordmark; Get started or icon search; Menu) no taller than 64px. Menu is a kit Drawer of AI, UI, Docs, Catalog, Issues, and GitHub (#303 adds Issues; the mockup still omits it). Desktop 1440 stays the mockup single row at 56px (`--zk-site-header-height`), not the mockup 60px.
 
+**#73 adjustment (#301):** at 390 the quiet-glass mockup shows a short in-flow grouped nav. The shipped docs page tree is a collapsed kit Drawer in the docs shell (not the site Menu). Opening it shows grouped, readable links; 809 and 1440 keep a styled sidebar column.
+
 **#73 adjustment (#258):** the quiet-glass mockup Home hero shows AI / UI / AI + UI pills. The shipped hero has no selector: one map prompt and one caption. Kit choice stays in `map.md`.
 
 Recompose (change the order or the arrangement, not the tokens) when any of these holds at 390px: the first action sits below the first screen; a control group wraps onto a second row of equal weight; two columns become two unreadable ones. Order with one DOM and CSS `order`, or with a slot (the editor's `afterShape`); never render a control twice and hide one. Compressing a look's spacing or type to make a phone fit changes the specimen and is not recomposition.

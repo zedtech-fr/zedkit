@@ -29,8 +29,8 @@ import { isSiteNavLinkActive, siteHeaderChrome, type SiteNavLink } from "@/lib/s
  * UI decisions: compact one-row bar (wordmark left; Get started or icon search, then Menu) because customer = hurried phone visitor who needs the first screen to start at the hero. Menu is a kit Drawer of AI / UI / Docs / Catalog / Issues / GitHub because those links must stay reachable after the wrap is removed.
  *
  * Phone header (< md): wordmark; path primary action; Menu. Home: Get started, no search.
- * Else: icon search. GitHub lives in the menu. Docs routes do not open a page-tree drawer:
- * the list is in the page. Foundations has no page tree. Never theme, version, or a site-nav disclosure.
+ * Else: icon search. GitHub lives in the menu. Docs routes do not open a page-tree drawer
+ * from this bar: that control lives in DocsSidebar. Foundations has no page tree. Never theme, version, or a site-nav disclosure.
  */
 function PhoneSiteMenuPanel({
   pathname,

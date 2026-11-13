@@ -19,8 +19,8 @@ import { routesForSweep } from "./published-routes.js";
  * can balance the sweep across runners.
  */
 const VIEWS = [
-  { width: 375, height: 800, theme: "light" },
-  { width: 375, height: 800, theme: "dark" },
+  { width: 375, height: 900, theme: "light" },
+  { width: 375, height: 900, theme: "dark" },
   { width: 809, height: 900, theme: "light" },
   { width: 809, height: 900, theme: "dark" },
   { width: 1440, height: 900, theme: "light" },

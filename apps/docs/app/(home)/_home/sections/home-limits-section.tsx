@@ -6,7 +6,7 @@ import {
   HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
 } from "@/ui/home/home-rhythm";
-import { homeLimitsCopy } from "@/ui/home/i18n/home-limits-copy";
+import { homeLimitsCopy } from "../i18n/home-limits-copy";
 
 /**
  * After looks: what the kit does not do, before the manifesto.

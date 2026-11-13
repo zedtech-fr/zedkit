@@ -7,6 +7,7 @@ import test from "node:test";
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 const root = join(app, "../..");
 const homeSections = join(app, "app/(home)/_home/sections");
+const homeI18n = join(app, "app/(home)/_home/i18n");
 
 test("retired interactive home hero cluster is gone (#265)", () => {
   const gone = [
@@ -171,12 +172,12 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const limits = readFileSync(join(homeSections, "home-limits-section.tsx"), "utf8");
   const manifesto = readFileSync(join(homeSections, "home-manifesto-section.tsx"), "utf8");
   const closing = readFileSync(join(homeSections, "home-closing-section.tsx"), "utf8");
-  const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
-  const sixSentencesCopy = readFileSync(join(app, "ui/home/i18n/home-six-sentences-copy.ts"), "utf8");
-  const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
-  const limitsCopy = readFileSync(join(app, "ui/home/i18n/home-limits-copy.ts"), "utf8");
-  const manifestoCopy = readFileSync(join(app, "ui/home/i18n/home-manifesto-copy.ts"), "utf8");
-  const closingCopy = readFileSync(join(app, "ui/home/i18n/home-closing-copy.ts"), "utf8");
+  const sameIdeaCopy = readFileSync(join(homeI18n, "home-same-idea-copy.ts"), "utf8");
+  const sixSentencesCopy = readFileSync(join(homeI18n, "home-six-sentences-copy.ts"), "utf8");
+  const pasteCopy = readFileSync(join(homeI18n, "home-paste-copy.ts"), "utf8");
+  const limitsCopy = readFileSync(join(homeI18n, "home-limits-copy.ts"), "utf8");
+  const manifestoCopy = readFileSync(join(homeI18n, "home-manifesto-copy.ts"), "utf8");
+  const closingCopy = readFileSync(join(homeI18n, "home-closing-copy.ts"), "utf8");
   const looksCopy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
   const dockCopy = readFileSync(join(app, "components/i18n/identity-dock-copy.ts"), "utf8");
   const order = [
@@ -554,10 +555,10 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
   const gallery = readFileSync(join(app, "content/gallery.ts"), "utf8");
   const componentsMatch = gallery.match(/uiGalleryStats[^=]*=\s*\{[^}]*"components":\s*(\d+)/);
   const components = Number(componentsMatch?.[1]);
-  const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
+  const sameIdeaCopy = readFileSync(join(homeI18n, "home-same-idea-copy.ts"), "utf8");
   const sameIdea = readFileSync(join(homeSections, "home-same-idea-section.tsx"), "utf8");
   const paste = readFileSync(join(homeSections, "home-paste-section.tsx"), "utf8");
-  const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
+  const pasteCopy = readFileSync(join(homeI18n, "home-paste-copy.ts"), "utf8");
   assert.equal(looks, 6);
   assert.match(sameIdeaCopy, new RegExp(`skills:\\s*${skills}`));
   assert.match(sameIdeaCopy, new RegExp(`agents:\\s*${agents}`));

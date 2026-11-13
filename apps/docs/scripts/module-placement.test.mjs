@@ -312,6 +312,10 @@ describe("live docs tree", () => {
   });
 
   it("imports home band sections from _home/sections and does not leave shims at the old paths", () => {
+    const composer = readFileSync(
+      join(docsRoot, "app/(home)/_home/home-below-hero.tsx"),
+      "utf8",
+    );
     const bands = [
       "home-same-idea-section.tsx",
       "home-six-sentences-section.tsx",
@@ -322,22 +326,66 @@ describe("live docs tree", () => {
       "home-closing-section.tsx",
       "home-link.tsx",
     ];
-    const composer = readFileSync(join(docsRoot, "app/(home)/_home/home-below-hero.tsx"), "utf8");
-    assert.match(composer, /from ["']\.\/sections\/home-same-idea-section["']/);
-    assert.doesNotMatch(
-      composer,
-      /from "@\/ui\/home\/home-(?:same-idea|six-sentences|paste|identities|limits|manifesto|closing)-section"/,
-    );
     for (const name of bands) {
       assert.ok(existsSync(join(docsRoot, "app/(home)/_home/sections", name)), name);
       assert.equal(existsSync(join(docsRoot, "ui/home", name)), false, `shim ${name}`);
     }
+    for (const name of bands.filter((file) => file.endsWith("-section.tsx"))) {
+      const stem = name.replace(/\.tsx$/, "");
+      assert.match(composer, new RegExp(`from ["']\\./sections/${stem}["']`));
+    }
+    assert.doesNotMatch(composer, /from ["']@\/ui\/home\/home-\w+-section["']/);
     const sameIdea = readFileSync(
       join(docsRoot, "app/(home)/_home/sections/home-same-idea-section.tsx"),
       "utf8",
     );
     assert.match(sameIdea, /from ["']\.\/home-link["']/);
     assert.doesNotMatch(sameIdea, /from "@\/ui\/home\/home-link"/);
+    assert.match(sameIdea, /from ["']@\/ui\/home\/home-rhythm["']/);
+    const identities = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-identities-section.tsx"),
+      "utf8",
+    );
+    assert.match(identities, /from ["']@\/ui\/home\/home-identity-looks["']/);
+    const closing = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-closing-section.tsx"),
+      "utf8",
+    );
+    assert.match(closing, /from ["']@\/ui\/home\/home-copy-command-field["']/);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+  });
+
+  it("imports band copy catalogs from _home/i18n and does not leave shims at the old paths", () => {
+    const copies = [
+      "home-same-idea-copy.ts",
+      "home-six-sentences-copy.ts",
+      "home-paste-copy.ts",
+      "home-limits-copy.ts",
+      "home-manifesto-copy.ts",
+      "home-closing-copy.ts",
+    ];
+    for (const name of copies) {
+      assert.ok(existsSync(join(docsRoot, "app/(home)/_home/i18n", name)), name);
+      assert.equal(existsSync(join(docsRoot, "ui/home/i18n", name)), false, `shim ${name}`);
+    }
+    assert.ok(existsSync(join(docsRoot, "ui/home/i18n/home-hero-copy.ts")));
+    assert.ok(existsSync(join(docsRoot, "ui/home/i18n/home-copy-command-copy.ts")));
+    const sectionsDir = join(docsRoot, "app/(home)/_home/sections");
+    const sectionFiles = [
+      "home-same-idea-section.tsx",
+      "home-six-sentences-section.tsx",
+      "home-paste-section.tsx",
+      "home-limits-section.tsx",
+      "home-manifesto-section.tsx",
+      "home-closing-section.tsx",
+    ];
+    for (const name of sectionFiles) {
+      const src = readFileSync(join(sectionsDir, name), "utf8");
+      assert.doesNotMatch(src, /from ["']@\/ui\/home\/i18n\//, name);
+      assert.match(src, /from ["']\.\.\/i18n\//, name);
+    }
+    const closing = readFileSync(join(sectionsDir, "home-closing-section.tsx"), "utf8");
+    assert.match(closing, /from ["']@\/ui\/home\/home-copy-command-field["']/);
     assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 

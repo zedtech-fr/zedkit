@@ -2,26 +2,17 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { register } from "node:module";
 import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-// node --test does not read tsconfig `@/` paths; register the default-identity alias first.
-const defaultIdentityUrl = new URL("../../../lib/default-identity.ts", import.meta.url).href;
-register(
-  `data:text/javascript,${encodeURIComponent(`
-    export async function resolve(specifier, context, nextResolve) {
-      if (specifier !== "@/lib/default-identity") return nextResolve(specifier, context);
-      return nextResolve(${JSON.stringify(defaultIdentityUrl)}, context);
-    }
-  `)}`,
-  import.meta.url,
-);
+import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 
-const { DEFAULT_IDENTITY } = await import("../../../lib/default-identity.ts");
+registerDocsAlias(import.meta.url);
+
+const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
+const { colorInputHex } = await import("@/lib/identity-simple-value");
 const { docsSiteDefaultTokens, docsSiteTokensEqual } = await import("./docs-site-default-tokens.ts");
-const { colorInputHex } = await import("../../../lib/identity-simple-value.ts");
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const app = join(dirname(fileURLToPath(import.meta.url)), "../../..");

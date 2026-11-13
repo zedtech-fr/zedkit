@@ -554,8 +554,9 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
 /*
  * Fumadocs 16.17.10 Docs Container writes this grid inline; DocsContainer
  * omits that so these rules can restack at 390. Desktop template matches
- * fumadocs; phone is one column with the page tree in-flow below the header.
- * `--fd-sidebar-width` is 16.75rem (fumadocs 268px) on desktop; 100% at 390.
+ * fumadocs; phone is one column with a short docs-nav trigger below the
+ * header (the page tree lives in a kit Drawer, not in the flow).
+ * `--fd-sidebar-width` is 16.75rem (fumadocs 268px) on desktop.
  */
 #nd-docs-layout {
   --fd-sidebar-width: 16.75rem;
@@ -603,7 +604,6 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
 
 @media (width < 48rem) {
   #nd-docs-layout {
-    --fd-sidebar-width: 100%;
     grid-template:
       "header"
       "sidebar"
@@ -612,28 +612,8 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
       "main"
       / minmax(0, 1fr);
   }
-  #nd-docs-layout [data-sidebar-placeholder] {
-    display: block;
-    position: static;
+  #nd-docs-layout [data-docs-nav-trigger] {
     height: auto;
-    pointer-events: auto;
-  }
-  #nd-docs-layout #nd-sidebar {
-    position: static;
-    inset: auto;
-    width: 100%;
-    height: auto;
-    border-inline-end-width: 0;
-  }
-  #nd-docs-layout #nd-sidebar [data-radix-scroll-area-root],
-  #nd-docs-layout #nd-sidebar [data-radix-scroll-area-viewport] {
-    display: block;
-    height: auto;
-    min-height: min-content;
-    flex: none;
-    overflow: visible;
-    -webkit-mask-image: none;
-    mask-image: none;
   }
 }
 

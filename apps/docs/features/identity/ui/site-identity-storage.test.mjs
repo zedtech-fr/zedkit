@@ -2,29 +2,23 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { register } from "node:module";
 import test from "node:test";
 
 import { CUSTOM_IDENTITY_ID, identityPresets } from "@zedtech/zedkit-ui";
 
-// node --test does not read tsconfig `@/` paths; register lib aliases first.
-const defaultIdentityUrl = new URL("../../../lib/default-identity.ts", import.meta.url).href;
-const identityLibraryUrl = new URL("../../../lib/identity-library.ts", import.meta.url).href;
-register(
-  `data:text/javascript,${encodeURIComponent(`
-    export async function resolve(specifier, context, nextResolve) {
-      if (specifier === "@/lib/default-identity") return nextResolve(${JSON.stringify(defaultIdentityUrl)}, context);
-      if (specifier === "@/lib/identity-library") return nextResolve(${JSON.stringify(identityLibraryUrl)}, context);
-      return nextResolve(specifier, context);
-    }
-  `)}`,
-  import.meta.url,
-);
+import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 
-const { DEFAULT_IDENTITY } = await import("../../../lib/default-identity.ts");
+registerDocsAlias(import.meta.url);
+
+const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
+const { LIBRARY_KEY } = await import("@/lib/identity-library");
+const { restoreNamedIdentity } = await import("./named-identities.ts");
 const { docsSiteDefaultTokens } = await import("./docs-site-default-tokens.ts");
-const { LIBRARY_KEY } = await import("../../../lib/identity-library.ts");
-const { applyDocsSiteLook, readDockSiteTokens, resetDocsSiteLook } = await import("./docs-site-look.ts");
+const {
+  applyDocsSiteLook,
+  readDockSiteTokens,
+  resetDocsSiteLook,
+} = await import("./docs-site-look.ts");
 const {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
   LEGACY_IDENTITY_KEYS,
@@ -55,6 +49,25 @@ function memoryStorage() {
     },
     _store: store,
   };
+}
+
+function seedNamedLibrary(browser, tokens) {
+  browser.localStorage.setItem(
+    LIBRARY_KEY,
+    JSON.stringify({
+      version: 2,
+      items: [
+        {
+          id: "n-coral",
+          label: "Coral",
+          tokens,
+          createdAt: 1,
+          updatedAt: 1,
+          source: "editor",
+        },
+      ],
+    }),
+  );
 }
 
 function installBrowser() {
@@ -222,7 +235,7 @@ test("purgeLegacyIdentityStorage drops the retired opt-in key", () => {
   browser.restore();
 });
 
-test("blocked storage does not throw from write, clear, or differs", () => {
+test("blocked storage does not throw from write, clear, differs, or restoreNamedIdentity", () => {
   const browser = installBrowser();
   const boom = () => {
     throw new Error("blocked");
@@ -234,6 +247,7 @@ test("blocked storage does not throw from write, clear, or differs", () => {
   assert.doesNotThrow(() => docsSiteLookDiffersFromDefaults());
   assert.doesNotThrow(() => clearDocsSiteIdentity());
   assert.doesNotThrow(() => purgeLegacyIdentityStorage());
+  assert.doesNotThrow(() => restoreNamedIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY));
   browser.restore();
 });
 
@@ -248,25 +262,23 @@ test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, 
   assert.equal(readDockSiteTokens("press").radius, identityPresets.press.radius);
 
   const named = { ...defaults, radius: "2rem" };
-  browser.localStorage.setItem(
-    LIBRARY_KEY,
-    JSON.stringify({
-      version: 2,
-      items: [
-        {
-          id: "n-coral",
-          label: "Coral",
-          tokens: named,
-          createdAt: 1,
-          updatedAt: 1,
-          source: "editor",
-        },
-      ],
-    }),
-  );
+  seedNamedLibrary(browser, named);
   assert.equal(readDockSiteTokens("n-coral").radius, "2rem");
 
   assert.deepEqual(readDockSiteTokens(DEFAULT_IDENTITY), defaults);
   assert.deepEqual(readDockSiteTokens("n-missing"), defaults);
+  browser.restore();
+});
+
+test("restoreNamedIdentity applies a named look from the passed storage key only", () => {
+  const browser = installBrowser();
+  const named = { ...docsSiteDefaultTokens(), radius: "2rem" };
+  seedNamedLibrary(browser, named);
+  browser.localStorage.setItem(DOCS_SITE_IDENTITY_STORAGE_KEY, "n-coral");
+  restoreNamedIdentity("zk-other-key");
+  assert.equal(browser.html.getAttribute("data-identity"), null);
+  restoreNamedIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY);
+  assert.equal(browser.html.getAttribute("data-identity"), "n-coral");
+  assert.equal(browser.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY), "n-coral");
   browser.restore();
 });
