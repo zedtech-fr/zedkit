@@ -9,7 +9,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { LIGHT_KEYS, isLightKey } from "@/lib/identity-editor-search";
-import { acceptedIdentityTokens, patchTokens, withKeptDark } from "@/lib/identity-editor-patch";
+import { acceptedIdentityTokens, patchTokens, withKeptDark } from "./identity-editor-patch";
 
 function withSuggestedDark(
   next: IdentityTokens,

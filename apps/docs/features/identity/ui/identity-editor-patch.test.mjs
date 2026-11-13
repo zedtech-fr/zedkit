@@ -3,8 +3,12 @@ import test from "node:test";
 
 import { identityPresets, parseIdentityTokens } from "@zedtech/zedkit-ui";
 
-import { acceptedIdentityTokens, patchTokens } from "../lib/identity-editor-patch.ts";
-import { isLightKey } from "../lib/identity-editor-search.ts";
+import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
+
+registerDocsAlias(import.meta.url);
+
+const { acceptedIdentityTokens, patchTokens } = await import("./identity-editor-patch.ts");
+const { isLightKey } = await import("@/lib/identity-editor-search");
 
 const TOKENS = identityPresets.mist;
 

@@ -10,8 +10,8 @@ import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { docsSiteDefaultTokens } from "./docs-site-default-tokens";
 import { applyDocsSiteLook, resetDocsSiteLook } from "./docs-site-look";
-import { dispatchIdentityEditorDraftApply } from "@/lib/identity-editor-draft-apply";
-import { patchTokens } from "@/lib/identity-editor-patch";
+import { dispatchIdentityEditorDraftApply } from "./identity-editor-draft-apply";
+import { patchTokens } from "./identity-editor-patch";
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 
