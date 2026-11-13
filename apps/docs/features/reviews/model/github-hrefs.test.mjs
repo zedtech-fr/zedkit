@@ -29,6 +29,13 @@ test("resolveIssueOpenId defaults to the first id", () => {
   assert.equal(resolveIssueOpenId(ids, "", "#first"), "issue-386");
   assert.equal(resolveIssueOpenId(ids, "open=first", "#issue-108"), "issue-108");
   assert.equal(resolveIssueOpenId(ids, "", "#pr-54"), "pr-54");
-  assert.equal(resolveIssueOpenId(ids, "", "#issue-999"), "issue-386");
+  assert.equal(resolveIssueOpenId(ids, "", "#issue-x"), "issue-386");
+  assert.equal(resolveIssueOpenId([], "", ""), null);
+});
+
+test("resolveIssueOpenId does not fall back when the hash names a missing row", () => {
+  const ids = ["issue-386", "issue-108", "pr-54"];
+  assert.equal(resolveIssueOpenId(ids, "", "#issue-999"), null);
+  assert.equal(resolveIssueOpenId(ids, "open=first", "#pr-0"), null);
   assert.equal(resolveIssueOpenId([], "", "#issue-108"), null);
 });

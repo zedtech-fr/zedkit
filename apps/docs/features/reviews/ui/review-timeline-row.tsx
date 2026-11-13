@@ -18,13 +18,19 @@ export function CompactLogLink({
   href,
   copy,
   children,
+  ariaLabel,
 }: {
   href: string;
   copy: ReviewsCopy;
   children: ReactNode;
+  ariaLabel?: string;
 }) {
   const opens = copy.list.opensInNewTab;
   const external = href.startsWith("https:");
+  const named =
+    ariaLabel === undefined
+      ? {}
+      : { "aria-label": external ? `${ariaLabel} (${opens})` : ariaLabel };
   const mark = external ? (
     <>
       <ExternalLink aria-hidden="true" className="size-icon shrink-0" />
@@ -35,14 +41,14 @@ export function CompactLogLink({
   ) : null;
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={compactLinkClass}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={compactLinkClass} {...named}>
         {children}
         {mark}
       </a>
     );
   }
   return (
-    <Link href={href} className={compactLinkClass}>
+    <Link href={href} className={compactLinkClass} {...named}>
       {children}
     </Link>
   );
@@ -115,7 +121,13 @@ export function TimelineRow({
         </Stack>
       </Stack>
       {href === null ? null : (
-        <CompactLogLink href={href} copy={copy}>
+        <CompactLogLink
+          href={href}
+          copy={copy}
+          ariaLabel={`${copy.issue.viewLog}: ${copy.type[entry.type]}, ${
+            entry.verdict !== null ? copy.verdict[entry.verdict] : copy.status[entry.status]
+          }`}
+        >
           {copy.issue.viewLog}
         </CompactLogLink>
       )}

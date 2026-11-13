@@ -1,6 +1,4 @@
-"use client";
-
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import {
   Badge,
   Card,
@@ -27,14 +25,6 @@ import {
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { OutcomeMark } from "./issue-status";
 import { CompactLogLink, TimelineRow } from "./review-timeline-row";
-
-function GithubRefLink({ href, copy, children }: { href: string; copy: ReviewsCopy; children: ReactNode }) {
-  return (
-    <CompactLogLink href={href} copy={copy}>
-      {children}
-    </CompactLogLink>
-  );
-}
 
 function DetailMeta({
   entries,
@@ -71,13 +61,12 @@ function DetailMeta({
     items.push({
       label,
       value: (
-        <GithubRefLink href={href} copy={copy}>
+        <CompactLogLink href={href} copy={copy}>
           {`${label} #${link.n}`}
-        </GithubRefLink>
+        </CompactLogLink>
       ),
     });
   }
-  if (items.length === 0) return null;
   return <DetailPanel variant="grid" items={items} />;
 }
 
@@ -90,15 +79,24 @@ function StepsList({
   empty: string;
   copy: ReviewsCopy;
 }) {
-  if (entries.length === 0) return <EmptyState description={empty} />;
+  const headingId = useId();
   return (
-    <ul aria-label={copy.issue.timeline} className="flex list-none flex-col gap-stack-sm">
-      {entriesNewestFirst(entries).map((entry) => (
-        <li key={entry.id}>
-          <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
-        </li>
-      ))}
-    </ul>
+    <Stack gap="sm">
+      <Heading level={3} typeRole="section" id={headingId}>
+        {copy.issue.timeline}
+      </Heading>
+      {entries.length === 0 ? (
+        <EmptyState description={empty} />
+      ) : (
+        <ul aria-labelledby={headingId} className="flex list-none flex-col gap-stack-sm">
+          {entriesNewestFirst(entries).map((entry) => (
+            <li key={entry.id}>
+              <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </Stack>
   );
 }
 

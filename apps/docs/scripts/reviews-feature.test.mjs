@@ -1518,6 +1518,8 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
+  assert.equal(reviewsCopy.list.openList, "Issue list");
+  assert.equal(reviewsCopy.issue.missing, "This issue is not on the public list.");
   assert.equal(
     reviewsCopy.unlinked.missing,
     "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
@@ -1749,6 +1751,9 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.match(detail, /<Card>/);
   assert.match(detail, /CardHeader/);
   assert.match(detail, /<DetailPanel variant="grid"/);
+  assert.doesNotMatch(detail, /function GithubRefLink/);
+  assert.doesNotMatch(detail, /^["']use client["']/m);
+  assert.match(detail, /level=\{3\}/);
   assert.match(detail, /entriesNewestFirst\(entries\)/);
   assert.match(list, /headlineOutcome/);
   assert.doesNotMatch(list, /min-h-target w-fit/);
@@ -1759,7 +1764,7 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.doesNotMatch(list, /unlinkedPrPath/);
   assert.doesNotMatch(list, /timelineHref/);
   assert.doesNotMatch(list, /timelineLabel/);
-  assert.match(detail, /aria-label=\{copy\.issue\.timeline\}/);
+  assert.match(detail, /aria-labelledby=\{headingId\}/);
   assert.match(detail, /githubIssueHref/);
   assert.match(detail, /githubPullHref/);
   assert.match(detail, /copy\.issue\.timelineEmpty/);
@@ -1770,11 +1775,16 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.match(css, /min-width: 48rem/);
   assert.match(css, /100svh - var\(--zk-site-header-height\)/);
   assert.match(list, /SidebarNavItem/);
-  assert.match(list, /StatusDot/);
+  assert.match(list, /OutcomeStatus/);
   assert.match(list, /w-app-shell-sidebar/);
   assert.match(list, /p-app-shell-padding/);
   assert.match(list, /DrawerTrigger/);
   assert.match(list, /max-md:hidden/);
+  assert.match(list, /copy\.list\.openList/);
+  assert.match(list, /copy\.issue\.missing/);
+  assert.match(list, /aria-live="polite"/);
+  assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
+  assert.doesNotMatch(list, /\?\? items\[0\]/);
 });
 
 test("detail timelines keep port order and do not import entriesNewestFirst", () => {
@@ -1796,7 +1806,7 @@ test("unlinked and timeline links take their accessible name from visible title 
   assert.match(timeline, /href=\{entry\.liveUrl\}/);
   assert.match(row, /copy\.type\[entry\.type\]/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
-  assert.doesNotMatch(row, /aria-label/);
+  assert.match(row, /ariaLabel=\{`\$\{copy\.issue\.viewLog\}/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
 });
 
@@ -1831,7 +1841,7 @@ test("list stays in the shared wide frame and uses kit console nav rows", () => 
   assert.doesNotMatch(list, /MarketingSiteHeader|MobileHeader|pathname/);
   assert.doesNotMatch(frame, /pathname/);
   assert.equal([...list.matchAll(/<details /g)].length, 0);
-  assert.match(list, /IssueListRow[\s\S]*StatusDot/);
+  assert.match(list, /IssueListRow[\s\S]*OutcomeStatus/);
   assert.match(list, /layout=\{empty \? "page" : "workspace"\}/);
   assert.match(list, /resolveIssueOpenId/);
   assert.match(list, /addEventListener\("hashchange"/);

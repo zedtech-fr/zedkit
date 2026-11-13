@@ -1,9 +1,9 @@
-import { Badge } from "@zedtech/zedkit-ui";
+import { Badge, StatusDot } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import type { HeadlineOutcome } from "../model/latest-status";
 import type { LatestStatus } from "../ports/review-port";
-import { latestStatusBadge, STATUS_BADGE, VERDICT_BADGE } from "./review-badges";
+import { latestStatusBadge, outcomeDotTone, STATUS_BADGE, VERDICT_BADGE } from "./review-badges";
 
 export function LatestStatusMark({
   status,
@@ -42,4 +42,19 @@ export function OutcomeMark({
     return <LatestStatusMark status={outcome.status} copy={copy} />;
   }
   return null;
+}
+
+export function outcomeLabel(outcome: HeadlineOutcome | null, copy: ReviewsCopy): string | null {
+  if (outcome === null) return null;
+  if (outcome.kind === "verdict" && outcome.verdict !== undefined) {
+    return copy.verdict[outcome.verdict];
+  }
+  if (outcome.status !== undefined) {
+    return copy.status[outcome.status];
+  }
+  return null;
+}
+
+export function OutcomeStatus({ outcome }: { outcome: HeadlineOutcome | null }) {
+  return <StatusDot tone={outcomeDotTone(outcome)} pulse={outcome?.status === "running"} />;
 }

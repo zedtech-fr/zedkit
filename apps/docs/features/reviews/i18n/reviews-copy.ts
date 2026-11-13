@@ -39,6 +39,7 @@ export const reviewsCopy = {
     title: "Issues",
     description: "Public work log of how each issue was planned, built, and reviewed.",
     empty: "No public runs yet",
+    openList: "Issue list",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
     githubIssue: "Issue",

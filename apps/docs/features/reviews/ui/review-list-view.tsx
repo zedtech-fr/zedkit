@@ -3,7 +3,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per scrollable-region-focusable (#396). */
 import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import {
-  Badge,
   Button,
   Drawer,
   DrawerBody,
@@ -17,31 +16,21 @@ import {
   SidebarNavGroup,
   SidebarNavItem,
   Stack,
-  StatusDot,
   Text,
-  type StatusDotTone,
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { resolveIssueOpenId } from "../model/issue-open-target";
-import { headlineOutcome, latestEntry, type HeadlineOutcome } from "../model/latest-status";
+import { headlineOutcome, latestEntry } from "../model/latest-status";
 import { uniqueRunIds } from "../model/review-routes";
 import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { OutcomeMark } from "./issue-status";
+import { OutcomeStatus, outcomeLabel } from "./issue-status";
 import { IssueDetail, UnlinkedDetail } from "./review-issue-detail";
 import "./review-list.css";
 
 function runCountLabel(count: number, copy: ReviewsCopy): string {
   return `${count} ${count === 1 ? copy.list.run : copy.list.runs}`;
-}
-
-function outcomeDotTone(outcome: HeadlineOutcome | null): StatusDotTone {
-  if (outcome?.status === "running") return "active";
-  if (outcome?.status === "failed") return "danger";
-  if (outcome?.verdict === "request-changes") return "warning";
-  if (outcome?.verdict === "approve") return "success";
-  return "idle";
 }
 
 type IssueItem = { kind: "issue"; id: string; issue: IssueRecord };
@@ -70,23 +59,14 @@ function IssueListRow({
   withIds: boolean;
 }) {
   const outcome = headlineOutcome(issue.entries);
+  const label = outcomeLabel(outcome, copy) ?? copy.state[issue.state];
   return (
-    <SidebarNavItem
-      asChild
-      active={active}
-      status={<StatusDot tone={outcomeDotTone(outcome)} pulse={outcome?.status === "running"} />}
-      count={
-        outcome ? (
-          <OutcomeMark outcome={outcome} copy={copy} />
-        ) : (
-          <Badge variant="outline">{copy.state[issue.state]}</Badge>
-        )
-      }
-    >
+    <SidebarNavItem asChild active={active} status={<OutcomeStatus outcome={outcome} />} count={label}>
       <a
         href={`#issue-${issue.number}`}
         {...(withIds ? { id: `issue-${issue.number}` } : {})}
         data-issues-row=""
+        aria-label={`#${issue.number} ${issue.title}, ${label}`}
       >
         {`#${issue.number} ${issue.title}`}
       </a>
@@ -108,15 +88,21 @@ function UnlinkedListRow({
   const outcome = headlineOutcome(entry.entries);
   const last = latestEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
+  const label = outcomeLabel(outcome, copy);
   return (
     <SidebarNavItem
       asChild
       active={active}
-      status={<StatusDot tone={outcomeDotTone(outcome)} pulse={outcome?.status === "running"} />}
+      status={<OutcomeStatus outcome={outcome} />}
       meta={last ? copy.type[last.type] : undefined}
       count={runCountLabel(runCount, copy)}
     >
-      <a href={`#pr-${entry.number}`} {...(withIds ? { id: `pr-${entry.number}` } : {})} data-issues-row="">
+      <a
+        href={`#pr-${entry.number}`}
+        {...(withIds ? { id: `pr-${entry.number}` } : {})}
+        data-issues-row=""
+        {...(label ? { "aria-label": `#${entry.number}, ${label}` } : {})}
+      >
         #{entry.number}
       </a>
     </SidebarNavItem>
@@ -217,12 +203,12 @@ function IssuesPane({
         <Stack gap="tight" className="pane-shrink content-shrink flex-1">
           <Stack
             direction="horizontal"
-            data-slot="app-shell-menu"
+            data-issues-menu=""
             className="p-app-shell-padding md:hidden"
           >
             <DrawerTrigger asChild>
               <Button type="button" variant="outline" size="sm" className="min-h-target">
-                {copy.list.title}
+                {copy.list.openList}
               </Button>
             </DrawerTrigger>
           </Stack>
@@ -274,13 +260,16 @@ function IssuesWorkspace({
           data-issues-detail=""
           tabIndex={0}
           className="content-shrink p-app-shell-padding md:pane-shrink md:flex-1 md:overflow-y-auto md:p-app-shell-padding-md md:focus-ring"
-          aria-labelledby={detailHeadingId}
+          aria-live="polite"
+          aria-labelledby={selected ? detailHeadingId : undefined}
         >
           {selected?.kind === "issue" ? (
             <IssueDetail issue={selected.issue} copy={copy} headingId={detailHeadingId} />
           ) : selected?.kind === "pr" ? (
             <UnlinkedDetail entry={selected.pull} copy={copy} headingId={detailHeadingId} />
-          ) : null}
+          ) : (
+            <EmptyState description={copy.issue.missing} />
+          )}
         </article>
       }
     />
@@ -299,7 +288,7 @@ export function ReviewListView({
   const items = useMemo(() => listItems(issues, unlinked), [issues, unlinked]);
   const ids = useMemo(() => items.map((item) => item.id), [items]);
   const selectedId = useSelectedIssueId(ids);
-  const selected = items.find((item) => item.id === selectedId) ?? items[0] ?? null;
+  const selected = items.find((item) => item.id === selectedId) ?? null;
   const empty = issues.length === 0 && unlinked.length === 0;
   return (
     <ReviewAppearanceFrame layout={empty ? "page" : "workspace"}>

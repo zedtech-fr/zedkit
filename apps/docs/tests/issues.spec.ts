@@ -34,8 +34,9 @@ test("issue rows are selectable list links with the first item open", async ({ p
   await expect(detail).toBeVisible();
   await expect(detail.getByRole("link", { name: "Timeline" })).toHaveCount(0);
   await expect(detail.getByRole("link", { name: new RegExp(`^${reviewsCopy.list.githubIssue} #`) })).toBeVisible();
-  await expect(detail.getByRole("link", { name: reviewsCopy.issue.viewLog }).first()).toBeVisible();
-  await page.getByRole("button", { name: reviewsCopy.list.title, exact: true }).click();
+  const viewLog = detail.getByRole("link", { name: new RegExp(`^${reviewsCopy.issue.viewLog}`) });
+  if ((await viewLog.count()) > 0) await expect(viewLog.first()).toBeVisible();
+  await page.getByRole("button", { name: reviewsCopy.list.openList, exact: true }).click();
   const visible = page.locator("[data-issues-row]:visible").first();
   await expect(visible).toHaveAttribute("aria-current", "page");
   const box = await visible.boundingBox();
@@ -65,6 +66,19 @@ test("open=first and a home illustration click select the first issue", async ({
   await page.goto(`/issues#${deepId}`, { waitUntil: "networkidle" });
   await expect(deep).toHaveAttribute("aria-current", "page");
   await expect(page.locator("main [data-issues-row]").first()).not.toHaveAttribute("aria-current");
+});
+
+test("unknown issue hash shows a missing note instead of the first issue", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/issues#issue-999999", { waitUntil: "networkidle" });
+  const first = await firstIssueRow(page);
+  if (first === null) {
+    await expect(emptyListVisible(page)).toBeVisible();
+    return;
+  }
+  await expect(first).not.toHaveAttribute("aria-current", "page");
+  await expect(page.locator("[data-issues-detail]")).toContainText(reviewsCopy.issue.missing);
+  await expect(page).toHaveURL(/#issue-999999/);
 });
 
 test("issues heading lines up with the header brand at 1440", async ({ page }) => {

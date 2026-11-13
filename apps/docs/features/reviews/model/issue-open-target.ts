@@ -10,15 +10,19 @@ export function issueOpenTarget(search: string, hash: string): "first" | string 
   return null;
 }
 
-/** First id when the URL has no target or an unknown hash. */
+/**
+ * First id when the URL has no target or asks for first.
+ * A well-formed `#issue-n` / `#pr-n` that is not on the list returns
+ * `null` so the page can show `copy.issue.missing` instead of silently
+ * opening another row while the stale hash stays in the URL.
+ */
 export function resolveIssueOpenId(
   ids: readonly string[],
   search: string,
   hash: string,
 ): string | null {
   const first = ids[0];
-  if (first === undefined) return null;
   const target = issueOpenTarget(search, hash);
-  if (target === null || target === "first") return first;
-  return ids.includes(target) ? target : first;
+  if (target === null || target === "first") return first ?? null;
+  return ids.includes(target) ? target : null;
 }
