@@ -41,6 +41,17 @@ export function docsRenderLooks(files) {
   return looksGridTriggered(files) ? [...DEFAULT_LOOKS] : [];
 }
 
+/** `"full"` sitemap vs `"touched"` mapper. Event property, not a file list. */
+export function docsRenderSweepMode({ event, baseRef, headRef }) {
+  if (event === "push") return "full";
+  if (event !== "pull_request") return "touched";
+  if (baseRef === "main") return "full";
+  if (baseRef === "dev" && typeof headRef === "string" && headRef.startsWith("epic/")) {
+    return "full";
+  }
+  return "touched";
+}
+
 export function slugNeed(heading) {
   return heading.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
 }
@@ -100,16 +111,26 @@ function loadSitemapRoutes(root) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const root = process.cwd();
-  const files = readFileSync(0, "utf8").split("\n").filter(Boolean);
-  if (process.argv.includes("--looks")) {
-    process.stdout.write(`${docsRenderLooks(files).join(",")}\n`);
+  if (process.argv.includes("--mode")) {
+    process.stdout.write(
+      `${docsRenderSweepMode({
+        event: process.env.EVENT,
+        baseRef: process.env.BASE_REF,
+        headRef: process.env.HEAD_REF,
+      })}\n`,
+    );
   } else {
-    const routes = docsRenderRoutes({
-      files,
-      manifest: loadManifest(root),
-      sitemapRoutes: loadSitemapRoutes(root),
-    });
-    process.stdout.write(`${routes.join(",")}\n`);
+    const root = process.cwd();
+    const files = readFileSync(0, "utf8").split("\n").filter(Boolean);
+    if (process.argv.includes("--looks")) {
+      process.stdout.write(`${docsRenderLooks(files).join(",")}\n`);
+    } else {
+      const routes = docsRenderRoutes({
+        files,
+        manifest: loadManifest(root),
+        sitemapRoutes: loadSitemapRoutes(root),
+      });
+      process.stdout.write(`${routes.join(",")}\n`);
+    }
   }
 }
