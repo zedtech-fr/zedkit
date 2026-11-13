@@ -9,9 +9,9 @@ import {
   Text,
 } from "@zedtech/zedkit-ui";
 
-import { docsSiteLookDiffersFromDefaults } from "@/lib/site-identity-storage";
-import { resetDocsSiteLook } from "@/lib/docs-site-look";
-import { customIdentityBarCopy } from "@/components/i18n/custom-identity-bar-copy";
+import { customIdentityBarCopy } from "@/features/identity/i18n/custom-identity-bar-copy";
+import { resetDocsSiteLook } from "@/features/identity/ui/docs-site-look";
+import { docsSiteLookDiffersFromDefaults } from "@/features/identity/ui/site-identity-storage";
 
 function subscribe(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);

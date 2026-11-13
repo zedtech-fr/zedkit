@@ -5,8 +5,6 @@
     "lib/registry-smoke-urls.ts"
   ],
   "singleOwner": [
-    "components/custom-identity-bar.tsx",
-    "components/i18n/custom-identity-bar-copy.ts",
     "components/i18n/identity-assistant-copy.ts",
     "components/i18n/identity-dock-copy.ts",
     "components/identity-editor-export.tsx",

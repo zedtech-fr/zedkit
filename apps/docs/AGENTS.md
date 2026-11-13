@@ -198,7 +198,7 @@ second fonts `pnpm add` next to that snippet.
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `i18n/identity-editor-copy.ts`.
 - Classic edits in the floating dock restyle the whole site immediately and
-  persist in `lib/site-identity-storage.ts`. Reset restores the site default
+  persist in `features/identity/ui/site-identity-storage.ts`. Reset restores the site default
   look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
   has no Apply or Preview step and no opt-in key. Dock customize copy must
   not name a preview; the page and its specimens follow. The editor page

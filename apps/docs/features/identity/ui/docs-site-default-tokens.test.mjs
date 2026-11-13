@@ -1,17 +1,32 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { register } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import { DEFAULT_IDENTITY } from "../lib/default-identity.ts";
-import { docsSiteDefaultTokens, docsSiteTokensEqual } from "../lib/docs-site-default-tokens.ts";
-import { colorInputHex } from "../lib/identity-simple-value.ts";
+// node --test does not read tsconfig `@/` paths; register before loading modules that use them.
+const docsRootHref = new URL("../../../", import.meta.url).href;
+register(
+  `data:text/javascript,${encodeURIComponent(`
+    export async function resolve(specifier, context, nextResolve) {
+      if (!specifier.startsWith("@/")) return nextResolve(specifier, context);
+      const rel = specifier.slice(2);
+      const withExt = /\\.(?:ts|tsx|mjs|js)$/.test(rel) ? rel : rel + ".ts";
+      return nextResolve(new URL(withExt, ${JSON.stringify(docsRootHref)}).href, context);
+    }
+  `)}`,
+  import.meta.url,
+);
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "../../..");
-const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
+const { colorInputHex } = await import("@/lib/identity-simple-value");
+const { docsSiteDefaultTokens, docsSiteTokensEqual } = await import("./docs-site-default-tokens.ts");
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "../../../../..");
+const app = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 function read(rel) {
   return readFileSync(join(rel.startsWith("packages/") ? root : app, rel), "utf8");
@@ -80,7 +95,7 @@ test("docsSiteTokensEqual is value equality, not object identity", () => {
 });
 
 test("docsSiteTokensEqual uses JSON.stringify so a new kit key is not silently ignored", () => {
-  const src = read("lib/docs-site-default-tokens.ts");
+  const src = read("features/identity/ui/docs-site-default-tokens.ts");
   assert.match(src, /JSON\.stringify\(a\) === JSON\.stringify\(b\)/);
   assert.doesNotMatch(src, /COLOUR_KEYS/);
   assert.doesNotMatch(src, /TOKEN_KEYS/);

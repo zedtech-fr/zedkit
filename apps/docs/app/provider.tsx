@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 import { useEffect, useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
 import { RootProvider } from "fumadocs-ui/provider/next";
-import { CustomIdentityBar } from "@/components/custom-identity-bar";
+import { CustomIdentityBar } from "@/features/identity/ui/custom-identity-bar";
 import { IdentityDockGate } from "@/features/identity/ui/identity-dock-gate";
 import { IdentityAssistantStoreProvider } from "@/features/identity/ui/identity-assistant-store";
-import { purgeLegacyIdentityStorage } from "@/lib/site-identity-storage";
+import { DOCS_SITE_IDENTITY_STORAGE_KEY, purgeLegacyIdentityStorage } from "@/features/identity/ui/site-identity-storage";
 import { SiteChromeA11yPatch } from "@/ui/site-chrome-a11y";
 import { ThemeColorMeta } from "@/ui/theme-color-meta";
 import { RouteScrollReset } from "@/ui/route-scroll-reset";
@@ -26,7 +26,9 @@ export function Provider({ children }: { children: ReactNode }) {
   }, []);
   useLayoutEffect(() => {
     purgeLegacyIdentityStorage();
-    void import("@/lib/named-identities").then((mod) => mod.restoreNamedIdentity());
+    void import("@/lib/named-identities").then((mod) =>
+      mod.restoreNamedIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY),
+    );
   }, []);
 
   return (

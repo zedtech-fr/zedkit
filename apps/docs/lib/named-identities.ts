@@ -19,7 +19,6 @@ import {
   type SaveResult,
   type SavedIdentity,
 } from "./identity-library.ts";
-import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "./site-identity-storage.ts";
 
 /**
  * The saved identities as the editor and the header read them: a live view over the versioned library
@@ -95,11 +94,11 @@ function subscribeNamedIdentities(onStoreChange: () => void) {
 }
 
 /** Re-apply a stored named look after hydration (uses the docs site identity keys). */
-function restoreNamedIdentity() {
-  const id = window.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY);
+function restoreNamedIdentity(storageKey: string) {
+  const id = window.localStorage.getItem(storageKey);
   if (!id || !isNamedIdentityId(id)) return;
   const saved = readNamedIdentities().find((item) => item.id === id);
-  if (saved) applyCustomIdentity(saved.tokens, saved.id, DOCS_SITE_IDENTITY_STORAGE_KEY);
+  if (saved) applyCustomIdentity(saved.tokens, saved.id, storageKey);
 }
 
 export {

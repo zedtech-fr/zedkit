@@ -8,8 +8,8 @@ import { IdentityDockCustomize } from "@/features/identity/ui/identity-dock-cust
 import { IdentityDockPanelToolbar } from "@/features/identity/ui/identity-dock-panel-toolbar";
 import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { docsSiteDefaultTokens } from "@/lib/docs-site-default-tokens";
-import { applyDocsSiteLook, resetDocsSiteLook } from "@/lib/docs-site-look";
+import { docsSiteDefaultTokens } from "@/features/identity/ui/docs-site-default-tokens";
+import { applyDocsSiteLook, resetDocsSiteLook } from "@/features/identity/ui/docs-site-look";
 import { dispatchIdentityEditorDraftApply } from "@/lib/identity-editor-draft-apply";
 import { patchTokens } from "@/lib/identity-editor-patch";
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";

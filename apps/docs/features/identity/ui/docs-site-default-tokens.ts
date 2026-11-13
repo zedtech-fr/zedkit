@@ -1,6 +1,6 @@
 import { identityPresets, parseIdentityTokens, type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { DEFAULT_IDENTITY } from "./default-identity.ts";
+import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
 /** Light page fill from `html[data-docs-shell]:not(.dark)` in docs-shell-tokens.css. */
 const DOCS_SITE_LIGHT_BACKGROUND = "0 0% 100%";

@@ -217,8 +217,8 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
 });
 
 test("the custom identity bar is Reset when the look differs, not a separate apply step", () => {
-  const copy = read("components/i18n/custom-identity-bar-copy.ts");
-  const bar = read("components/custom-identity-bar.tsx");
+  const copy = read("features/identity/i18n/custom-identity-bar-copy.ts");
+  const bar = read("features/identity/ui/custom-identity-bar.tsx");
   assert.match(copy, /badge: "Custom identity active"/);
   assert.match(copy, /reset: "Reset"/);
   assert.doesNotMatch(copy, /You applied/);

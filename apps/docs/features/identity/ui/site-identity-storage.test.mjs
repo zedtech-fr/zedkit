@@ -1,21 +1,36 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { register } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import { CUSTOM_IDENTITY_ID, identityPresets } from "@zedtech/zedkit-ui";
 
-import { DEFAULT_IDENTITY } from "../lib/default-identity.ts";
-import { docsSiteDefaultTokens } from "../lib/docs-site-default-tokens.ts";
+// node --test does not read tsconfig `@/` paths; register before loading modules that use them.
+const docsRootHref = new URL("../../../", import.meta.url).href;
+register(
+  `data:text/javascript,${encodeURIComponent(`
+    export async function resolve(specifier, context, nextResolve) {
+      if (!specifier.startsWith("@/")) return nextResolve(specifier, context);
+      const rel = specifier.slice(2);
+      const withExt = /\\.(?:ts|tsx|mjs|js)$/.test(rel) ? rel : rel + ".ts";
+      return nextResolve(new URL(withExt, ${JSON.stringify(docsRootHref)}).href, context);
+    }
+  `)}`,
+  import.meta.url,
+);
 
-import { LIBRARY_KEY } from "../lib/identity-library.ts";
-import {
+const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
+const { LIBRARY_KEY } = await import("@/lib/identity-library");
+const { restoreNamedIdentity } = await import("@/lib/named-identities");
+const { docsSiteDefaultTokens } = await import("./docs-site-default-tokens.ts");
+const {
   applyDocsSiteLook,
   readDockSiteTokens,
   resetDocsSiteLook,
-} from "../lib/docs-site-look.ts";
-import {
+} = await import("./docs-site-look.ts");
+const {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
   LEGACY_IDENTITY_KEYS,
   docsSiteCustomStorageKey,
@@ -25,9 +40,9 @@ import {
   readDocsSiteTokens,
   writeDocsSiteTokens,
   clearDocsSiteIdentity,
-} from "../lib/site-identity-storage.ts";
+} = await import("./site-identity-storage.ts");
 
-const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const app = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 function read(rel) {
   return readFileSync(join(app, rel), "utf8");
@@ -133,7 +148,7 @@ test("JSON tokens round-trip and invalid JSON reads as missing", () => {
 });
 
 test("opt-in key and helpers are gone from storage and the root layout", () => {
-  const storage = read("lib/site-identity-storage.ts");
+  const storage = read("features/identity/ui/site-identity-storage.ts");
   const layout = read("app/layout.tsx");
   assert.doesNotMatch(storage, /OPT_IN/);
   assert.doesNotMatch(storage, /isDocsSiteIdentityOptIn/);
@@ -258,5 +273,33 @@ test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, 
 
   assert.deepEqual(readDockSiteTokens(DEFAULT_IDENTITY), defaults);
   assert.deepEqual(readDockSiteTokens("n-missing"), defaults);
+  browser.restore();
+});
+
+test("restoreNamedIdentity applies a named look from the passed storage key only", () => {
+  const browser = installBrowser();
+  const named = { ...docsSiteDefaultTokens(), radius: "2rem" };
+  browser.localStorage.setItem(
+    LIBRARY_KEY,
+    JSON.stringify({
+      version: 2,
+      items: [
+        {
+          id: "n-coral",
+          label: "Coral",
+          tokens: named,
+          createdAt: 1,
+          updatedAt: 1,
+          source: "editor",
+        },
+      ],
+    }),
+  );
+  browser.localStorage.setItem(DOCS_SITE_IDENTITY_STORAGE_KEY, "n-coral");
+  restoreNamedIdentity("zk-other-key");
+  assert.equal(browser.html.getAttribute("data-identity"), null);
+  restoreNamedIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY);
+  assert.equal(browser.html.getAttribute("data-identity"), "n-coral");
+  assert.equal(browser.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY), "n-coral");
   browser.restore();
 });
