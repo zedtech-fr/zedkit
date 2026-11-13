@@ -1,5 +1,5 @@
+import { createStoredChoice } from "@zedtech/zedkit-ui";
 import { packageManagers, type PackageManager } from "@/lib/package-manager-commands";
-import { createStoredChoice } from "@/lib/use-stored-choice";
 
 /** The key fumadocs' `<Tabs groupId="package-manager" persist>` writes, so generated pages and these selects agree. */
 const packageManager = createStoredChoice("package-manager", packageManagers);

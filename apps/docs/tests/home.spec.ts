@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
 import { homeManifestoCopy } from "../app/(home)/_home/i18n/home-manifesto-copy";
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
 
 const homeHeroHeading = homeHeroCopy.hero.title;
 
@@ -48,7 +49,7 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   await expect(page.getByRole("link", { name: /manifesto/i })).toHaveCount(0);
 });
 
-test("home hero matches the mockup first screen: two-beat title, prompt, glass card (#118, #247, #258)", async ({
+test("home hero matches the mockup first screen: question title, prompt, glass card (#118, #247, #258, #411)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -57,6 +58,7 @@ test("home hero matches the mockup first screen: two-beat title, prompt, glass c
   // #118 supersedes the Setup / Get started / Browse catalog hero row (#111).
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Setup" })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Get started" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: siteChromeCopy.getStarted })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Browse catalog" })).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead] a[data-site-action]")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveAttribute(
@@ -264,7 +266,7 @@ test.describe("home paste band light/dark (#769)", () => {
   }
 });
 
-test.describe("home header Get started CTA light/dark", () => {
+test.describe("home header primary CTA light/dark", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -274,7 +276,7 @@ test.describe("home header Get started CTA light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const getStarted = page.getByRole("link", { name: "Get started" }).first();
+      const getStarted = page.getByRole("link", { name: siteChromeCopy.getStarted }).first();
       await getStarted.scrollIntoViewIfNeeded();
       await expect(getStarted).toBeVisible();
       await getStarted.screenshot({ path: `test-results/home-header-docs-cta-${mode}.png` });

@@ -441,6 +441,12 @@ paginatedRowModel: (table: Table_2<any, any>) => () => RowModel<any, any>;
 }, TData>;
 
 // @public
+export function createStoredChoice<const Values extends readonly string[]>(storageKey: string, values: Values): {
+    isValue: (value: string) => value is Values[number];
+    useChoice: () => readonly [Values[number], (value: Values[number]) => void];
+};
+
+// @public
 export const CUSTOM_IDENTITY_ID = "custom";
 
 // @public (undocumented)
@@ -1516,6 +1522,13 @@ export function readAssistantStreamEvent(frame: SseFrame, stages: readonly strin
     type: "status";
     stage: string;
 } | null;
+
+// @public
+export function repairContrast(tokens: IdentityTokens): {
+    tokens: IdentityTokens;
+    adjusted: number;
+    remaining: number;
+};
 
 // @public
 export function RouteModal(input: RouteModalProps): React_2.JSX.Element;

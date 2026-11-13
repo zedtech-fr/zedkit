@@ -34,7 +34,7 @@ test("issue rows are selectable list links with the first item open", async ({ p
   await expect(detail).toBeVisible();
   await expect(detail.getByRole("link", { name: "Timeline" })).toHaveCount(0);
   await expect(detail.getByRole("link", { name: new RegExp(`^${reviewsCopy.list.githubIssue} #`) })).toBeVisible();
-  const viewLog = detail.getByRole("link", { name: new RegExp(`^${reviewsCopy.issue.viewLog}`) });
+  const viewLog = detail.getByRole("link", { name: new RegExp(reviewsCopy.issue.viewLog) });
   if ((await viewLog.count()) > 0) await expect(viewLog.first()).toBeVisible();
   await page.getByRole("button", { name: reviewsCopy.list.openList, exact: true }).click();
   const visible = page.locator("[data-issues-row]:visible").first();

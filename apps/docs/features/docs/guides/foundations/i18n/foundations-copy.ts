@@ -3,7 +3,7 @@ export const foundationsCopy = {
   hero: {
     title: "Site foundations",
     intro:
-      "White pages, zinc text, black actions. Color lives in panels, and glass sits on top of them.",
+      "Light pages, zinc text, black actions; dark pages keep the same roles on the look's dark pair. Color lives in panels, and glass sits on top of them.",
   },
   rules: {
     color:
@@ -19,7 +19,7 @@ export const foundationsCopy = {
     indigo: "Indigo",
     violet: "Violet",
     panelTitle: "Glass goes on a panel",
-    panelBody: "Never on the white page. It needs color behind it to show.",
+    panelBody: "Never on the page. It needs color behind it to show.",
   },
   typeRows: {
     display: { spec: "Inter 48 / 1.08, medium", sample: "Code that's checked." },
