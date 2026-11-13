@@ -41,6 +41,16 @@
 }
 
 /*
+ * #411 wrap: 16px page gutter at 390 (signature mobile gutter). The shell
+ * token stays 1.5rem. Do not shrink --zk-type-h1-size here.
+ */
+@media (max-width: 390px) {
+  #home-page {
+    --zk-page-gutter: 1rem;
+  }
+}
+
+/*
  * Home hero band: section tokens (88px top / 96px bottom), same at 390 and
  * 1440. Inner padding-block on the grid used to stack with this and miss
  * the 142px heading offset. Hash aliases #ai-setup / #get-started live

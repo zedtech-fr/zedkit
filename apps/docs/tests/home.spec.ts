@@ -191,6 +191,25 @@ test("home hero at 390 is headline-first; the glass card follows (#118)", async 
   expect(order).toBeTruthy();
 });
 
+test("home hero h1 fits in at most 3 lines at 390 after fonts (#411)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.evaluate(() => document.fonts.ready);
+  const heading = page.getByRole("heading", { name: homeHeroHeading, level: 1 });
+  await expect(heading).toBeVisible();
+  const metrics = await heading.evaluate((el) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const lines = [...range.getClientRects()].filter((box) => box.width > 1).length;
+    return {
+      lines,
+      overflow: el.scrollWidth > el.clientWidth + 1,
+    };
+  });
+  expect(metrics.lines).toBeLessThanOrEqual(3);
+  expect(metrics.overflow).toBe(false);
+});
+
 test("home extra bands stay gone at 390 and 1440; the dock remains (#210)", async ({ page }) => {
   for (const viewport of [
     { width: 390, height: 844 },
