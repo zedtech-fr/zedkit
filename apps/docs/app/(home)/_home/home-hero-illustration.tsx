@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Badge, Button, Stack, StatusDot, Surface, Text, useMotionPreference } from "@zedtech/zedkit-ui";
 import { OffPathLink } from "@/ui/off-path-link";
 import {
@@ -15,6 +15,7 @@ import {
   type HeroActiveRun,
   type HeroStepStatus,
 } from "./home-hero-active-run";
+import { useRestoreFocusOnLiveSwap } from "./home-hero-focus";
 import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "./home-rhythm";
 import { homeHeroCopy } from "./i18n/home-hero-copy";
 import { HomeLink } from "./sections/home-link";
@@ -86,13 +87,7 @@ function LiveRows({ run, paused, motionOk }: { run: HeroActiveRun; paused: boole
             </Text>
             <div className="inline-flex content-shrink flex-wrap items-center gap-icon">
               <StatusDot tone={dot.tone} pulse={dot.pulse && !paused && motionOk} />
-              <Text
-                as="span"
-                variant="muted"
-                data-hero-run-step-status=""
-                className="line-clamp-1"
-                title={statusText}
-              >
+              <Text as="span" variant="muted" data-hero-run-step-status="" className="line-clamp-1" title={statusText}>
                 {statusText}
               </Text>
             </div>
@@ -138,43 +133,53 @@ function LiveLinks({ run }: { run: HeroActiveRun }) {
   );
 }
 
-function useRestoreFocusOnLiveSwap(liveKey: string | null, showPause: boolean) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const pauseRef = useRef<HTMLButtonElement>(null);
-  const lastFocus = useRef<"pause" | "link" | "other" | null>(null);
-
-  useLayoutEffect(() => {
-    const root = cardRef.current;
-    const pause = pauseRef.current;
-    if (root === null) return;
-    const active = document.activeElement;
-    const contained = active instanceof Node && root.contains(active);
-    const onHiddenPause = !showPause && pause !== null && active === pause;
-    if (contained && !onHiddenPause) return;
-    if (lastFocus.current === null && !onHiddenPause) return;
-    if (lastFocus.current === "link" || onHiddenPause) {
-      const link = root.querySelector("a");
-      if (link instanceof HTMLElement) link.focus();
-      return;
-    }
-    if (lastFocus.current === "pause" && showPause) pause?.focus();
-  }, [liveKey, showPause]);
-
-  return {
-    cardRef,
-    pauseRef,
-    onFocusCapture: (event: { target: EventTarget | null }) => {
-      const target = event.target;
-      if (target === pauseRef.current) lastFocus.current = "pause";
-      else if (target instanceof Element && target.closest("a") !== null) lastFocus.current = "link";
-      else lastFocus.current = "other";
-    },
-    onBlurCapture: (event: { currentTarget: HTMLElement; relatedTarget: EventTarget | null }) => {
-      const next = event.relatedTarget;
-      if (next instanceof Node && event.currentTarget.contains(next)) return;
-      if (next instanceof Node) lastFocus.current = null;
-    },
-  };
+function RunCardTitle({
+  title,
+  live,
+  stale,
+  showPause,
+  pauseLabel,
+  control,
+  paused,
+  pauseRef,
+  onToggle,
+}: {
+  title: string;
+  live: HeroActiveRun | null;
+  stale: boolean;
+  showPause: boolean;
+  pauseLabel: string;
+  control: string;
+  paused: boolean;
+  pauseRef: RefObject<HTMLButtonElement | null>;
+  onToggle: () => void;
+}) {
+  return (
+    <Stack direction="horizontal" gap="sm" className="justify-between">
+      <Stack direction="horizontal" gap="sm" className="content-shrink flex-1 items-start">
+        {live === null ? null : (
+          <Badge variant={stale ? "soft-warning" : "soft-success"}>{stale ? copy.staleBadge : copy.liveBadge}</Badge>
+        )}
+        <Text data-hero-run-title="" className="line-clamp-2 font-semibold wrap-anywhere" title={title}>
+          {title}
+        </Text>
+      </Stack>
+      <Button
+        ref={pauseRef}
+        type="button"
+        variant="ghost"
+        size="sm"
+        className={showPause ? "min-h-target w-fit" : "pointer-events-none invisible min-h-target w-fit"}
+        tabIndex={showPause ? undefined : -1}
+        aria-hidden={showPause ? undefined : true}
+        aria-label={pauseLabel}
+        aria-pressed={paused}
+        onClick={showPause ? onToggle : undefined}
+      >
+        {control}
+      </Button>
+    </Stack>
+  );
 }
 
 function RunCard({
@@ -190,14 +195,10 @@ function RunCard({
   stale: boolean;
   onToggle: () => void;
 }) {
-  const liveKey = live?.runId ?? null;
   const showPause = motionOk || live !== null;
-  const focus = useRestoreFocusOnLiveSwap(liveKey, showPause);
+  const focus = useRestoreFocusOnLiveSwap(live?.runId ?? null, showPause);
   const pauseLabel = live === null ? (paused ? copy.playMotion : copy.pauseMotion) : paused ? copy.playLive : copy.pauseLive;
-  const control = live === null ? (paused ? copy.play : copy.pause) : pauseLabel;
   const title = live === null ? copy.emptyStateTitle : heroRunTitle(live, copy);
-  const caption =
-    live === null ? copy.caption : paused ? copy.liveCaptionPaused : stale ? copy.liveCaptionStale : copy.liveCaption;
 
   return (
     <Surface
@@ -210,33 +211,26 @@ function RunCard({
       onFocusCapture={focus.onFocusCapture}
       onBlurCapture={focus.onBlurCapture}
     >
-      <Stack direction="horizontal" gap="sm" className="justify-between">
-        <Stack direction="horizontal" gap="sm" className="min-w-0 flex-1 items-start">
-          {live === null ? null : (
-            <Badge variant={stale ? "soft-warning" : "soft-success"}>{stale ? copy.staleBadge : copy.liveBadge}</Badge>
-          )}
-          <Text data-hero-run-title="" className="line-clamp-2 font-semibold wrap-anywhere" title={title}>
-            {title}
-          </Text>
-        </Stack>
-        <Button
-          ref={focus.pauseRef}
-          type="button"
-          variant="ghost"
-          size="sm"
-          className={showPause ? "min-h-target w-fit" : "pointer-events-none invisible min-h-target w-fit"}
-          tabIndex={showPause ? undefined : -1}
-          aria-hidden={showPause ? undefined : true}
-          aria-label={pauseLabel}
-          aria-pressed={paused}
-          onClick={showPause ? onToggle : undefined}
-        >
-          {control}
-        </Button>
-      </Stack>
+      <RunCardTitle
+        title={title}
+        live={live}
+        stale={stale}
+        showPause={showPause}
+        pauseLabel={pauseLabel}
+        control={live === null ? (paused ? copy.play : copy.pause) : pauseLabel}
+        paused={paused}
+        pauseRef={focus.pauseRef}
+        onToggle={onToggle}
+      />
       {live === null ? <PlaceholderRows /> : <LiveRows run={live} paused={paused} motionOk={motionOk} />}
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
-        {caption}
+        {live === null
+          ? copy.caption
+          : paused
+            ? copy.liveCaptionPaused
+            : stale
+              ? copy.liveCaptionStale
+              : copy.liveCaption}
       </Text>
       {live === null ? <PlaceholderLinks /> : <LiveLinks run={live} />}
     </Surface>
@@ -275,12 +269,7 @@ function useActiveHeroRun(paused: boolean): { live: HeroActiveRun | null; stale:
   return { live, stale };
 }
 
-/**
- * Site-owned high-value glass illustration. Client-fetches one active run
- * and swaps in the live card; empty or stale lists return to the placeholder.
- * A fetch or parse error keeps the last live card (does not clear) and marks it stale.
- * Pause freezes CSS step motion and live polling (no fetch while paused).
- */
+/** Glass illustration: live active run, else the static placeholder. Pause skips polling. */
 export function HomeHeroIllustration() {
   const motionOk = useMotionPreference() === "no-preference";
   const [paused, setPaused] = useState(false);
