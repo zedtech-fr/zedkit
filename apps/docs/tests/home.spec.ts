@@ -2,8 +2,9 @@ import { expect, test } from "@playwright/test";
 
 import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
+import { homeManifestoCopy } from "../app/(home)/_home/i18n/home-manifesto-copy";
 
-const homeHeroHeading = `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`;
+const homeHeroHeading = homeHeroCopy.hero.title;
 
 test("home explains the product without preview-only extra bands (#210)", async ({ page }) => {
   const errors: string[] = [];
@@ -30,12 +31,24 @@ test("home explains the product without preview-only extra bands (#210)", async 
 test("home visitor copy carries no repo internals or literal backticks (#1090)", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
   const text = (await page.locator("main").innerText()).toLowerCase();
-  for (const leak of ["`", "catalog.json", "packages/ui/tests", "generated index", "generated doc page", "manifest-driven"]) {
+  for (const leak of [
+    "`",
+    "catalog.json",
+    "packages/ui/tests",
+    "generated index",
+    "generated doc page",
+    "manifest-driven",
+    "manifesto",
+  ]) {
     expect(text, `home copy must not contain ${JSON.stringify(leak)}`).not.toContain(leak);
   }
+  await expect(page.getByText(homeManifestoCopy.quote)).toBeVisible();
+  await expect(page.getByText(homeManifestoCopy.goldenRule)).toBeVisible();
+  await expect(page.getByText(homeManifestoCopy.attribution)).toBeVisible();
+  await expect(page.getByRole("link", { name: /manifesto/i })).toHaveCount(0);
 });
 
-test("home hero matches the mockup first screen: clause, prompt, glass card (#118, #247, #258)", async ({
+test("home hero matches the mockup first screen: two-beat title, prompt, glass card (#118, #247, #258)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -106,7 +119,7 @@ test("home hero matches the mockup first screen: clause, prompt, glass card (#11
   await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute("role", "group");
   await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute(
     "aria-label",
-    "An illustration of one run, not a recording.",
+    homeHeroCopy.heroIllustration.stageLabel,
   );
   const badgeInSpan = await page.evaluate(
     () =>

@@ -89,10 +89,11 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   const hero = readFileSync(join(homePrivate, "home-hero.tsx"), "utf8");
   const lead = readFileSync(join(homePrivate, "home-hero-lead.tsx"), "utf8");
   const illustration = readFileSync(join(homePrivate, "home-hero-illustration.tsx"), "utf8");
+  const focus = readFileSync(join(homePrivate, "home-hero-focus.ts"), "utf8");
   const copy = readFileSync(join(homeI18n, "home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
-  const firstScreen = hero + lead + illustration;
-  // #258: one map prompt, no kit tablist. #118 still owns the third title clause vs one Setup row.
+  const firstScreen = hero + lead + illustration + focus;
+  // #258: one map prompt, no kit tablist. Two-beat h1; agent detail lives in hero.sub.
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
@@ -104,16 +105,19 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
   assert.match(
     copy,
-    /sub: "AI brings the workflow rules and checks; UI brings the components and the look, from one map in the repo\."/,
+    /sub: "AI brings the workflow rules and checks; UI brings the components and the look, from the agent you already use\."/,
   );
   assert.doesNotMatch(copy, /subLead:|subAiName:|subAi:|subUiName:|subUi:/);
-  assert.match(copy, /titleClause: "From the agent you already use\."/);
+  assert.doesNotMatch(copy, /titleClause:/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
   assert.doesNotMatch(copy, /heroKits:|promptCaption:|promptCaptionSingle:|HeroKitId|dueDatesTitle:|aiPlan:|settingsTitle:/);
   assert.match(copy, /emptyStateTitle: "Add an empty state to the tasks list"/);
   assert.match(copy, /viewPublicRun: "View a public run"/);
   assert.match(illustration, /\/issues\?open=first/);
   assert.match(illustration, /copy\.viewPublicRun/);
+  assert.match(illustration, /copy\.viewPublicRunNamed/);
+  assert.match(illustration, /copy\.followRunNamed/);
+  assert.match(illustration, /pulse=\{dot\.pulse && !paused && motionOk\}/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
   assert.match(copy, /Check/);
@@ -124,7 +128,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
   assert.doesNotMatch(lead, /variant="muted"/);
-  assert.match(lead, /homeHeroCopy\.hero\.titleClause/);
+  assert.doesNotMatch(lead, /homeHeroCopy\.hero\.titleClause|titleClause/);
   assert.doesNotMatch(lead, /^["']use client["']/m);
   assert.match(lead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
   assert.doesNotMatch(lead, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b/);
@@ -160,6 +164,30 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(illustration, /aria-pressed=\{paused\}/);
   assert.match(copy, /pauseMotion: "Pause illustration motion"/);
   assert.match(copy, /playMotion: "Play illustration motion"/);
+  assert.match(copy, /playLive: "Resume live updates"/);
+  assert.match(copy, /pauseLive: "Pause live updates"/);
+  assert.match(copy, /liveCaptionStale:/);
+  assert.match(copy, /Retrying automatically/);
+  assert.match(copy, /liveBadge: "Live"/);
+  assert.match(copy, /staleBadge: "Stale"/);
+  assert.match(copy, /issueBadge: \(\{ count \}/);
+  assert.match(copy, /stepStatusWithSummary:/);
+  assert.match(illustration, /STEP_STATUS_COPY\[step\.status\]/);
+  assert.match(illustration, /<StatusDot /);
+  assert.match(illustration, /data-hero-run-title/);
+  assert.match(illustration, /data-hero-run-step-status/);
+  assert.match(illustration, /copy\.liveCaptionStale/);
+  assert.match(illustration, /copy\.liveReverted/);
+  assert.match(illustration, /liveUpdateMessage\(live, copy, paused, stale\)/);
+  assert.match(illustration, /isHidden: \(\) => document\.hidden/);
+  assert.match(illustration, /live === null \? \(paused \? copy\.play : copy\.pause\) : pauseLabel/);
+  assert.match(focus, /lastFocus\.current === "pause" && showPause/);
+  const homeCss = readFileSync(join(homePrivate, "home.css"), "utf8");
+  assert.match(homeCss, /\[data-hero-run-step-status\]/);
+  assert.doesNotMatch(
+    homeCss,
+    /\[data-hero-run-status="failed"\] \{\s*color: hsl\(var\(--destructive\)\);/,
+  );
   assert.doesNotMatch(illustration, /<span className="inline-flex flex-wrap items-center gap-icon">/);
   assert.match(nav, /text: "AI"/);
   assert.match(nav, /text: "UI"/);
@@ -530,20 +558,25 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(manifesto, /className="sr-only"/);
   assert.match(manifesto, /<blockquote className="trim-margin not-italic" aria-describedby="manifesto-attribution">/);
   assert.match(manifesto, /id="manifesto-attribution"/);
-  assert.match(manifesto, /from "@\/ui\/off-path-link"/);
-  assert.match(manifesto, /from "@\/lib\/site-links\.mjs"/);
-  assert.match(manifesto, /href=\{SITE_COMPANY_URL\}/);
-  assert.match(manifesto, /\{homeManifestoCopy\.readLink\}/);
-  assert.doesNotMatch(manifesto, /<OffPathLink[^>]*\btarget=/);
-  assert.doesNotMatch(manifesto, /<OffPathLink[^>]*\brel=/);
+  assert.doesNotMatch(manifesto, /from "@\/ui\/off-path-link"/);
+  assert.doesNotMatch(manifesto, /from "@\/lib\/site-links\.mjs"/);
+  assert.doesNotMatch(manifesto, /SITE_COMPANY_URL|OffPathLink|readLink/);
+  assert.match(manifesto, /\{homeManifestoCopy\.goldenRule\}/);
   assert.doesNotMatch(manifesto, /FeatureGrid|SetupEntryPrompt|SecretField|bg-primary/);
   assert.match(
     manifestoCopy,
     /\\u201cIf nobody else can pick up what was built, that isn't expertise\. It's lock-in\.\\u201d/,
   );
-  assert.match(manifestoCopy, /From the Zed Tech manifesto/);
-  assert.match(manifestoCopy, /sectionLabel: "Manifesto"/);
-  assert.match(manifestoCopy, /readLink: "Read the manifesto"/);
+  assert.match(
+    manifestoCopy,
+    /The second time you build something should be faster, easier, and higher quality than the first/,
+  );
+  assert.match(
+    manifestoCopy,
+    /zedkit began as our own working base, and we opened it for the same reason we hand clients their access and their docs/,
+  );
+  assert.match(manifestoCopy, /sectionLabel: "Origin"/);
+  assert.doesNotMatch(manifestoCopy, /From the Zed Tech manifesto|Read the manifesto|sectionLabel: "Manifesto"|readLink:/);
   assert.doesNotMatch(manifestoCopy, /→/);
   assert.doesNotMatch(manifestoCopy, /https:\/\/zedtech\.fr/);
   assert.match(closing, /id="closing"/);

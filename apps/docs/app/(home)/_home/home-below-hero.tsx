@@ -9,7 +9,7 @@ import { HomeSixSentencesSection } from "./sections/home-six-sentences-section";
 /**
  * Marketing sections below the hero, in the order a visitor decides: the
  * three-card same-idea band, six quote/reply cards, hash landing, then the same task
- * in four looks, then limits, manifesto, closing ask.
+ * in four looks, then limits, origin quote, closing ask.
  * Kept in the main home payload (not dynamically imported) so section anchors stay in the live layout on first paint.
  *
  * Compose-UI brief:
@@ -27,9 +27,9 @@ import { HomeSixSentencesSection } from "./sections/home-six-sentences-section";
  *   land there.
  *   paste is a dark zinc band with a file listing, because: neighbours must
  *   differ in shape and the mockup's paste surface was not a #73 drop.
- *   looks then limits then manifesto then closing, because: the visitor
- *   should read what it does not do and the lock-in quote (readLink "Read
- *   the manifesto") before the closing copyable prompt. Catalog and nav
+ *   looks then limits then origin then closing, because: the visitor
+ *   should read what it does not do and the lock-in quote plus the
+ *   golden-rule line before the closing copyable prompt. Catalog and nav
  *   already list components and package areas.
  */
 export function HomeBelowHero({

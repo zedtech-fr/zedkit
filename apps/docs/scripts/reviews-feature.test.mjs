@@ -1117,6 +1117,8 @@ test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API so
   assert.match(contract, /Allowlisted hosted-console href/);
   assert.match(contract, /GitHub REST/);
   assert.match(contract, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.match(contract, /active=1&limit=1/);
+  assert.match(contract, /kind` is ignored/);
   assert.match(contract, /kind: public-github-runs/);
   assert.match(contract, /ErrorState with no Retry/);
   assert.match(contract, /10 pages × 100/);
@@ -1508,7 +1510,7 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.verdict["request-changes"], "Changes requested");
   assert.equal(reviewsCopy.status.failed, "Didn't finish");
   assert.equal(reviewsCopy.issue.replaced, "Replaced by newer run");
-  assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a later review");
+  assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a newer run");
   assert.equal(reviewsCopy.issue.viewLog, "View log");
   assert.equal(reviewsCopy.list.took, "Took");
   assert.equal(reviewsCopy.list.finished, "Finished");
@@ -1825,6 +1827,7 @@ test("timeline rows show score, superseded, and endedAt-aware UpdatedAgo", () =>
   assert.match(row, /score=\{entry\.score \?\? null\}/);
   assert.match(row, /entry\.superseded !== true/);
   assert.match(row, /copy\.issue\.replaced/);
+  assert.match(row, /copy\.issue\.failedReplaced/);
   assert.match(row, /entryUpdatedAt\(entry\)/);
   assert.doesNotMatch(row, /new Date\(entry\.startedAt\)/);
   assert.match(list, /summedDurationMs/);

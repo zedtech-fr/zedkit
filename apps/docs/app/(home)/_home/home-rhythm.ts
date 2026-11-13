@@ -62,7 +62,7 @@ export const HOME_PASTE_TIMELINE_REVEAL_PROPS = {
 
 /**
  * Reading bands: opacity only. Apply on the inner stack, never the Section.
- * Fade-in because manifesto/limits/closing are reading; displacement fights the copy.
+ * Fade-in because origin/limits/closing are reading; displacement fights the copy.
  */
 export const HOME_READING_REVEAL_PROPS = { "data-animate": "fade-in" } as const;
 

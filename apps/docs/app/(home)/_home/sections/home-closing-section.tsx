@@ -10,7 +10,7 @@ import {
 import { homeClosingCopy } from "../i18n/home-closing-copy";
 
 /**
- * After manifesto: one ask that copies the same AI-and-UI map prompt as the hero.
+ * After the origin quote: one ask that copies the same AI-and-UI map prompt as the hero.
  *
  * Compose-UI: shared wrapping copy-command field with the AI-and-UI prompt, because:
  * the last ask is copy-and-go and must match the hero field; the kit shown-once
