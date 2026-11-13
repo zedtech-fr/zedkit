@@ -153,15 +153,18 @@ test("keyboard enter on a list row selects it", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/issues", { waitUntil: "networkidle" });
   const rows = page.locator("main [data-issues-row]");
-  if ((await rows.count()) < 2) {
+  const count = await rows.count();
+  if (count === 0) {
     await expect(emptyListVisible(page)).toBeVisible();
     return;
   }
-  const second = rows.nth(1);
-  await second.focus();
+  const target = rows.nth(count === 1 ? 0 : 1);
+  await target.focus();
   await page.keyboard.press("Enter");
-  await expect(second).toHaveAttribute("aria-current", "page");
-  await expect(rows.first()).not.toHaveAttribute("aria-current");
+  await expect(target).toHaveAttribute("aria-current", "page");
+  if (count > 1) {
+    await expect(rows.first()).not.toHaveAttribute("aria-current");
+  }
 });
 
 async function expectNotSideBySide(a: Locator, b: Locator) {

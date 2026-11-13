@@ -3,6 +3,9 @@
 import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import {
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -80,13 +83,14 @@ function UnlinkedListRow({
   const label = outcomeLabel(outcome, copy);
   const typeLabel = last ? copy.type[last.type] : undefined;
   const runsLabel = runCountLabel(runCount, copy);
-  const name = [`#${entry.number}`, typeLabel, runsLabel, label].filter(Boolean).join(", ");
+  const meta = typeLabel === undefined ? runsLabel : `${typeLabel} · ${runsLabel}`;
+  const name = [`#${entry.number}`, meta, label].filter(Boolean).join(", ");
   return (
     <SidebarNavItem
       asChild
       active={active}
       status={<OutcomeStatus outcome={outcome} />}
-      meta={typeLabel === undefined ? runsLabel : `${typeLabel} · ${runsLabel}`}
+      meta={meta}
       {...(label === null ? {} : { count: label })}
     >
       <a
@@ -180,7 +184,7 @@ function IssuesPane({
         data-issues-aside=""
         tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per #396.
         aria-label={copy.list.title}
-        className="flex w-full shrink-0 flex-col border-b muted-wash max-md:hidden md:pane-shrink md:w-app-shell-sidebar md:overflow-y-auto md:border-r md:border-b-0 md:focus-ring"
+        className="flex w-full shrink-0 flex-col muted-wash max-md:hidden md:pane-shrink md:w-app-shell-sidebar md:overflow-y-auto md:border-r md:focus-ring"
       >
         {sidebar}
       </aside>
@@ -201,7 +205,7 @@ function IssuesPane({
             <DrawerCloseButton />
           </DrawerHeader>
           <DrawerBody
-            tabIndex={0}
+            tabIndex={0} // scrollable-region-focusable (#396); kit DrawerBody is not a DOM node for jsx-a11y.
             className="focus-ring"
             onClick={(event) => {
               if (event.target instanceof Element && event.target.closest("a")) setOpen(false);
@@ -242,7 +246,7 @@ function IssuesWorkspace({
         <article
           data-issues-detail=""
           tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per #396.
-          className="content-shrink p-app-shell-padding md:pane-shrink md:flex-1 md:overflow-y-auto md:p-app-shell-padding-md md:focus-ring"
+          className="content-shrink p-app-shell-padding focus-ring md:pane-shrink md:flex-1 md:overflow-y-auto md:p-app-shell-padding-md"
           aria-labelledby={detailHeadingId}
         >
           <Text as="p" className="sr-only" aria-live="polite">
@@ -253,12 +257,14 @@ function IssuesWorkspace({
           ) : selected?.kind === "pr" ? (
             <UnlinkedDetail entry={selected.pull} copy={copy} headingId={detailHeadingId} />
           ) : (
-            <>
-              <Heading level={2} typeRole="cardTitle" id={detailHeadingId}>
-                {copy.list.missing}
-              </Heading>
-              <EmptyState description={copy.list.missingNext} />
-            </>
+            <Card>
+              <CardHeader>
+                <Heading level={2} typeRole="cardTitle" id={detailHeadingId}>{copy.list.missing}</Heading>
+              </CardHeader>
+              <CardContent>
+                <EmptyState description={copy.list.missingNext} />
+              </CardContent>
+            </Card>
           )}
         </article>
       }

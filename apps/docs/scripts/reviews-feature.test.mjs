@@ -1866,7 +1866,14 @@ test("list stays in the shared wide frame and uses kit console nav rows", () => 
   assert.doesNotMatch(frame, /pathname/);
   assert.equal([...list.matchAll(/<details /g)].length, 0);
   assert.match(list, /IssueListRow[\s\S]*OutcomeStatus/);
+  assert.match(frame, /"data-issues-layout": "workspace"/);
   assert.match(list, /layout=\{empty \? "page" : "workspace"\}/);
+  assert.match(list, /sidebar=\{list\(true\)\}/);
+  assert.match(list, /drawerSidebar=\{list\(false\)\}/);
+  assert.match(list, /\[`#\$\{entry\.number\}`, meta, label\]/);
+  assert.match(list, /md:focus-ring/);
+  assert.match(list, /p-app-shell-padding focus-ring md:pane-shrink/);
+  assert.doesNotMatch(list, /border-b muted-wash/);
   assert.match(list, /resolveIssueOpenId/);
   assert.match(list, /addEventListener\("hashchange"/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
