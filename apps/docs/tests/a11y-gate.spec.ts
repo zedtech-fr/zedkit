@@ -81,13 +81,16 @@ test.describe("a11y gate (#396)", () => {
     }
   }
 
-  test("docs phone page tree is named in the page, not behind Open navigation (#396)", async ({ page }) => {
+  test("docs phone page tree is a named drawer, not behind Open navigation (#301)", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
     await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
-    const tree = page.locator("#nd-sidebar");
+    const trigger = page.getByRole("button", { name: "Docs pages" });
     const title = page.getByRole("heading", { name: "Getting started", level: 1 });
-    await expect(tree.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
-    expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
+    await expect(trigger).toBeVisible();
+    expect((await title.boundingBox())!.y).toBeLessThan(844);
+    await trigger.click();
+    const dialog = page.getByRole("dialog", { name: "Documentation" });
+    await expect(dialog.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
   });
 });

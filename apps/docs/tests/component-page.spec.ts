@@ -42,17 +42,22 @@ test("confirm-dialog preview precedes install (#R2 template)", async ({ page }) 
   expect((await usage.boundingBox())!.y).toBeLessThan((await install.boundingBox())!.y);
 });
 
-test("button reference page keeps the component list in flow at 390 (#230)", async ({ page }) => {
+test("button reference page keeps the heading on the first screen at 390 (#301)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BUTTON_DOC, { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "Button", level: 1 })).toBeVisible();
-  await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
-  const tree = page.locator("#nd-sidebar");
   const title = page.getByRole("heading", { name: "Button", level: 1 });
-  await expect(tree).toBeVisible();
-  await expect(tree.getByRole("link", { name: "Button" }).first()).toBeVisible();
-  await expect(tree.getByText("Actions")).toBeVisible();
-  expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
+  await expect(title).toBeVisible();
+  await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
+  await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Docs pages" })).toHaveCount(0);
+  const trigger = page.getByRole("button", { name: "Docs pages" });
+  await expect(trigger).toBeVisible();
+  await expect(page.locator("#nd-sidebar")).toBeHidden();
+  expect((await title.boundingBox())!.y).toBeLessThan(844);
+  await trigger.click();
+  const dialog = page.getByRole("dialog", { name: "Documentation" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Button" }).first()).toBeVisible();
+  await expect(dialog.getByText("Actions")).toBeVisible();
 });
 
 test("the secondary button keeps a quieter fill on hover", async ({ page }) => {

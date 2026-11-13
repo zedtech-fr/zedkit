@@ -73,16 +73,20 @@ test("the docs phone bar keeps a painted fill without an 80% background class", 
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
 
-test("docs phone page tree is in the page without Open navigation", async ({ page }) => {
+test("docs phone page tree is a kit drawer without Open navigation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/docs/getting-started");
   await expect(page.locator("#nd-mobile-nav").getByRole("button", { name: "Open navigation" })).toHaveCount(0);
-  const tree = page.locator("#nd-sidebar");
+  const trigger = page.getByRole("button", { name: "Docs pages" });
   const title = page.getByRole("heading", { name: "Getting started", level: 1 });
-  await expect(tree).toBeVisible();
-  await expect(tree.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
-  expect((await tree.boundingBox())!.y).toBeLessThan((await title.boundingBox())!.y);
-  const background = await tree.evaluate((node) => getComputedStyle(node).backgroundColor);
+  await expect(trigger).toBeVisible();
+  await expect(page.locator("#nd-sidebar")).toBeHidden();
+  expect((await title.boundingBox())!.y).toBeLessThan(844);
+  await trigger.click();
+  const dialog = page.getByRole("dialog", { name: "Documentation" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+  const background = await dialog.evaluate((node) => getComputedStyle(node).backgroundColor);
   expect(background).not.toBe("rgba(0, 0, 0, 0)");
 });
 

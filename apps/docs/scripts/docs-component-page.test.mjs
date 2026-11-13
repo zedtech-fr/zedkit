@@ -260,25 +260,46 @@ test("docs chrome keeps header search and does not duplicate it in a fumadocs sl
   assert.match(docs, /root:\s*DocsSidebar/);
 });
 
-test("phone docs page tree is in-flow in the shell, not a max-md drawer", () => {
+test("phone docs page tree is a kit Drawer in the docs shell, not an in-flow list", () => {
   const css = read("app/docs-shell-tokens.css");
   const container = read("ui/docs-container.tsx");
   const sidebar = read("ui/docs-sidebar.tsx");
+  const header = read("ui/mobile-header.tsx");
   assert.doesNotMatch(container, /gridTemplate\s*:/);
   assert.doesNotMatch(container, /grid-template\s*:/);
   assert.doesNotMatch(container, /\bstyle=/);
   assert.doesNotMatch(container, /useSidebar/);
   assert.match(sidebar, /id="nd-sidebar"/);
-  assert.doesNotMatch(sidebar, /max-md:hidden/);
+  assert.equal((sidebar.match(/id="nd-sidebar"/g) ?? []).length, 1);
+  assert.match(sidebar, /max-md:hidden/);
+  assert.match(sidebar, /md:hidden/);
+  assert.match(sidebar, /<Drawer direction="left" mobile="side"/);
+  assert.match(sidebar, /DrawerTrigger asChild/);
+  assert.match(sidebar, /DrawerTitle/);
+  assert.match(sidebar, /DrawerCloseButton/);
+  assert.match(sidebar, /siteChromeCopy\.nav\.docsPages/);
+  assert.match(sidebar, /siteChromeCopy\.nav\.docsNavigation/);
   assert.doesNotMatch(sidebar, /<SidebarDrawer|<SidebarContent/);
+  assert.doesNotMatch(sidebar, /nd-sidebar-mobile/);
+  assert.doesNotMatch(sidebar, /openNavigation/);
+  assert.doesNotMatch(header, /siteChromeCopy\.nav\.docsPages/);
+  assert.doesNotMatch(header, /Drawer direction="left"/);
   assert.match(css, /\[data-sidebar-placeholder\]/);
   assert.match(css, /#nd-sidebar/);
   assert.match(css, /width < 48rem/);
-  assert.match(css, /--fd-sidebar-width:\s*100%/);
+  assert.doesNotMatch(css, /--fd-sidebar-width:\s*100%/);
   assert.match(css, /#nd-docs-layout:not\(:has\(#nd-sidebar\)\)/);
   assert.match(css, /--fd-sidebar-col:\s*0px/);
   assert.match(css, /Fumadocs 16\.17\.10/);
   assert.doesNotMatch(css, /Cmd\/Ctrl\+B|data-sidebar-panel/);
+});
+
+test("docs page-tree items are a flex column with 44px rows, not unstyled /base leaves", () => {
+  const sidebar = read("ui/docs-sidebar.tsx");
+  assert.match(sidebar, /flex min-h-target w-full items-center/);
+  assert.match(sidebar, /<Stack gap="tight"/);
+  assert.match(sidebar, /SidebarFolderContent/);
+  assert.doesNotMatch(sidebar, /fumadocs-ui\/layouts\/docs\/slots\/sidebar/);
 });
 
 test("docs layout on UI routes uses the job-grouped tree helper", () => {

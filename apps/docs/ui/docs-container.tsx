@@ -6,7 +6,8 @@ import { cn } from "@zedtech/zedkit-ui";
 /**
  * Fumadocs 16.17.10 `Container` sets inline `gridTemplate` on `#nd-docs-layout`,
  * which beats the phone restack in `docs-shell-tokens.css`. Own the variables
- * here; the stylesheet owns both breakpoint templates and `--fd-sidebar-width`.
+ * here; the stylesheet owns both breakpoint templates and `--fd-sidebar-width`
+ * (phone is header + docs-nav trigger + main, not an in-flow page tree).
  */
 export function DocsContainer({ className, ...props }: ComponentProps<"div">) {
   const rest = { ...props };
