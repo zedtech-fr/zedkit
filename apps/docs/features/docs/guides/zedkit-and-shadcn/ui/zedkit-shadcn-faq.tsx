@@ -1,6 +1,6 @@
+import { JsonLd } from "@zedtech/zedkit-seo/react";
 import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
-import { JsonLd } from "@/components/json-ld";
 import { registryBrickNames } from "@/content/registry-site";
 
 import { zedkitShadcnFaqCopy } from "../i18n/zedkit-shadcn-faq-copy";

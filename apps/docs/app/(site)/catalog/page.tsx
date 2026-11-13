@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
+import { JsonLd } from "@zedtech/zedkit-seo/react";
 
 import "./_catalog/catalog-shell.css";
 import { catalogCopy } from "./_catalog/i18n/catalog-copy";
-import { JsonLd } from "@/components/json-ld";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";

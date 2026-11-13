@@ -1,4 +1,5 @@
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@zedtech/zedkit-seo";
+import { JsonLd } from "@zedtech/zedkit-seo/react";
 import type { TOCItemType } from "fumadocs-core/toc";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
@@ -6,7 +7,6 @@ import { notFound } from "next/navigation";
 import { Stack } from "@zedtech/zedkit-ui";
 
 import { docsPageCopy } from "@/app/i18n/docs-page-copy";
-import { JsonLd } from "@/components/json-ld";
 import { mergeComponentPageToc } from "@/features/docs/component-page-toc";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
