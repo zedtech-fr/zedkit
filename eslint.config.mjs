@@ -40,15 +40,14 @@ const docsFeatureAppBan = {
   message: "One-way imports: a feature may not import app. Compose in the route and pass props.",
 };
 
-// `#*` is a gitignore comment, so hash subpaths need `regex` (not `group`).
-// `#*` maps to app/; `#scripts/*` is the colocated node-test loader (same
-// shape as packages/ui `#preview/*`) and is not an app import.
+// `#*` is a gitignore comment, so hash subpaths use `regex`; `#scripts/` is the node-test loader, not app.
+const docsHashAppImportRegex = "^#(?!scripts/)";
 const docsHashImportBan = {
-  regex: "^#(?!scripts/)",
+  regex: docsHashAppImportRegex,
   message: docsAppFeatureBan.message,
 };
 const docsFeatureHashImportBan = {
-  regex: "^#(?!scripts/)",
+  regex: docsHashAppImportRegex,
   message: docsFeatureAppBan.message,
 };
 

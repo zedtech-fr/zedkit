@@ -27,10 +27,29 @@ test("identity node tests share registerDocsAlias instead of an inline @/ shim",
     assert.match(src, /registerDocsAlias/, rel);
     assert.match(src, /from ["']#scripts\/register-docs-alias\.mjs["']/, rel);
     assert.equal(src.includes("data:text/javascript"), false, `${rel} still inlines the @/ shim`);
+    assert.match(src, /await import\(["']@\//, `${rel} must await import() @/ after registerDocsAlias`);
+    assert.equal(
+      /(?:^|\n)import\s+[^;]*\sfrom\s+["']@\//.test(src),
+      false,
+      `${rel} static-imports @/ (hoisted before registerDocsAlias)`,
+    );
   }
+});
+
+test("docs AGENTS.md requires await import() of @/ after registerDocsAlias", () => {
+  const agents = readFileSync(join(app, "AGENTS.md"), "utf8");
+  assert.match(agents, /await import\(\)/);
+  assert.match(agents, /hoisted/);
 });
 
 test("docs package maps #scripts/* so colocated tests skip ../../../scripts", () => {
   const pkg = JSON.parse(readFileSync(join(app, "package.json"), "utf8"));
   assert.equal(pkg.imports["#scripts/*"], "./scripts/*");
+});
+
+test("eslint one-way hash ban shares one #scripts/ exemption regex", () => {
+  const config = readFileSync(join(app, "../../eslint.config.mjs"), "utf8");
+  const literals = config.match(/\^#\(\?!scripts\/\)/g) ?? [];
+  assert.equal(literals.length, 1, "duplicate hash-import regex literals");
+  assert.match(config, /docsHashAppImportRegex/);
 });
