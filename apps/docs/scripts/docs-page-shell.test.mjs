@@ -162,7 +162,8 @@ test("docs shell 390 lead beats the kit 15px cap; home band-sub and persuasion m
   assert.match(phone[0], /--zk-home-band-sub-leading:\s*1\.55/);
   assert.match(phone[0], /--zk-home-persuasion-font-size:\s*0\.9375rem/);
   assert.match(phone[0], /--zk-home-persuasion-leading:\s*1\.55/);
-  assert.doesNotMatch(phone[0], /--zk-type-h1-size:\s*3rem/);
+  // #411: marketing H1 stays the #home-page clamp; 390 must not fork a size.
+  assert.doesNotMatch(phone[0], /--zk-type-h1-size/);
 });
 
 test("home display clamp scales at 375 / 809 / 1440; foundations stay 48px", () => {
