@@ -35,8 +35,10 @@ tasks:
   status                    git status --porcelain=v1 -b + diff --stat
   pr [n]                    gh pr view/checks JSON (failing/pending only)
 logs: .agent-logs/<timestamp>-<pid>-<task>.log  (gitignored)
-  test also routes node --test targets (.mjs / scripts|apps/docs|deploy globs)
-  flags-only test args stay turbo; peel only with a non-flag node-test target
+  test also routes node --test targets (.mjs/.cjs or scripts|apps/docs|deploy|packages/ai/scripts)
+  * globs peel only in those dirs or with a .mjs/.cjs suffix
+  flags-only test args stay turbo; peel needs a non-flag node-test target
+  or a leading --test / node --test
 `;
 
 const MAX_BUFFER = 64 * 1024 * 1024;
@@ -188,12 +190,15 @@ export function defaultNodeTestGlobs(cwd) {
   return [...script.matchAll(/"([^"]+)"/g)].map((match) => match[1] ?? "").filter(Boolean);
 }
 
+const NODE_TEST_DIR = /^(?:\.\/)?(?:scripts|apps\/docs|deploy|packages\/ai\/scripts)(?:\/|$)/;
+
 export function isNodeTestTarget(arg) {
   if (arg.startsWith("-")) return false;
   const n = String(arg).replaceAll("\\", "/");
-  if (n.includes("*")) return true;
-  if (n.endsWith(".mjs") || n.endsWith(".cjs")) return true;
-  return /^(?:\.\/)?(?:scripts|apps\/docs|deploy|packages\/ai\/scripts)(?:\/|$)/.test(n);
+  const inNodeTestDir = NODE_TEST_DIR.test(n);
+  const nodeTestFile = n.endsWith(".mjs") || n.endsWith(".cjs");
+  if (n.includes("*")) return inNodeTestDir || nodeTestFile;
+  return nodeTestFile || inNodeTestDir;
 }
 
 export function peelNodeTestArgs(args) {

@@ -216,6 +216,9 @@ describe("node-test formatting", () => {
     assert.equal(peelNodeTestArgs(["--reporter=json"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["--test-name-pattern", "foo"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["--reporter=json", "scripts/foo.test.mjs"]).nodeTest, true);
+    assert.equal(peelNodeTestArgs(["packages/core/src/*.test.ts"]).nodeTest, false);
+    assert.equal(peelNodeTestArgs(["packages/core/**/*.test.ts"]).nodeTest, false);
+    assert.equal(peelNodeTestArgs(["packages/ai/scripts/*.test.mjs"]).nodeTest, true);
   });
 
   it("defaults node-test globs to test:registry:nodeploy", () => {
@@ -358,6 +361,21 @@ describe("run() wiring", () => {
     assert.ok(dash >= 0);
     assert.equal(argv[dash + 1], "--reporter=minimal");
     assert.ok(argv.slice(0, dash).includes("--filter=@zedtech/zedkit-ai"));
+  });
+
+  it("keeps a vitest glob with * on turbo, not node --test", (t) => {
+    const dir = scratch(t, "agent-run-vitest-glob-");
+    const calls = [];
+    capture(["test", "packages/core/src/*.test.ts"], {
+      cwd: dir,
+      spawn: (cmd, args) => {
+        calls.push([cmd, args]);
+        return { status: 0, stdout: "", stderr: "" };
+      },
+    });
+    assert.equal(calls[0]?.[0], "pnpm");
+    assert.ok(calls[0]?.[1].includes("turbo"));
+    assert.ok(calls[0]?.[1].includes("packages/core/src/*.test.ts"));
   });
 
   it("keeps flags-only test args on turbo, not node --test", (t) => {
