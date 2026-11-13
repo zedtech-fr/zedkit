@@ -9,6 +9,7 @@ import {
   IDENTITY_DOCK_MAX_BYTES,
   IDENTITY_DOCK_MAX_THREAD_TURNS,
   IDENTITY_DOCK_STORAGE_KEY,
+  readIdentityDockPersist,
   trimSessionForPersist,
 } from "../lib/identity-dock-persist.ts";
 import { initialSession } from "../lib/identity-creator-session.ts";
@@ -77,6 +78,31 @@ test("previewDomain survives when encode drops oldest thread turns", () => {
   assert.ok(encoded.length <= IDENTITY_DOCK_MAX_BYTES);
   const parsed = JSON.parse(encoded);
   assert.equal(parsed.previewDomain, "editorial");
+});
+
+test("v2 dock blob with previewDomain booking reads as service-booking", () => {
+  const store = new Map();
+  const localStorage = {
+    getItem: (k) => store.get(k) ?? null,
+    setItem: (k, v) => {
+      store.set(k, v);
+    },
+    removeItem: (k) => {
+      store.delete(k);
+    },
+  };
+  globalThis.window = { localStorage };
+  store.set(
+    IDENTITY_DOCK_STORAGE_KEY,
+    JSON.stringify({
+      session: { ...initialSession, pending: null },
+      brief: "clinic",
+      previewDomain: "booking",
+    }),
+  );
+  const out = readIdentityDockPersist();
+  assert.equal(out.previewDomain, "service-booking");
+  delete globalThis.window;
 });
 
 test("clearIdentityDockPersist removes the v2 storage key", () => {

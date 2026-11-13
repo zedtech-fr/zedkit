@@ -1,12 +1,8 @@
-/** Which real composition the assistant preview uses (D4). */
-export type SpecimenDomain = "commerce" | "saas-dashboard" | "editorial" | "booking";
+import { DOMAIN_KEYWORDS, selectSpecimenDomain, type SpecimenDomain } from "@zedtech/zedkit-ui/marketing";
 
-const RULES: { domain: SpecimenDomain; pattern: RegExp }[] = [
-  { domain: "saas-dashboard", pattern: /\b(saas|dashboard|admin|console|workspace|b2b|analytics|metrics)\b/i },
-  { domain: "booking", pattern: /\b(booking|appointment|schedule|salon|clinic|reservation|calendar)\b/i },
-  { domain: "editorial", pattern: /\b(editorial|magazine|newsroom|newspaper|journal|blog|publishing|newsletter)\b/i },
-  { domain: "commerce", pattern: /\b(shop|store|commerce|product|cart|checkout|ceramic|handmade|retail)\b/i },
-];
+export type { SpecimenDomain };
+
+const LEGACY_BOOKING_ID = "booking";
 
 /** Keeps the first user brief when follow-ups are short refinements. */
 export function specimenBriefFromThread(thread: readonly { role: string; text: string }[], fallback: string): string {
@@ -14,19 +10,18 @@ export function specimenBriefFromThread(thread: readonly { role: string; text: s
   return first || fallback;
 }
 
-/** Picks the closest domain from plain text; commerce is the default. */
+/** Picks the closest domain from plain text via the kit scorer (empty → saas-dashboard). */
 export function specimenDomainFromBrief(text: string): SpecimenDomain {
-  const trimmed = text.trim();
-  if (!trimmed) return "commerce";
-  for (const { domain, pattern } of RULES) {
-    if (pattern.test(trimmed)) return domain;
-  }
-  return "commerce";
+  return selectSpecimenDomain(text);
 }
 
-const DOMAINS: readonly SpecimenDomain[] = ["commerce", "saas-dashboard", "editorial", "booking"];
-
-/** True when a persisted or incoming value is one of the four specimen domains. */
+/** True when a persisted or incoming value is one of the four kit specimen domains. */
 export function isSpecimenDomain(value: unknown): value is SpecimenDomain {
-  return typeof value === "string" && (DOMAINS as readonly string[]).includes(value);
+  return typeof value === "string" && Object.hasOwn(DOMAIN_KEYWORDS, value);
+}
+
+/** Maps a persisted domain id onto the live kit union (`booking` → `service-booking`). */
+export function coercePersistedSpecimenDomain(value: unknown): SpecimenDomain | undefined {
+  const mapped = value === LEGACY_BOOKING_ID ? "service-booking" : value;
+  return isSpecimenDomain(mapped) ? mapped : undefined;
 }
