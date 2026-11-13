@@ -21,10 +21,12 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   Router `page` files, `apps/docs/prose/guides/**/*.mdx` → `/docs/<slug>`
   (`index` → `/docs`; skip `snippets/`), AI setup sources
   `packages/ai/kit/cursor-onboarding.md` and `apps/docs/public/ai/setup.md`
-  → `/docs/ai/setup`, optional `--manifest` `source` → `/docs/ui/<slug>`)
-  union `--routes`. Unknown files add no extra route.
-  A host fixed set is passed by the host `visual:verify` script (or
-  equivalent), not invented here.
+  → `/docs/ai/setup`, public review files (`features/reviews`, issues App
+  Router, `tests/evidence/issues`) → `/issues`, optional `--manifest`
+  `source` → `/docs/ui/<slug>`) union `--routes`. Omitted `--routes`
+  implies `--changed`. Unknown files add no extra route. A host fixed set
+  is passed by the host `visual:verify` script (or equivalent), not
+  invented here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
   dark. Full **looks grid** (every shipped look × both modes) only when a
   token, a primitive, or a shared identity sheet (`identities.css`)
@@ -92,8 +94,9 @@ screenshot on the **default** tree, then clicks:
 - hit targets ≥ 24px on visible `a`/`button`/`input`/`select`/`textarea`
   and button/link/tab/menuitem/checkbox/radio/switch/combobox roles.
   Skip `display:inline`, `pointer-events:none`, `disabled`,
-  `visibility:hidden`, `display:none`, zero-size boxes, and visually
-  hidden nodes (`sr-only`, clip-rect 0, 1×1). Union the
+  `visibility:hidden`, `display:none`, zero-size boxes, visually hidden
+  nodes (`sr-only`, clip-rect 0, 1×1), and `aria-hidden="true"` with
+  `tabIndex < 0` (Radix native select). Union the
   border box with an **overlapping** `::before` / `::after` (distant
   pseudos do not count). This host is intentionally stricter than SC
   2.5.8 (inline only; no equivalent/essential/user-agent/Spacing). If a

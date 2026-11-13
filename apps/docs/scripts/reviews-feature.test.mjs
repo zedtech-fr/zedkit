@@ -1283,6 +1283,9 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
   const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
   const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
   assert.match(consoleView, /AgentConsole/);
+  assert.match(consoleView, /Heading/);
+  assert.match(consoleView, /level=\{1\}/);
+  assert.match(consoleView, /copy\.run\.title/);
   assert.match(feature, /toAgentConsole/);
   assert.match(feature, /ReviewConsoleView/);
   assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);

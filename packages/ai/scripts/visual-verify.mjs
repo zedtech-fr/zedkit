@@ -152,6 +152,18 @@ export function slugNeed(heading) {
   return heading.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
 }
 
+/** Host public-review files. Lockstep with scripts/docs-render-routes.mjs. */
+export function isPublicReviewPath(file) {
+  const n = file.replaceAll("\\", "/");
+  return (
+    /(?:^|\/)apps\/docs\/features\/reviews\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/app\/\(run-console\)\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/app\/\([^/]+\)\/issues\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/tests\/evidence\/issues\//u.test(n) ||
+    /(?:^|\/)apps\/docs\/scripts\/issues-evidence-artifacts\.test\.mjs$/u.test(n)
+  );
+}
+
 export function routesFromFiles(files, manifest) {
   const routes = new Set();
   const sources = [];
@@ -180,6 +192,7 @@ export function routesFromFiles(files, manifest) {
     if (n.endsWith("packages/ai/kit/cursor-onboarding.md") || n.endsWith("apps/docs/public/ai/setup.md")) {
       routes.add("/docs/ai/setup");
     }
+    if (isPublicReviewPath(n)) routes.add("/issues");
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
     }
@@ -388,14 +401,15 @@ export function parseVisualVerifyArgs(args) {
       .filter(Boolean);
   const routeTokens = split(v.routes);
   const auto = routeTokens.includes("auto");
+  const routes = routeTokens.filter((r) => r !== "auto");
   const widths = split(v.widths).map(Number).filter((n) => Number.isFinite(n) && n > 0);
   const modes = split(v.modes);
   return ok({
     url: v.url ?? v["base-url"],
     dir: v.dir,
-    changed: v.changed === true || auto,
+    changed: v.changed === true || auto || routes.length === 0,
     base: v.base,
-    routes: routeTokens.filter((r) => r !== "auto"),
+    routes,
     widths: widths.length > 0 ? widths : WIDTHS,
     modes: modes.length > 0 ? modes : MODES,
     identities: v.identities === undefined ? undefined : split(v.identities),
@@ -623,6 +637,7 @@ async function readPageFacts(page) {
       if (cs.pointerEvents === "none") continue;
       if (el.disabled || el.hasAttribute("disabled")) continue;
       if (visuallyHidden(el, cs)) continue;
+      if (el.getAttribute("aria-hidden") === "true" && el.tabIndex < 0) continue;
       const rect = el.getBoundingClientRect();
       let box = { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
       for (const pseudo of ["::before", "::after"]) {
