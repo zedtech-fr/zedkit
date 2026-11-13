@@ -265,6 +265,20 @@ describe("visual-verify helpers", () => {
     expect(routesFromFiles(["apps/docs/features/identity/ui/identity-look.test.mjs"])).toEqual([]);
   });
 
+  it("maps docs home route-group files to / when there is no page.tsx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/app/(home)/_home/home-identity-looks.tsx",
+        "apps/docs/app/(home)/_home/home-identity-looks.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/"]);
+    expect(
+      routesFromFiles(["apps\\docs\\app\\(home)\\_home\\home-identity-looks.tsx"]),
+    ).toEqual(["/"]);
+    expect(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"])).toEqual([]);
+  });
+
   it("turns the looks grid on for tokens, primitives, and identity sheets", () => {
     expect(looksGridTriggered(["packages/ui/src/identities.css"])).toBe(true);
     expect(looksGridTriggered(["packages/ui/src/styles.css"])).toBe(true);

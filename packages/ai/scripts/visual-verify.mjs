@@ -186,6 +186,9 @@ export function routesFromFiles(files, manifest) {
     if (/(?:^|\/)apps\/docs\/features\/identity\//u.test(n) && !/\.(?:test|spec)\./u.test(n)) {
       routes.add("/features/identity-editor");
     }
+    if (/(?:^|\/)apps\/docs\/app\/\(home\)\//u.test(n) && !/\.(?:test|spec)\./u.test(n)) {
+      routes.add("/");
+    }
   }
   return [...routes];
 }
