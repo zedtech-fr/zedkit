@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const homeCss = "app/(home)/_home/home.css";
+const homeIllustration = "app/(home)/_home/home-hero-illustration.tsx";
+const homeRhythm = "app/(home)/_home/home-rhythm.ts";
 
 function readApp(rel) {
   return readFileSync(join(app, rel), "utf8");
@@ -67,17 +70,20 @@ function withoutDataMotionGate(src) {
 /** Shorthand and longhand. An ungated `transition:` or `animation-name:` must fail. */
 const MOTION_DECL = /(?:^|[{;}])\s*(?:animation(?:-[a-z]+)?|transition(?:-[a-z]+)?)\s*:/;
 
-test("useMotionOk reads the kit preference and is still false on the server", () => {
-  const src = readApp("ui/home/use-motion-ok.ts");
-  assert.match(src, /from ["']@zedtech\/zedkit-ui["']/);
-  assert.match(src, /useMotionPreference/);
-  assert.match(src, /===\s*["']no-preference["']/);
-  assert.doesNotMatch(src, /matchMedia/);
-  assert.doesNotMatch(src, /useSyncExternalStore/);
+test("illustration Pause and identity-looks fade follow the kit motion preference", () => {
+  assert.equal(existsSync(join(app, "ui/home/use-motion-ok.ts")), false);
+  const illustration = readApp(homeIllustration);
+  const looks = readApp("app/(home)/_home/home-identity-looks.tsx");
+  for (const src of [illustration, looks]) {
+    assert.match(src, /from ["']@zedtech\/zedkit-ui["']/);
+    assert.match(src, /useMotionPreference\(\) === ["']no-preference["']/);
+    assert.doesNotMatch(src, /\buseMotionOk\b/);
+    assert.doesNotMatch(src, /use-motion-ok/);
+  }
 });
 
 test("home hero animation rules run only when motion is allowed", () => {
-  const css = stripComments(readApp("app/home-hero.css"));
+  const css = stripComments(readApp(homeCss));
   const allowed = eachNoPreferenceBlock(css);
   assert.ok(allowed.length >= 1, "expected prefers-reduced-motion: no-preference blocks");
   for (const block of allowed) {
@@ -93,9 +99,9 @@ test("home hero animation rules run only when motion is allowed", () => {
 });
 
 test("mockup motion jobs map onto live names, not a rebuilt run", () => {
-  const css = readApp("app/home-hero.css");
-  const illustration = readApp("ui/home/home-hero-illustration.tsx");
-  const rhythm = readApp("ui/home/home-rhythm.ts");
+  const css = readApp(homeCss);
+  const illustration = readApp(homeIllustration);
+  const rhythm = readApp(homeRhythm);
   const live = `${css}\n${illustration}\n${rhythm}`;
   // zk-up → lead rise; zk-in → glass stage; zk-s1…s5 → zk-home-run-* steps (not mockup names).
   assert.match(css, /@keyframes zk-home-hero-rise/);
@@ -125,7 +131,7 @@ const HOME_SECTIONS = [
 ];
 
 test("home-rhythm names distinct appears instead of one section fade", () => {
-  const rhythm = readApp("ui/home/home-rhythm.ts");
+  const rhythm = readApp(homeRhythm);
   assert.doesNotMatch(rhythm, /HOME_SECTION_REVEAL_PROPS/);
   assert.match(rhythm, /HOME_CARD_GRID_REVEAL_PROPS/);
   assert.match(rhythm, /HOME_PASTE_TIMELINE_REVEAL_PROPS/);
@@ -147,7 +153,7 @@ test("each home band has one appear or scroll, never on Section", () => {
   const limits = readApp("app/(home)/_home/sections/home-limits-section.tsx");
   const manifesto = readApp("app/(home)/_home/sections/home-manifesto-section.tsx");
   const closing = readApp("app/(home)/_home/sections/home-closing-section.tsx");
-  const illustration = readApp("ui/home/home-hero-illustration.tsx");
+  const illustration = readApp(homeIllustration);
   const mist = readApp("app/(home)/_home/home-identity-example-mist.tsx");
   for (const rel of HOME_SECTIONS) {
     const src = readApp(rel);
@@ -181,7 +187,7 @@ test("each home band has one appear or scroll, never on Section", () => {
 });
 
 test("docs CSS does not use the mockup star reduced-motion kill", () => {
-  const hero = readApp("app/home-hero.css");
+  const hero = readApp(homeCss);
   const compact = readApp("app/site-compact.css");
   const catalog = readApp("app/(site)/catalog/_catalog/catalog-shell.css");
   for (const css of [hero, compact, catalog]) {
@@ -190,8 +196,8 @@ test("docs CSS does not use the mockup star reduced-motion kill", () => {
 });
 
 test("illustration drift is decorative and does not wrap the glass card", () => {
-  const illustration = readApp("ui/home/home-hero-illustration.tsx");
-  const css = readApp("app/home-hero.css");
+  const illustration = readApp(homeIllustration);
+  const css = readApp(homeCss);
   assert.match(illustration, /data-hero-run-drift/);
   assert.match(illustration, /aria-hidden="true"/);
   const parallaxOpen = illustration.indexOf("{...HOME_PARALLAX_SCROLL_PROPS}");
@@ -224,4 +230,69 @@ test("visual contract allows illustration motion, not page-fill motion", () => {
   assert.match(contract, /paused illustration/);
   assert.doesNotMatch(contract, /guided cursor/);
   assert.doesNotMatch(contract, /Display row/);
+  assert.match(contract, /_home\/home\.css/);
+  assert.doesNotMatch(contract, /app\/home-hero\.css/);
+});
+
+test("home CSS is imported by the home page, not the root layout", () => {
+  const page = readApp("app/(home)/page.tsx");
+  const layout = readApp("app/layout.tsx");
+  const homeLayout = readApp("app/(home)/layout.tsx");
+  assert.match(page, /import ["']\.\/_home\/home\.css["']/);
+  assert.doesNotMatch(layout, /home-hero\.css|_home\/home\.css/);
+  assert.doesNotMatch(homeLayout, /home-hero\.css|_home\/home\.css/);
+  assert.equal(existsSync(join(app, "app/home-hero.css")), false);
+  assert.ok(existsSync(join(app, homeCss)));
+});
+
+test("home CSS keeps live hero rules and drops retired tour selectors", () => {
+  const css = stripComments(readApp(homeCss));
+  assert.match(css, /#home-page \[data-home-hero/);
+  assert.match(css, /\[data-hero-run-/);
+  assert.match(css, /@keyframes zk-home-hero-rise/);
+  assert.match(css, /@keyframes zk-home-float/);
+  assert.match(css, /\[data-hero-run-drift\]/);
+  assert.doesNotMatch(css, /\[data-hero-agent-panel\]/);
+  assert.doesNotMatch(css, /\[data-hero-satellite/);
+  assert.doesNotMatch(css, /\[data-hero-cursor\]/);
+  assert.doesNotMatch(css, /\[data-hero-page/);
+  assert.doesNotMatch(css, /\[data-hero-nav-item\]/);
+  assert.doesNotMatch(css, /\[data-hero-bar/);
+  assert.doesNotMatch(css, /\[data-hero-avatar\]/);
+  assert.doesNotMatch(css, /\[data-hero-calendar\]/);
+  assert.doesNotMatch(css, /\[data-hero-team-split\]/);
+  assert.doesNotMatch(css, /\[data-hero-demo-fields\]/);
+  assert.doesNotMatch(css, /\[data-hero-float\]/);
+  assert.doesNotMatch(css, /\[data-hero-drift\]/);
+  assert.doesNotMatch(css, /\[data-hero-panel-drift/);
+  assert.doesNotMatch(css, /\[data-hero-crumb\]/);
+  assert.doesNotMatch(css, /\[data-hero-shapes\]/);
+  assert.doesNotMatch(css, /@keyframes zk-home-rise\b/);
+  assert.doesNotMatch(css, /@keyframes zk-home-slide\b/);
+  assert.doesNotMatch(css, /@keyframes zk-home-grow\b/);
+  assert.doesNotMatch(css, /@keyframes zk-home-ring\b/);
+  assert.doesNotMatch(css, /@keyframes zk-home-pop\b/);
+  assert.doesNotMatch(css, /@keyframes zk-home-drift\b/);
+});
+
+function pageLinksHomeCssToken(htmlRel) {
+  const html = readFileSync(join(app, "out", htmlRel), "utf8");
+  if (html.includes("zk-home-hero-rise")) return true;
+  const hrefs = [...html.matchAll(/href="(\/_next\/static\/[^"]+\.css)"/g)].map((match) => match[1]);
+  for (const href of hrefs) {
+    const css = readFileSync(join(app, "out", href), "utf8");
+    if (css.includes("zk-home-hero-rise")) return true;
+  }
+  return false;
+}
+
+test("built home export references home CSS; catalog does not", (t) => {
+  const homeHtml = join(app, "out", "index.html");
+  const catalogHtml = join(app, "out", "catalog.html");
+  if (!existsSync(homeHtml) || !existsSync(catalogHtml)) {
+    t.skip("docs export missing; run after build");
+    return;
+  }
+  assert.equal(pageLinksHomeCssToken("index.html"), true);
+  assert.equal(pageLinksHomeCssToken("catalog.html"), false);
 });

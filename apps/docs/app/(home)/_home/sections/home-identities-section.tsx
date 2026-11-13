@@ -1,6 +1,6 @@
 import { Section, Stack } from "@zedtech/zedkit-ui";
 import { HomeIdentityLooks } from "../home-identity-looks";
-import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_CONTENT_GAP } from "@/ui/home/home-rhythm";
+import { HOME_MARKETING_ROOT_PROPS, HOME_SECTION_CONTENT_GAP } from "../home-rhythm";
 
 /**
  * Comparison: the same product screen in four looks, after paste and before limits.

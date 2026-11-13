@@ -49,13 +49,13 @@ test("retired interactive home hero cluster is gone (#265)", () => {
   const registry = readFileSync(join(app, "components/demos/registry.ts"), "utf8");
   assert.doesNotMatch(registry, /HomeAdminDashboardDemo/);
   assert.match(registry, /AdminDashboardGuideDemo/);
-  const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
+  const copy = readFileSync(join(homeI18n, "home-hero-copy.ts"), "utf8");
   assert.doesNotMatch(copy, /\bheroApp:|\bheroTour:|\bHeroPageId\b/);
   assert.doesNotMatch(copy, /galleryPreview|homeGalleryPreviewCopy|\bheroActions\b/);
   assert.equal(existsSync(join(app, "ui/home/i18n/home-copy.ts")), false);
   const identity = readFileSync(join(app, "lib/default-identity.ts"), "utf8");
   assert.doesNotMatch(identity, /HERO_TOUR_LOOK/);
-  const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  const rhythm = readFileSync(join(homePrivate, "home-rhythm.ts"), "utf8");
   assert.doesNotMatch(rhythm, /HOME_HERO_PREVIEW_SHELL_CLASS|HOME_GALLERY_PREVIEW_SHELL_CLASS|HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX/);
   assert.doesNotMatch(
     rhythm,
@@ -65,7 +65,7 @@ test("retired interactive home hero cluster is gone (#265)", () => {
     "app/docs-shell-tokens.css",
     "app/docs-signature.css",
     "app/site-compact.css",
-    "app/home-hero.css",
+    "app/(home)/_home/home.css",
   ]
     .map((rel) => readFileSync(join(app, rel), "utf8"))
     .join("\n");
@@ -86,10 +86,10 @@ test("search dialog is lazy and not preloaded on every page", () => {
 });
 
 test("home hero first screen is the mockup lead and glass illustration, not the live window (#118)", () => {
-  const hero = readFileSync(join(app, "ui/home/home-hero.tsx"), "utf8");
-  const lead = readFileSync(join(app, "ui/home/home-hero-lead.tsx"), "utf8");
-  const illustration = readFileSync(join(app, "ui/home/home-hero-illustration.tsx"), "utf8");
-  const copy = readFileSync(join(app, "ui/home/i18n/home-hero-copy.ts"), "utf8");
+  const hero = readFileSync(join(homePrivate, "home-hero.tsx"), "utf8");
+  const lead = readFileSync(join(homePrivate, "home-hero-lead.tsx"), "utf8");
+  const illustration = readFileSync(join(homePrivate, "home-hero-illustration.tsx"), "utf8");
+  const copy = readFileSync(join(homeI18n, "home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
   const firstScreen = hero + lead + illustration;
   // #258: one map prompt, no kit tablist. #118 still owns the third title clause vs one Setup row.
@@ -151,7 +151,8 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(copy, /facts:/);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole|ThemeScope/);
   assert.match(illustration, /data-hero-run-stage/);
-  assert.match(illustration, /useMotionOk/);
+  assert.match(illustration, /useMotionPreference\(\) === ["']no-preference["']/);
+  assert.doesNotMatch(illustration, /\buseMotionOk\b/);
   assert.match(illustration, /role="group"/);
   assert.match(illustration, /aria-pressed=\{paused\}/);
   assert.match(copy, /pauseMotion: "Pause illustration motion"/);
@@ -241,7 +242,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.equal(existsSync(join(app, "app/(site)/page.tsx")), false);
   const page = readFileSync(join(app, "app/(home)/page.tsx"), "utf8");
   assert.match(page, /import \{ uiGalleryStats \} from ["']@\/content\/gallery["']/);
-  const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  const rhythm = readFileSync(join(homePrivate, "home-rhythm.ts"), "utf8");
   assert.doesNotMatch(rhythm, /HOME_SAME_IDEA_GRID/);
   assert.match(
     rhythm,
@@ -305,7 +306,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sameIdeaCopy, /stack: "React 19 and Tailwind CSS 4, from npm or as source"/);
   assert.match(sameIdeaCopy, /mit: "MIT"/);
   assert.doesNotMatch(sixSentencesCopy, /What you see is MIT/);
-  const heroCss = readFileSync(join(app, "app/home-hero.css"), "utf8");
+  const heroCss = readFileSync(join(homePrivate, "home.css"), "utf8");
   const signatureCss = readFileSync(join(app, "app/docs-signature.css"), "utf8");
   const typographyCss = readFileSync(join(app, "app/docs-typography.css"), "utf8");
   assert.match(heroCss, /#home-page \[data-home-hero-lead\] h1/);
@@ -604,7 +605,7 @@ test("home looks band is specimen | look-name pills, not a Section header or pal
   const tabs = readFileSync(join(homePrivate, "home-identity-looks-tabs.tsx"), "utf8");
   const copy = readFileSync(join(homeI18n, "home-identity-looks-copy.ts"), "utf8");
   const facts = readFileSync(join(homePrivate, "home-identity-facts.ts"), "utf8");
-  const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
+  const rhythm = readFileSync(join(homePrivate, "home-rhythm.ts"), "utf8");
   assert.doesNotMatch(section, /\btitle=\{/);
   assert.doesNotMatch(section, /\bdescription=\{/);
   assert.doesNotMatch(section, /HomeYoursScene|#your-identity|data-home-yours/);
@@ -766,7 +767,10 @@ test("docs home uses native document scroll; SectionScroll is not mounted (#262)
   );
 
   const importers = [];
-  for (const dir of [join(app, "ui/home"), join(app, "app/(home)/_home")]) {
+  const homeDirs = [join(app, "app/(home)/_home")];
+  const leftoverHome = join(app, "ui/home");
+  if (existsSync(leftoverHome)) homeDirs.push(leftoverHome);
+  for (const dir of homeDirs) {
     for (const file of walkTsx(dir)) {
       const src = readFileSync(file.abs, "utf8");
       if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
@@ -783,4 +787,27 @@ test("docs home uses native document scroll; SectionScroll is not mounted (#262)
     compact,
     /\[data-scroll-anchor\]\s*\{[^}]*scroll-margin-top:\s*max\(calc\(var\(--spacing\) \* 24\), calc\(var\(--zk-header-height\) \+ 1rem\)\)/,
   );
+});
+
+test("ui/home is gone; leftover home modules live next to the page", () => {
+  assert.equal(existsSync(join(app, "ui/home")), false);
+  assert.equal(existsSync(join(homePrivate, "use-motion-ok.ts")), false);
+  const remaining = [
+    "home-hero.tsx",
+    "home-hero-lead.tsx",
+    "home-hero-illustration.tsx",
+    "home-copy-command-field.tsx",
+    "home-rhythm.ts",
+    "home.css",
+    "i18n/home-hero-copy.ts",
+    "i18n/home-copy-command-copy.ts",
+  ];
+  for (const name of remaining) {
+    assert.ok(existsSync(join(homePrivate, name)), name);
+  }
+  const page = readFileSync(join(app, "app/(home)/page.tsx"), "utf8");
+  const layout = readFileSync(join(app, "app/layout.tsx"), "utf8");
+  assert.match(page, /import ["']\.\/_home\/home\.css["']/);
+  assert.doesNotMatch(layout, /home-hero\.css|_home\/home\.css/);
+  assert.equal(existsSync(join(app, "app/home-hero.css")), false);
 });

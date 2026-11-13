@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Stack, Surface, Text } from "@zedtech/zedkit-ui";
-import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "@/ui/home/home-rhythm";
-import { homeHeroCopy } from "@/ui/home/i18n/home-hero-copy";
-import { useMotionOk } from "@/ui/home/use-motion-ok";
+import { Badge, Button, Stack, Surface, Text, useMotionPreference } from "@zedtech/zedkit-ui";
+import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "./home-rhythm";
+import { homeHeroCopy } from "./i18n/home-hero-copy";
 
 const copy = homeHeroCopy.heroIllustration;
 
@@ -78,7 +77,7 @@ function RunCard({
  * Pause only freezes CSS step motion; nothing is fetched.
  */
 export function HomeHeroIllustration() {
-  const motionOk = useMotionOk();
+  const motionOk = useMotionPreference() === "no-preference";
   const [paused, setPaused] = useState(false);
 
   return (

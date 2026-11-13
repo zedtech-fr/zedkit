@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button, Text, useUiMessages } from "@zedtech/zedkit-ui";
-import { homeCopyCommandCopy } from "@/ui/home/i18n/home-copy-command-copy";
+import { homeCopyCommandCopy } from "./i18n/home-copy-command-copy";
 
 function selectAll(node: HTMLElement): void {
   const selection = window.getSelection();

@@ -6,7 +6,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SAME_IDEA_CARDS_GRID,
   HOME_SECTION_CONTENT_GAP,
-} from "@/ui/home/home-rhythm";
+} from "../home-rhythm";
 import { homeSameIdeaCopy } from "../i18n/home-same-idea-copy";
 
 const CARD_IDS = ["ai", "ui", "together"] as const;

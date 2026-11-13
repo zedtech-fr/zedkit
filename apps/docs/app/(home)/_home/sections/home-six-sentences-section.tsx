@@ -5,7 +5,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
   HOME_SECTION_CONTENT_GAP,
   HOME_SIX_SENTENCES_GRID,
-} from "@/ui/home/home-rhythm";
+} from "../home-rhythm";
 import { homeSixSentencesCopy } from "../i18n/home-six-sentences-copy";
 
 type SixSentencesCard = (typeof homeSixSentencesCopy.cards)[number];

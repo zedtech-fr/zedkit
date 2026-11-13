@@ -79,7 +79,7 @@ Only to explain a change or keep context (overlay in/out, panel following focus,
 
 The home page has one scene that is allowed to do more, because it is the first impression and each motion shows the kit working:
 
-- **Hero illustration** (`app/home-hero.css`): the glass illustration enters on load, then Plan / Build / Check / Fix / Done step opacities loop on the card (Pause freezes them). Entrances are finite (320-640ms, `backwards` fill, nothing left applied); loops stay on the illustration steps and one decorative blob on the purple stage, never on the page fill. Reduced motion shows the paused illustration, no Pause control.
+- **Hero illustration** (`app/(home)/_home/home.css`): the glass illustration enters on load, then Plan / Build / Check / Fix / Done step opacities loop on the card (Pause freezes them). Entrances are finite (320-640ms, `backwards` fill, nothing left applied); loops stay on the illustration steps and one decorative blob on the purple stage, never on the page fill. Reduced motion shows the paused illustration, no Pause control.
 
 It obeys reduced motion completely (no animation, paused illustration, final numbers), never takes over scrolling, and never put a running transform, filter or mask on anything that holds a toast, a dialog or a portaled menu (see the traps).
 

@@ -1,9 +1,9 @@
 import { Heading, Stack, Text } from "@zedtech/zedkit-ui";
 import { MAP_AI_UI_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
-import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
-import { HOME_METADATA_TEXT_CLASS } from "@/ui/home/home-rhythm";
-import { HomeHeroIllustration } from "@/ui/home/home-hero-illustration";
-import { homeHeroCopy } from "@/ui/home/i18n/home-hero-copy";
+import { HomeCopyCommandField } from "./home-copy-command-field";
+import { HOME_METADATA_TEXT_CLASS } from "./home-rhythm";
+import { HomeHeroIllustration } from "./home-hero-illustration";
+import { homeHeroCopy } from "./i18n/home-hero-copy";
 
 /**
  * Métier:           Public TypeScript kit: npm packages plus a docs site, not a hosted app with accounts.

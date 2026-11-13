@@ -23,8 +23,6 @@
     "ui/skip-link.tsx",
     "ui/theme-color-meta.tsx"
   ],
-  "globs": [
-    "ui/home/**"
-  ],
+  "globs": [],
   "edges": []
 }

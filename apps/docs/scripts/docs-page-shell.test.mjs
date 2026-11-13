@@ -90,7 +90,7 @@ test("home pins mockup section rhythm on #home-page tokens", () => {
   assert.match(compact, /#home-page[\s\S]{0,400}--zk-section-md:\s*5\.5rem/);
   assert.match(compact, /#home-page[\s\S]{0,400}--zk-section-lg:\s*6rem/);
   assert.match(compact, /--zk-heading-to-sub:\s*0\.5rem/);
-  const hero = read("app/home-hero.css");
+  const hero = read("app/(home)/_home/home.css");
   assert.match(hero, /--zk-home-hero-stack:\s*4rem/);
   assert.match(hero, /padding-top:\s*var\(--zk-section-md\)/);
   assert.match(hero, /padding-bottom:\s*var\(--zk-section-lg\)/);
@@ -108,7 +108,7 @@ test("home pins mockup section rhythm on #home-page tokens", () => {
   );
   const closing = read("app/(home)/_home/sections/home-closing-section.tsx");
   assert.match(closing, /spacing="lg"/);
-  const lead = read("ui/home/home-hero-lead.tsx");
+  const lead = read("app/(home)/_home/home-hero-lead.tsx");
   assert.match(lead, /gap="list"/);
   assert.doesNotMatch(lead, /gap="blocks"/);
 });
@@ -180,6 +180,6 @@ test("docs shell remaps light greys to stock zinc, not Glass blue", () => {
 });
 
 test("home mobile page height budget allows mockup air", () => {
-  const src = read("ui/home/home-rhythm.ts");
+  const src = read("app/(home)/_home/home-rhythm.ts");
   assert.match(src, /HOME_MOBILE_PAGE_MAX_SCROLL_PX = 10200/);
 });
