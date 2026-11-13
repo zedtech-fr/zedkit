@@ -26,12 +26,13 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   Router, `tests/evidence/issues`) → `/issues`, identity feature files
   (non-test) → `/features/identity-editor`, `apps/docs/app/(home)/**`
   (non-test, including `_home/`) → `/`, optional `--manifest`
-  `source` → `/docs/ui/<slug>`) union `--routes`. Omitted `--manifest`
-  with `--changed` loads `apps/docs/docs-manifest.json` when that file
-  exists in `--cwd` (UI `packages/ui/src` diffs map through `source`).
-  Omitted `--routes` implies `--changed`. Unknown files add no extra route. A host fixed set
-  is passed by the host `visual:verify` script (or equivalent), not
-  invented here.
+  (`source` → `/docs/ui/<slug>`, `demo`/`examples` →
+  `apps/docs/components/demos/<kebab>.tsx`, kit files that share that
+  source stem). Omitted `--manifest` loads `apps/docs/docs-manifest.json`
+  when present (with `--changed`, UI `packages/ui/src` diffs map through
+  `source`). Union `--routes`. Omitted `--routes` implies `--changed`.
+  Unknown files add no extra route. A host fixed set is passed by the host
+  `visual:verify` script (or equivalent), not invented here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
   dark. Full **looks grid** (every shipped look × both modes) only when a
   token, a primitive, or a shared identity sheet (`identities.css`)

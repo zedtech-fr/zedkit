@@ -14,12 +14,12 @@ export function SidebarNavActiveDemo() {
             meta={sidebarNavCopy.nightlyMeta}
             count={<Badge variant="meta">{sidebarNavCopy.nightlyCount}</Badge>}
           >
-            <a href="#nightly">{sidebarNavCopy.nightly}</a>
+            <a href="#nightly" id="nightly">{sidebarNavCopy.nightly}</a>
           </SidebarNavItem>
         </li>
         <li>
           <SidebarNavItem asChild status={<StatusDot tone="idle" />} meta={sidebarNavCopy.stagingMeta}>
-            <a href="#staging">{sidebarNavCopy.staging}</a>
+            <a href="#staging" id="staging">{sidebarNavCopy.staging}</a>
           </SidebarNavItem>
         </li>
       </ul>

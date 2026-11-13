@@ -100,7 +100,8 @@ zedkit-ai <command>
       (wins over Visual reference:); the pair PNG does not fail the run.
       Unresolvable directory PNGs warn on stderr. --base defaults to origin/dev,
       else origin/main, else HEAD~1, else HEAD. --cwd is the git and path root
-      (default: process cwd).
+      (default: process cwd). Omitted --manifest loads
+      apps/docs/docs-manifest.json when that file exists.
   evidence [--base-url <origin> | --url <origin> | --dir <static-export>]
       [--routes <path,path|auto>] [--changed] [--base <ref>] [--cwd <dir>]
       [--widths <n,n>] [--modes <mode,mode>] [--identities <id,id>]
@@ -115,6 +116,7 @@ zedkit-ai <command>
       375,809,1440 and light,dark.
       --states is a JSON array of {name, click?}; extra cells after the default
       tree. --mockup is a file or directory of width PNGs (wins over Visual
-      reference:); the pair PNG does not fail the run.
+      reference:); the pair PNG does not fail the run. Omitted --manifest loads
+      apps/docs/docs-manifest.json when that file exists.
   list
       Show presets, subagents and commands.

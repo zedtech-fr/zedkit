@@ -74,7 +74,7 @@ export function HowItWorksDemo() {
 export function MarketingChromeDemo() {
   const { chrome } = marketingCopy;
   return (
-    <Stack gap="lg" className="content-shrink">
+    <Stack gap="lg" className="content-shrink" id="chrome">
       <MarketingHeader
         sticky={false}
         brand={
@@ -127,7 +127,7 @@ export function LocaleSwitchDemo() {
   return (
     <LocaleSwitch
       current="en"
-      locales={chrome.locales.map((locale) => ({ ...locale, href: `#${locale.code}` }))}
+      locales={chrome.locales.map((locale) => ({ ...locale, href: "#example" }))}
     />
   );
 }
