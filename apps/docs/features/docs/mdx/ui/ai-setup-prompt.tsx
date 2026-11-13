@@ -73,7 +73,7 @@ export function AiSetupPrompt() {
         </a>
         {aiSetupCopy.prompt.pasteAfter}
       </Text>
-      <Stack gap="sm" className="content-shrink sm:flex-row sm:items-start sm:justify-between">
+      <Stack direction="horizontal" gap="sm" className="content-shrink items-start justify-between">
         <pre className="content-shrink flex-1 overflow-x-auto rounded-md bg-background px-control-inline surface-pad-block-sm font-mono text-dense break-words whitespace-pre-wrap">
           {AI_SETUP_MINI_PROMPT}
         </pre>
