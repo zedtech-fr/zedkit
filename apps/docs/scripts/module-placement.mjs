@@ -4,6 +4,10 @@ import ts from "typescript";
 
 export const SHARED_OWNER = "docs";
 
+// Root layout wraps every route. Next.js does not import it from pages, so
+// chrome it mounts looks single-owner. Nested layouts stay single-owner.
+const ROOT_LAYOUT = "app/layout.tsx";
+
 // Directory globs absorb new dead/single-owner files. Do not add under them.
 // Drop a glob from this list when that lot moves. File paths are exact.
 export const REQUIRED_GLOBS = [];
@@ -148,7 +152,10 @@ function currentViolations(graph) {
     if (owned.size === 1) {
       const [owner] = owned;
       // Synthetic `docs` stands in for the generated pages corpus, not one route.
-      if (owner !== SHARED_OWNER) violations.push({ kind: "single-owner", file });
+      // Root layout is site chrome, not a single route. Nested layouts still flag.
+      if (owner !== SHARED_OWNER && owner !== ROOT_LAYOUT) {
+        violations.push({ kind: "single-owner", file });
+      }
     }
   }
   for (const edge of graph.edges) {
@@ -351,10 +358,6 @@ export function baselineGrowth(committed, next) {
 export function writeLandTimeBaseline(docsRoot, baselinePath) {
   const graph = buildDocsGraph(docsRoot);
   const baseline = landTimeBaseline(graph);
-  const absorbed = currentViolations(graph).filter((v) => coveredByGlob(v, baseline.globs)).length;
-  if (baseline.dead.length === 0 && baseline.singleOwner.length === 0 && absorbed === 0) {
-    throw new Error("placement walk found no shared-folder violations; resolver is likely wrong");
-  }
   if (baseline.dead.length > 200) {
     throw new Error(`placement walk found ${baseline.dead.length} dead files; resolver is likely wrong`);
   }
@@ -376,11 +379,37 @@ export function writeLandTimeBaseline(docsRoot, baselinePath) {
   return { graph, baseline };
 }
 
+export function checkDocsBaseline(docsRoot, baselinePath) {
+  const graph = buildDocsGraph(docsRoot);
+  const baseline = JSON.parse(readFileSync(baselinePath, "utf8"));
+  return checkPlacement(graph, baseline);
+}
+
+function placementIds(items) {
+  return items.map((v) =>
+    v.kind === "cross-feature" || v.kind === "private-leak"
+      ? `${v.kind}:${v.from}->${v.to}`
+      : `${v.kind}:${v.file ?? v.glob}`,
+  );
+}
+
 const invoked = process.argv[1] && posixPath(process.argv[1]).endsWith("module-placement.mjs");
+const docsRootCli = join(import.meta.dirname, "..");
+const baselineCli = join(import.meta.dirname, "module-placement.baseline.json");
 if (invoked && process.argv.includes("--write-baseline")) {
-  const docsRoot = join(import.meta.dirname, "..");
-  const out = writeLandTimeBaseline(docsRoot, join(import.meta.dirname, "module-placement.baseline.json"));
+  const out = writeLandTimeBaseline(docsRootCli, baselineCli);
   process.stdout.write(
     `dead=${out.baseline.dead.length} singleOwner=${out.baseline.singleOwner.length} edges=${out.baseline.edges.length}\n`,
   );
+}
+if (invoked && process.argv.includes("--check")) {
+  const result = checkDocsBaseline(docsRootCli, baselineCli);
+  if (result.newViolations.length > 0 || result.stale.length > 0) {
+    const hint =
+      "See apps/docs/AGENTS.md File placement; baseline apps/docs/scripts/module-placement.baseline.json. Move the file; never extend the baseline.";
+    process.stderr.write(
+      `new: ${placementIds(result.newViolations).join("\n")}\nstale: ${placementIds(result.stale).join("\n")}\n${hint}\n`,
+    );
+    process.exitCode = 1;
+  }
 }

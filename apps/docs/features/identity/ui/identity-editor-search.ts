@@ -7,7 +7,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { LIGHT_KEYS, inferKeptDark } from "@/lib/identity-recipe";
+import { LIGHT_KEYS, inferKeptDark } from "@/features/identity/ui/identity-recipe";
 
 const SCALAR_KEYS = [
   "spacing",

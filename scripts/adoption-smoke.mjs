@@ -58,7 +58,7 @@ const {
   shownInstallCommands,
   uncoveredInstallCommands,
   workspacePackageDir,
-} = await import(join(ROOT, "apps/docs/lib/adoption-shown-commands.mjs"));
+} = await import(join(ROOT, "apps/docs/scripts/adoption-shown-commands.mjs"));
 const catalog = JSON.parse(readFileSync(join(ROOT, "docs/catalog/catalog.json"), "utf8"));
 const registry = loadRegistry(ROOT);
 

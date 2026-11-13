@@ -13,14 +13,14 @@ import {
   identityContrastWarnings,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
-import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import {
   IDENTITY_KIT_STYLES_CSS,
   identityExportCss,
   identityExportFonts,
   identityExportInstall,
-} from "@/lib/identity-export-css";
-import { parseRecipe, serializeRecipe } from "@/lib/identity-recipe";
+} from "@/features/identity/ui/identity-export-css";
+import { parseRecipe, serializeRecipe } from "@/features/identity/ui/identity-recipe";
 
 function copyText(value: string, onDone: () => void) {
   const clipboard = navigator.clipboard;

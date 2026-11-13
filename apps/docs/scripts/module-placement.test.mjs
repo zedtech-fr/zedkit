@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -9,7 +10,10 @@ import {
   REQUIRED_GLOBS,
   baselineGrowth,
   buildDocsGraph,
+  checkDocsBaseline,
   checkPlacement,
+  landTimeBaseline,
+  writeLandTimeBaseline,
 } from "./module-placement.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -35,6 +39,44 @@ describe("checkPlacement fixtures", () => {
       { dead: [], singleOwner: [], globs: [], edges: [] },
     );
     assert.deepEqual(ids(result.newViolations), ["single-owner:components/foo.ts"]);
+    assert.deepEqual(result.stale, []);
+  });
+
+  it("does not flag a components file whose only owner is app/layout.tsx", () => {
+    const result = checkPlacement(
+      {
+        files: ["app/layout.tsx", "components/skip-link.tsx"],
+        edges: [{ from: "app/layout.tsx", to: "components/skip-link.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
+    assert.deepEqual(result.stale, []);
+  });
+
+  it("still flags a components file whose only owner is a nested layout", () => {
+    const result = checkPlacement(
+      {
+        files: ["app/(home)/layout.tsx", "components/home-only.tsx"],
+        edges: [{ from: "app/(home)/layout.tsx", to: "components/home-only.tsx" }],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(ids(result.newViolations), ["single-owner:components/home-only.tsx"]);
+  });
+
+  it("treats an empty committed baseline on a clean graph as no new and no stale", () => {
+    const result = checkPlacement(
+      {
+        files: ["app/x/page.tsx", "app/y/page.tsx", "components/foo.ts"],
+        edges: [
+          { from: "app/x/page.tsx", to: "components/foo.ts" },
+          { from: "app/y/page.tsx", to: "components/foo.ts" },
+        ],
+      },
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+    assert.deepEqual(result.newViolations, []);
     assert.deepEqual(result.stale, []);
   });
 
@@ -482,7 +524,108 @@ describe("live docs tree", () => {
   });
 });
 
+describe("landTimeBaseline", () => {
+  it("writes empty dead, singleOwner, and edges for a two-route shared component", () => {
+    assert.deepEqual(
+      landTimeBaseline({
+        files: ["app/x/page.tsx", "app/y/page.tsx", "components/foo.ts"],
+        edges: [
+          { from: "app/x/page.tsx", to: "components/foo.ts" },
+          { from: "app/y/page.tsx", to: "components/foo.ts" },
+        ],
+      }),
+      { dead: [], singleOwner: [], globs: [], edges: [] },
+    );
+  });
+});
+
+function withTempDocs(files, fn) {
+  const dir = mkdtempSync(join(tmpdir(), "placement-"));
+  for (const [rel, body] of Object.entries(files)) {
+    const abs = join(dir, rel);
+    mkdirSync(dirname(abs), { recursive: true });
+    writeFileSync(abs, body);
+  }
+  const value = fn(dir);
+  rmSync(dir, { recursive: true, force: true });
+  return value;
+}
+
+describe("checkDocsBaseline", () => {
+  it("passes when an empty baseline matches a clean graph", () => {
+    withTempDocs(
+      {
+        "app/x/page.tsx": 'import "@/components/foo";\n',
+        "app/y/page.tsx": 'import "@/components/foo";\n',
+        "components/foo.ts": "export const foo = 1;\n",
+      },
+      (dir) => {
+        const baseline = join(dir, "baseline.json");
+        writeFileSync(baseline, `${JSON.stringify({ dead: [], singleOwner: [], globs: [], edges: [] }, null, 2)}\n`);
+        const result = checkDocsBaseline(dir, baseline);
+        assert.deepEqual(result.newViolations, []);
+        assert.deepEqual(result.stale, []);
+      },
+    );
+  });
+
+  it("fails when a new dead file appears against an empty baseline", () => {
+    withTempDocs(
+      {
+        "app/x/page.tsx": "export default function Page() {}\n",
+        "lib/orphan.ts": "export const x = 1;\n",
+      },
+      (dir) => {
+        const baseline = join(dir, "baseline.json");
+        writeFileSync(baseline, `${JSON.stringify({ dead: [], singleOwner: [], globs: [], edges: [] }, null, 2)}\n`);
+        const result = checkDocsBaseline(dir, baseline);
+        assert.deepEqual(ids(result.newViolations), ["dead:lib/orphan.ts"]);
+      },
+    );
+  });
+});
+
+describe("writeLandTimeBaseline", () => {
+  it("writes empty arrays when the walk finds no shared-folder violations", () => {
+    withTempDocs(
+      {
+        "app/x/page.tsx": 'import "@/components/foo";\n',
+        "app/y/page.tsx": 'import "@/components/foo";\n',
+        "components/foo.ts": "export const foo = 1;\n",
+      },
+      (dir) => {
+        const out = join(dir, "baseline.json");
+        writeLandTimeBaseline(dir, out);
+        assert.deepEqual(JSON.parse(readFileSync(out, "utf8")), {
+          dead: [],
+          singleOwner: [],
+          globs: [],
+          edges: [],
+        });
+      },
+    );
+  });
+
+  it("still throws when the walk finds more than 200 dead files", () => {
+    /** @type {Record<string, string>} */
+    const files = { "app/x/page.tsx": "export default function Page() {}\n" };
+    for (let i = 0; i < 201; i += 1) files[`lib/dead-${String(i).padStart(3, "0")}.ts`] = "export const x = 1;\n";
+    withTempDocs(files, (dir) => {
+      assert.throws(
+        () => writeLandTimeBaseline(dir, join(dir, "baseline.json")),
+        /201 dead files/,
+      );
+    });
+  });
+});
+
 describe("baselineGrowth", () => {
+  it("refuses a new dead entry after an empty baseline", () => {
+    assert.deepEqual(baselineGrowth({ dead: [], singleOwner: [], globs: [], edges: [] }, { dead: ["lib/a.ts"] }), [
+      "dead:lib/a.ts",
+    ]);
+  });
+
   it("refuses new dead, single-owner, glob, and edge entries", () => {
     assert.deepEqual(
       baselineGrowth(
@@ -637,6 +780,12 @@ describe("ESLint one-way imports", () => {
     );
     const eslintConfig = readFileSync(join(repoRoot, "eslint.config.mjs"), "utf8");
     assert.doesNotMatch(eslintConfig, /docs\/one-way-exception-l5-home-hero/);
+    assert.doesNotMatch(eslintConfig, /docs\/one-way-exception/);
+  });
+
+  it("runs placement --check from the docs lint script", () => {
+    const pkg = JSON.parse(readFileSync(join(docsRoot, "package.json"), "utf8"));
+    assert.match(pkg.scripts.lint, /node scripts\/module-placement\.mjs --check/);
   });
 
   it("keeps hexagonal feature-folder bans on note-list ui", async () => {

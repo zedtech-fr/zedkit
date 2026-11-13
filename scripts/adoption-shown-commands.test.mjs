@@ -13,7 +13,7 @@ import {
   shownInstallCommands,
   uncoveredInstallCommands,
   workspacePackageDir,
-} from "../apps/docs/lib/adoption-shown-commands.mjs";
+} from "../apps/docs/scripts/adoption-shown-commands.mjs";
 import { CASES } from "./adoption-smoke.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
