@@ -256,6 +256,8 @@ jobs:
         if: env.FULL == 'true' || env.PACKAGES == 'true'
         run: bash scripts/check-pack.sh
       - run: bash scripts/check-e2e-registered.sh
+      - name: Playwright Chromium
+        run: pnpm exec playwright install chromium
       - name: test
         if: env.FULL != 'true'
         run: |
