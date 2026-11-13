@@ -36,7 +36,7 @@ Print the matching follow-up prompt from the list below.
 
 Skip every setup-able package that is already pinned at the current published version **and** wired (AI: kit files present; UI: stylesheet import + `@source`; Nest: `createNestApp` imported).
 
-- Already wired: say why, and for AI offer improve mode (`/setup-ai` improve) rather than a second fresh install.
+- Already wired: say why, and for AI offer improve mode (`/zedkit-ai` improve) rather than a second fresh install.
 - Missing or unwired: recommend that package.
 - Wrong stack (UI without React+Tailwind, Nest without Nest): skip with the reason.
 

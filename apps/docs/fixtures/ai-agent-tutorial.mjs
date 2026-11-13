@@ -84,10 +84,10 @@ export function runCursorSetupTutorial(dir) {
   if (setup.code !== 0) {
     throw new Error(`setup failed: ${setup.err || setup.out}`);
   }
-  if (!setup.out.includes("/setup-ai")) {
-    throw new Error("setup should print the /setup-ai next step");
+  if (!setup.out.includes("/zedkit-ai")) {
+    throw new Error("setup should print the /zedkit-ai next step");
   }
-  for (const rel of [".agents/skills/setup-ai/SKILL.md", ".cursor/commands/setup-ai.md", ".cursor/rules/project.mdc"]) {
+  for (const rel of [".agents/skills/setup-ai/SKILL.md", ".cursor/commands/zedkit-ai.md", ".cursor/rules/project.mdc"]) {
     if (!existsSync(join(dir, rel))) throw new Error(`setup missing ${rel}`);
   }
   for (const rel of [".agents/skills/domain-modeling/SKILL.md", ".agents/agents/product-director.md"]) {
@@ -151,8 +151,8 @@ export function runHomeSnippetInit(dir) {
   const required = [
     "AGENTS.md",
     ".agents/skills/setup-ai/SKILL.md",
-    ".cursor/commands/setup-ai.md",
-    ".claude/commands/setup-ai.md",
+    ".cursor/commands/zedkit-ai.md",
+    ".claude/commands/zedkit-ai.md",
     ".cursor/rules/project.mdc",
   ];
   for (const rel of required) {

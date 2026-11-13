@@ -60,21 +60,6 @@ export const AI_SETUP_KIT = {
     "test-runner"
   ],
   "commands": [
-    "setup-ai",
-    "review",
-    "plan",
-    "challenge",
-    "implement",
-    "pr",
-    "orchestrate",
-    "improve-config",
-    "research",
-    "from-audit",
-    "to-audit",
-    "fix",
-    "improve-from-review",
-    "quick-wins",
-    "triage",
     "zedkit-ai"
   ],
   "installed": [
@@ -285,66 +270,6 @@ export const AI_SETUP_KIT = {
     {
       "text": "│  ├─ commands/",
       "kind": "dir"
-    },
-    {
-      "text": "│  │  ├─ setup-ai.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ review.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ plan.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ challenge.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ implement.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ pr.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ orchestrate.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ improve-config.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ research.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ from-audit.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ to-audit.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ fix.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ improve-from-review.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ quick-wins.md",
-      "kind": "file"
-    },
-    {
-      "text": "│  │  ├─ triage.md",
-      "kind": "file"
     },
     {
       "text": "│  │  └─ zedkit-ai.md",
