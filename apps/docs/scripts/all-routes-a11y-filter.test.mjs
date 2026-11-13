@@ -7,6 +7,38 @@ const spec = readFileSync(
   fileURLToPath(new URL("../tests/all-routes-a11y.spec.ts", import.meta.url)),
   "utf8",
 );
+const fitSpec = readFileSync(
+  fileURLToPath(new URL("../tests/all-routes-fit.spec.ts", import.meta.url)),
+  "utf8",
+);
+
+const REQUIRED_WIDTHS = [375, 809, 1440];
+const REQUIRED_HEIGHT = 900;
+const VIEWS_BLOCK_RE = /const VIEWS\s*=\s*\[([\s\S]*?)\]\s*as const/u;
+const VIEW_ROW_RE =
+  /\{\s*width:\s*(\d+)\s*,\s*height:\s*(\d+)\s*,\s*theme:\s*['"](light|dark)['"]\s*\}/gu;
+
+function matrixProblems(source) {
+  const block = source.match(VIEWS_BLOCK_RE);
+  if (!block) return ["missing VIEWS table"];
+  const rows = [...block[1].matchAll(VIEW_ROW_RE)].map((match) => ({
+    width: Number(match[1]),
+    height: Number(match[2]),
+    theme: match[3],
+  }));
+  if (rows.length === 0) return ["missing VIEWS table"];
+  const problems = [];
+  const widths = new Set(rows.map((row) => row.width));
+  for (const width of REQUIRED_WIDTHS) {
+    if (!widths.has(width)) problems.push(`missing width ${width}`);
+  }
+  for (const row of rows) {
+    if (row.height !== REQUIRED_HEIGHT) {
+      problems.push(`height ${row.height} at ${row.width} ${row.theme}`);
+    }
+  }
+  return problems;
+}
 
 const TAGS_RE = /\.withTags\(\s*\[([^\]]+)\]\s*\)/u;
 const IMPACT_RE =
@@ -62,5 +94,50 @@ describe("all-routes-a11y axe filter", () => {
     for (const [name, src] of Object.entries(sneaks)) {
       assert.equal(contrastBypass(src), true, name);
     }
+  });
+});
+
+describe("docs-render route specs share the DoD v2 matrix", () => {
+  it("rejects a phone cell whose height is not 900", () => {
+    const source = `const VIEWS = [
+  { width: 375, height: 800, theme: "light" },
+  { width: 375, height: 800, theme: "dark" },
+  { width: 809, height: 900, theme: "light" },
+  { width: 809, height: 900, theme: "dark" },
+  { width: 1440, height: 900, theme: "light" },
+  { width: 1440, height: 900, theme: "dark" },
+] as const;`;
+    assert.deepEqual(matrixProblems(source), [
+      "height 800 at 375 light",
+      "height 800 at 375 dark",
+    ]);
+  });
+
+  it("rejects a table that drops a required width", () => {
+    const source = `const VIEWS = [
+  { width: 375, height: 900, theme: "light" },
+  { width: 809, height: 900, theme: "dark" },
+] as const;`;
+    assert.deepEqual(matrixProblems(source), ["missing width 1440"]);
+  });
+
+  it("still matches a reflowed VIEWS row", () => {
+    const source = `const VIEWS = [
+  { width: 375,
+    height: 900,
+    theme: "light" },
+  { width: 809, height: 900, theme: "dark" },
+  { width: 1440, height: 900, theme: "light" },
+] as const;`;
+    assert.deepEqual(matrixProblems(source), []);
+  });
+
+  it("fails closed when VIEWS is missing", () => {
+    assert.deepEqual(matrixProblems("const other = [];"), ["missing VIEWS table"]);
+  });
+
+  it("keeps overflow and axe specs at 375, 809, 1440 × height 900", () => {
+    assert.deepEqual(matrixProblems(spec), []);
+    assert.deepEqual(matrixProblems(fitSpec), []);
   });
 });
