@@ -181,3 +181,11 @@ html:not(.dark):root[data-identity] body:has([data-catalog-shell]) {
 [data-palette-dots] {
   --spacing: 0.25rem;
 }
+
+/* Skip-link: a real 24px box parked above the viewport until focus (not 1px sr-only). */
+[data-skip-link] {
+  bottom: 100%;
+}
+[data-skip-link]:focus {
+  bottom: auto;
+}

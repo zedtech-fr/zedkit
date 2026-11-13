@@ -89,7 +89,8 @@ zedkit-ai <command>
       axe violation, selected contrast below 4.5, a Copy button off its block, or
       an h1 count other than 1 also exit 1. Missing Playwright/axe peers, bad
       flags, invalid --states, and missing --states/--mockup files exit 2.
-      --routes auto is --changed. --widths and --modes default to 375,809,1440
+      --routes auto is --changed. Omitted --routes implies --changed.
+      --widths and --modes default to 375,809,1440
       and light,dark. --states is a JSON array of {name, click?}; extra cells
       after the default tree. --mockup is a file or directory of width PNGs
       (wins over Visual reference:); the pair PNG does not fail the run.
@@ -104,7 +105,8 @@ zedkit-ai <command>
       [--manifest <docs-manifest.json>]
       Public name for visual-verify. Same crawl, same exits. Writes
       summary.md next to the run record. --routes auto is --changed.
-      --widths and --modes default to 375,809,1440 and light,dark.
+      Omitted --routes implies --changed. --widths and --modes default to
+      375,809,1440 and light,dark.
       --states is a JSON array of {name, click?}; extra cells after the default
       tree. --mockup is a file or directory of width PNGs (wins over Visual
       reference:); the pair PNG does not fail the run.
