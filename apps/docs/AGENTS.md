@@ -51,8 +51,10 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list, docs, identity). Ports/adapters/model only where there is I/O.
   Identity dock kit/React lives under `features/identity/dock/ui/` (`feature-folders`
-  `**/ui/**`); copy under `features/identity/dock/i18n/`. `app/provider.tsx` imports
-  those files directly; do not add a `dock/index.tsx` barrel.
+  `**/ui/**`); copy under `features/identity/dock/i18n/`. Identity editor kit/React
+  lives under `features/identity/editor/ui/`; copy under `features/identity/editor/i18n/`.
+  `app/provider.tsx` imports dock files directly; do not add a `dock/index.tsx` or
+  `editor/index.tsx` barrel.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome in `components/site-chrome/`). `ui/` is dissolved;
   do not add files there. `REQUIRED_GLOBS` is empty
@@ -236,7 +238,7 @@ second fonts `pnpm add` next to that snippet.
   (Classic ChoiceSelect and catalog filters). After deleting a look, focus
   `[data-identity-look-control]`. User-facing editor copy is US spelling
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
-  `i18n/identity-editor-copy.ts`.
+  `features/identity/editor/i18n/identity-editor-copy.ts`.
 - Classic edits in the floating dock restyle the whole site immediately and
   persist in `features/identity/ui/site-identity-storage.ts`. Reset restores the site default
   look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
