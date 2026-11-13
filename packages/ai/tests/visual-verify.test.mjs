@@ -18,6 +18,7 @@ import {
   isSafeGitRef,
   looksGridTriggered,
   markdownTable,
+  mdCell,
   newAxeIds,
   parseStatesFile,
   parseVisualVerifyArgs,
@@ -93,6 +94,45 @@ button.pad{display:inline-block;box-sizing:border-box;width:16px;height:16px;pad
 button.pad::before{content:"";position:absolute;left:0;top:0;width:24px;height:24px}
 </style></head><body><h1>Padded</h1><button class="pad" type="button">x</button></body></html>`;
 
+const DISTANT_PSEUDO = `<!doctype html><html lang="en"><head><title>Distant</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button.far{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;position:relative;font-size:10px;line-height:16px}
+button.far::before{content:"";position:absolute;left:100px;top:100px;width:24px;height:24px}
+</style></head><body><h1>Distant</h1><button class="far" type="button">x</button></body></html>`;
+
+const ARIA_HIDDEN_TARGET = `<!doctype html><html lang="en"><head><title>Hidden aria</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button.tiny{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;font-size:10px;line-height:16px}
+</style></head><body><h1>Hidden aria</h1><button class="tiny" type="button" aria-hidden="true">x</button></body></html>`;
+
+const POINTER_NONE_TARGET = `<!doctype html><html lang="en"><head><title>Pointer none</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button.tiny{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;font-size:10px;line-height:16px;pointer-events:none}
+</style></head><body><h1>Pointer none</h1><button class="tiny" type="button">x</button></body></html>`;
+
+const DISABLED_TARGET = `<!doctype html><html lang="en"><head><title>Disabled</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button.tiny{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;font-size:10px;line-height:16px}
+</style></head><body><h1>Disabled</h1><button class="tiny" type="button" disabled>x</button></body></html>`;
+
+const BOOM = `<!doctype html><html lang="en"><head><title>Boom</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button{min-width:32px;min-height:32px}
+</style></head><body>
+<h1>Boom</h1>
+<button type="button" id="boom">Boom</button>
+<script>
+document.getElementById("boom").addEventListener("click", () => {
+  console.error("clicked-boom");
+});
+</script>
+</body></html>`;
+
 const STATES = `<!doctype html><html lang="en"><head><title>States</title><style>
 html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px}
@@ -153,7 +193,12 @@ function fixtureDir() {
   writeFileSync(join(dir, "small.html"), SMALL_TARGET);
   writeFileSync(join(dir, "inline.html"), INLINE_LINK);
   writeFileSync(join(dir, "padded.html"), PADDED_TARGET);
+  writeFileSync(join(dir, "distant.html"), DISTANT_PSEUDO);
+  writeFileSync(join(dir, "aria-hidden.html"), ARIA_HIDDEN_TARGET);
+  writeFileSync(join(dir, "pointer-none.html"), POINTER_NONE_TARGET);
+  writeFileSync(join(dir, "disabled.html"), DISABLED_TARGET);
   writeFileSync(join(dir, "states.html"), STATES);
+  writeFileSync(join(dir, "boom.html"), BOOM);
   return dir;
 }
 
@@ -213,10 +258,16 @@ describe("visual-verify helpers", () => {
     expect(one.ok && one.value).toEqual([{ name: "open panel", click: "#open" }]);
     const nameless = parseStatesFile('[{"click":"#open"}]');
     expect(nameless.ok).toBe(false);
+    const nameOnly = parseStatesFile('[{"name":"idle"}]');
+    expect(nameOnly.ok && nameOnly.value).toEqual([{ name: "idle" }]);
+    const badClick = parseStatesFile('[{"name":"x","click":123}]');
+    expect(badClick.ok).toBe(false);
+    expect(badClick.ok ? "" : badClick.error.message).toMatch(/invalid --states/u);
     const notArray = parseStatesFile("{}");
     expect(notArray.ok).toBe(false);
     const junk = parseStatesFile("not json");
     expect(junk.ok).toBe(false);
+    expect(junk.ok ? "" : junk.error.message).toMatch(/invalid --states/u);
   });
 
   it("reads ticket States: names as unverified, and skips no transient states", () => {
@@ -225,6 +276,11 @@ describe("visual-verify helpers", () => {
       skip: false,
       unverified: ["open drawer", "tab Two"],
     });
+    expect(ticketStateNames("**States:** open drawer, tab Two\n")).toEqual({
+      skip: false,
+      unverified: ["open drawer", "tab Two"],
+    });
+    expect(ticketStateNames("**States:** no transient states\n")).toEqual({ skip: true, unverified: [] });
     expect(ticketStateNames("Visual reference: shots/home.png\n")).toEqual({ skip: false, unverified: [] });
   });
 
@@ -301,6 +357,17 @@ describe("visual-verify helpers", () => {
           axeNew: [],
           h1: { count: 1, fontSize: 24, lines: 1, share: 0.05 },
         },
+        {
+          route: "/",
+          width: 375,
+          mode: "light",
+          state: "open|drawer\nnext",
+          collection: "ok",
+          overflow: false,
+          axeNew: [],
+          hitTargets: { fail: true, count: 1, min: 16, failed: [{ tag: "button", box: { w: 16, h: 16 } }] },
+          h1: { count: 1, fontSize: 24, lines: 1, share: 0.05 },
+        },
       ],
     });
     expect(table).toContain("| / | 375 | light |");
@@ -308,6 +375,12 @@ describe("visual-verify helpers", () => {
     expect(table).toContain("new serious axe");
     expect(table).toContain("h1 size");
     expect(table).toContain("h1 share of viewport");
+    expect(table).toContain("| state |");
+    expect(table).toContain("| hit |");
+    expect(table).toContain("fail button 16×16");
+    expect(table).not.toMatch(/open\|drawer/u);
+    expect(table).toContain("open drawer next");
+    expect(mdCell("a|b\r\nc")).toBe("a b c");
   });
 
   it("reads Visual reference paths and sanitizes branch names", () => {
@@ -334,8 +407,12 @@ describe("visual-verify helpers", () => {
       expect(text).toContain(flag);
     }
     expect(text).toContain("evidence/<branch>/manifest.json");
-    expect(text).toContain("peers exit 2");
+    expect(text).toContain("Missing Playwright/axe peers");
+    expect(text).toContain("invalid --states");
+    expect(text).toContain("missing --states");
     expect(text).toContain("page/console/HTTP");
+    expect(text).toContain("JSON array of {name, click?}");
+    expect(text).toContain("wins over Visual reference");
     const parsed = parseVisualVerifyArgs(["--help"]);
     expect(parsed.ok && parsed.value.help).toBe(true);
   });
@@ -391,6 +468,8 @@ describe("visual-verify CLI", () => {
     expect(text).toContain("--out");
     expect(text).toContain("--states");
     expect(text).toContain("--mockup");
+    expect(text).toContain("JSON array of {name, click?}");
+    expect(text).toContain("file or directory of width PNGs");
   });
 
   it("rejects --url and --base-url together before launch", async () => {
@@ -438,7 +517,65 @@ describe("visual-verify CLI", () => {
     );
     expect(code).toBe(2);
     expect(launched).toBe(false);
-    expect(errors.join("\n")).toMatch(/states/i);
+    expect(errors.join("\n")).toMatch(/invalid --states/u);
+  });
+
+  it("exits 2 on a missing --states file before launch", async () => {
+    const dir = fixtureDir();
+    let launched = false;
+    const errors = [];
+    const code = await visualVerifyMain(
+      ["--dir", dir, "--routes", "/", "--states", join(dir, "nope.json")],
+      { out: () => undefined, err: (l) => errors.push(l) },
+      {
+        loadPlaywright: async () => {
+          launched = true;
+          return { ok: true, value: { chromium: {} } };
+        },
+      },
+    );
+    expect(code).toBe(2);
+    expect(launched).toBe(false);
+    expect(errors.join("\n")).toMatch(/missing --states/u);
+  });
+
+  it("exits 2 on a missing --mockup path before launch", async () => {
+    const dir = fixtureDir();
+    let launched = false;
+    const errors = [];
+    const code = await visualVerifyMain(
+      ["--dir", dir, "--routes", "/", "--mockup", join(dir, "nope.png")],
+      { out: () => undefined, err: (l) => errors.push(l) },
+      {
+        loadPlaywright: async () => {
+          launched = true;
+          return { ok: true, value: { chromium: {} } };
+        },
+      },
+    );
+    expect(code).toBe(2);
+    expect(launched).toBe(false);
+    expect(errors.join("\n")).toMatch(/missing --mockup/u);
+  });
+
+  it("exits 2 on a non-string --states click before launch", async () => {
+    const dir = fixtureDir();
+    writeFileSync(join(dir, "states.json"), JSON.stringify([{ name: "x", click: 123 }]));
+    let launched = false;
+    const errors = [];
+    const code = await visualVerifyMain(
+      ["--dir", dir, "--routes", "/", "--states", join(dir, "states.json")],
+      { out: () => undefined, err: (l) => errors.push(l) },
+      {
+        loadPlaywright: async () => {
+          launched = true;
+          return { ok: true, value: { chromium: {} } };
+        },
+      },
+    );
+    expect(code).toBe(2);
+    expect(launched).toBe(false);
+    expect(errors.join("\n")).toMatch(/invalid --states/u);
   });
 
   it("exits 2 on a tagged peer failure whose message does not contain install", async () => {
@@ -479,6 +616,7 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(summary).toContain("manifest.json");
     expect(result.value.contactSheets.some((s) => s.route === "/")).toBe(true);
     expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
+    expect(result.value.cells.every((c) => c.hitTargets?.min === null && c.hitTargets?.fail === false)).toBe(true);
   });
 
   it("fails on planted overflow", async () => {
@@ -559,6 +697,8 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(small.result.ok, small.result.ok ? "" : small.result.error.message).toBe(true);
     expect(small.result.value.ok).toBe(false);
     expect(small.result.value.cells.some((c) => c.hitTargets?.fail === true && c.hitTargets.min < 24)).toBe(true);
+    expect(small.result.value.cells.some((c) => c.hitTargets?.failed?.[0]?.tag === "button")).toBe(true);
+    expect(readFileSync(join(small.out, "summary.md"), "utf8")).toMatch(/fail button/u);
     const inline = await runRoutes(["/inline"], { widths: [375], modes: ["light"] });
     expect(inline.result.ok, inline.result.ok ? "" : inline.result.error.message).toBe(true);
     expect(inline.result.value.ok).toBe(true);
@@ -567,6 +707,22 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(padded.result.ok, padded.result.ok ? "" : padded.result.error.message).toBe(true);
     expect(padded.result.value.ok).toBe(true);
     expect(padded.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
+    const distant = await runRoutes(["/distant"], { widths: [375], modes: ["light"] });
+    expect(distant.result.ok, distant.result.ok ? "" : distant.result.error.message).toBe(true);
+    expect(distant.result.value.ok).toBe(false);
+    expect(distant.result.value.cells.some((c) => c.hitTargets?.fail === true)).toBe(true);
+    const ariaHidden = await runRoutes(["/aria-hidden"], { widths: [375], modes: ["light"] });
+    expect(ariaHidden.result.ok, ariaHidden.result.ok ? "" : ariaHidden.result.error.message).toBe(true);
+    expect(ariaHidden.result.value.ok).toBe(false);
+    expect(ariaHidden.result.value.cells.some((c) => c.hitTargets?.fail === true)).toBe(true);
+    const pointerNone = await runRoutes(["/pointer-none"], { widths: [375], modes: ["light"] });
+    expect(pointerNone.result.ok, pointerNone.result.ok ? "" : pointerNone.result.error.message).toBe(true);
+    expect(pointerNone.result.value.ok).toBe(true);
+    expect(pointerNone.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
+    const disabled = await runRoutes(["/disabled"], { widths: [375], modes: ["light"] });
+    expect(disabled.result.ok, disabled.result.ok ? "" : disabled.result.error.message).toBe(true);
+    expect(disabled.result.value.ok).toBe(true);
+    expect(disabled.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
   });
 
   it("captures --states clicks as extra cells and skips no transient states", async () => {
@@ -623,6 +779,22 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.value.ok).toBe(true);
     expect(result.value.cells).toHaveLength(1);
     expect(result.value.statesUnverified).toEqual(["open drawer", "tab Two"]);
+    expect(readFileSync(join(result.value.outDir, "summary.md"), "utf8")).toContain(
+      "statesUnverified: open drawer, tab Two",
+    );
+    writeFileSync(ticket, "# T\n**States:** open drawer, tab Two\n");
+    const bold = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      ticket,
+    });
+    expect(bold.ok, bold.ok ? "" : bold.error.message).toBe(true);
+    expect(bold.value.statesUnverified).toEqual(["open drawer", "tab Two"]);
+    expect(readFileSync(join(bold.value.outDir, "summary.md"), "utf8")).toContain("statesUnverified:");
   });
 
   it("writes a non-blocking mockup pair PNG when --mockup is a file", async () => {
@@ -643,5 +815,158 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.value.ok).toBe(true);
     expect(existsSync(join(out, "pair-home.png"))).toBe(true);
     expect(result.value.pairs?.some((p) => p.route === "/" && p.path.endsWith("pair-home.png"))).toBe(true);
+  });
+
+  it("writes a pair PNG from ticket Visual reference: when --mockup is omitted", async () => {
+    const dir = fixtureDir();
+    const mockup = join(dir, "ref.png");
+    writeFileSync(mockup, TINY_PNG);
+    const ticket = join(dir, "ISSUE.md");
+    writeFileSync(ticket, "Visual reference: ref.png\n");
+    const out = mkdtempSync(join(tmpdir(), "vv-out-"));
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out,
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      ticket,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(existsSync(join(out, "pair-home.png"))).toBe(true);
+  });
+
+  it("warns and writes no pair when --mockup is an empty directory", async () => {
+    const dir = fixtureDir();
+    const mockup = join(dir, "empty-mockups");
+    mkdirSync(mockup);
+    const out = mkdtempSync(join(tmpdir(), "vv-out-"));
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out,
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      mockup,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(result.value.pairs ?? []).toEqual([]);
+    expect(result.value.warnings?.some((w) => /unresolvable --mockup/u.test(w))).toBe(true);
+    expect(existsSync(join(out, "pair-home.png"))).toBe(false);
+  });
+
+  it("keeps uncovered ticket States: names when --states is partial", async () => {
+    const dir = fixtureDir();
+    const ticket = join(dir, "ISSUE.md");
+    writeFileSync(ticket, "**States:** open panel, tab Two\n");
+    const statesPath = join(dir, "states.json");
+    writeFileSync(statesPath, JSON.stringify([{ name: "open panel", click: "#open" }]));
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/states"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      ticket,
+      states: statesPath,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.statesTicket).toEqual(["open panel", "tab Two"]);
+    expect(result.value.statesUnverified).toEqual(["tab Two"]);
+    expect(result.value.warnings?.some((w) => /tab Two/u.test(w))).toBe(true);
+    expect(readFileSync(join(result.value.outDir, "summary.md"), "utf8")).toContain("statesUnverified: tab Two");
+  });
+
+  it("captures a name-only --states cell and fails a missing click", async () => {
+    const dir = fixtureDir();
+    const nameOnlyPath = join(dir, "name-only.json");
+    writeFileSync(nameOnlyPath, JSON.stringify([{ name: "idle" }]));
+    const idle = await runVisualVerify({
+      dir,
+      routes: ["/states"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      states: nameOnlyPath,
+    });
+    expect(idle.ok, idle.ok ? "" : idle.error.message).toBe(true);
+    expect(idle.value.ok).toBe(true);
+    expect(idle.value.cells).toHaveLength(2);
+    expect(idle.value.cells[1].state).toBe("idle");
+    expect(idle.value.cells[1].collection).toBe("ok");
+    const missPath = join(dir, "miss.json");
+    writeFileSync(missPath, JSON.stringify([{ name: "gone", click: "#missing" }]));
+    const missed = await runVisualVerify({
+      dir,
+      routes: ["/states"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      states: missPath,
+    });
+    expect(missed.ok, missed.ok ? "" : missed.error.message).toBe(true);
+    expect(missed.value.ok).toBe(false);
+    expect(missed.value.cells.some((c) => c.state === "gone" && c.collection === "failed")).toBe(true);
+  });
+
+  it("counts console errors caused by a state click", async () => {
+    const dir = fixtureDir();
+    const statesPath = join(dir, "boom.json");
+    writeFileSync(statesPath, JSON.stringify([{ name: "boom", click: "#boom" }]));
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/boom"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      states: statesPath,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.cells[0].consoleErrors).toBe(0);
+    expect(result.value.cells[1].state).toBe("boom");
+    expect(result.value.cells[1].consoleErrors).toBeGreaterThan(0);
+    expect(result.value.ok).toBe(false);
+  });
+
+  it("writes distinct screenshots when state names share a route stem", async () => {
+    const dir = fixtureDir();
+    const statesPath = join(dir, "stems.json");
+    writeFileSync(statesPath, JSON.stringify([{ name: "a b" }, { name: "a-b" }]));
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      states: statesPath,
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    const shots = result.value.cells.map((c) => c.screenshot).filter(Boolean);
+    expect(new Set(shots).size).toBe(shots.length);
+    expect(shots.every((p) => existsSync(p))).toBe(true);
+  });
+
+  it("records --identities on cells and looksGrid", async () => {
+    const dir = fixtureDir();
+    const result = await runVisualVerify({
+      dir,
+      routes: ["/"],
+      out: mkdtempSync(join(tmpdir(), "vv-out-")),
+      cwd: dir,
+      widths: [375],
+      modes: ["light"],
+      identities: ["mist"],
+    });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.looksGrid).toBe(true);
+    expect(result.value.cells.every((c) => c.identity === "mist")).toBe(true);
   });
 });

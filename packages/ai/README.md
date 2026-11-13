@@ -115,7 +115,7 @@ npx @zedtech/zedkit-ai visual-verify --url http://127.0.0.1:3100 --changed
 npx @zedtech/zedkit-ai visual-verify --dir ./out --routes /,/docs --identities mist,press --baseline evidence/run/manifest.json --out evidence/run --md table.md --ticket ISSUE.md --states states.json --mockup mockups --base origin/dev --cwd . --manifest docs-manifest.json
 ```
 
-Writes `evidence/<branch>/manifest.json`, `summary.md`, one contact-sheet PNG per route, and a side-by-side PNG when `--mockup` or `Visual reference:` is set. Exit 0 pass, 1 fail (collection, overflow, clipped text, hit targets under 24px, page/console/HTTP, new serious axe, contrast, Copy, h1), 2 missing peers or bad flags. `--routes auto` is `--changed`. `--base-url` is `--url`. `--states` is a JSON `{name, click?}[]`. `--mockup` does not fail the run.
+Writes `evidence/<branch>/manifest.json`, `summary.md`, one contact-sheet PNG per route, and a side-by-side PNG when `--mockup` or `Visual reference:` is set. Exit 0 pass, 1 fail (collection, overflow, clipped text, hit targets under 24px, page/console/HTTP, new serious axe, contrast, Copy, h1), 2 missing peers, bad flags, invalid `--states`, or missing `--states`/`--mockup` files. `--routes auto` is `--changed`. `--base-url` is `--url`. `--states` is a JSON `{name, click?}[]`. `--mockup` does not fail the run on pixel diffs; a missing path is exit 2.
 
 **Starter (default for `init`):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
 `orchestrate` (so setup can hand off bigger work), `parallel-work`, `tdd`, and
