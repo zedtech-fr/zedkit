@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Button, Stack, StatusDot, Surface, Text, useMotionPreference } from "@zedtech/zedkit-ui";
 import { OffPathLink } from "@/ui/off-path-link";
 import {
-  ACTIVE_HERO_POLL_MS,
   fetchActiveHeroRun,
   followRunHref,
   heroRunTitle,
+  liveUpdateMessage,
+  nextLivePollMs,
   type HeroActiveRun,
+  type HeroStepKey,
   type HeroStepStatus,
 } from "./home-hero-active-run";
 import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "./home-rhythm";
@@ -24,6 +26,22 @@ const COMBINED_STEPS = [
   { beat: "fix", label: copy.stepFix, text: copy.combinedFix, issue: false },
   { beat: "done", label: copy.stepDone, text: copy.combinedDone, issue: false },
 ] as const;
+
+const STEP_LABEL: Record<HeroStepKey, string> = {
+  plan: copy.stepPlan,
+  build: copy.stepBuild,
+  check: copy.stepCheck,
+  fix: copy.stepFix,
+  done: copy.stepDone,
+};
+
+const STEP_STATUS_COPY: Record<HeroStepStatus, string> = {
+  pending: copy.statusPending,
+  active: copy.statusActive,
+  done: copy.statusDone,
+  failed: copy.statusFailed,
+  skipped: copy.statusSkipped,
+};
 
 const STEP_DOT: Record<HeroStepStatus, { tone: "active" | "idle" | "success" | "danger"; pulse: boolean }> = {
   pending: { tone: "idle", pulse: false },
@@ -66,15 +84,14 @@ function LiveRows({ run }: { run: HeroActiveRun }) {
             data-hero-run-status={step.status}
           >
             <Text as="span" className="font-semibold">
-              {step.label}
+              {STEP_LABEL[step.key]}
             </Text>
             <div className="inline-flex content-shrink flex-wrap items-center gap-icon">
               <StatusDot tone={dot.tone} pulse={dot.pulse} />
-              {step.summary === null ? null : (
-                <Text as="span" variant="muted">
-                  {step.summary}
-                </Text>
-              )}
+              <Text as="span" variant="muted">
+                {STEP_STATUS_COPY[step.status]}
+                {step.summary === null ? "" : ` · ${step.summary}`}
+              </Text>
             </div>
           </li>
         );
@@ -161,36 +178,28 @@ function RunCard({
 
 function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
   const [live, setLive] = useState<HeroActiveRun | null>(null);
-  const liveRef = useRef(live);
-  liveRef.current = live;
 
   useEffect(() => {
+    const delay = nextLivePollMs(paused);
+    if (delay === null) return;
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
     const envValue = process.env.NEXT_PUBLIC_ZEDOS_RUNS_API_BASE;
 
-    const tick = (schedule: boolean) => {
+    const tick = () => {
       void fetchActiveHeroRun({
         ...(envValue === undefined ? {} : { envValue }),
         hostname: window.location.hostname,
         signal: controller.signal,
       }).then((result) => {
         if (cancelled || controller.signal.aborted) return;
-        if (!result.ok) {
-          if (liveRef.current !== null && schedule) {
-            timer = setTimeout(() => tick(true), ACTIVE_HERO_POLL_MS);
-          }
-          return;
-        }
-        setLive(result.value);
-        if (result.value !== null && schedule) {
-          timer = setTimeout(() => tick(true), ACTIVE_HERO_POLL_MS);
-        }
+        if (result.ok) setLive(result.value);
+        timer = setTimeout(tick, delay);
       });
     };
 
-    tick(!paused);
+    tick();
     return () => {
       cancelled = true;
       controller.abort();
@@ -204,17 +213,18 @@ function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
 /**
  * Site-owned high-value glass illustration. Client-fetches one active run
  * and falls back to the static placeholder on empty, stale, or fetch failure.
- * Pause freezes CSS step motion and live polling.
+ * Pause freezes CSS step motion and live polling (no fetch while paused).
  */
 export function HomeHeroIllustration() {
   const motionOk = useMotionPreference() === "no-preference";
   const [paused, setPaused] = useState(false);
   const live = useActiveHeroRun(paused);
+  const groupLabel = live === null ? copy.caption : liveUpdateMessage(live, copy);
 
   return (
     <div
       role="group"
-      aria-label={live === null ? copy.caption : copy.liveCaption}
+      aria-label={groupLabel}
       data-home-hero-preview=""
       data-hero-run-stage=""
       data-hero-run-live={live === null ? undefined : ""}
@@ -222,6 +232,9 @@ export function HomeHeroIllustration() {
       data-paused={paused ? "" : undefined}
       className="relative content-shrink overflow-clip"
     >
+      <p role="status" className="sr-only">
+        {live === null ? "" : liveUpdateMessage(live, copy)}
+      </p>
       <div
         {...HOME_PARALLAX_SCROLL_PROPS}
         aria-hidden="true"

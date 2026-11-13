@@ -7,7 +7,6 @@ export type HeroStepStatus = "pending" | "active" | "done" | "failed" | "skipped
 
 export type HeroRunStep = {
   key: HeroStepKey;
-  label: string;
   status: HeroStepStatus;
   summary: string | null;
 };
@@ -31,23 +30,18 @@ export const ACTIVE_HERO_TIMEOUT_MS = 4_000;
 
 const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const STEP_STATUS = new Set<HeroStepStatus>(["pending", "active", "done", "failed", "skipped"]);
-const STEP_LABEL: Record<HeroStepKey, string> = {
-  plan: "Plan",
-  build: "Build",
-  check: "Check",
-  fix: "Fix",
-  done: "Done",
-};
 const ORIGIN_FALLBACK_HOSTS = new Set(["zedkit.app", "dev.zedkit.app", "epic-73.dev.zedkit.app"]);
 const STAGING_RUNS_ORIGIN = "https://dev.zedkit.app";
 const TITLE_MAX = 160;
+const SUMMARY_MAX = 160;
 
 function liveServiceName(): string {
   return [["ze", "dos"].join(""), "bot"].join("-");
 }
 
-function liveRunsKind(): string {
-  return [["ze", "dos"].join(""), "runs"].join("-");
+/** Same allowlist as reviews `sanitizeLiveUrl` (host + `/live/` + run id). */
+function hostedLiveHrefPrefix(): string {
+  return `${STAGING_RUNS_ORIGIN}/${liveServiceName()}/live/`;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -56,17 +50,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function asSafeInt(value: unknown): number | null | undefined {
   if (value === undefined || value === null) return null;
-  if (typeof value === "number" && Number.isSafeInteger(value)) return value;
+  if (typeof value === "number" && Number.isSafeInteger(value) && value > 0) return value;
   return undefined;
 }
 
-function parseHttpOrigin(value: string | undefined): string | null {
+function parseHttpsOrigin(value: string | undefined): string | null {
   const trimmed = value?.trim() ?? "";
   if (trimmed === "") return null;
   const parsed = tryCatch(() => new URL(trimmed));
   if (!parsed.ok) return null;
-  if (parsed.value.protocol !== "https:" && parsed.value.protocol !== "http:") return null;
-  return trimmed.replace(/\/$/, "");
+  const url = parsed.value;
+  if (url.protocol !== "https:") return null;
+  if (url.username !== "" || url.password !== "") return null;
+  if (url.port !== "") return null;
+  return url.origin;
 }
 
 export function sanitizeHeroLiveUrl(value: string | null): string | null {
@@ -74,16 +71,25 @@ export function sanitizeHeroLiveUrl(value: string | null): string | null {
   const parsed = tryCatch(() => new URL(value));
   if (!parsed.ok) return null;
   const url = parsed.value;
+  const prefix = hostedLiveHrefPrefix();
+  const prefixUrl = new URL(prefix);
   if (url.protocol !== "https:") return null;
   if (url.username !== "" || url.password !== "") return null;
-  return url.href;
+  if (url.port !== "") return null;
+  if (url.search !== "" || url.hash !== "") return null;
+  if (url.hostname !== prefixUrl.hostname) return null;
+  if (!url.pathname.startsWith(prefixUrl.pathname)) return null;
+  const rest = url.pathname.slice(prefixUrl.pathname.length);
+  const runId = rest.endsWith("/") ? rest.slice(0, -1) : rest;
+  if (runId.includes("/") || !RUN_ID_PATTERN.test(runId)) return null;
+  return `${prefix}${runId}`;
 }
 
 export function resolveRunsApiBase(input: {
   envValue?: string;
   hostname?: string;
 }): string | null {
-  const fromEnv = parseHttpOrigin(input.envValue);
+  const fromEnv = parseHttpsOrigin(input.envValue);
   if (fromEnv !== null) return fromEnv;
   const host = input.hostname?.trim() ?? "";
   if (ORIGIN_FALLBACK_HOSTS.has(host)) return STAGING_RUNS_ORIGIN;
@@ -95,12 +101,24 @@ export function activeRunsUrl(base: string): string {
   return `${root}?${new URLSearchParams({ active: "1", limit: "1" })}`;
 }
 
+export function nextLivePollMs(paused: boolean): number | null {
+  return paused ? null : ACTIVE_HERO_POLL_MS;
+}
+
 function asTitle(value: unknown): string | null | undefined {
   if (value === undefined || value === null) return null;
   if (typeof value !== "string") return undefined;
   const trimmed = value.trim();
   if (trimmed === "") return null;
   return trimmed.length > TITLE_MAX ? trimmed.slice(0, TITLE_MAX) : trimmed;
+}
+
+function asSummary(value: unknown): string | null | undefined {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  return trimmed.length > SUMMARY_MAX ? trimmed.slice(0, SUMMARY_MAX) : trimmed;
 }
 
 function asStepStatus(value: unknown): HeroStepStatus | null {
@@ -113,13 +131,9 @@ function parseStep(value: unknown, expected: HeroStepKey): HeroRunStep | null {
   if (value.key !== expected) return null;
   const status = asStepStatus(value.status);
   if (status === null) return null;
-  if (value.summary !== undefined && value.summary !== null && typeof value.summary !== "string") {
-    return null;
-  }
-  const summary =
-    typeof value.summary === "string" && value.summary.trim() !== "" ? value.summary.trim() : null;
-  const label = value.label === STEP_LABEL[expected] ? value.label : STEP_LABEL[expected];
-  return { key: expected, label, status, summary };
+  const summary = asSummary(value.summary);
+  if (summary === undefined) return null;
+  return { key: expected, status, summary };
 }
 
 function parseHeroRun(value: unknown): HeroActiveRun | null {
@@ -150,15 +164,13 @@ function parseHeroRun(value: unknown): HeroActiveRun | null {
 export function parseActiveRunsEnvelope(value: unknown): Result<HeroActiveRun[], Error> {
   if (!isRecord(value)) return err(new PermanentError("hero-runs: expected an object"));
   if (value.version !== 1) return err(new PermanentError("hero-runs: unknown version"));
-  if (value.kind !== liveRunsKind()) return err(new PermanentError("hero-runs: unknown kind"));
   if (!Array.isArray(value.runs)) return err(new PermanentError("hero-runs: missing runs"));
-  const runs: HeroActiveRun[] = [];
-  for (const row of value.runs) {
-    const parsed = parseHeroRun(row);
-    if (parsed === null) return err(new PermanentError("hero-runs: malformed run"));
-    if (isRecord(row) && row.active === true && row.stale !== true) runs.push(parsed);
-  }
-  return ok(runs);
+  const first = value.runs[0];
+  if (first === undefined) return ok([]);
+  const parsed = parseHeroRun(first);
+  if (parsed === null) return err(new PermanentError("hero-runs: malformed run"));
+  if (!isRecord(first) || first.active !== true || first.stale === true) return ok([]);
+  return ok([parsed]);
 }
 
 export function selectActiveHeroRun(runs: readonly HeroActiveRun[]): HeroActiveRun | null {
@@ -180,6 +192,34 @@ export function followRunHref(run: HeroActiveRun): FollowRunHref | null {
   if (run.pr !== null) return { href: `/issues#pr-${run.pr}`, offPath: false };
   if (run.liveUrl !== null) return { href: run.liveUrl, offPath: true };
   return null;
+}
+
+export function liveUpdateMessage(
+  run: HeroActiveRun,
+  copy: {
+    liveCaption: string;
+    issueFallback: (n: number) => string;
+    prFallback: (n: number) => string;
+    untitled: string;
+    statusFailed: string;
+    stepPlan: string;
+    stepBuild: string;
+    stepCheck: string;
+    stepFix: string;
+    stepDone: string;
+  },
+): string {
+  const title = heroRunTitle(run, copy);
+  const failed = run.steps.find((step) => step.status === "failed");
+  const stepLabel = {
+    plan: copy.stepPlan,
+    build: copy.stepBuild,
+    check: copy.stepCheck,
+    fix: copy.stepFix,
+    done: copy.stepDone,
+  };
+  if (failed === undefined) return `${copy.liveCaption} ${title}`;
+  return `${copy.liveCaption} ${title}. ${copy.statusFailed}: ${stepLabel[failed.key]}`;
 }
 
 export type FetchActiveHeroRunOptions = {

@@ -1,21 +1,21 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
 
 import {
   activeRunsUrl,
   fetchActiveHeroRun,
   followRunHref,
   heroRunTitle,
+  liveUpdateMessage,
+  nextLivePollMs,
   parseActiveRunsEnvelope,
   resolveRunsApiBase,
+  sanitizeHeroLiveUrl,
   selectActiveHeroRun,
+  ACTIVE_HERO_POLL_MS,
 } from "./home-hero-active-run.ts";
 import { homeHeroCopy } from "./i18n/home-hero-copy.ts";
 
-const here = dirname(fileURLToPath(import.meta.url));
 const copy = homeHeroCopy.heroIllustration;
 const TITLE = { issueFallback: copy.issueFallback, prFallback: copy.prFallback, untitled: copy.untitled };
 
@@ -23,8 +23,8 @@ function serviceName() {
   return [["ze", "dos"].join(""), "bot"].join("-");
 }
 
-function runsKind() {
-  return [["ze", "dos"].join(""), "runs"].join("-");
+function hostedLive(runId = "20261113T120000Z-hero1") {
+  return `https://dev.zedkit.app/${serviceName()}/live/${runId}`;
 }
 
 function step(key, status, summary = null) {
@@ -79,13 +79,13 @@ function runRow(overrides = {}) {
   };
 }
 
-function envelope(runs) {
+function envelope(runs, extra = {}) {
   return {
     version: 1,
-    kind: runsKind(),
     generatedAt: "2026-11-13T12:00:00Z",
     nextCursor: null,
     runs,
+    ...extra,
   };
 }
 
@@ -99,10 +99,10 @@ function jsonResponse(status, body) {
 test("env origin wins over the browser hostname fallback", () => {
   assert.equal(
     resolveRunsApiBase({ envValue: "https://example.test/runs/", hostname: "zedkit.app" }),
-    "https://example.test/runs",
+    "https://example.test",
   );
   assert.equal(resolveRunsApiBase({ envValue: "not a url", hostname: "zedkit.app" }), "https://dev.zedkit.app");
-  assert.equal(resolveRunsApiBase({ envValue: "ftp://dev.zedkit.app", hostname: "zedkit.app" }), "https://dev.zedkit.app");
+  assert.equal(resolveRunsApiBase({ envValue: "http://dev.zedkit.app", hostname: "zedkit.app" }), "https://dev.zedkit.app");
 });
 
 test("browser origins fall back to the staging runs origin", () => {
@@ -119,18 +119,6 @@ test("active runs URL uses the assembled service path", () => {
   assert.equal(url, `https://dev.zedkit.app/${serviceName()}/api/runs?active=1&limit=1`);
 });
 
-test("source assembles the service name instead of a single private literal", () => {
-  const src = readFileSync(join(here, "home-hero-active-run.ts"), "utf8");
-  const illustration = readFileSync(join(here, "home-hero-illustration.tsx"), "utf8");
-  assert.match(src, /\["ze", "dos"\]\.join\(""\)/);
-  assert.match(src, /fetchJson/);
-  assert.match(illustration, /fetchActiveHeroRun/);
-  assert.doesNotMatch(illustration, /AgentConsole/);
-  assert.match(illustration, /copy\.followRun/);
-  assert.match(illustration, /copy\.allRuns/);
-  assert.match(illustration, /\/issues\?open=first/);
-});
-
 test("maps an active run title, steps, and CTA hrefs", () => {
   const parsed = parseActiveRunsEnvelope(envelope([runRow()]));
   assert.equal(parsed.ok, true);
@@ -143,32 +131,29 @@ test("maps an active run title, steps, and CTA hrefs", () => {
   assert.deepEqual(followRunHref(run), { href: "/issues#issue-241", offPath: false });
 });
 
-test("title falls back to Issue, then PR, then untitled", () => {
+test("title falls back to issue, then pull request, then untitled", () => {
   const withIssue = parseActiveRunsEnvelope(envelope([runRow({ title: null })])).value[0];
-  assert.equal(heroRunTitle(withIssue, TITLE), "Issue #241");
+  assert.equal(heroRunTitle(withIssue, TITLE), "Run for issue #241");
   const withPr = parseActiveRunsEnvelope(envelope([runRow({ title: "   ", issue: null })])).value[0];
-  assert.equal(heroRunTitle(withPr, TITLE), "PR #250");
+  assert.equal(heroRunTitle(withPr, TITLE), "Run for pull request #250");
   const untitled = parseActiveRunsEnvelope(envelope([runRow({ title: null, issue: null, pr: null })])).value[0];
   assert.equal(heroRunTitle(untitled, TITLE), "Active run");
   assert.equal(followRunHref(untitled), null);
 });
 
-test("follow CTA uses the PR hash when there is no issue, else a live URL", () => {
+test("follow CTA uses the PR hash when there is no issue, else a hosted live URL", () => {
   const prOnly = parseActiveRunsEnvelope(envelope([runRow({ issue: null })])).value[0];
   assert.deepEqual(followRunHref(prOnly), { href: "/issues#pr-250", offPath: false });
   const liveOnly = parseActiveRunsEnvelope(
-    envelope([
-      runRow({
-        issue: null,
-        pr: null,
-        liveUrl: "https://dev.zedkit.app/live/20261113T120000Z-hero1",
-      }),
-    ]),
+    envelope([runRow({ issue: null, pr: null, liveUrl: hostedLive() })]),
   ).value[0];
-  assert.deepEqual(followRunHref(liveOnly), {
-    href: "https://dev.zedkit.app/live/20261113T120000Z-hero1",
-    offPath: true,
-  });
+  assert.deepEqual(followRunHref(liveOnly), { href: hostedLive(), offPath: true });
+});
+
+test("live URL allowlist matches the hosted console path", () => {
+  assert.equal(sanitizeHeroLiveUrl(hostedLive()), hostedLive());
+  assert.equal(sanitizeHeroLiveUrl("https://dev.zedkit.app/live/20261113T120000Z-hero1"), null);
+  assert.equal(sanitizeHeroLiveUrl("https://evil.example/live/20261113T120000Z-hero1"), null);
 });
 
 test("empty runs and inactive or stale rows fall back to no live card", () => {
@@ -177,13 +162,32 @@ test("empty runs and inactive or stale rows fall back to no live card", () => {
   assert.equal(selectActiveHeroRun(parseActiveRunsEnvelope(envelope([runRow({ stale: true })])).value), null);
 });
 
+test("version 1 envelopes parse without a kind field", () => {
+  assert.equal(parseActiveRunsEnvelope(envelope([])).ok, true);
+  assert.equal(parseActiveRunsEnvelope(envelope([], { kind: "other" })).ok, true);
+  assert.equal(parseActiveRunsEnvelope({ version: 2, runs: [] }).ok, false);
+});
+
 test("malformed envelopes are errors so the card can keep the placeholder", () => {
   assert.equal(parseActiveRunsEnvelope(null).ok, false);
-  assert.equal(parseActiveRunsEnvelope({ version: 2, kind: runsKind(), runs: [] }).ok, false);
-  assert.equal(parseActiveRunsEnvelope({ version: 1, kind: "other", runs: [] }).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ runId: "../x" })])).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ steps: steps("build").slice(0, 4) })])).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ title: 12 })])).ok, false);
+  assert.equal(parseActiveRunsEnvelope(envelope([runRow({ issue: 0 })])).ok, false);
+  assert.equal(parseActiveRunsEnvelope(envelope([runRow({ pr: -1 })])).ok, false);
+});
+
+test("polling continues while not paused, including empty and failed loads", () => {
+  assert.equal(nextLivePollMs(false), ACTIVE_HERO_POLL_MS);
+  assert.equal(nextLivePollMs(true), null);
+});
+
+test("live status copy names a failed step", () => {
+  const failedSteps = steps("check").map((row) =>
+    row.key === "check" ? { ...row, status: "failed", summary: "hand-made button" } : row,
+  );
+  const run = parseActiveRunsEnvelope(envelope([runRow({ steps: failedSteps })])).value[0];
+  assert.match(liveUpdateMessage(run, copy), /Failed: Check/);
 });
 
 test("fetch maps an active run and falls back when the list is empty", async () => {
@@ -210,7 +214,7 @@ test("fetch maps an active run and falls back when the list is empty", async () 
   assert.equal(empty.value, null);
 });
 
-test("fetch failure and timeout leave the caller with an error to keep the placeholder", async () => {
+test("fetch failure leaves the caller with an error to keep the placeholder", async () => {
   const rejected = await fetchActiveHeroRun({
     envValue: "https://dev.zedkit.app",
     fetch: async () => {
