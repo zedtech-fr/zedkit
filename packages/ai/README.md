@@ -108,6 +108,8 @@ npx @zedtech/zedkit-ai scan [dir]                         # repo size and one sl
 npx @zedtech/zedkit-ai route verifier --kind check --stakes sensitive   # model and effort for one call (--allow-fast only if the user asked)
 npx @zedtech/zedkit-ai stakes PLAN.md --base origin/main  # stakes, kind, needs and gates of a plan, ticket or PR body
 npx @zedtech/zedkit-ai sync --provider cursor,claude --kit /path/to/kit  # local kit; omit = bundled; --check in CI
+npx @zedtech/zedkit-ai visual-verify --url http://127.0.0.1:3100 --changed
+npx @zedtech/zedkit-ai visual-verify --dir ./out --routes /,/docs --identities mist,press --baseline evidence/run/manifest.json --out evidence/run --md table.md --ticket ISSUE.md --base origin/dev --manifest docs-manifest.json
 ```
 
 **Starter (default for `init`):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
@@ -117,7 +119,7 @@ and commands `/setup-ai` and `/review`. Enough to onboard a repo, verify facts,
 run one review workflow, and check done-ness without loading the whole kit.
 
 **Setup preset (default for `setup`):** everything in starter, plus
-`domain-modeling`, `persona-review`, `compose-ui`, `code-review`,
+`domain-modeling`, `persona-review`, `compose-ui`, `visual-verify`, `code-review`,
 `ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
 `plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
 `research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
@@ -280,7 +282,7 @@ when the skills link is not followed.
 
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
-`use-signature`, `compose-ui` (persona chain brief before composing UI), `review`, `plan`, `challenge`, `audit`, `orchestrate`,
+`use-signature`, `compose-ui` (persona chain brief before composing UI), `visual-verify`, `review`, `plan`, `challenge`, `audit`, `orchestrate`,
 `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
 `evidence-grounded-analysis` (answers about customer or user material only
 from that material, every claim tagged verbatim, inference or absent;

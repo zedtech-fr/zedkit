@@ -72,5 +72,13 @@ zedkit-ai <command>
       START:, output, END:, CAUSE: when killed or out of memory, and
       EXIT:<code> as the last line. Caps the V8 heap at 4096 MB unless
       NODE_OPTIONS sets one; exits with the command's code.
+  visual-verify [--url <origin> | --dir <static-export>] [--changed]
+      [--base <ref>] [--routes <path,path>] [--identities <id,id>]
+      [--baseline <run-record.json>] [--out <dir>] [--md <file>]
+      [--ticket <file>] [--manifest <docs-manifest.json>]
+      Render touched routes at 375, 809 and 1440 in light and dark.
+      Writes a run record, one contact-sheet PNG per route, and a
+      Markdown table. Collection failed (no CSS or fonts) exits 1 with
+      no verdict. Overflow or a new serious axe violation exits 1.
   list
       Show presets, subagents and commands.

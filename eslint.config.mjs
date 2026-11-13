@@ -65,6 +65,7 @@ export default tseslint.config(
       "scripts/**/*.mjs",
       "apps/docs/scripts/*.mjs",
       "packages/ai/scripts/*.mjs",
+      "packages/ai/tests/*.mjs",
       "packages/quality/src/bin/**/*.mjs",
       "packages/ui/preview/*.mjs",
       "packages/ui/playwright.config.ts",
