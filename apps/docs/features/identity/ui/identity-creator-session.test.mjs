@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import { initialSession, sessionReducer } from "../lib/identity-creator-session.ts";
+import { initialSession, sessionReducer } from "./identity-creator-session.ts";
 
 const ok = (requestId, summary = "Rounder.") => ({ kind: "ok", requestId, tokens: identityPresets.press, summary, changed: ["radius"], references: [{ url: "https://a.example.org/", status: "used", analysis: "text-only" }] });
 const run = (...actions) => actions.reduce(sessionReducer, initialSession);

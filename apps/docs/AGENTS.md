@@ -47,7 +47,7 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
-  reviews, note-list, docs). Ports/adapters/model only where there is I/O.
+  reviews, note-list, docs, identity). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
   is dissolving; do not add a fifth home there. Directory globs in
@@ -177,7 +177,7 @@ second fonts `pnpm add` next to that snippet.
   CSS or HTML. One schema (`parseIdentityTokens`,
   `packages/ui/src/identity/identity-tokens.ts`) validates in the browser and in the
   suggest service ([deploy/AGENTS.md](../../deploy/AGENTS.md)).
-  The page's client is `lib/identity-assistant.ts`: it parses whatever the
+  The page's client is `features/identity/ui/identity-assistant.ts`: it parses whatever the
   service returns and turns every failure into a named outcome (`unavailable`
   with its reason). The floating dock is manual customize only and does not
   render those outcomes. There is no silent keyword fallback: a failed

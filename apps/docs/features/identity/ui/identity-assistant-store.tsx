@@ -14,18 +14,18 @@ import {
 } from "react";
 import type { IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { type SpecimenDomain } from "@/lib/brief-specimen-domain";
+import { type SpecimenDomain } from "@/features/identity/ui/brief-specimen-domain";
 
-import type { AssistantStatus } from "@/lib/identity-assistant";
-import { initialSession, sessionReducer, type SessionAction, type SessionState } from "@/lib/identity-creator-session";
+import type { AssistantStatus } from "@/features/identity/ui/identity-assistant";
+import { initialSession, sessionReducer, type SessionAction, type SessionState } from "@/features/identity/ui/identity-creator-session";
 import {
   clearIdentityDockPersist,
   parsePersistedPreviewTokens,
   readIdentityDockPersist,
   writeIdentityDockPersist,
   type IdentityDockPersistRead,
-} from "@/lib/identity-dock-persist";
-import { useAssistantNetwork } from "@/lib/use-assistant-network";
+} from "@/features/identity/ui/identity-dock-persist";
+import { useAssistantNetwork } from "@/features/identity/ui/use-assistant-network";
 
 type IdentityAssistantStore = {
   session: SessionState;
@@ -116,7 +116,7 @@ function IdentityAssistantStoreProvider({ children }: { children: ReactNode }) {
 
   const ensureAssistantStatus = useCallback(() => {
     const stop = new AbortController();
-    void import("@/lib/identity-assistant")
+    void import("@/features/identity/ui/identity-assistant")
       .then(({ fetchAssistantStatus }) => fetchAssistantStatus({ signal: stop.signal }))
       .then(setStatus);
     return () => stop.abort();

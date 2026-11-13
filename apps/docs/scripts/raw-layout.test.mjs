@@ -41,7 +41,7 @@ test("legal kit layout is not a hit, including Text as=span", () => {
 });
 
 test("allowlisted basenames skip even a split <div", () => {
-  assert.deepEqual(checkRawLayoutFile("components/identity-dock-chrome.tsx", SPLIT_DIV), []);
+  assert.deepEqual(checkRawLayoutFile("features/identity/ui/identity-dock-chrome.tsx", SPLIT_DIV), []);
   assert.deepEqual(
     checkRawLayoutFile("components/identity-dock-composer-footer.tsx", SPLIT_DIV),
     [],

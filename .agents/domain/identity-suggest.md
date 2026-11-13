@@ -16,7 +16,7 @@ checkout. This product has no payments. `source: owner`
 | S-07 | current | `DISABLED` in the state volume is the kill switch, read on every request. | `deploy/AGENTS.md:34`; `deploy/suggest/ledger.mjs:251` | `deploy/suggest/server.test.mjs:118` | `killed()` |
 | S-08 | current | Unsettled job charged in full at TTL; 5xx/408 may be billable; 4xx/429 are not. | `deploy/suggest/ledger.mjs:8-14`; `deploy/suggest/provider.mjs:109` | `deploy/suggest/ledger.test.mjs:130-136`; `deploy/suggest/server.test.mjs:515` | ledger + provider |
 | S-09 | current | Logs name no brief, URL or address (one JSON line: outcome, ms, costMicro, calls, refs). | `deploy/AGENTS.md:36`; `deploy/suggest/server.mjs:393` | no test — flag | documented, not enforced (no test asserts omitted fields) |
-| S-10 | current | A failed generation is a named non-`ok` kind; the session reducer sets `notice` and does not apply tokens (draft / last proposal stays). | `apps/docs/lib/identity-assistant.ts:153`; `apps/docs/lib/identity-creator-session.ts:88-102` | `apps/docs/tests/identity-state-matrix.spec.ts` (error/quota on screen; docs-e2e, not this slice) | client reducer |
+| S-10 | current | A failed generation is a named non-`ok` kind; the session reducer sets `notice` and does not apply tokens (draft / last proposal stays). | `apps/docs/features/identity/ui/identity-assistant.ts:153`; `apps/docs/features/identity/ui/identity-creator-session.ts:88-102` | `apps/docs/tests/identity-state-matrix.spec.ts` (error/quota on screen; docs-e2e, not this slice) | client reducer |
 
 ## Invariants
 

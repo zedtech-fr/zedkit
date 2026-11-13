@@ -5,7 +5,7 @@ import {
   SESSION_BRIEF_KEY,
   readCreatorSessionBrief,
   writeCreatorSessionBrief,
-} from "../lib/creator-session-brief.ts";
+} from "./creator-session-brief.ts";
 
 function store(initial = {}) {
   const data = new Map(Object.entries(initial));

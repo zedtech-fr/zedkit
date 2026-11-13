@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef, type Dispatch, type RefObject } from "react";
 import type { IdentityTokens } from "@zedtech/zedkit-ui";
 
-import type { AssistantStatus } from "@/lib/identity-assistant";
-import { newRequestId } from "@/lib/identity-request-id";
-import type { SessionAction, SessionState } from "@/lib/identity-creator-session";
+import type { AssistantStatus } from "@/features/identity/ui/identity-assistant";
+import { newRequestId } from "@/features/identity/model/identity-request-id";
+import type { SessionAction, SessionState } from "@/features/identity/ui/identity-creator-session";
 
 /** Paid generation and cancel; lives outside the provider to keep the provider under the line cap. */
 export function useAssistantNetwork(
@@ -28,7 +28,7 @@ export function useAssistantNetwork(
       dispatch({ type: "submit", requestId, prompt });
       const history = live.current.thread;
       // The request code loads on first submit; it stays out of every page's first load.
-      void import("@/lib/identity-assistant-stream")
+      void import("@/features/identity/ui/identity-assistant-stream")
         .then(({ requestIdentityStream }) =>
           requestIdentityStream(
             { requestId, prompt, references, history, current },

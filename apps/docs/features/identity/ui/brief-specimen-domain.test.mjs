@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isSpecimenDomain, specimenBriefFromThread, specimenDomainFromBrief } from "../lib/brief-specimen-domain.ts";
+import { isSpecimenDomain, specimenBriefFromThread, specimenDomainFromBrief } from "./brief-specimen-domain.ts";
 
 test("specimenBriefFromThread keeps the first user turn for specimen routing", () => {
   assert.equal(
