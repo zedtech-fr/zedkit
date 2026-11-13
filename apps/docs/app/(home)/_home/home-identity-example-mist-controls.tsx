@@ -1,7 +1,7 @@
 "use client";
 
 import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stack } from "@zedtech/zedkit-ui";
-import { homeIdentityExamplesCopy } from "@/ui/home/home-identity-examples-copy";
+import { homeIdentityExamplesCopy } from "./i18n/home-identity-examples-copy";
 
 const copy = homeIdentityExamplesCopy.mist;
 

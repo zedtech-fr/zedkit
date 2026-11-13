@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const app = join(here, "..");
+const app = join(here, "../../..");
 const uiSrc = join(app, "../../packages/ui/src");
-const factsSrc = readFileSync(join(app, "ui/home/home-identity-facts.ts"), "utf8");
+const factsSrc = readFileSync(join(here, "home-identity-facts.ts"), "utf8");
 const identityData = readFileSync(join(uiSrc, "identity/identity-data.ts"), "utf8");
 const identitiesCss = readFileSync(join(uiSrc, "identities.css"), "utf8");
 

@@ -42,11 +42,11 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/<route>/_<name>/` (view, `sections/`, hooks, `i18n/`, page CSS
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
-  `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`, `sections/`
-  for the seven `home-*-section.tsx` files and `home-link.tsx`, `i18n/`
-  for band copy catalogs). Remaining home files (hero, identity looks,
-  leftover hero i18n, rhythm, copy-command) still live under `ui/home/**`
-  until those move lots.
+  `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`, identity-looks
+  widgets, `sections/` for the seven `home-*-section.tsx` files and
+  `home-link.tsx`, `i18n/` for band copy catalogs including identity looks).
+  Remaining home files (hero, leftover hero i18n, rhythm, copy-command)
+  still live under `ui/home/**` until those move lots.
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:

@@ -6,8 +6,9 @@ import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 const root = join(app, "../..");
-const homeSections = join(app, "app/(home)/_home/sections");
-const homeI18n = join(app, "app/(home)/_home/i18n");
+const homePrivate = join(app, "app/(home)/_home");
+const homeSections = join(homePrivate, "sections");
+const homeI18n = join(homePrivate, "i18n");
 
 test("retired interactive home hero cluster is gone (#265)", () => {
   const gone = [
@@ -178,7 +179,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const limitsCopy = readFileSync(join(homeI18n, "home-limits-copy.ts"), "utf8");
   const manifestoCopy = readFileSync(join(homeI18n, "home-manifesto-copy.ts"), "utf8");
   const closingCopy = readFileSync(join(homeI18n, "home-closing-copy.ts"), "utf8");
-  const looksCopy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
+  const looksCopy = readFileSync(join(homeI18n, "home-identity-looks-copy.ts"), "utf8");
   const dockCopy = readFileSync(join(app, "components/i18n/identity-dock-copy.ts"), "utf8");
   const order = [
     ...src.matchAll(
@@ -575,10 +576,10 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
 
 test("home looks band is specimen | look-name pills, not a Section header or palette-dot tabs (#119)", () => {
   const section = readFileSync(join(homeSections, "home-identities-section.tsx"), "utf8");
-  const looks = readFileSync(join(app, "ui/home/home-identity-looks.tsx"), "utf8");
-  const tabs = readFileSync(join(app, "ui/home/home-identity-looks-tabs.tsx"), "utf8");
-  const copy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
-  const facts = readFileSync(join(app, "ui/home/home-identity-facts.ts"), "utf8");
+  const looks = readFileSync(join(homePrivate, "home-identity-looks.tsx"), "utf8");
+  const tabs = readFileSync(join(homePrivate, "home-identity-looks-tabs.tsx"), "utf8");
+  const copy = readFileSync(join(homeI18n, "home-identity-looks-copy.ts"), "utf8");
+  const facts = readFileSync(join(homePrivate, "home-identity-facts.ts"), "utf8");
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.doesNotMatch(section, /\btitle=\{/);
   assert.doesNotMatch(section, /\bdescription=\{/);

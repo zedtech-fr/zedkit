@@ -346,12 +346,48 @@ describe("live docs tree", () => {
       join(docsRoot, "app/(home)/_home/sections/home-identities-section.tsx"),
       "utf8",
     );
-    assert.match(identities, /from ["']@\/ui\/home\/home-identity-looks["']/);
+    assert.match(identities, /from ["']\.\.\/home-identity-looks["']/);
+    assert.doesNotMatch(identities, /from ["']@\/ui\/home\/home-identity-looks["']/);
     const closing = readFileSync(
       join(docsRoot, "app/(home)/_home/sections/home-closing-section.tsx"),
       "utf8",
     );
     assert.match(closing, /from ["']@\/ui\/home\/home-copy-command-field["']/);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+  });
+
+  it("imports identity-looks from _home and does not leave shims at the old paths", () => {
+    const cluster = [
+      "home-identity-looks.tsx",
+      "home-identity-looks-tabs.tsx",
+      "home-identity-example-mist.tsx",
+      "home-identity-example-mist-controls.tsx",
+      "home-identity-facts.ts",
+      "use-look-fade.ts",
+    ];
+    for (const name of cluster) {
+      assert.ok(existsSync(join(docsRoot, "app/(home)/_home", name)), name);
+      assert.equal(existsSync(join(docsRoot, "ui/home", name)), false, `shim ${name}`);
+    }
+    const copies = ["home-identity-looks-copy.ts", "home-identity-examples-copy.ts"];
+    for (const name of copies) {
+      assert.ok(existsSync(join(docsRoot, "app/(home)/_home/i18n", name)), name);
+      assert.equal(existsSync(join(docsRoot, "ui/home", name)), false, `shim ${name}`);
+    }
+    const looks = readFileSync(join(docsRoot, "app/(home)/_home/home-identity-looks.tsx"), "utf8");
+    assert.match(looks, /from ["']@\/ui\/home\/home-rhythm["']/);
+    assert.match(looks, /from ["']@\/ui\/home\/use-motion-ok["']/);
+    assert.match(looks, /from ["']\.\/home-identity-facts["']/);
+    assert.match(looks, /from ["']\.\/i18n\/home-identity-looks-copy["']/);
+    assert.match(looks, /from ["']\.\/use-look-fade["']/);
+    assert.doesNotMatch(looks, /from ["']@\/ui\/home\/home-identity/);
+    assert.doesNotMatch(looks, /from ["']@\/ui\/home\/use-look-fade["']/);
+    const identities = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-identities-section.tsx"),
+      "utf8",
+    );
+    assert.match(identities, /from ["']\.\.\/home-identity-looks["']/);
+    assert.match(identities, /from ["']@\/ui\/home\/home-rhythm["']/);
     assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 
