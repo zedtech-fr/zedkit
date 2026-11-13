@@ -259,7 +259,7 @@ Path segments, spaces, and `..` fail closed.
 
 ## Share URL (site, not merge)
 
-Issue pages pin a local `ThemeScope` from these query keys. The merge does not emit them. An empty query inherits the site look (the identity dock is enough). Do not restore an inline preview form.
+Issue pages and the live console pin a local `ThemeScope` from these query keys. The merge does not emit them. An empty query inherits the site look (`html` `data-identity` from IdentityScript, `.dark` from the theme provider; the identity dock is enough). The live console has no look-control strip. Do not restore an inline preview form.
 
 | Key | Pins |
 | --- | --- |
@@ -268,7 +268,7 @@ Issue pages pin a local `ThemeScope` from these query keys. The merge does not e
 | `theme` | legacy alias of `preview` (`theme=dark` still parses) |
 | `density` | `compact` |
 
-Any listed key pins the whole appearance. Missing, empty, or unknown values use codec defaults (glass, light, default density); they do not inherit the site look. `serializeReviewAppearance` in `apps/docs/features/reviews/model/review-appearance.ts` is the canonical writer (omit glass, light, default density).
+Any listed key pins the whole appearance. Missing, empty, or unknown values use codec defaults (glass, light, default density); they do not inherit the site look. `serializeReviewAppearance` in `apps/docs/features/reviews/model/review-appearance.ts` is the canonical writer (omit glass, light, default density; currently no UI caller; kept as the canonical codec for a future writer).
 
 Pinned URLs read `window.location.search` after mount (static export). The first paint may show the unpinned site look; that flash is accepted.
 
