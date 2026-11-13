@@ -23,6 +23,7 @@ const CONSUMERS = [
   "ui/site-brand.tsx",
   "ui/off-path-link.tsx",
   "ui/site-chrome-a11y.tsx",
+  "ui/docs-sidebar.tsx",
 ];
 
 function read(rel) {
@@ -39,6 +40,8 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal("openMenu" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.menu, "Menu");
   assert.equal(siteChromeCopy.nav.siteNavigation, "Site navigation");
+  assert.equal(siteChromeCopy.nav.docsPages, "Docs pages");
+  assert.equal(siteChromeCopy.nav.docsNavigation, "Documentation");
   assert.equal("guides" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.github, "GitHub");
   assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
@@ -96,7 +99,12 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.doesNotMatch(header, /siteChromeCopy\.nav\.openNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.siteNavigation/);
   assert.match(header, /siteChromeCopy\.nav\.menu/);
+  assert.doesNotMatch(header, /siteChromeCopy\.nav\.docsPages/);
   assert.match(header, /siteChromeCopy\.brand\.homeAriaLabel/);
+  const docsSidebar = read("ui/docs-sidebar.tsx");
+  assert.match(docsSidebar, /siteChromeCopy\.nav\.docsPages/);
+  assert.match(docsSidebar, /siteChromeCopy\.nav\.docsNavigation/);
+  assert.doesNotMatch(docsSidebar, /"Docs pages"|"Documentation"/);
   const searchTrigger = read("ui/site-chrome.tsx");
   assert.match(searchTrigger, /siteChromeCopy\.search\.triggerAriaLabel/);
   assert.doesNotMatch(searchTrigger, /"Search documentation"|"Search the documentation"/);
@@ -134,6 +142,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
     .map(read)
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
+  assert.doesNotMatch(consumers, /"Docs pages"|"Documentation"/);
   assert.doesNotMatch(consumers, /"Search documentation"|"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"/);
   assert.doesNotMatch(consumers, /"opens in a new tab"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);

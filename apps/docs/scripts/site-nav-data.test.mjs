@@ -130,7 +130,7 @@ test("home phone chrome exposes the four links, GitHub, and Get started — no s
   );
 });
 
-test("catalog and docs phone chrome keep search and GitHub; the page tree is in-flow so the opener stays off", () => {
+test("catalog and docs phone chrome keep search and GitHub; the page-tree opener stays off the header", () => {
   const catalog = siteHeaderChrome("/catalog");
   assert.deepEqual(
     catalog.links.map((link) => link.text),
