@@ -1,6 +1,6 @@
-import { HomeBelowHero } from "@/ui/home/home-below-hero";
 import { HomeHero } from "@/ui/home/home-hero";
 import { HOME_MARKETING_ROOT_PROPS } from "@/ui/home/home-rhythm";
+import { HomeBelowHero } from "./home-below-hero";
 
 export function HomeView({
   uiGalleryStats,
