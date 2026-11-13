@@ -61,12 +61,12 @@ One shared source, then thin provider layers. Phases **A–D** are provider-neut
 
 **Always record** the value table below in the **plan table appendix** and in **every setup-log entry** (even when the user pre-selected providers or the run is headless). Wire every provider the owner names (several allowed). Only the **selection question** ("which providers to wire?") is conditional — when names are already known, skip the question but **still paste the table**.
 
-| Provider | Value                                                                       |
-| -------- | --------------------------------------------------------------------------- |
-| `cursor` | Rules, skills, agents and commands inside the IDE                           |
-| `claude` | The same setup for Claude Code sessions, linked not copied                  |
-| `codex`  | Reads the shared source directly; nothing extra to install                  |
-| `muse`   | Native marked files in `.agents/agents`; kit/unmarked files stay the source |
+| Provider | Value                                                                                                                                                     |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cursor` | Rules, skills, agents and commands inside the IDE                                                                                                         |
+| `claude` | The same setup for Claude Code sessions, linked not copied                                                                                                |
+| `codex`  | Reads the shared source directly; nothing extra to install                                                                                                |
+| `muse`   | Native marked files in `.agents/agents`; kit/unmarked files stay the source; invoke the `zedkit-ai` skill by name (Muse does not scan `.agents/commands`) |
 
 Add a **Wired:** line listing the providers you actually installed for this repo.
 
@@ -377,7 +377,7 @@ After the owner approves the table, **persist** it as **`PLAN.md`** at the repo 
 | `cursor` | `.cursor/rules/project.mdc` (skip it when an always-on rule exists), `.cursor/skills` link, generated agent files, command links (a linked folder shows up empty there) |
 | `claude` | `CLAUDE.md` link, `.claude/{skills,agents,commands}` links (per-skill links and file copies when those paths are already real directories)                              |
 | `codex`  | none: reads `AGENTS.md` and `.agents/skills` directly                                                                                                                   |
-| `muse`   | native marked files in `.agents/agents` (not the kit/unmarked source)                                                                                                   |
+| `muse`   | native marked files in `.agents/agents` (not the kit/unmarked source); invoke the `zedkit-ai` skill by name (Muse does not scan `.agents/commands`)                     |
 
 - **Root `AGENTS.md`**: start from the kit template if there is none; when one exists, keep it and add the missing ladder section (the same 7 questions as the template) and the missing depth gate (`Depth first`, same sentence as the template). Replace every `<placeholder>` with a verified fact or delete the line. Non-negotiables say **`documented, not enforced`** or name a checker you opened and verified — never **`enforced by`** without that proof. Link `.agents/product.md` and domain docs from the map section. Fill **Observed commands** from the manifest and CI (label Playwright/`e2e` as observed). Keep **Test recommendation** as unit-and-integration-primary / E2E-only-critical-path. Do not recommend growing a legacy E2E battery.
 - **Role and style**: fill it from evidence and owner answers, not taste. Tag owner choices `source: owner`.
