@@ -9,12 +9,12 @@ import {
 import { homeLimitsCopy } from "../i18n/home-limits-copy";
 
 /**
- * After looks: what the kit does not do, before the manifesto.
+ * After looks: what the kit does not do, before the origin quote.
  *
  * Compose-UI: three short columns from lg, stacked on a phone, because:
  * client = integrating developer who needs limits before adopting, and a
  * feature-card grid would look like a sell. Section H2, item H3,
- * persuasion body. Muted band, because neighbours (looks stage, manifesto
+ * persuasion body. Muted band, because neighbours (looks stage, origin
  * band) already occupy the high-value surfaces.
  */
 export function HomeLimitsSection() {

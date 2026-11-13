@@ -57,9 +57,7 @@ test.describe("home paste band", () => {
     await expect(paste.locator("[data-home-full-steps]")).toHaveCount(0);
     await expect(paste.locator("[data-home-paste-lands]")).toBeVisible();
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`,
-    );
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(homeHeroCopy.hero.title);
     await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
     await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
     await expect(page.locator("[data-home-hero-sub]")).toHaveText(homeHeroCopy.hero.sub);

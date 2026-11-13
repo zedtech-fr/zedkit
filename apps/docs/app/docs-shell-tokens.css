@@ -242,12 +242,11 @@ html[data-docs-shell][data-identity] {
 }
 
 /*
- * Manifesto is a full-bleed high-value Glass band (not an inner inset
+ * Origin band is a full-bleed high-value Glass band (not an inner inset
  * card, still not indigo page fill). Tokenized primary→accent fill plus
  * the same static circle/stripe recipe as featured six-sentences cards.
- * Quote, attribution, and the off-path link inherit the inverted
- * foreground. `--ring` is pinned so the link focus outline is not Glass
- * `--primary` on `--primary`.
+ * Quote and body inherit the inverted foreground. `--ring` stays pinned
+ * so a control's focus outline is not Glass `--primary` on `--primary`.
  */
 #home-page #manifesto[data-slot="section"] {
   --foreground: var(--primary-foreground);
