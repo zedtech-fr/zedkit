@@ -185,6 +185,19 @@ describe("test:registry globs", () => {
   });
 });
 
+describe("AGENTS.md docs-render truth", () => {
+  for (const rel of ["AGENTS.md", "apps/docs/AGENTS.md"]) {
+    it(`${rel} names docs-render and local e2e, and does not claim CI owns e2e`, () => {
+      const text = readFileSync(join(root, rel), "utf8");
+      // Merge-gate claim is "CI owns … e2e" in one sentence. "stays local"
+      // after a period must still be allowed.
+      assert.doesNotMatch(text, /CI owns[^.]*\be2e\b/u);
+      assert.match(text, /docs-render/);
+      assert.match(text, /(?:stays local|local-only)/u);
+    });
+  }
+});
+
 describe("pr template", () => {
   it("has no mandatory Lenses/Personas tables", () => {
     const template = readFileSync(join(root, ".github/pull_request_template.md"), "utf8");
