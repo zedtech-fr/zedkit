@@ -182,7 +182,7 @@ second fonts `pnpm add` next to that snippet.
   with its reason). The floating dock is manual customize only and does not
   render those outcomes. There is no silent keyword fallback: a failed
   generation says so and leaves the draft untouched.
-- Saved looks are local recipes (`lib/named-identities.ts`): re-validated on
+- Saved looks are local recipes (`features/identity/ui/named-identities.ts`): re-validated on
   every read, no server copy. Changing the stored shape needs a version and a
   migration.
 - Simple and Expert share `IdentityLookForm`. Simple colour fields read and
@@ -194,7 +194,7 @@ second fonts `pnpm add` next to that snippet.
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `i18n/identity-editor-copy.ts`.
 - Classic edits in the floating dock restyle the whole site immediately and
-  persist in `lib/site-identity-storage.ts`. Reset restores the site default
+  persist in `features/identity/ui/site-identity-storage.ts`. Reset restores the site default
   look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
   has no Apply or Preview step and no opt-in key. Dock customize copy must
   not name a preview; the page and its specimens follow. The editor page

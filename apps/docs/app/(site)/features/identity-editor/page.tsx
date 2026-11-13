@@ -3,7 +3,7 @@ import { Button, Container, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
 import "@/app/identity-creator-type.css";
 import { identityEditorCopy } from "@/app/i18n/identity-editor-copy";
-import { IdentityEditorPanel } from "@/components/identity-editor-panel";
+import { IdentityEditorPanel } from "@/features/identity/ui/identity-editor-panel";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
