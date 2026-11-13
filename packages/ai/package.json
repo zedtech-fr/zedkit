@@ -56,7 +56,7 @@
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.tests.json",
-    "lint": "eslint src tests",
+    "lint": "eslint src tests scripts",
     "kit:md": "prettier --check kit"
   },
   "dependencies": {

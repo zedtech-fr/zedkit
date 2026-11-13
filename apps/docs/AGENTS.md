@@ -63,8 +63,9 @@ reject dead `/r/<name>.json` links.
   Checked-in JSON read at build: import the file (`with { type: "json" }`).
   Next 16 turbopack's `fileURLToPath` rejects a URL from
   `new URL(..., import.meta.url)`. After a rendered-surface change, also
-  `pnpm --filter @zedtech/zedkit-docs visual:verify --changed` (alias of
-  `zedkit-ai visual-verify`, not a second CLI).
+  `pnpm --filter @zedtech/zedkit-docs visual:verify` (alias of
+  `zedkit-ai visual-verify`; the script already passes `--changed` and the
+  fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
 - **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
   component page, getting-started). Unit tests, `catalog:check`, the SEO
   export check and the first-load budget cover the rest. `pnpm e2e` is

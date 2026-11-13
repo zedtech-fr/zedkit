@@ -15,6 +15,7 @@ export const MODES = ["light", "dark"];
 export const VIEWPORT_HEIGHT = 900;
 export const DEFAULT_LOOKS = ["mist", "press", "tide", "volt", "maison", "glass"];
 export const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"];
+export const PEER_MISSING = "PEER_MISSING";
 export const PEER_HINT = "install `@playwright/test` and run `playwright install chromium`";
 
 const MIME = {
@@ -28,20 +29,42 @@ const MIME = {
   ".woff2": "font/woff2",
 };
 
-export function relativeLuminance(rgb) {
-  const channel = (c) => {
-    const s = c / 255;
-    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2]);
+export function peerHint(spec) {
+  if (spec === "@axe-core/playwright") return "install `@axe-core/playwright`";
+  return PEER_HINT;
 }
 
-export function contrastRatio(fg, bg) {
-  const l1 = relativeLuminance(fg);
-  const l2 = relativeLuminance(bg);
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
+export function peerMissingError(spec, extra = "") {
+  const error = new Error(extra ? `${peerHint(spec)} (${extra})` : peerHint(spec));
+  error.code = PEER_MISSING;
+  return error;
+}
+
+export function unwrapPeerModule(mod, key) {
+  if (key && mod?.[key] != null) return mod;
+  return mod?.default ?? mod;
+}
+
+export function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+export function isFaviconRequest(url) {
+  const parsed = tryCatch(() => new URL(url));
+  const path = parsed.ok ? parsed.value.pathname : String(url);
+  return /favicon/iu.test(path);
+}
+
+export function routeStem(route) {
+  return String(route).replaceAll(/[/\\:]+/gu, "_").replace(/^_+|_+$/gu, "") || "home";
+}
+
+export function isSafeGitRef(ref) {
+  return typeof ref === "string" && ref.length > 0 && !ref.startsWith("-");
 }
 
 export function copySitsWithBlock(button, frame) {
@@ -53,6 +76,7 @@ export function copySitsWithBlock(button, frame) {
   if (overlap) return true;
   return (
     button.bottom <= frame.top + 48 &&
+    button.bottom >= frame.top - 48 &&
     button.right >= frame.left &&
     button.left <= frame.right
   );
@@ -106,8 +130,9 @@ export function unionRoutes(changedRoutes, extra) {
 
 export function resolveStaticFile(root, urlPath) {
   const base = resolve(root);
-  const decoded = decodeURIComponent(urlPath.split("?")[0] ?? "/");
-  const trimmed = decoded.replace(/\/$/u, "") || "/";
+  const decoded = tryCatch(() => decodeURIComponent((urlPath ?? "/").split("?")[0] ?? "/"));
+  if (!decoded.ok) return null;
+  const trimmed = decoded.value.replace(/\/$/u, "") || "/";
   const rel = trimmed === "/" ? "index.html" : trimmed.replace(/^\//u, "");
   const candidates = [rel, `${rel}.html`, join(rel, "index.html")];
   for (const candidate of candidates) {
@@ -152,7 +177,8 @@ export function cellHasVerdict(cell) {
 }
 
 export function markdownTable(report) {
-  const header = "| route | width | mode | look | collection | overflow | axe new | h1 | size | lines | share |";
+  const header =
+    "| route | width | mode | look | collection | overflow | new serious axe | h1 | h1 size | lines | h1 share of viewport |";
   const sep = "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |";
   const rows = report.cells.map((cell) => {
     const overflow = cellHasVerdict(cell) ? (cell.overflow ? "fail" : "ok") : "—";
@@ -223,20 +249,15 @@ export function parseVisualVerifyArgs(args) {
 }
 
 export function usageVisualVerify() {
-  return `zedkit-ai visual-verify [--url <origin> | --dir <static-export>]
-      [--changed] [--base <ref>] [--routes <path,path>] [--identities <id,id>]
-      [--baseline <run-record.json>] [--out <dir>] [--md <file>]
-      [--ticket <file>] [--manifest <docs-manifest.json>]
-      Render touched routes at 375, 809 and 1440 in light and dark.
-      Writes a run record (evidence/<branch>/manifest.json), one contact
-      sheet PNG per route, and a Markdown table. Collection failed (no CSS
-      or fonts) exits 1 with no verdict. Overflow or a new serious axe
-      violation exits 1. Missing Playwright/axe peers exit 2.`;
+  const read = tryCatch(() => readFileSync(new URL("../kit/usage.txt", import.meta.url), "utf8"));
+  if (!read.ok) return "zedkit-ai visual-verify [--url <origin> | --dir <static-export>]";
+  const block = /(?:^|\n) {2}(visual-verify [\s\S]*?)(?=\n {2}[a-z-]|$)/u.exec(read.value)?.[1]?.trim();
+  return block ? `zedkit-ai ${block}` : "zedkit-ai visual-verify [--url <origin> | --dir <static-export>]";
 }
 
 function git(cwd, gitArgs) {
   const run = spawnSync("git", gitArgs, { cwd, encoding: "utf8" });
-  if (run.status !== 0) return err(new Error(run.stderr.trim() || `git ${gitArgs[0]} failed`));
+  if (run.status !== 0) return err(new Error((run.stderr ?? "").trim() || `git ${gitArgs[0]} failed`));
   return ok((run.stdout ?? "").trim());
 }
 
@@ -249,6 +270,7 @@ export function defaultGitBase(cwd) {
 }
 
 export function changedFiles(cwd, base) {
+  if (!isSafeGitRef(base)) return [];
   const diff = git(cwd, ["diff", "--name-only", `${base}...HEAD`]);
   if (!diff.ok) return [];
   return diff.value.split("\n").filter(Boolean);
@@ -267,8 +289,13 @@ function loadManifestFile(path) {
 
 function serveDir(root) {
   const server = createServer((req, res) => {
-    const url = new URL(req.url ?? "/", "http://127.0.0.1");
-    const file = resolveStaticFile(root, url.pathname);
+    const url = tryCatch(() => new URL(req.url ?? "/", "http://127.0.0.1"));
+    if (!url.ok) {
+      res.writeHead(400);
+      res.end("bad request");
+      return;
+    }
+    const file = resolveStaticFile(root, url.value.pathname);
     if (!file) {
       res.writeHead(404);
       res.end("not found");
@@ -286,37 +313,30 @@ function serveDir(root) {
 }
 
 function resolvePeer(spec) {
-  const starts = [import.meta.url];
-  let dir = process.cwd();
-  for (let i = 0; i < 8; i += 1) {
-    starts.push(pathToFileURL(join(dir, "package.json")).href);
-    const parent = dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
+  const starts = [import.meta.url, pathToFileURL(join(process.cwd(), "package.json")).href];
   for (const start of starts) {
     const found = tryCatch(() => createRequire(start).resolve(spec));
     if (found.ok) return found;
   }
-  return err(new Error(PEER_HINT));
+  return err(peerMissingError(spec));
 }
 
 function importPeer(spec) {
   const resolved = resolvePeer(spec);
-  if (!resolved.ok) return Promise.resolve(err(new Error(PEER_HINT)));
+  if (!resolved.ok) return Promise.resolve(err(resolved.error));
   return tryCatchAsync(() => import(pathToFileURL(resolved.value).href));
 }
 
 export async function loadPlaywright() {
   const loaded = await importPeer("@playwright/test");
-  if (!loaded.ok) return err(new Error(PEER_HINT));
-  return ok(loaded.value);
+  if (!loaded.ok) return err(loaded.error);
+  return ok(unwrapPeerModule(loaded.value, "chromium"));
 }
 
 export async function loadAxe() {
   const loaded = await importPeer("@axe-core/playwright");
-  if (!loaded.ok) return err(new Error(PEER_HINT));
-  return ok(loaded.value.default ?? loaded.value);
+  if (!loaded.ok) return err(loaded.error);
+  return ok(unwrapPeerModule(loaded.value));
 }
 
 const CONTRAST_WALK = (el) => {
@@ -434,15 +454,105 @@ async function stitchSheet(page, shots, dest, mockup) {
   if (mockup && existsSync(mockup)) {
     cells.push({ src: `data:image/png;base64,${readFileSync(mockup).toString("base64")}`, label: "reference" });
   }
-  const html = `<!doctype html><html><head><style>
+  const html = `<!doctype html><html lang="en"><head><title>Contact sheet</title><style>
     body{margin:0;background:#111;color:#eee;font:12px sans-serif}
     .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px}
     figure{margin:0} img{width:100%;height:auto;display:block}
   </style></head><body><div class="g">${cells
-    .map((c) => `<figure><img src="${c.src}" alt="${c.label}"><figcaption>${c.label}</figcaption></figure>`)
+    .map((c) => `<figure><img src="${c.src}" alt=""><figcaption>${escapeHtml(c.label)}</figcaption></figure>`)
     .join("")}</div></body></html>`;
   await page.setContent(html, { waitUntil: "domcontentloaded" });
   await page.screenshot({ path: dest, fullPage: true });
+}
+
+function failedCell(route, width, mode, identity, reason, extras = {}) {
+  return { route, width, mode, identity, ...collectionFailedRecord(reason), ...extras };
+}
+
+async function runOneCell({ context, origin, route, width, mode, identity, outDir, AxeBuilder, baselineIds }) {
+  const pageResult = await tryCatchAsync(() => context.newPage());
+  if (!pageResult.ok) return { cell: failedCell(route, width, mode, identity, pageResult.error.message), shot: null };
+  const page = pageResult.value;
+  const measured = await tryCatchAsync(async () => {
+    await page.setViewportSize({ width, height: VIEWPORT_HEIGHT });
+    const pageerrors = [];
+    const consoles = [];
+    const httpErrors = [];
+    page.on("pageerror", (error) => pageerrors.push(error?.message ?? String(error)));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") consoles.push(msg.text());
+    });
+    page.on("response", (res) => {
+      if (res.status() >= 400 && !isFaviconRequest(res.url())) httpErrors.push(res.status());
+    });
+    await page.route("**/*", (routeReq) => {
+      if (isAllowedRequest(routeReq.request().url(), origin)) return routeReq.continue();
+      return routeReq.abort();
+    });
+    await page.emulateMedia({ colorScheme: mode, reducedMotion: "reduce" });
+    const target = `${origin}${route === "/" ? "/" : route}`;
+    await page.goto(target, { waitUntil: "domcontentloaded" });
+    await page.evaluate(
+      ({ nextMode, nextIdentity }) => {
+        document.documentElement.classList.toggle("dark", nextMode === "dark");
+        document.documentElement.style.colorScheme = nextMode;
+        if (nextIdentity) document.documentElement.setAttribute("data-identity", nextIdentity);
+      },
+      { nextMode: mode, nextIdentity: identity },
+    );
+    const collection = await readCollection(page);
+    const extras = {
+      pageerror: pageerrors.length,
+      pageerrors,
+      consoleErrors: consoles.length,
+      httpErrors: httpErrors.length,
+    };
+    if (!collection.ok) {
+      return { cell: failedCell(route, width, mode, identity, collection.reason, extras), shot: null };
+    }
+    const facts = await readPageFacts(page);
+    let axeNew = [];
+    let axeIds = [];
+    const axeRun = await tryCatchAsync(async () => {
+      const builder = new AxeBuilder({ page }).withTags(AXE_TAGS);
+      return builder.analyze();
+    });
+    if (axeRun.ok) {
+      const serious = (axeRun.value.violations ?? []).filter(
+        (v) => v.impact === "serious" || v.impact === "critical",
+      );
+      axeIds = serious.map((v) => v.id);
+      axeNew = newAxeIds(serious, baselineIds);
+    } else {
+      pageerrors.push(`axe: ${axeRun.error.message}`);
+      extras.pageerror = pageerrors.length;
+    }
+    const shotPath = join(outDir, `${[routeStem(route), width, mode, identity ?? "default"].join("-")}.png`);
+    await page.screenshot({ path: shotPath, fullPage: false });
+    const selected = await selectedContrast(page);
+    const copyFail = facts.copy.some((pair) => !pair.frame || !copySitsWithBlock(pair.button, pair.frame));
+    return {
+      cell: {
+        route,
+        width,
+        mode,
+        identity,
+        collection: "ok",
+        overflow: facts.overflow,
+        ...extras,
+        axeNew,
+        axeIds,
+        selectedContrast: selected,
+        copyButtons: { fail: copyFail, count: facts.copy.length },
+        h1: facts.h1,
+        screenshot: shotPath,
+      },
+      shot: { path: shotPath, label: `${width} ${mode}${identity ? ` ${identity}` : ""}` },
+    };
+  });
+  await tryCatchAsync(() => page.close());
+  if (!measured.ok) return { cell: failedCell(route, width, mode, identity, measured.error.message), shot: null };
+  return measured.value;
 }
 
 export async function runVisualVerify(options, deps = {}) {
@@ -454,11 +564,11 @@ export async function runVisualVerify(options, deps = {}) {
   const axeMod = await loadAxeBuilder();
   if (!axeMod.ok) return err(axeMod.error);
   const AxeBuilder = axeMod.value;
-  const { chromium } = playwright.value;
+  const chromium = playwright.value?.chromium;
+  if (!chromium) return err(peerMissingError("@playwright/test"));
 
   const branch = currentBranch(cwd);
   const outDir = resolve(cwd, options.out ?? join("evidence", branch));
-  mkdirSync(outDir, { recursive: true });
 
   const files = options.changed ? changedFiles(cwd, options.base ?? defaultGitBase(cwd)) : [];
   const manifest = loadManifestFile(options.manifest ? resolve(cwd, options.manifest) : "");
@@ -468,11 +578,16 @@ export async function runVisualVerify(options, deps = {}) {
 
   const looksOn = options.identities !== undefined || looksGridTriggered(files);
   const identities = looksOn ? (options.identities ?? DEFAULT_LOOKS) : [undefined];
+  if (looksOn && identities.length === 0) return err(new Error("no identities: pass --identities <id,id>"));
 
   let baselineIds = new Set();
-  if (options.baseline && existsSync(resolve(cwd, options.baseline))) {
-    const raw = tryCatch(() => JSON.parse(readFileSync(resolve(cwd, options.baseline), "utf8")));
-    if (raw.ok) baselineIds = baselineAxeIds(raw.value);
+  if (options.baseline) {
+    const baselinePath = resolve(cwd, options.baseline);
+    if (existsSync(baselinePath)) {
+      const raw = tryCatch(() => JSON.parse(readFileSync(baselinePath, "utf8")));
+      if (!raw.ok) return err(new Error(`unreadable baseline: ${options.baseline}`));
+      baselineIds = baselineAxeIds(raw.value);
+    }
   }
 
   let ticketText = "";
@@ -491,16 +606,17 @@ export async function runVisualVerify(options, deps = {}) {
     origin = served.origin;
   }
   origin = origin.replace(/\/$/u, "");
+  mkdirSync(outDir, { recursive: true });
 
   const browserResult = await tryCatchAsync(() => chromium.launch());
   if (!browserResult.ok) {
     server?.close();
-    return err(new Error(`${PEER_HINT} (${browserResult.error.message})`));
+    return err(peerMissingError("@playwright/test", browserResult.error.message));
   }
   const browser = browserResult.value;
   const contextResult = await tryCatchAsync(() => browser.newContext());
   if (!contextResult.ok) {
-    await browser.close();
+    await tryCatchAsync(() => browser.close());
     server?.close();
     return err(contextResult.error);
   }
@@ -513,112 +629,44 @@ export async function runVisualVerify(options, deps = {}) {
       for (const width of WIDTHS) {
         for (const mode of MODES) {
           for (const identity of identities) {
-            const page = await context.newPage();
-            await page.setViewportSize({ width, height: VIEWPORT_HEIGHT });
-            const pageerrors = [];
-            const consoles = [];
-            const httpErrors = [];
-            page.on("pageerror", (error) => pageerrors.push(error?.message ?? String(error)));
-            page.on("console", (msg) => {
-              if (msg.type() === "error") consoles.push(msg.text());
-            });
-            page.on("response", (res) => {
-              if (res.status() >= 400) httpErrors.push(res.status());
-            });
-            await page.route("**/*", (routeReq) => {
-              if (isAllowedRequest(routeReq.request().url(), origin)) return routeReq.continue();
-              return routeReq.abort();
-            });
-            await page.emulateMedia({ colorScheme: mode, reducedMotion: "reduce" });
-            const target = `${origin}${route === "/" ? "/" : route}`;
-            await page.goto(target, { waitUntil: "domcontentloaded" });
-            await page.evaluate(
-              ({ nextMode, nextIdentity }) => {
-                document.documentElement.classList.toggle("dark", nextMode === "dark");
-                document.documentElement.style.colorScheme = nextMode;
-                if (nextIdentity) document.documentElement.setAttribute("data-identity", nextIdentity);
-              },
-              { nextMode: mode, nextIdentity: identity },
-            );
-            const collection = await readCollection(page);
-            const stem = [route.replaceAll("/", "_") || "home", width, mode, identity ?? "default"].join("-");
-            const shotPath = join(outDir, `${stem}.png`);
-            if (!collection.ok) {
-              cells.push({
-                route,
-                width,
-                mode,
-                identity,
-                collection: "failed",
-                reason: collection.reason,
-                pageerror: pageerrors.length,
-                pageerrors,
-                consoleErrors: consoles.length,
-                httpErrors: httpErrors.length,
-                screenshot: shotPath,
-              });
-              await page.close();
-              continue;
-            }
-            const facts = await readPageFacts(page);
-            const selected = await selectedContrast(page);
-            let axeNew = [];
-            let axeIds = [];
-            const axeRun = await tryCatchAsync(async () => {
-              const builder = new AxeBuilder({ page }).withTags(AXE_TAGS);
-              return builder.analyze();
-            });
-            if (axeRun.ok) {
-              const serious = (axeRun.value.violations ?? []).filter(
-                (v) => v.impact === "serious" || v.impact === "critical",
-              );
-              axeIds = serious.map((v) => v.id);
-              axeNew = newAxeIds(serious, baselineIds);
-            } else {
-              pageerrors.push(`axe: ${axeRun.error.message}`);
-            }
-            const copyFail = facts.copy.some((pair) => !pair.frame || !copySitsWithBlock(pair.button, pair.frame));
-            await page.screenshot({ path: shotPath, fullPage: false });
-            shots.push({ path: shotPath, label: `${width} ${mode}${identity ? ` ${identity}` : ""}` });
-            cells.push({
+            const one = await runOneCell({
+              context,
+              origin,
               route,
               width,
               mode,
               identity,
-              collection: "ok",
-              overflow: facts.overflow,
-              pageerror: pageerrors.length,
-              pageerrors,
-              consoleErrors: consoles.length,
-              httpErrors: httpErrors.length,
-              axeNew,
-              axeIds,
-              selectedContrast: selected,
-              copyButtons: { fail: copyFail, count: facts.copy.length },
-              h1: facts.h1,
-              screenshot: shotPath,
+              outDir,
+              AxeBuilder,
+              baselineIds,
             });
-            await page.close();
+            cells.push(one.cell);
+            if (one.shot) shots.push(one.shot);
           }
         }
       }
-      const sheetPath = join(outDir, `sheet-${route.replaceAll("/", "_") || "home"}.png`);
-      const sheetPage = await context.newPage();
-      await sheetPage.setViewportSize({ width: 1200, height: 800 });
-      await stitchSheet(sheetPage, shots, sheetPath, mockup);
-      await sheetPage.close();
-      contactSheets.push({ route, path: sheetPath });
+      const sheetPath = join(outDir, `sheet-${routeStem(route)}.png`);
+      const sheet = await tryCatchAsync(async () => {
+        const sheetPage = await context.newPage();
+        await sheetPage.setViewportSize({ width: 1200, height: 800 });
+        await stitchSheet(sheetPage, shots, sheetPath, mockup);
+        await sheetPage.close();
+        return { route, path: sheetPath };
+      });
+      if (sheet.ok) contactSheets.push(sheet.value);
     }
   });
-  await context.close();
-  await browser.close();
+  await tryCatchAsync(() => context.close());
+  await tryCatchAsync(() => browser.close());
   server?.close();
   if (!run.ok) return err(run.error);
+  if (cells.length === 0) return err(new Error("no cells"));
 
   const anyCollectionFailed = cells.some((c) => c.collection !== "ok");
-  const okRun = cells.length > 0 && cells.every((c) => !cellFailed(c));
+  const okRun = cells.every((c) => !cellFailed(c));
   const report = {
     branch,
+    outDir,
     collection: anyCollectionFailed ? "failed" : "ok",
     looksGrid: looksOn,
     identities: identities.filter(Boolean),
@@ -629,6 +677,10 @@ export async function runVisualVerify(options, deps = {}) {
   };
   writeFileSync(join(outDir, "manifest.json"), `${JSON.stringify(report, null, 2)}\n`);
   return ok(report);
+}
+
+function isPeerFailure(error) {
+  return error.code === PEER_MISSING || String(error.message).startsWith("install `");
 }
 
 export async function visualVerifyMain(args, sinks, deps) {
@@ -649,12 +701,13 @@ export async function visualVerifyMain(args, sinks, deps) {
   }
   const result = await runVisualVerify(parsed.value, deps);
   if (!result.ok) {
-    const message = result.error.message;
-    sinks.err(`error: ${message}`);
-    return message.includes("install") ? 2 : 1;
+    sinks.err(`error: ${result.error.message}`);
+    return isPeerFailure(result.error) ? 2 : 1;
   }
   const table = markdownTable(result.value);
   sinks.out(table);
+  sinks.out(result.value.ok ? "pass" : "fail");
+  sinks.out(join(result.value.outDir, "manifest.json"));
   if (parsed.value.md) {
     const mdPath = resolve(parsed.value.cwd ?? process.cwd(), parsed.value.md);
     mkdirSync(dirname(mdPath), { recursive: true });

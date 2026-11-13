@@ -5,27 +5,35 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   PEER_HINT,
+  PEER_MISSING,
   baselineAxeIds,
   cellHasVerdict,
   collectionFailedRecord,
-  contrastRatio,
   copySitsWithBlock,
+  escapeHtml,
   isAllowedRequest,
+  isFaviconRequest,
+  isSafeGitRef,
   looksGridTriggered,
   markdownTable,
   newAxeIds,
   parseVisualVerifyArgs,
+  peerHint,
   resolveStaticFile,
+  routeStem,
   routesFromFiles,
   runVisualVerify,
   sanitizeBranch,
   unionRoutes,
+  unwrapPeerModule,
   usageVisualVerify,
   visualReferencePath,
   visualVerifyMain,
 } from "../scripts/visual-verify.mjs";
 
-const CLEAN = `<!doctype html><html lang="en"><head><title>Home</title><style>
+const CLEAN = `<!doctype html><html lang="en"><head><title>Home</title>
+<link rel="icon" href="/favicon.ico">
+<style>
 html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px;line-height:1.2}
 </style></head><body><h1>Home</h1><p>Readable body copy.</p></body></html>`;
@@ -43,12 +51,39 @@ h1{font-size:24px}
 
 const BARE = `<!doctype html><html lang="en"><head><title>Bare</title></head><body><h1>Bare</h1><p>No stylesheet.</p></body></html>`;
 
+const TABS = `<!doctype html><html lang="en"><head><title>Tabs</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+[role=tab]{color:#111;background:#fff;border:1px solid #111}
+.bad{color:#eee;background:#fff}
+[hidden]{display:none}
+</style></head><body>
+<h1>Tabs</h1>
+<div role="tablist">
+  <button type="button" role="tab" id="t1" aria-selected="true" aria-controls="p1">One</button>
+  <button type="button" role="tab" id="t2" aria-selected="false" aria-controls="p2">Two</button>
+</div>
+<div role="tabpanel" id="p1">Readable panel.</div>
+<div role="tabpanel" id="p2" hidden><p class="bad">hidden low contrast</p></div>
+<script>
+document.querySelectorAll("[role=tab]").forEach((tab) => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll("[role=tab]").forEach((t) => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
+    document.querySelectorAll("[role=tabpanel]").forEach((p) => {
+      p.hidden = p.id !== tab.getAttribute("aria-controls");
+    });
+  });
+});
+</script>
+</body></html>`;
+
 function fixtureDir() {
   const dir = mkdtempSync(join(tmpdir(), "visual-verify-"));
   writeFileSync(join(dir, "index.html"), CLEAN);
   writeFileSync(join(dir, "overflow.html"), OVERFLOW);
   writeFileSync(join(dir, "contrast.html"), CONTRAST);
   writeFileSync(join(dir, "bare.html"), BARE);
+  writeFileSync(join(dir, "tabs.html"), TABS);
   return dir;
 }
 
@@ -86,10 +121,25 @@ describe("visual-verify helpers", () => {
     expect(copySitsWithBlock({ left: 20, right: 80, top: 50, bottom: 70 }, frame)).toBe(true);
     expect(copySitsWithBlock({ left: 150, right: 190, top: 8, bottom: 32 }, frame)).toBe(true);
     expect(copySitsWithBlock({ left: 400, right: 440, top: 8, bottom: 32 }, frame)).toBe(false);
+    expect(copySitsWithBlock({ left: 20, right: 80, top: -200, bottom: -180 }, frame)).toBe(false);
   });
 
-  it("computes WCAG contrast for black on white as 21", () => {
-    expect(contrastRatio([0, 0, 0], [255, 255, 255])).toBe(21);
+  it("unwraps Playwright CJS default without dropping ESM named chromium", () => {
+    expect(unwrapPeerModule({ default: { chromium: "cjs" } }, "chromium").chromium).toBe("cjs");
+    expect(unwrapPeerModule({ chromium: "esm", default: { click: 1 } }, "chromium").chromium).toBe("esm");
+    expect(unwrapPeerModule({ default: { analyze: 1 } }).analyze).toBe(1);
+  });
+
+  it("ignores favicon 404s and rejects a leading-dash git base", () => {
+    expect(isFaviconRequest("http://127.0.0.1:9/favicon.ico")).toBe(true);
+    expect(isFaviconRequest("http://127.0.0.1:9/overflow.css")).toBe(false);
+    expect(isSafeGitRef("-n")).toBe(false);
+    expect(isSafeGitRef("origin/dev")).toBe(true);
+    expect(routeStem("/")).toBe("home");
+    expect(routeStem("/docs\\ui:x")).toBe("docs_ui_x");
+    expect(escapeHtml(`<mist">`)).toBe("&lt;mist&quot;&gt;");
+    expect(peerHint("@axe-core/playwright")).toContain("@axe-core/playwright");
+    expect(peerHint("@playwright/test")).toBe(PEER_HINT);
   });
 
   it("maps a static /foo request to foo.html", () => {
@@ -125,6 +175,9 @@ describe("visual-verify helpers", () => {
     });
     expect(table).toContain("| / | 375 | light |");
     expect(table).toContain("| ok |");
+    expect(table).toContain("new serious axe");
+    expect(table).toContain("h1 size");
+    expect(table).toContain("h1 share of viewport");
   });
 
   it("reads Visual reference paths and sanitizes branch names", () => {
@@ -147,9 +200,12 @@ describe("visual-verify helpers", () => {
 
   it("documents the visual-verify flags", () => {
     const text = usageVisualVerify();
-    for (const flag of ["--url", "--dir", "--changed", "--base", "--routes", "--identities", "--baseline", "--out", "--md", "--ticket"]) {
+    for (const flag of ["--url", "--dir", "--changed", "--base", "--cwd", "--routes", "--identities", "--baseline", "--out", "--md", "--ticket", "--manifest"]) {
       expect(text).toContain(flag);
     }
+    expect(text).toContain("evidence/<branch>/manifest.json");
+    expect(text).toContain("peers exit 2");
+    expect(text).toContain("page/console/HTTP");
     const parsed = parseVisualVerifyArgs(["--help"]);
     expect(parsed.ok && parsed.value.help).toBe(true);
   });
@@ -173,6 +229,16 @@ describe("visual-verify CLI", () => {
     }, { loadPlaywright: async () => ({ ok: false, error: new Error(PEER_HINT) }) });
     expect(code).toBe(2);
     expect(errors.join("\n")).toContain(PEER_HINT);
+  });
+
+  it("exits 2 on a tagged peer failure whose message does not contain install", async () => {
+    const error = new Error("no browser");
+    error.code = PEER_MISSING;
+    const code = await visualVerifyMain(["--dir", fixtureDir(), "--routes", "/"], {
+      out: () => undefined,
+      err: () => undefined,
+    }, { loadPlaywright: async () => ({ ok: false, error }) });
+    expect(code).toBe(2);
   });
 });
 
@@ -209,16 +275,44 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
 
   it("fails on a new serious axe violation", async () => {
     const { result } = await runRoutes(["/contrast"]);
-    expect(result.ok).toBe(true);
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
     expect(result.value.ok).toBe(false);
     expect(result.value.cells.some((c) => (c.axeNew ?? []).length > 0)).toBe(true);
   });
 
   it("fails collection with no CSS and writes no pass verdict", async () => {
     const { result } = await runRoutes(["/bare"]);
-    expect(result.ok).toBe(true);
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
     expect(result.value.ok).toBe(false);
     expect(result.value.collection).toBe("failed");
     expect(result.value.cells.every((c) => !cellHasVerdict(c))).toBe(true);
+    expect(result.value.cells.every((c) => !("screenshot" in c))).toBe(true);
+  });
+
+  it("runs axe and the screenshot on the default tab before clicking", async () => {
+    const { result } = await runRoutes(["/tabs"]);
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(result.value.cells.every((c) => (c.axeNew ?? []).length === 0)).toBe(true);
+    expect(result.value.cells.some((c) => (c.selectedContrast?.count ?? 0) >= 2)).toBe(true);
+  });
+
+  it("rejects an empty identities list and a corrupt baseline before launch", async () => {
+    const dir = fixtureDir();
+    const out = mkdtempSync(join(tmpdir(), "vv-out-"));
+    const empty = await runVisualVerify({ dir, routes: ["/"], identities: [], out, cwd: dir }, {
+      loadPlaywright: async () => ({ ok: true, value: { chromium: { launch: async () => ({}) } } }),
+      loadAxe: async () => ({ ok: true, value: class Axe {} }),
+    });
+    expect(empty.ok).toBe(false);
+    expect(empty.error.message).toContain("no identities");
+    const baseline = join(dir, "baseline.json");
+    writeFileSync(baseline, "{not json");
+    const corrupt = await runVisualVerify({ dir, routes: ["/"], baseline, out, cwd: dir }, {
+      loadPlaywright: async () => ({ ok: true, value: { chromium: { launch: async () => ({}) } } }),
+      loadAxe: async () => ({ ok: true, value: class Axe {} }),
+    });
+    expect(corrupt.ok).toBe(false);
+    expect(corrupt.error.message).toContain("unreadable baseline");
   });
 });
