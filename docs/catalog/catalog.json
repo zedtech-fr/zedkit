@@ -2103,12 +2103,12 @@
         },
         {
           "need": "Emit typed JSON-LD structured data",
-          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`; `@zedtech/zedkit-seo/react` — `JsonLd`",
+          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`; `@zedtech/zedkit-seo/react` — `JsonLd`, `JsonLdProps`",
           "wraps": "`schema-dts`",
           "status": "stable",
           "shortName": "JSON-LD",
           "audience": "Developers who want rich results without hand-writing schema.org JSON.",
-          "purpose": "Typed builders for Organization, WebPage, Breadcrumb, Article and SoftwareSourceCode JSON-LD, plus a React JsonLd script tag.",
+          "purpose": "Typed JSON-LD builders for Organization, WebPage, Breadcrumb, Article and SoftwareSourceCode, plus a React JsonLd script tag.",
           "whenToUse": "On pages eligible for rich results (articles, org pages, breadcrumbs).",
           "whenNotToUse": "For data with no matching schema.org type — skip structured data instead of forcing it.",
           "derivedFrom": null,
@@ -2140,7 +2140,8 @@
               {
                 "from": "@zedtech/zedkit-seo/react",
                 "exports": [
-                  "JsonLd"
+                  "JsonLd",
+                  "JsonLdProps"
                 ]
               }
             ]

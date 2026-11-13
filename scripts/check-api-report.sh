@@ -16,7 +16,7 @@ write=0
 
 fail=0
 
-# pkg|types-entry|report file  (quality has a second export path)
+# pkg|types-entry|report file  (quality, ui, and seo have extra export paths)
 entries=(
   "ai|dist/index.d.ts|zedkit-ai.api.md"
   "brand|dist/index.d.ts|zedkit-brand.api.md"
@@ -32,6 +32,7 @@ entries=(
   "quality|src/index.d.mts|zedkit-quality.api.md"
   "quality|src/eslint.d.mts|zedkit-quality-eslint.api.md"
   "seo|dist/index.d.ts|zedkit-seo.api.md"
+  "seo|dist/react.d.ts|zedkit-seo-react.api.md"
   "server|dist/index.d.ts|zedkit-server.api.md"
   "storage|dist/index.d.ts|zedkit-storage.api.md"
   "ui|dist/index.d.ts|zedkit-ui.api.md"

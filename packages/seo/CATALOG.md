@@ -62,12 +62,12 @@ return new Response(xml, { headers: { "Content-Type": "application/xml" } });
 
 ## Emit typed JSON-LD structured data
 
-- Import: `@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`; `@zedtech/zedkit-seo/react` — `JsonLd`
+- Import: `@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`; `@zedtech/zedkit-seo/react` — `JsonLd`, `JsonLdProps`
 - Wraps: `schema-dts`
 - Status: stable
 - Short name: JSON-LD
 - Audience: Developers who want rich results without hand-writing schema.org JSON.
-- Purpose: Typed builders for Organization, WebPage, Breadcrumb, Article and SoftwareSourceCode JSON-LD, plus a React JsonLd script tag.
+- Purpose: Typed JSON-LD builders for Organization, WebPage, Breadcrumb, Article and SoftwareSourceCode, plus a React JsonLd script tag.
 - When to use: On pages eligible for rich results (articles, org pages, breadcrumbs).
 - When not to use: For data with no matching schema.org type — skip structured data instead of forcing it.
 - See also: `Build localized page metadata`

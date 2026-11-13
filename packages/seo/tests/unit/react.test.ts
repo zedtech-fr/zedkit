@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildWebPageJsonLd } from "#index.js";
-import { JsonLd } from "#react.js";
+import { JsonLd, type JsonLdProps } from "#react.js";
 
 function scriptFrom(data: object) {
   const element = JsonLd({ data });
@@ -34,12 +34,15 @@ describe("JsonLd", () => {
     expect(scriptFrom(data).html).toBe('{"z":{"city":"Kyōto 東京"},"a":[true,null]}');
   });
 
-  it("does not extra-escape a string that contains </script>", () => {
-    expect(scriptFrom({ html: "</script>" }).html).toBe('{"html":"</script>"}');
+  it("escapes < so a </script> string cannot break out of the tag", () => {
+    const html = String(scriptFrom({ html: "</script>" }).html);
+    expect(html).toBe('{"html":"\\u003c/script>"}');
+    expect(html.includes("</script>")).toBe(false);
+    expect(JSON.parse(html)).toEqual({ html: "</script>" });
   });
 
   it("accepts a FAQPage-shaped plain object", () => {
-    const data = {
+    const data: JsonLdProps["data"] = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       mainEntity: [],
