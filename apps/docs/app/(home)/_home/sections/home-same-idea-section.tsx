@@ -1,5 +1,5 @@
 import { Badge, Card, Heading, Section, Stack, Text, cn } from "@zedtech/zedkit-ui";
-import { HomeLink } from "@/ui/home/home-link";
+import { HomeLink } from "./home-link";
 import {
   HOME_CARD_GRID_REVEAL_PROPS,
   HOME_MARKETING_ROOT_PROPS,

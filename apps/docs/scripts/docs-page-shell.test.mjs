@@ -106,7 +106,7 @@ test("home pins mockup section rhythm on #home-page tokens", () => {
     typography,
     /@media \(max-width:\s*390px\)[\s\S]{0,400}#home-page \[data-slot="section"\] h2\[data-slot="heading"\] \+ \[data-slot="text"\][\s\S]{0,200}font-size:\s*var\(--zk-home-band-sub-size\)/,
   );
-  const closing = read("ui/home/home-closing-section.tsx");
+  const closing = read("app/(home)/_home/sections/home-closing-section.tsx");
   assert.match(closing, /spacing="lg"/);
   const lead = read("ui/home/home-hero-lead.tsx");
   assert.match(lead, /gap="list"/);
