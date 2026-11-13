@@ -18,10 +18,7 @@ Use this template for writing the PR body:
 
 ## Evidence
 
-Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Link the visual-verify run record (`evidence/<branch>/manifest.json`) and linked/contact-sheet PNGs. Links, not inlined binaries.
-
-- **Before:** ![short alt of the previous UI](<PNG or run-record link>)
-  **After:** ![short alt of the changed UI](<PNG or run-record link>)
+Follow ### Evidence (omit when that section says to).
 
 ## Merge Danger
 
@@ -159,7 +156,14 @@ You may use one of these, you may use several, it is unlikely you will use all o
 
 ### Evidence
 
-Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Link the visual-verify run record (`evidence/<branch>/manifest.json`) and linked/contact-sheet PNGs. Links, not inlined binaries. Give alt text on embedded Before/After PNGs. Docs (`.mdx` / `.html` / `.md`) and canvas/WebGL `.ts` are not this trigger.
+Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Non-test: not under `tests/` or `__tests__/`, not `*.test.*` / `*.spec.*` / `*.stories.*`. Docs (`.mdx` / `.html` / `.md`), canvas/WebGL `.ts`, `*.scss`, and `*.vue` are not this trigger.
+
+Paste the visual-verify stdout table into the PR (skill `visual-verify`). Attach contact-sheet PNGs with a GitHub upload (or the host's equivalent) so reviewers can open them. The local run record (`evidence/<branch>/manifest.json`) is gitignored and is not itself the review surface. Links, not inlined binaries (no PNG bytes, no data URIs). Markdown `![alt](attached-url)` is a link the host may render.
+
+- **Before:** ![short alt of the previous UI](<attached PNG URL>)
+  **After:** ![short alt of the changed UI](<attached PNG URL>)
+
+Give alt text on embedded Before/After PNGs and on any embedded contact sheet.
 
 ### Merge Danger
 
