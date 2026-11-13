@@ -100,7 +100,7 @@ function NonModalDrawerContent({
         className={cn(
           surfaceVariants({ variant: "solid", elevation: 3, radius: "none", padding: "none" }),
           drawerPanelClassName(size, className),
-          "outline-none",
+          "outline-none focus-visible:focus-ring",
         )}
         onPointerDown={(event) => {
           onPointerDown?.(event);

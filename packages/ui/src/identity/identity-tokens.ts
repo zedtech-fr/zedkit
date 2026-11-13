@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { fieldBorderFor } from "./identity-contrast.js";
 import { applyCustomIdentityCss } from "./identity-custom-sheet.js";
 import { IDENTITY_STORAGE_KEY } from "./identity-data.js";
 
@@ -298,7 +299,7 @@ function colourCssVars(pair: ColourPair): Record<string, string> {
     "--secondary-foreground": pair.foreground,
     "--muted": pair.background,
     "--muted-foreground": pair.mutedForeground,
-    "--input": pair.border,
+    "--input": fieldBorderFor(pair.border, pair.background),
     "--ring": pair.accent,
     "--sidebar": pair.background,
     "--sidebar-foreground": pair.foreground,

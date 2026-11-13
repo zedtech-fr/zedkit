@@ -67,7 +67,7 @@ export const identityEditorCopy = {
     spacing: "Spacing",
     contrast: "Color checker",
     contrastHint:
-      "Text needs 4.5:1 on its background. Accents (focus rings) need 3:1. Hairline separators do not. Fix moves only that color to the nearest passing shade.",
+      "Text needs 4.5:1 on its background. Accents (focus rings) need 3:1. Decorative separators are not a fail. Fix moves only that color to the nearest passing shade.",
     contrastOk: "Every checked color pair passes.",
     contrastNeedFix: (n: number) =>
       n === 1 ? "One color pair needs a fix." : `${n} color pairs need a fix.`,
@@ -133,7 +133,7 @@ export const identityEditorCopy = {
     noChanges: "No token changes.",
     diffRow: (path: string, from: string, to: string) => `${path}: ${from} → ${to}`,
     contrastPassed:
-      "Contrast check passed (body, primary, and muted text 4.5:1; accent 3:1).",
+      "Contrast check passed (text, primary text, and muted text 4.5:1; accent 3:1).",
     apply: "Apply",
     discard: "Discard",
     intro: "Describe a look, then Suggest. Review the list before Apply.",

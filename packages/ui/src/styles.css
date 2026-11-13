@@ -1309,9 +1309,11 @@ section[data-gallery-section].border-b:last-child {
 }
 
 /*
- * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
- * vanishes on dark and tinted identities. Draw it from the kit tokens
- * so it reads on every surface. The 44px hit area is vaul's own.
+ * Drawer handles: Vaul paints a light-grey 5×32px bar at 70% opacity that
+ * vanishes on dark and tinted identities. Draw modal (Vaul) and non-modal
+ * kit handles from the kit tokens so they read on every surface.
+ * `touch-action: none` applies to both, so the browser does not steal the
+ * drag for scroll. Modal 44px hit area is Vaul's; non-modal adds `hit-target`.
  * The whole vaul block below stays deliberately unlayered: vaul injects
  * unlayered styles, and layered CSS would lose to them.
  */

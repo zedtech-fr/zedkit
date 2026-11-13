@@ -1,4 +1,5 @@
 import * as React from "react";
+import { tryCatch } from "@zedtech/zedkit-core";
 
 import { isMotionReduced } from "../motion/motion-preference.js";
 import type { DrawerDirection } from "./drawer-non-modal-context.js";
@@ -15,9 +16,15 @@ type SheetEdge = Extract<DrawerDirection, "bottom" | "top">;
 /** Fraction of the panel height a body swipe must cover before the sheet closes. */
 const NON_MODAL_DISMISS_DRAG_FRACTION = 0.2;
 
-/** Interactive hosts that must keep pointerup/click. `a` is required: capturing the panel retargets the click and the link never activates. */
+/** Handle close needs a drag toward the edge; a tap is a no-op. */
+const HANDLE_CLOSE_SLOP_PX = 8;
+
+/** Capture only after the pointer has moved, so clicks and text selection keep working. */
+const POINTER_CAPTURE_SLOP_PX = 8;
+
+/** Interactive hosts that must keep pointerup/click. Capture on the panel retargets the click. */
 const IGNORE_DISMISS_SELECTOR =
-  "a, input, textarea, select, button, [role='slider'], [contenteditable]:not([contenteditable='false'])";
+  "a, input, textarea, select, button, option, summary, label, [role='slider'], [role='option'], [role='menuitem'], [role='listbox'], [role='tab'], [role='button'], [role='link'], [contenteditable]:not([contenteditable='false'])";
 
 type DismissKind = "handle" | "body";
 
@@ -45,6 +52,20 @@ function shouldIgnoreBodyTarget(target: EventTarget | null, panel: HTMLElement):
   if (target.closest("[data-slot='drawer-handle']")) return true;
   if (target.closest(IGNORE_DISMISS_SELECTOR)) return true;
   return hasScrolledAncestor(target, panel);
+}
+
+function shouldClose(kind: DismissKind, delta: number, threshold: number): boolean {
+  if (kind === "handle") return delta >= HANDLE_CLOSE_SLOP_PX;
+  return delta >= threshold;
+}
+
+function hasTextSelection(): boolean {
+  const selection = document.getSelection();
+  return Boolean(selection && !selection.isCollapsed && selection.toString());
+}
+
+function capturePointer(host: HTMLElement, pointerId: number): void {
+  tryCatch(() => host.setPointerCapture(pointerId));
 }
 
 function startNonModalDrawerDismiss({
@@ -76,11 +97,12 @@ function startNonModalDrawerDismiss({
   const threshold = Math.max(panel.getBoundingClientRect().height, 1) * NON_MODAL_DISMISS_DRAG_FRACTION;
   const pointerId = event.pointerId;
   const reduceMotion = isMotionReduced();
-
-  event.currentTarget.setPointerCapture?.(pointerId);
+  const host = event.currentTarget;
+  const priorTransform = panel.style.transform;
+  let captured = false;
 
   const clearTransform = () => {
-    panel.style.transform = "";
+    panel.style.transform = priorTransform;
   };
 
   const onMove = (moveEvent: PointerEvent) => {
@@ -90,6 +112,10 @@ function startNonModalDrawerDismiss({
       return;
     }
     const delta = dismissDelta(direction, startY, moveEvent.clientY);
+    if (!captured && Math.abs(delta) >= POINTER_CAPTURE_SLOP_PX) {
+      captured = true;
+      capturePointer(host, pointerId);
+    }
     if (!reduceMotion) panel.style.transform = translateFor(direction, delta);
   };
 
@@ -100,8 +126,9 @@ function startNonModalDrawerDismiss({
     window.removeEventListener("pointercancel", onCancel);
     if (panel.isConnected) clearTransform();
     if (cancelled) return;
+    if (kind === "body" && hasTextSelection()) return;
     const delta = dismissDelta(direction, startY, endEvent.clientY);
-    if (kind === "handle" || delta >= threshold) onOpenChange(false);
+    if (shouldClose(kind, delta, threshold)) onOpenChange(false);
   };
 
   const onUp = (endEvent: PointerEvent) => finish(endEvent, false);
@@ -127,12 +154,27 @@ function useNonModalDrawerEscape({ open, dismissible, onOpenChange }: NonModalDr
 
 function useNonModalDrawerFocusRestore({ open, triggerRef }: NonModalDrawerFocusProps): void {
   const wasOpen = React.useRef(open);
+  const focusWasInside = React.useRef(false);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const active = document.activeElement;
+      focusWasInside.current = active instanceof Element && active.closest("[data-slot='drawer-content']") !== null;
+    };
+    update();
+    document.addEventListener("focusin", update);
+    return () => document.removeEventListener("focusin", update);
+  }, [open]);
+
   React.useEffect(() => {
     if (open) {
       wasOpen.current = true;
       return;
     }
     if (!wasOpen.current) return;
+    wasOpen.current = false;
+    if (!focusWasInside.current) return;
     const trigger = triggerRef.current;
     if (trigger && document.contains(trigger)) {
       trigger.focus({ preventScroll: true });

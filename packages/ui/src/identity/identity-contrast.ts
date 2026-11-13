@@ -86,8 +86,17 @@ function pairWarnings(scheme: "light" | "dark", pair: IdentityTokens["light"]): 
     warningFor(scheme, "mutedForeground", pair.mutedForeground, pair.background, AA_BODY),
     warningFor(scheme, "accent", pair.accent, pair.background, AA_UI),
     // --border is a decorative separator; WCAG 1.4.11 does not require 3:1.
-    // shortcut: compact tokens alias --input to border; field-border 3:1 stays on identity CSS sheets until Classic can edit them apart
+    // Compact export splits --input and nudges it to 3:1 in colourCssVars.
   ];
+}
+
+/** Resting field border: keep 3:1 against the surface, even when `--border` is a hairline. */
+function fieldBorderFor(border: string, background: string): string {
+  const value = parseHsl(border);
+  const bg = parseHsl(background);
+  if (!value || !bg) return border;
+  if (contrastRatio(value, bg) >= AA_UI) return border;
+  return nudgeForeground(value, bg, AA_UI);
 }
 
 function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[] {
@@ -172,6 +181,7 @@ function identityContrastTokenLabel(token: IdentityContrastWarning["token"]): st
 }
 
 export {
+  fieldBorderFor,
   identityContrastTokenLabel,
   identityContrastWarnings,
   keepIdentityDarkKeys,

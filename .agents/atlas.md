@@ -82,7 +82,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Compact duration formatter | `.agents/atlas/ui-primitives.md` | Public two-unit `6m 17s`; not `Intl.DurationFormat`. | `format-duration.test.ts` | 2026-11-12 |
 | SSE frame parser | `.agents/atlas/ui-primitives.md` | Blank line is two WHATWG endings; CRLF tried first. | `consumeSseStream` | 2026-11-11 |
 | AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-10 |
-| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Body ignore list must include `a`; reuse `isMotionReduced`; handle uses `hit-target`. | `drawer.test.tsx` | 2026-11-13 |
+| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Handle needs 8px slop (tap is a no-op); defer capture; ignore `a`/`option`/`menuitem`; `afterEach` not `try/finally`. | `drawer.test.tsx` | 2026-11-13 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. | `agent-console.test.tsx` | 2026-11-12 |
