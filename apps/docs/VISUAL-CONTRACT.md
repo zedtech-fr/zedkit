@@ -79,7 +79,7 @@ Only to explain a change or keep context (overlay in/out, panel following focus,
 
 The home page has one scene that is allowed to do more, because it is the first impression and each motion shows the kit working:
 
-- **Hero illustration** (`app/home-hero.css`): the glass illustration enters on load, then Plan / Build / Check / Fix / Done step opacities loop on the card (Pause freezes them). Entrances are finite (320-640ms, `backwards` fill, nothing left applied); loops stay on the illustration steps and one decorative blob on the purple stage, never on the page fill. Reduced motion shows the paused illustration, no Pause control.
+- **Hero illustration** (`app/(home)/_home/home.css`): the glass illustration enters on load, then Plan / Build / Check / Fix / Done step opacities loop on the card (Pause freezes them). Entrances are finite (320-640ms, `backwards` fill, nothing left applied); loops stay on the illustration steps and one decorative blob on the purple stage, never on the page fill. Reduced motion shows the paused illustration, no Pause control.
 
 It obeys reduced motion completely (no animation, paused illustration, final numbers), never takes over scrolling, and never put a running transform, filter or mask on anything that holds a toast, a dialog or a portaled menu (see the traps).
 
@@ -130,6 +130,7 @@ These broke real previews. Check them before changing home, chrome, specimens or
 - **Inverted home bands pin ghost fills.** A dark band that only sets `--foreground` / `--muted-foreground` leaves light-mode `--muted` / `--secondary` in place; ghost hover is then ~1.6:1. Pin `--muted`, `--secondary`, and `--secondary-foreground` with the fill (`#paste` uses `--zk-site-action-hover`). A focusable control on that band also needs `--ring` pinned to the inverted foreground: Glass `--ring` is `--primary`, so the outline disappears on a `--primary` fill (`#manifesto`).
 - **Light shell surfaces keep light ink in dark.** `--zk-site-band` / `--zk-site-page` are the documented light chrome colours (foundations swatches). Text on that band must pin the light `--foreground` / `--muted-foreground`; identity dark foreground is pale on `#FAFAFA`. Do not dark-pair those tokens or the hex labels lie.
 - **Docs grid without a sidebar.** `#nd-docs-layout` still sets `--fd-sidebar-col: 16.75rem` when `#nd-sidebar` is unmounted. Restack with `:not(:has(#nd-sidebar))` or `overflow-x-clip` hides the header at 809.
+- **Public issues list.** `/issues` rows are native `<details>` (same pattern as Faq / SidebarNavGroup). Do not add a kit Accordion. The summary has no nested links; steps and the hosted-console href live in the panel. Keep accordions closed by default.
 
 ## Verifying the render
 

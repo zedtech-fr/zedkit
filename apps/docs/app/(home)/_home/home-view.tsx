@@ -1,5 +1,5 @@
-import { HomeHero } from "@/ui/home/home-hero";
-import { HOME_MARKETING_ROOT_PROPS } from "@/ui/home/home-rhythm";
+import { HomeHero } from "./home-hero";
+import { HOME_MARKETING_ROOT_PROPS } from "./home-rhythm";
 import { HomeBelowHero } from "./home-below-hero";
 
 export function HomeView({

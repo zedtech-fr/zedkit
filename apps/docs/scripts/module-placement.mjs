@@ -6,9 +6,7 @@ export const SHARED_OWNER = "docs";
 
 // Directory globs absorb new dead/single-owner files. Do not add under them.
 // Drop a glob from this list when that lot moves. File paths are exact.
-export const REQUIRED_GLOBS = [
-  "ui/home/**",
-];
+export const REQUIRED_GLOBS = [];
 
 // No remaining required cross-feature edges. prose/guides → features/docs and
 // mdx-components.tsx → features/docs are allowed (docs-domain UI); other

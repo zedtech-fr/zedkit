@@ -3,7 +3,9 @@ zedkit-ai <command>
   setup [dir] [--provider ...] [--preset starter|setup|core|full] [--kit <dir>] [--dry-run] [--allow-fast]
       One-shot onboarding: preset setup by default (override with --preset);
       same as init --adopt (keeps your existing agent files on collision).
-      Then run /zedkit-ai (or the setup-ai skill) in your agent.
+      Then run /zedkit-ai (or the setup-ai skill) in your agent. On Muse,
+      paste "zedkit-ai: set up this repo from what it contains". Muse does
+      not scan .agents/commands; invoke the zedkit-ai skill by name.
       --kit is a local kit directory (omit = bundled kit). Pass it again on
       later sync and validate; it is not remembered.
   init [dir] [--preset starter|setup|core|full] [--provider ...] [--kit <dir>] [--adopt] [--dry-run] [--allow-fast]

@@ -38,6 +38,10 @@ const FIXTURES: Array<{ request: string; expected: string[] }> = [
     expected: ["setup-ai"],
   },
   {
+    request: "zedkit-ai: set up this repo from what it contains",
+    expected: ["setup-ai"],
+  },
+  {
     request: "we are unsure of the facts; audit this topic first",
     expected: ["to-audit"],
   },
@@ -199,8 +203,8 @@ describe("zedkit-ai entry skill", () => {
     expect(text.split("\n").length).toBeLessThanOrEqual(90);
   });
 
-  it("routes at least 27 of 30 labelled requests, covering every inventoried command", () => {
-    expect(FIXTURES).toHaveLength(30);
+  it("routes at least 27 of 31 labelled requests, covering every inventoried command", () => {
+    expect(FIXTURES).toHaveLength(31);
     const routes = parseRoutes(routesText());
     const hits = FIXTURES.filter((fixture) =>
       fixture.expected.includes(classify(fixture.request, routes)),

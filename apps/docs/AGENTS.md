@@ -43,20 +43,19 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
   `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`, identity-looks
-  widgets, `sections/` for the seven `home-*-section.tsx` files and
-  `home-link.tsx`, `i18n/` for band copy catalogs including identity looks).
-  Remaining home files (hero, leftover hero i18n, rhythm, copy-command)
-  still live under `ui/home/**` until those move lots.
+  widgets, hero, rhythm, copy-command field, page CSS `home.css` imported by
+  `page.tsx`, `sections/` for the seven `home-*-section.tsx` files and
+  `home-link.tsx`, `i18n/` for band and leftover hero copy catalogs).
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list, docs, identity). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
-  is dissolving; do not add a fifth home there. Directory globs in
-  `REQUIRED_GLOBS` (`ui/home/**`) silently absorb new files; do not add under
-  them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order: move
-  the files, regen, drop the glob, regen again.
+  is dissolving; do not add a fifth home there. `REQUIRED_GLOBS` is empty
+  after the home lot. Directory globs silently absorb new files; do not add
+  under them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order:
+  move the files, regen, drop the glob, regen again.
 - Pure helpers used by two or more domains (and `.mjs` shared with
   `scripts/generate.mjs`): `lib/`.
 - Domain-free code: a zedkit package (check zedkit first).
@@ -152,8 +151,8 @@ reject dead `/r/<name>.json` links.
   clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
   ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
   Home smoke exact-text must quote a string from
-  `app/(home)/_home/i18n/*-copy.ts`, leftover `ui/home/i18n/*-copy.ts`,
-  or `ui/i18n/site-chrome-copy.ts`; do not invent a sentence in the spec.
+  `app/(home)/_home/i18n/*-copy.ts` or `ui/i18n/site-chrome-copy.ts`; do not
+  invent a sentence in the spec.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set
   `DOCS_E2E_BASE_URL` to the port `serve` actually bound:

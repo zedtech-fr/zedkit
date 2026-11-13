@@ -14,6 +14,7 @@ const identityDir = join(root, "packages/ui/src/identities");
 const stylesPath = join(root, "packages/ui/src/styles.css");
 const identitiesCssPath = join(root, "packages/ui/src/identities.css");
 const shellPath = join(app, "app/docs-shell-tokens.css");
+const homeCssPath = join(app, "app/(home)/_home/home.css");
 
 function read(path) {
   return readFileSync(path, "utf8");
@@ -83,6 +84,7 @@ function identityPalette(id, mode) {
     const body = stylesThemeBody(mode);
     return {
       background: parseTriplet(tokenValue(body, "background", `mist ${mode} styles.css`)),
+      foreground: parseTriplet(tokenValue(body, "foreground", `mist ${mode} styles.css`)),
       mutedForeground: parseTriplet(tokenValue(body, "muted-foreground", `mist ${mode} styles.css`)),
       primaryForeground: parseTriplet(tokenValue(body, "primary-foreground", `mist ${mode} styles.css`)),
     };
@@ -103,6 +105,7 @@ function identityPalette(id, mode) {
   if (!body) throw new Error(`missing ${label} palette`);
   return {
     background: parseTriplet(tokenValue(body, "background", label)),
+    foreground: parseTriplet(tokenValue(body, "foreground", label)),
     mutedForeground: parseTriplet(tokenValue(body, "muted-foreground", label)),
     primaryForeground: parseTriplet(tokenValue(body, "primary-foreground", label)),
   };
@@ -133,6 +136,7 @@ function loadShell() {
     band: parseTriplet(lookup["zk-site-action"]),
     fill: parseTriplet(lookup["zk-site-action-foreground"]),
     lightPageBackground: parseTriplet(tokenValue(lightPage, "background", "light page")),
+    lightPageForeground: parseTriplet(tokenValue(lightPage, "foreground", "light page foreground")),
     lightMutedForeground: parseTriplet(tokenValue(lightPage, "muted-foreground", "light muted-foreground")),
     pasteForeground: resolveTriplet(tokenValue(paste, "foreground", "#paste foreground"), lookup, "#paste"),
     pasteBackground: resolveTriplet(tokenValue(paste, "background", "#paste background"), lookup, "#paste"),
@@ -233,4 +237,23 @@ test("html mist caption reads stock styles.css, not the scoped-mist reset", () =
   );
   const scopedSubtle = parseTriplet(tokenValue(scoped, "zk-subtle-foreground", "scoped mist subtle"));
   assert.notDeepEqual(mistLight.mutedForeground, scopedSubtle);
+});
+
+test("look tabs selected chip keeps 4.5:1 inverted ink on fill", () => {
+  const shell = loadShell();
+  assert.doesNotMatch(shell.css, /#home-page \[data-slot="tabs-trigger"\]\[data-state="active"\]/);
+  const rule = ruleBody(
+    read(homeCssPath),
+    /^#home-page \[data-look-tab\]\[data-state="active"\]$/,
+    "look tab selected",
+  );
+  assert.match(rule.replace(/\s+/g, " "), /background-color:\s*hsl\(var\(--foreground\)\)/);
+  assert.match(rule.replace(/\s+/g, " "), /color:\s*hsl\(var\(--background\)\)/);
+  const lightRatio = contrast(shell.lightPageBackground, shell.lightPageForeground);
+  assert.ok(lightRatio >= AA, `light shell look tab ${lightRatio.toFixed(2)}`);
+  for (const id of IDENTITIES) {
+    const palette = identityPalette(id, "dark");
+    const ratio = contrast(palette.background, palette.foreground);
+    assert.ok(ratio >= AA, `${id} dark look tab ${ratio.toFixed(2)}`);
+  }
 });

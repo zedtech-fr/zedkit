@@ -17,7 +17,6 @@ import "./code-syntax.css";
 import "./docs-typography.css";
 import "./docs-shell-tokens.css";
 import "./docs-signature.css";
-import "./home-hero.css";
 import "./tide-fit.css";
 import "./docs-tables.css";
 import "./code-scroll.css";

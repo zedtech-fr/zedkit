@@ -1,12 +1,12 @@
 import { Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
 import { MAP_AI_UI_SETUP_MINI_PROMPT } from "@/lib/ai-setup-onboarding.generated";
-import { HomeCopyCommandField } from "@/ui/home/home-copy-command-field";
+import { HomeCopyCommandField } from "../home-copy-command-field";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
   HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
-} from "@/ui/home/home-rhythm";
+} from "../home-rhythm";
 import { homeClosingCopy } from "../i18n/home-closing-copy";
 
 /**
