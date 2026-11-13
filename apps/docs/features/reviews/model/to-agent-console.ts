@@ -7,6 +7,11 @@ import type {
   PublicLiveRun,
 } from "../ports/review-port";
 
+export function isLiveRunActive(status: string): boolean {
+  const normalized = status.trim().toLowerCase();
+  return normalized === "running" || normalized === "starting";
+}
+
 type FindingDisposition = "kept" | "downgraded" | "dismissed";
 
 type MappedFinding = {
@@ -187,7 +192,7 @@ function mapItem(item: LiveItemDetail): MappedItem {
     lastActivityAt: item.last_activity_ms ?? null,
     tokensIn: item.tokens_in,
     tokensOut: item.tokens_out,
-    running: status === "running" || status === "starting",
+    running: isLiveRunActive(status),
     entries: item.entries.flatMap((entry, index) => {
       const mapped = mapEntry(entry, item.id, index);
       return mapped === null ? [] : [mapped];

@@ -2672,7 +2672,7 @@ test("toAgentConsole marks running items from live status and ignores live_url a
       decision: { ...liveSample().decision, review_url: null },
       items: [
         liveItem({ status: "starting" }),
-        liveItem({ id: "lens-1", status: "running" }),
+        liveItem({ id: "lens-1", status: "Running" }),
         liveItem({ id: "done-1", status: "done" }),
       ],
     }),

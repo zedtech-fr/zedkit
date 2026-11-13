@@ -468,6 +468,8 @@ test("live console UI uses kit states and does not duplicate AgentConsole", () =
   assert.match(view, /liveConsoleCopy\.unauthorized/);
   assert.match(view, /parseLiveConsoleLocation\(/);
   assert.match(view, /window\.location\.search/);
+  assert.match(view, /addEventListener\("popstate"/);
+  assert.match(view, /addEventListener\("hashchange"/);
   assert.match(view, /live\.status\.kind === "invalid"/);
   assert.match(view, /liveConsoleCopy\.error/);
   assert.match(states, /liveConsoleCopy\.retry/);

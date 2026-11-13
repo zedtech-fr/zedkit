@@ -52,18 +52,26 @@ function useConsoleItemId(runId: string, itemIdProp?: string | null) {
   const [itemId, setItemId] = useState<string | null>(itemIdProp ?? null);
   const [locationReady, setLocationReady] = useState(itemIdProp !== undefined);
   useEffect(() => {
-    if (itemIdProp !== undefined) {
-      setItemId(itemIdProp);
+    const fromProp = itemIdProp !== undefined;
+    const read = () => {
+      if (fromProp) {
+        setItemId(itemIdProp);
+        setLocationReady(true);
+        return;
+      }
+      setItemId(
+        parseLiveConsoleLocation(window.location.search, window.location.hash, runId).itemId,
+      );
       setLocationReady(true);
-      return;
-    }
-    const location = parseLiveConsoleLocation(
-      window.location.search,
-      window.location.hash,
-      runId,
-    );
-    setItemId(location.itemId);
-    setLocationReady(true);
+    };
+    read();
+    if (fromProp) return;
+    window.addEventListener("popstate", read);
+    window.addEventListener("hashchange", read);
+    return () => {
+      window.removeEventListener("popstate", read);
+      window.removeEventListener("hashchange", read);
+    };
   }, [itemIdProp, runId]);
   return { itemId, setItemId, locationReady };
 }

@@ -1,6 +1,8 @@
 import type { LiveRunApiResult } from "../ports/live-run-port.ts";
 import type { PublicLiveRun } from "../ports/review-port.ts";
-import { toAgentConsole, type MappedAgentConsole } from "./to-agent-console.ts";
+import { isLiveRunActive, toAgentConsole, type MappedAgentConsole } from "./to-agent-console.ts";
+
+export { isLiveRunActive };
 
 export const LIVE_RUN_POLL_MS = 2_000;
 export const LIVE_RUN_HIDDEN_POLL_MS = 6_000;
@@ -15,11 +17,6 @@ export type LiveConsoleStatus =
 
 export function liveRunPollIntervalMs(hidden: boolean): number {
   return hidden ? LIVE_RUN_HIDDEN_POLL_MS : LIVE_RUN_POLL_MS;
-}
-
-export function isLiveRunActive(status: string): boolean {
-  const normalized = status.trim().toLowerCase();
-  return normalized === "running" || normalized === "starting";
 }
 
 export function isUnchangedLiveRunResult(_previous: LiveRunApiResult, next: LiveRunApiResult): boolean {
