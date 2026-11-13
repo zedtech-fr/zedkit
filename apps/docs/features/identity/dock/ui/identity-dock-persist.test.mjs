@@ -3,7 +3,11 @@ import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import {
+import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
+
+registerDocsAlias(import.meta.url);
+
+const {
   clearIdentityDockPersist,
   encodeIdentityDockPersist,
   IDENTITY_DOCK_MAX_BYTES,
@@ -11,8 +15,8 @@ import {
   IDENTITY_DOCK_STORAGE_KEY,
   readIdentityDockPersist,
   trimSessionForPersist,
-} from "./identity-dock-persist.ts";
-import { initialSession } from "./identity-creator-session.ts";
+} = await import("./identity-dock-persist.ts");
+const { initialSession } = await import("@/features/identity/ui/identity-creator-session.ts");
 
 test("trimSessionForPersist keeps the last 20 thread turns and clears pending", () => {
   const thread = Array.from({ length: 25 }, (_, i) => ({ role: "user", text: `turn-${i}` }));

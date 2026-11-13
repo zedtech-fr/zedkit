@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import { identityContrastWarnings, Stack, Tabs, TabsList, TabsTrigger, type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { IdentityDockActionBar } from "@/features/identity/ui/identity-dock-action-bar";
-import { IdentityDockCustomize } from "@/features/identity/ui/identity-dock-customize";
-import { IdentityDockPanelToolbar } from "@/features/identity/ui/identity-dock-panel-toolbar";
-import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
+import { IdentityDockActionBar } from "@/features/identity/dock/ui/identity-dock-action-bar";
+import { IdentityDockCustomize } from "@/features/identity/dock/ui/identity-dock-customize";
+import { IdentityDockPanelToolbar } from "@/features/identity/dock/ui/identity-dock-panel-toolbar";
+import { identityDockCopy } from "@/features/identity/dock/i18n/identity-dock-copy";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { docsSiteDefaultTokens } from "./docs-site-default-tokens";
-import { applyDocsSiteLook, resetDocsSiteLook } from "./docs-site-look";
-import { dispatchIdentityEditorDraftApply } from "./identity-editor-draft-apply";
-import { patchTokens } from "./identity-editor-patch";
+import { docsSiteDefaultTokens } from "@/features/identity/ui/docs-site-default-tokens";
+import { applyDocsSiteLook, resetDocsSiteLook } from "@/features/identity/ui/docs-site-look";
+import { dispatchIdentityEditorDraftApply } from "@/features/identity/ui/identity-editor-draft-apply";
+import { patchTokens } from "@/features/identity/ui/identity-editor-patch";
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 
