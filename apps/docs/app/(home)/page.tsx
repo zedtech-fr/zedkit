@@ -3,8 +3,8 @@ import {
   buildSoftwareSourceCodeJsonLd,
   buildWebPageJsonLd,
 } from "@zedtech/zedkit-seo";
+import { JsonLd } from "@zedtech/zedkit-seo/react";
 
-import { JsonLd } from "@/components/json-ld";
 import { uiGalleryStats } from "@/content/gallery";
 import { PUBLIC_SITE_URL, homePage, pageUrl } from "@/lib/site";
 import "./_home/home.css";

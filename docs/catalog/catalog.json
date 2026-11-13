@@ -1988,6 +1988,7 @@
         "llms-txt",
         "slug",
         "nextjs",
+        "react",
         "typescript"
       ],
       "audience": "Developers who want correct SEO primitives without becoming SEO experts.",
@@ -2102,20 +2103,20 @@
         },
         {
           "need": "Emit typed JSON-LD structured data",
-          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`",
+          "import": "`@zedtech/zedkit-seo` — `buildOrganizationJsonLd`, `buildWebPageJsonLd`, `buildBreadcrumbJsonLd`, `buildArticleJsonLd`, `buildSoftwareSourceCodeJsonLd`, `OrganizationJsonLdOptions`, `WebPageJsonLdOptions`, `BreadcrumbItem`, `ArticleJsonLdOptions`, `SoftwareSourceCodeJsonLdOptions`; `@zedtech/zedkit-seo/react` — `JsonLd`, `JsonLdProps`",
           "wraps": "`schema-dts`",
           "status": "stable",
           "shortName": "JSON-LD",
           "audience": "Developers who want rich results without hand-writing schema.org JSON.",
-          "purpose": "Typed builders for Organization, WebPage, Breadcrumb and Article JSON-LD.",
+          "purpose": "Typed JSON-LD builders for Organization, WebPage, Breadcrumb, Article and SoftwareSourceCode, plus a React JsonLd script tag.",
           "whenToUse": "On pages eligible for rich results (articles, org pages, breadcrumbs).",
           "whenNotToUse": "For data with no matching schema.org type — skip structured data instead of forcing it.",
           "derivedFrom": null,
-          "example": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>",
+          "example": "import { buildArticleJsonLd } from \"@zedtech/zedkit-seo\";\nimport { JsonLd } from \"@zedtech/zedkit-seo/react\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<JsonLd data={jsonLd} />",
           "examples": [
             {
               "title": "Simple",
-              "code": "import { buildArticleJsonLd, buildBreadcrumbJsonLd } from \"@zedtech/zedkit-seo\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<script type=\"application/ld+json\">{JSON.stringify(jsonLd)}</script>"
+              "code": "import { buildArticleJsonLd } from \"@zedtech/zedkit-seo\";\nimport { JsonLd } from \"@zedtech/zedkit-seo/react\";\nconst jsonLd = buildArticleJsonLd({ title, description, url, datePublished });\n<JsonLd data={jsonLd} />"
             }
           ],
           "adoption": {
@@ -2134,6 +2135,13 @@
                   "BreadcrumbItem",
                   "ArticleJsonLdOptions",
                   "SoftwareSourceCodeJsonLdOptions"
+                ]
+              },
+              {
+                "from": "@zedtech/zedkit-seo/react",
+                "exports": [
+                  "JsonLd",
+                  "JsonLdProps"
                 ]
               }
             ]

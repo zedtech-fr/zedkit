@@ -75,3 +75,8 @@
   border-right: 1px solid hsl(var(--border));
   border-bottom: 1px solid hsl(var(--border));
 }
+
+/* Two-letter titles (`cn`) are ~19px wide as a flex item. Floor is the 24px evidence hit target. */
+[data-catalog-shell] [data-catalog-title] {
+  min-width: 24px;
+}
