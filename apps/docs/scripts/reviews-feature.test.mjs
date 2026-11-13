@@ -2164,6 +2164,7 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
   assert.match(run, /copy\.run\.openLive/);
   assert.match(run, /copy\.run\.noLive/);
   assert.match(run, /target="_blank"/);
+  assert.match(run, /rel="noreferrer"/);
   assert.doesNotMatch(run, /ReviewConsole/);
   assert.doesNotMatch(run, /AgentConsole/);
   assert.doesNotMatch(run, /reviewMainFlow/);
@@ -2172,6 +2173,35 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
   assert.doesNotMatch(layout, /SiteLayout/);
   assert.match(layout, /<main id="main-content"/);
   assert.match(siteLayout, /SiteLayout/);
+});
+
+test("index-only and unlinked run summaries sit on a calm surface with a site action", () => {
+  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
+  const runBodyStart = run.indexOf("function RunBody");
+  const reviewRunStart = run.indexOf("export function ReviewRunView");
+  const unlinkedStart = run.indexOf("export function UnlinkedRunView");
+  assert.notEqual(runBodyStart, -1);
+  assert.notEqual(reviewRunStart, -1);
+  assert.notEqual(unlinkedStart, -1);
+  const runBody = run.slice(runBodyStart, reviewRunStart);
+  assert.match(runBody, /<Surface[\s\S]*elevation=\{0\}[\s\S]*radius="xl"[\s\S]*bg-background/);
+  assert.match(runBody, /data-site-action=""/);
+  assert.match(runBody, /min-h-target/);
+  assert.match(runBody, /copy\.run\.openLive/);
+  assert.match(runBody, /copy\.run\.noLive/);
+  assert.match(runBody, /target="_blank"/);
+  assert.match(runBody, /rel="noreferrer"/);
+  assert.doesNotMatch(runBody, /variant="glass"/);
+  assert.doesNotMatch(runBody, /hover-lift/);
+  assert.doesNotMatch(runBody, /surface-tint/);
+  assert.doesNotMatch(runBody, /\bCard\b/);
+  assert.doesNotMatch(runBody, /AgentConsole/);
+  assert.doesNotMatch(runBody, /ReviewConsole/);
+  assert.doesNotMatch(run, /ReviewAppearancePanel/);
+  assert.doesNotMatch(run, /writeShareUrl/);
+  assert.equal([...run.matchAll(/<RunBody /g)].length, 2);
+  assert.match(run.slice(reviewRunStart, unlinkedStart), /<RunBody run=\{run\} copy=\{copy\} \/>/);
+  assert.match(run.slice(unlinkedStart), /<RunBody run=\{run\} copy=\{copy\} \/>/);
 });
 
 test("toAgentConsole keeps confidence on /10 and converts durations to milliseconds", () => {

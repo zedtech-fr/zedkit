@@ -12,6 +12,7 @@
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
  * - Index-only runs keep the hosted-console link (or a placeholder) — because: failed or in-progress rows without a console body still resolve, and this is not a second console.
+ * - Index-only and unlinked run summaries sit on a hairline Surface (elevation 0, page fill) with a site-action hosted-console control — because: a hurried visitor reads on a white page; indigo is kit Glass primary and must not compete with the content.
  * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground. The console uses `ReviewConsoleAppearanceFrame` (dense strip) only.
  * - Empty state says no public runs yet — because: the visitor always has a next thought.
  * - Load error uses the route PageHeader plus kit ErrorState with an All issues link and no Retry — because: a nested URL must not keep the list heading (WCAG 2.4.6), the HTML is baked at build time so a reload would serve the same page, and the visitor still needs a way off the dead-end.
