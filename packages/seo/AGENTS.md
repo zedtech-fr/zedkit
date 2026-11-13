@@ -9,8 +9,11 @@ Rules:
 
 - New code goes in `src/`, tests in `tests/unit/` (plain vitest,
   no DOM needed except the standard `Response` in llms tests).
-  The main entry has no React dependency; `./react` optional-peers
-  `react`. Call `JsonLd` as a function in tests — do not add jsdom.
+  The main entry has no React dependency; `./react` takes an optional
+  `react` peer. Import a type from `react` in `src/react.tsx` so knip
+  sees the peer (automatic JSX runtime is not enough; `JSX.Element`
+  keeps `JsonLd({ data }).props` typed for function-call tests). Call
+  `JsonLd` as a function in tests — do not add jsdom.
 - Every public export gets a `## <need>` entry in CATALOG.md
   (format in `docs/catalog/README.md`), then run
   `pnpm catalog:build` from the root.

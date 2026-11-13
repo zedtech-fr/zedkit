@@ -1,4 +1,6 @@
-export function JsonLd({ data }: { data: object }) {
+import type { JSX } from "react";
+
+export function JsonLd({ data }: { data: object }): JSX.Element {
   return (
     <script
       type="application/ld+json"

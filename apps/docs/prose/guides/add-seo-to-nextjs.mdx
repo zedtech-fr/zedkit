@@ -88,6 +88,7 @@ export function generateMetadata() {
 
 ```tsx no-preview="JSON-LD data rendered into a script tag, nothing visible"
 import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
+import { JsonLd } from "@zedtech/zedkit-seo/react";
 
 const jsonLd = buildWebPageJsonLd({
   title: "About",
@@ -98,7 +99,7 @@ const jsonLd = buildWebPageJsonLd({
 export default function About() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
       <main>...</main>
     </>
   );

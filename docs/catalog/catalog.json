@@ -2108,7 +2108,7 @@
           "status": "stable",
           "shortName": "JSON-LD",
           "audience": "Developers who want rich results without hand-writing schema.org JSON.",
-          "purpose": "Typed builders for Organization, WebPage, Breadcrumb and Article JSON-LD; React JsonLd emits the script tag.",
+          "purpose": "Typed builders for Organization, WebPage, Breadcrumb, Article and SoftwareSourceCode JSON-LD, plus a React JsonLd script tag.",
           "whenToUse": "On pages eligible for rich results (articles, org pages, breadcrumbs).",
           "whenNotToUse": "For data with no matching schema.org type — skip structured data instead of forcing it.",
           "derivedFrom": null,
