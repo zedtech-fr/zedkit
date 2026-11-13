@@ -9,7 +9,7 @@ import {
 } from "fumadocs-ui/layouts/shared/slots/search-trigger";
 import { ThemeSwitch, type ThemeSwitchProps } from "fumadocs-ui/layouts/shared/slots/theme-switch";
 import { IconButton, cn } from "@zedtech/zedkit-ui";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 
 export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerProps) {
   const { setOpenSearch, enabled } = useSearchContext();
@@ -29,9 +29,8 @@ export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerPr
   );
 }
 
-export function SiteFullSearchTrigger(props: FullSearchTriggerProps) {
-  const label = siteChromeCopy.search.triggerAriaLabel;
-  return <FullSearchTrigger {...props} title={label} aria-label={label} data-search="" />;
+export function SiteFullSearchTrigger({ className, ...props }: FullSearchTriggerProps) {
+  return <FullSearchTrigger {...props} className={cn("focus-ring-control", className)} data-search="" />;
 }
 
 export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchProps) {

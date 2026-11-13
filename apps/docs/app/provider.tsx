@@ -8,10 +8,10 @@ import { CustomIdentityBar } from "@/features/identity/dock/ui/custom-identity-b
 import { IdentityDockGate } from "@/features/identity/dock/ui/identity-dock-gate";
 import { IdentityAssistantStoreProvider } from "@/features/identity/ui/identity-assistant-store";
 import { DOCS_SITE_IDENTITY_STORAGE_KEY, purgeLegacyIdentityStorage } from "@/features/identity/ui/site-identity-storage";
-import { SiteChromeA11yPatch } from "@/ui/site-chrome-a11y";
-import { ThemeColorMeta } from "@/ui/theme-color-meta";
-import { RouteScrollReset } from "@/ui/route-scroll-reset";
-import { DocsAppLink } from "@/ui/docs-app-link";
+import { SiteChromeA11yPatch } from "@/components/site-chrome/site-chrome-a11y";
+import { ThemeColorMeta } from "@/components/site-chrome/theme-color-meta";
+import { RouteScrollReset } from "@/components/site-chrome/route-scroll-reset";
+import { DocsAppLink } from "@/components/site-chrome/docs-app-link";
 
 /** Scroll-reveal runtime runs after hydration; it stays out of the first load. */
 const AnimateObserver = dynamic(() => import("@zedtech/zedkit-ui").then((mod) => ({ default: mod.AnimateObserver })), {

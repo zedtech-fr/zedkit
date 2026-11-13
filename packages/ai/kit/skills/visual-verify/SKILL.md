@@ -19,7 +19,8 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   `HEAD`.
 - **Routes:** `--changed` or `--routes auto` (diff via the route map: App
   Router `page` files, `apps/docs/prose/guides/**/*.mdx` → `/docs/<slug>`
-  (`index` → `/docs`; skip `snippets/`), AI setup sources
+  (`index` → `/docs`; skip `snippets/`), `apps/docs/features/docs/guides/<slug>/**`
+  (non-test) → `/docs/<slug>`, AI setup sources
   `packages/ai/kit/cursor-onboarding.md` and `apps/docs/public/ai/setup.md`
   → `/docs/ai/setup`, public review files (`features/reviews`, issues App
   Router, `tests/evidence/issues`) → `/issues`, identity feature files

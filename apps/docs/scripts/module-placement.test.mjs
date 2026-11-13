@@ -236,10 +236,10 @@ describe("checkPlacement fixtures", () => {
   it("absorbs a new single-owner file under a directory glob", () => {
     const result = checkPlacement(
       {
-        files: ["app/x/page.tsx", "ui/home/new.tsx"],
-        edges: [{ from: "app/x/page.tsx", to: "ui/home/new.tsx" }],
+        files: ["app/x/page.tsx", "components/foo/new.tsx"],
+        edges: [{ from: "app/x/page.tsx", to: "components/foo/new.tsx" }],
       },
-      { dead: [], singleOwner: [], globs: ["ui/home/**"], edges: [] },
+      { dead: [], singleOwner: [], globs: ["components/foo/**"], edges: [] },
     );
     assert.deepEqual(result.newViolations, []);
     assert.deepEqual(result.stale, []);
@@ -468,16 +468,16 @@ describe("live docs tree", () => {
   it("imports use-package-manager from features/docs", () => {
     const blocks = readFileSync(join(docsRoot, "features/docs/ui/adoption-blocks.tsx"), "utf8");
     const panel = readFileSync(join(docsRoot, "features/docs/ui/adoption-panel.tsx"), "utf8");
-    assert.match(blocks, /from "\.\.\/use-package-manager"/);
-    assert.match(panel, /from "\.\.\/use-package-manager"/);
+    assert.match(blocks, /from "\.\/use-package-manager"/);
+    assert.match(panel, /from "\.\/use-package-manager"/);
     assert.doesNotMatch(blocks, /from "@\/lib\/use-package-manager"/);
     assert.doesNotMatch(panel, /from "@\/lib\/use-package-manager"/);
   });
 
   it("keeps the fumadocs package-manager storage key on the docs-feature hook", () => {
-    const hook = readFileSync(join(docsRoot, "features/docs/use-package-manager.ts"), "utf8");
+    const hook = readFileSync(join(docsRoot, "features/docs/ui/use-package-manager.ts"), "utf8");
     assert.match(hook, /createStoredChoice\("package-manager"/);
-    assert.match(hook, /from "@\/lib\/use-stored-choice"/);
+    assert.match(hook, /from "@zedtech\/zedkit-ui"/);
     assert.match(hook, /from "@\/lib\/package-manager-commands"/);
   });
 });
@@ -566,17 +566,6 @@ describe("ESLint one-way imports", () => {
     const messages = await lintText(
       join(repoRoot, "apps/docs/components/placement-probe.tsx"),
       'import { x } from "../app/layout";\n',
-    );
-    assert.ok(
-      messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
-      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
-    );
-  });
-
-  it("fails a nested ui file importing ../../app/", async () => {
-    const messages = await lintText(
-      join(repoRoot, "apps/docs/ui/placement-probe.tsx"),
-      'import { x } from "../../app/layout";\n',
     );
     assert.ok(
       messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),

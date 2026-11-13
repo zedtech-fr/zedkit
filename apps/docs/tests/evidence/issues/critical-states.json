@@ -1,6 +1,6 @@
 [
   {
     "name": "First issue open",
-    "click": "main details[data-issues-row] > summary"
+    "click": "main [data-issues-row]"
   }
 ]

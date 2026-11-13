@@ -1,5 +1,5 @@
-import { identityContrastWarnings, parseIdentityTokens } from "@zedtech/zedkit-ui";
-import type { IdentityTokens } from "@zedtech/zedkit-ui";
+import { identityContrastWarnings } from "./identity-contrast.js";
+import { parseIdentityTokens, type IdentityTokens } from "./identity-tokens.js";
 
 /**
  * Nudges a generated identity's colors until text and controls meet WCAG AA, in light and dark.

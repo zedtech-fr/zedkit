@@ -247,6 +247,34 @@ test("home CSS is imported by the home page, not the root layout", () => {
   assert.ok(existsSync(join(app, homeCss)));
 });
 
+function keyframesInner(css, name) {
+  const match = css.match(new RegExp(`@keyframes\\s+${name}\\s*\\{`));
+  if (!match || match.index === undefined) throw new Error(`missing @keyframes ${name}`);
+  const open = match.index + match[0].length - 1;
+  return blockFrom(css, open).inner;
+}
+
+function fromBlock(keyframes) {
+  const match = /from\s*\{/.exec(keyframes);
+  if (!match || match.index === undefined) throw new Error("missing from {} in keyframes");
+  const open = match.index + match[0].length - 1;
+  return blockFrom(keyframes, open).inner;
+}
+
+test("hero LCP path paints at full opacity: no settle on the band, rise is transform-only", () => {
+  const hero = readApp("app/(home)/_home/home-hero.tsx");
+  const css = stripComments(readApp(homeCss));
+  assert.doesNotMatch(hero, /signatureMotionClass/);
+  assert.doesNotMatch(hero, /motion-settle/);
+  assert.doesNotMatch(css, /\[data-home-hero-band\][^{]*\{[^}]*animation\s*:/);
+  const riseFrom = fromBlock(keyframesInner(css, "zk-home-hero-rise"));
+  assert.doesNotMatch(riseFrom, /opacity\s*:/);
+  assert.match(riseFrom, /transform:\s*translateY\(/);
+  const allowed = eachNoPreferenceBlock(css).join("\n");
+  assert.match(allowed, /\[data-home-hero-lead\]\s*>\s*\*/);
+  assert.match(allowed, /zk-home-hero-rise/);
+});
+
 test("home CSS keeps live hero rules and drops retired tour selectors", () => {
   const css = stripComments(readApp(homeCss));
   assert.match(css, /#home-page \[data-home-hero/);

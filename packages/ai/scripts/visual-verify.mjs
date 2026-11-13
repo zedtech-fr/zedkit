@@ -225,6 +225,10 @@ export function routesFromFiles(files, manifest) {
     if (guide && !guide[1].includes("snippets/")) {
       routes.add(guide[1] === "index" ? "/docs" : `/docs/${guide[1]}`);
     }
+    const guideFeature = /(?:^|\/)apps\/docs\/features\/docs\/guides\/([^/]+)\//u.exec(n);
+    if (guideFeature && !/\.(?:test|spec)\./u.test(n)) {
+      routes.add(`/docs/${guideFeature[1]}`);
+    }
     if (n.endsWith("packages/ai/kit/cursor-onboarding.md") || n.endsWith("apps/docs/public/ai/setup.md")) {
       routes.add("/docs/ai/setup");
     }

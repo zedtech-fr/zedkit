@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const src = readFileSync(
-  join(dirname(fileURLToPath(import.meta.url)), "../ui/docs-app-link.tsx"),
+  join(dirname(fileURLToPath(import.meta.url)), "../components/site-chrome/docs-app-link.tsx"),
   "utf8",
 );
 

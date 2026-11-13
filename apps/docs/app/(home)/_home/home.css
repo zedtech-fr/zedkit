@@ -22,15 +22,15 @@
 /*
  * Looks pills: inverted selected chip. Unlayered so ink beats kit tab
  * utilities and inherited muted color (selected contrast walks [role=tab]).
- * The trigger snaps with `transition-none` (evidence uses reduced motion;
- * a CSS snap inside the no-preference gate never applies).
+ * Color snap is `transition-none` on the trigger class: evidence emulates
+ * reduced motion, so a CSS snap inside the no-preference gate never applies.
  */
 #home-page [data-look-tab][data-state="active"] {
   background-color: hsl(var(--foreground));
   color: hsl(var(--background));
 }
 
-/* Hero title line, then the sentence under it. Two short beats, no third clause. */
+/* Hero title line, then the sentence under it. Question plus invitation, no third clause. */
 #home-page [data-home-hero-lead] h1 {
   max-width: 48rem;
 }
@@ -143,7 +143,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) {
-  /* 1. Load: the lead, one block at a time. Opacity and a short rise; `backwards`, so nothing is left applied. */
+  /* 1. Load: the lead, one block at a time. Transform-only rise; backwards fill so nothing is left applied. */
   #home-page [data-home-hero] [data-home-hero-lead] > * {
     animation: zk-home-hero-rise 360ms var(--zk-home-ease) backwards;
     animation-delay: calc(var(--zk-lead-beat, 0) * 70ms);
@@ -198,7 +198,6 @@
 
 @keyframes zk-home-hero-rise {
   from {
-    opacity: 0;
     transform: translateY(0.5rem);
   }
 }

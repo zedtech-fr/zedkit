@@ -93,7 +93,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   const copy = readFileSync(join(homeI18n, "home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
   const firstScreen = hero + lead + illustration + focus;
-  // #258: one map prompt, no kit tablist. Two-beat h1; agent detail lives in hero.sub.
+  // #258 / #411: one map prompt, no kit tablist. Question+invitation h1; principle lives in hero.sub.
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
   assert.doesNotMatch(firstScreen, /\bid=["']demo["']/);
@@ -102,11 +102,12 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(lead, /\bTabs\b|TabsList|TabsTrigger|TabsContent|useState|HeroKitId|isHeroKit|heroKits/);
   assert.match(lead, /data-home-hero=/);
   assert.match(lead, /<HomeHeroIllustration\s*\/>/);
-  assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
+  assert.match(copy, /title: "Can zedkit save you half your grey hairs\? Build something and find out\."/);
   assert.match(
     copy,
-    /sub: "AI brings the workflow rules and checks; UI brings the components and the look, from the agent you already use\."/,
+    /sub: "The second time is faster, easier and better than the first\."/,
   );
+  assert.doesNotMatch(copy, /Code that\u2019s checked|Screens that match/);
   assert.doesNotMatch(copy, /subLead:|subAiName:|subAi:|subUiName:|subUi:/);
   assert.doesNotMatch(copy, /titleClause:/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
@@ -128,6 +129,11 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
   assert.doesNotMatch(lead, /variant="muted"/);
+  assert.match(lead, /\{homeHeroCopy\.hero\.title\}/);
+  assert.doesNotMatch(
+    lead,
+    /Can zedkit save you half your grey hairs|Want your next build twice as fast|Could zedkit spare you half the rework|Code that.?s checked|Try it yourself/,
+  );
   assert.doesNotMatch(lead, /homeHeroCopy\.hero\.titleClause|titleClause/);
   assert.doesNotMatch(lead, /^["']use client["']/m);
   assert.match(lead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
@@ -685,11 +691,11 @@ test("admin dashboard guide demo wires save and delete to state", () => {
 });
 
 test("docs phone chrome keeps search; home chrome does not", () => {
-  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
-  const siteHeaders = readFileSync(join(app, "ui/site-headers.tsx"), "utf8");
-  const actions = readFileSync(join(app, "ui/home-header-actions.tsx"), "utf8");
+  const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
+  const siteHeaders = readFileSync(join(app, "components/site-chrome/site-headers.tsx"), "utf8");
+  const actions = readFileSync(join(app, "components/site-chrome/header-actions.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
-  const layout = readFileSync(join(app, "ui/site-layout.tsx"), "utf8");
+  const layout = readFileSync(join(app, "components/site-chrome/site-layout.tsx"), "utf8");
   assert.match(header, /siteHeaderChrome/);
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /aria-label=\{siteChromeCopy\.nav\.siteNavigation\}/);
@@ -747,7 +753,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
 });
 
 test("phone header is one compact row with a kit Drawer site menu", () => {
-  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /flex min-h-phone-bar flex-nowrap items-center/);
