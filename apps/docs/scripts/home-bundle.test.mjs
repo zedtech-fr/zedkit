@@ -130,6 +130,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /text-muted-foreground/);
   assert.doesNotMatch(lead, /variant="muted"/);
   assert.match(lead, /\{homeHeroCopy\.hero\.title\}/);
+  assert.doesNotMatch(lead, /text-balance/);
   assert.doesNotMatch(
     lead,
     /Can zedkit save you half your grey hairs|Want your next build twice as fast|Could zedkit spare you half the rework|Code that.?s checked|Try it yourself/,
