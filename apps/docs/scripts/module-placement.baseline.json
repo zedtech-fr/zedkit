@@ -8,10 +8,7 @@
     "components/site-chrome/route-scroll-reset.tsx",
     "components/site-chrome/site-chrome-a11y.tsx",
     "components/site-chrome/skip-link.tsx",
-    "components/site-chrome/theme-color-meta.tsx",
-    "lib/identity-export-css.ts",
-    "lib/identity-recipe.ts",
-    "lib/identity-token-css-vars.ts"
+    "components/site-chrome/theme-color-meta.tsx"
   ],
   "globs": [],
   "edges": []

@@ -19,8 +19,8 @@ import {
   identityExportCss,
   identityExportFonts,
   identityExportInstall,
-} from "@/lib/identity-export-css";
-import { parseRecipe, serializeRecipe } from "@/lib/identity-recipe";
+} from "@/features/identity/ui/identity-export-css";
+import { parseRecipe, serializeRecipe } from "@/features/identity/ui/identity-recipe";
 
 function copyText(value: string, onDone: () => void) {
   const clipboard = navigator.clipboard;

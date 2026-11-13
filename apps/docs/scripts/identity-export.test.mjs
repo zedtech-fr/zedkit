@@ -11,7 +11,7 @@ import {
   IDENTITY_KIT_STYLES_CSS,
   identityExportFonts,
   identityExportInstall,
-} from "../lib/identity-export-css.ts";
+} from "../features/identity/ui/identity-export-css.ts";
 import { allBlocks, buildAdoptionPlan, loadRegistry } from "../lib/adoption-plan.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
