@@ -7,7 +7,13 @@ import { siteChromeSlots } from "@/ui/site-chrome-slots";
 import { MarketingSiteHeader } from "@/ui/site-headers";
 
 /** Shared marketing shell: nav, search, GitHub link. Theme and version live off this header. */
-export function SiteLayout({ children }: { children: ReactNode }) {
+export function SiteLayout({
+  children,
+  header = MarketingSiteHeader,
+}: {
+  children: ReactNode;
+  header?: typeof MarketingSiteHeader;
+}) {
   return (
     <HomeLayout
       nav={{
@@ -18,7 +24,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       links={siteHeaderLinks()}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: false }}
-      slots={{ ...siteChromeSlots, header: MarketingSiteHeader }}
+      slots={{ ...siteChromeSlots, header }}
     >
       <SitePageShell>{children}</SitePageShell>
     </HomeLayout>

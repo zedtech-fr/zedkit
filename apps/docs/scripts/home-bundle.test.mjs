@@ -235,7 +235,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(sameIdea, /aria-hidden/);
   assert.match(sameIdea, /HomeLink/);
   assert.match(src, /HomeSameIdeaSection componentCount=\{uiGalleryStats\.components\}/);
-  const page = readFileSync(join(app, "app/(site)/page.tsx"), "utf8");
+  assert.equal(existsSync(join(app, "app/(site)/page.tsx")), false);
+  const page = readFileSync(join(app, "app/(home)/page.tsx"), "utf8");
   assert.match(page, /import \{ uiGalleryStats \} from ["']@\/content\/gallery["']/);
   const rhythm = readFileSync(join(app, "ui/home/home-rhythm.ts"), "utf8");
   assert.doesNotMatch(rhythm, /HOME_SAME_IDEA_GRID/);
@@ -647,7 +648,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.doesNotMatch(header, /SearchPill/);
   assert.doesNotMatch(header, /DocsIdentityPicker/);
   assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
-  assert.match(siteHeaders, /isHomePath/);
+  assert.doesNotMatch(siteHeaders, /isHomePath/);
   assert.match(siteHeaders, /min-h-phone-bar/);
   assert.match(siteHeaders, /flex-nowrap/);
   assert.doesNotMatch(siteHeaders, /flex-wrap items-center/);
