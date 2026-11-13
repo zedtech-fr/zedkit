@@ -28,7 +28,7 @@
   color: hsl(var(--background));
 }
 
-/* Hero title line, then the sentence under it. Wide enough for the grey third clause. */
+/* Hero title line, then the sentence under it. Two short beats, no third clause. */
 #home-page [data-home-hero-lead] h1 {
   max-width: 48rem;
 }

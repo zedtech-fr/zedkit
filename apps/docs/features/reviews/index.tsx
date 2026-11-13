@@ -4,13 +4,14 @@
  * Customers: app teams who install @zedtech/zedkit-* or copy UI via the registry.
  * Customer personas: hurried visitor on a phone scanning real issue work; maintainer reproducing a look via share link.
  * UI decisions:
- * - Issue list at /issues with title, state, linked PRs, duration, and latest status first; each row is a native details accordion of that issue’s steps — because: hurried visitor reads every step inline without opening an empty run page.
- * - Accordion panel has GitHub issue/PR links and step rows; no Timeline button — because: `/issues/N` stays for bookmarks, and a second page of the same steps is redundant.
+ * - Issue list at /issues with title, state, and latest review outcome first; each row is a native details accordion of that issue’s steps — because: hurried visitor reads every step inline without opening an empty run page.
+ * - Accordion panel has compact Issue/PR links and step rows; no Timeline button — because: `/issues/N` stays for bookmarks, and a second page of the same steps is redundant.
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
- * - Public run history list stays in the shared appearance-frame Container (width wide) — because: a hurried visitor at 1440 expects the same centered column as an issue detail page.
- * - Issue and unlinked summary rows are two bands below md (title, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per issue without chasing wrapped fragments. Accordion panels stay closed until opened.
- * - `/issues` accordion lists steps newest first — because: hurried visitor sees the latest state without scrolling.
- * - `/issues/N` and `/issues/pr/:n` timelines stay chronological stacked rows with type, models, duration, verdict/score, superseded, status — because: hurried visitor follows plan → implement → review → improve.
+ * - Public run history list matches the 1400px header column (`--zk-header-max-width`) — because: a hurried visitor at 1440 expects the Issues heading and rows to line up under the brand, not sit in a narrower 1200px well.
+ * - Issue and unlinked summary rows are two bands below md (title, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per issue without chasing wrapped fragments. Accordion panels stay closed until opened. Chevron sits at the title top-right (`items-start`) so a tall wrapped title does not center it.
+ * - `/issues` accordion lists steps newest first (running, then `endedAt ?? startedAt`, then `id` descending) — because: hurried visitor sees the latest state without scrolling. Port `sortEntries` stays oldest-first.
+ * - Expanded panel is a solid Surface (elevation 1) with the latest outcome, total duration, finish time, and compact Issue/PR links — because: a visitor with no internal context should read the outcome in two seconds. Summary has no nested links and no GitHub issue/PR text (WCAG 2.5.3). Headline is running, else a newest-finished failure, else the newest review verdict.
+ * - `/issues/N` and `/issues/pr/:n` timelines stay chronological stacked rows with type, muted models, duration, verdict/score, replacement copy — because: hurried visitor follows plan → implement → review → follow-up. Completed is not badged; only running, didn't-finish, and review verdicts are.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
  * - Index-only `/issues/N/runs/<id>` (and unlinked run URLs) redirect to the allowlisted hosted-console href, or to the issue / unlinked page when that href is missing — because: bot comments still resolve, and the public runs API has no transcript to render here. Static export overwrites those HTML files with the same stub writer as `/reviews`.

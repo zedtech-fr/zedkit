@@ -1,5 +1,4 @@
 import { Heading, Section, Stack, Text } from "@zedtech/zedkit-ui";
-import { SITE_COMPANY_URL } from "@/lib/site-links.mjs";
 import {
   HOME_MARKETING_ROOT_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
@@ -7,22 +6,25 @@ import {
   HOME_SECTION_CONTENT_GAP,
 } from "../home-rhythm";
 import { homeManifestoCopy } from "../i18n/home-manifesto-copy";
-import { OffPathLink } from "@/ui/off-path-link";
 
 /**
  * After limits: the lock-in quote on a full-bleed high-value band.
  *
- * Compose-UI: full-bleed manifesto band, because: client = developer who
+ * Compose-UI: full-bleed origin band, because: client = developer who
  * just read limits; neighbours (muted limits grid, light closing) must
  * differ in shape; the inset card was the 12 Nov defect.
  * Tokenized `--primary`→`--accent` 135° fill plus static circle/stripe,
  * because: this is a high-value Glass band (not page fill); neighbours
  * (muted limits grid, light closing) must differ in shape; #246 asks for
  * kit tokens rather than mockup hex.
- * Sr-only Manifesto H2 + blockquote, because: the rotor needs a short
+ * Sr-only Origin H2 + blockquote, because: the rotor needs a short
  * section name; the quote must not occupy the heading list.
+ * Golden-rule line under the quote, because: that is the practitioner
+ * principle; the origin paragraph explains why the kit is public.
  * Centered reading measure, because: mockup centers both bands; a full-wide
  * quote fights the limits grid.
+ * No off-path company link, because: the band is the quote and the
+ * principle, not a manifesto CTA.
  */
 export function HomeManifestoSection() {
   return (
@@ -50,15 +52,10 @@ export function HomeManifestoSection() {
             {homeManifestoCopy.quote}
           </Heading>
         </blockquote>
+        <Text className={HOME_PERSUASION_TEXT_CLASS}>{homeManifestoCopy.goldenRule}</Text>
         <Text id="manifesto-attribution" className={HOME_PERSUASION_TEXT_CLASS}>
           {homeManifestoCopy.attribution}
         </Text>
-        <OffPathLink
-          href={SITE_COMPANY_URL}
-          className="min-h-target text-foreground underline link-offset focus-ring"
-        >
-          {homeManifestoCopy.readLink}
-        </OffPathLink>
       </Stack>
     </Section>
   );

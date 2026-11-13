@@ -109,7 +109,7 @@ Each `entries[]` object (issue or unlinked PR):
 | `models` | String array. Skip empty strings. Plan, implement, and dry-run: engine model. Review: lens and second-pass models. Improve: improve model. |
 | `verdict` | `approve` \| `request-changes` \| `comment`, or `null`. |
 | `score` | Optional integer 0–10, or `null`. Shown next to a review verdict. |
-| `superseded` | Optional boolean. The list shows a Superseded pill when true. |
+| `superseded` | Optional boolean. The list shows replacement copy when true (`Replaced by newer run`, or `Didn't finish — replaced by a later review` when the step also failed). |
 | `liveUrl` | Allowlisted hosted-console href (`HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id) or `null`. Never a GitHub `review_url`. Never a reserved host, other host, other path, query, hash, userinfo, `http:`, non-empty port, or a home path. The public gate drops those. |
 
 Plan and implement phases of one implement ticket run are **two**

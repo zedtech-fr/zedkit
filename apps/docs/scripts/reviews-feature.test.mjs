@@ -13,10 +13,13 @@ import {
   listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
+import { displayModelLabel, displayModelLabels } from "../features/reviews/model/display-model.ts";
 import {
   entriesNewestFirst,
   entryUpdatedAt,
+  headlineOutcome,
   latestEntry,
+  latestFinishedEntry,
   latestStatus,
   summedDurationMs,
 } from "../features/reviews/model/latest-status.ts";
@@ -649,34 +652,56 @@ test("entriesNewestFirst keeps a single step", () => {
   );
 });
 
-test("entriesNewestFirst lists later startedAt first", () => {
+test("entriesNewestFirst puts running steps first", () => {
   assert.deepEqual(
     entriesNewestFirst([
-      entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
-      entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+      entry({ id: "done", status: "completed", endedAt: "2026-11-10T19:00:00.000Z" }),
+      entry({
+        id: "live",
+        status: "running",
+        startedAt: "2026-11-10T16:00:00.000Z",
+        durationMs: null,
+      }),
+    ]).map((item) => item.id),
+    ["live", "done"],
+  );
+});
+
+test("entriesNewestFirst lists later entryUpdatedAt first", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z", endedAt: "2026-11-10T16:10:00.000Z" }),
+      entry({ id: "late", startedAt: "2026-11-10T17:00:00.000Z", endedAt: "2026-11-10T18:00:00.000Z" }),
     ]).map((item) => item.id),
     ["late", "early"],
   );
 });
 
-test("entriesNewestFirst keeps id ascending when startedAt ties", () => {
+test("entriesNewestFirst prefers endedAt over an earlier startedAt", () => {
   assert.deepEqual(
     entriesNewestFirst([
-      entry({ id: "z", startedAt: "2026-11-10T16:00:00.000Z" }),
-      entry({ id: "a", startedAt: "2026-11-10T16:00:00.000Z" }),
+      entry({
+        id: "long",
+        startedAt: "2026-11-10T16:00:00.000Z",
+        endedAt: "2026-11-10T19:00:00.000Z",
+      }),
+      entry({
+        id: "short",
+        startedAt: "2026-11-10T17:00:00.000Z",
+        endedAt: "2026-11-10T17:10:00.000Z",
+      }),
     ]).map((item) => item.id),
-    ["a", "z"],
+    ["long", "short"],
   );
 });
 
-test("entriesNewestFirst sorts unsorted input by startedAt descending", () => {
+test("entriesNewestFirst keeps id descending when entryUpdatedAt ties", () => {
   assert.deepEqual(
     entriesNewestFirst([
-      entry({ id: "mid", startedAt: "2026-11-10T17:00:00.000Z" }),
-      entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
-      entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+      entry({ id: "a", startedAt: "2026-11-10T16:00:00.000Z" }),
+      entry({ id: "z", startedAt: "2026-11-10T16:00:00.000Z" }),
     ]).map((item) => item.id),
-    ["late", "mid", "early"],
+    ["z", "a"],
   );
 });
 
@@ -712,6 +737,120 @@ test("listIssues stays oldest-first; entriesNewestFirst of those rows is newest-
     entriesNewestFirst(listed[0].entries).map((item) => item.id),
     ["late", "early"],
   );
+});
+
+test("headlineOutcome prefers a review verdict over a later completed follow-up", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+      endedAt: "2026-11-10T17:20:00.000Z",
+    }),
+    entry({
+      id: "improve",
+      type: "improve",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:20:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "verdict");
+  assert.equal(outcome?.verdict, "approve");
+  assert.equal(outcome?.score, 9);
+});
+
+test("headlineOutcome returns running even when an older review exists", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+    }),
+    entry({
+      id: "live",
+      type: "implement",
+      status: "running",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      durationMs: null,
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "running");
+});
+
+test("headlineOutcome is null for completed work with no review", () => {
+  assert.equal(headlineOutcome([entry({ type: "implement" })]), null);
+});
+
+test("headlineOutcome prefers a later failed step over an older review verdict", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+      endedAt: "2026-11-10T17:20:00.000Z",
+    }),
+    entry({
+      id: "failed-later",
+      type: "improve",
+      status: "failed",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:20:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "failed");
+});
+
+test("headlineOutcome badges a failed step that finished after a later-started completed step", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "failed-late",
+      type: "implement",
+      status: "failed",
+      startedAt: "2026-11-10T16:00:00.000Z",
+      endedAt: "2026-11-10T19:00:00.000Z",
+    }),
+    entry({
+      id: "done-later-start",
+      type: "plan",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:10:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "failed");
+});
+
+test("latestFinishedEntry skips running steps and uses endedAt", () => {
+  const finished = latestFinishedEntry([
+    entry({
+      id: "done",
+      endedAt: "2026-11-10T17:00:00.000Z",
+    }),
+    entry({
+      id: "live",
+      status: "running",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      durationMs: null,
+    }),
+  ]);
+  assert.equal(finished?.id, "done");
+  assert.equal(entryUpdatedAt(finished), "2026-11-10T17:00:00.000Z");
+});
+
+test("displayModelLabel shortens stored model ids", () => {
+  assert.equal(displayModelLabel("cursor-grok-4.6-high"), "Grok 4.6");
+  assert.equal(displayModelLabel("muse-wonder-1.0-high"), "Muse");
+  assert.equal(displayModelLabel("claude-sonnet-5-5"), "Claude Sonnet");
+  assert.equal(displayModelLabel("cursor-composer-2.5"), "");
+  assert.equal(displayModelLabels(["cursor-grok-4.6-high", "cursor-grok-4.6-high"]), "Grok 4.6");
 });
 
 test("issue and unlinked run paths format /issues/:n/runs/:id", () => {
@@ -1364,7 +1503,16 @@ test("inventory-scale generated run index stays under 200KB and extra keys are i
 
 test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
   assert.equal(reviewsCopy.list.empty, "No public runs yet");
-  assert.equal(reviewsCopy.type.improve, "Improve from review");
+  assert.equal(reviewsCopy.type.improve, "Follow-up after review");
+  assert.equal(reviewsCopy.type.implement, "Implementation");
+  assert.equal(reviewsCopy.verdict.approve, "Approved");
+  assert.equal(reviewsCopy.verdict["request-changes"], "Changes requested");
+  assert.equal(reviewsCopy.status.failed, "Didn't finish");
+  assert.equal(reviewsCopy.issue.replaced, "Replaced by newer run");
+  assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a later review");
+  assert.equal(reviewsCopy.issue.viewLog, "View log");
+  assert.equal(reviewsCopy.list.took, "Took");
+  assert.equal(reviewsCopy.list.finished, "Finished");
   assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
@@ -1374,12 +1522,17 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   );
   assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
-  assert.equal(reviewsCopy.list.description, "Public issues with at least one exportable run.");
-  assert.equal(reviewsCopy.metadata.list.description, "Public issues with exportable runs on zedkit.");
+  assert.equal(
+    reviewsCopy.list.description,
+    "Public work log: open a row to see how each issue was planned, built, and reviewed.",
+  );
+  assert.equal(
+    reviewsCopy.metadata.list.description,
+    "Public work log of how each issue was planned, built, and reviewed.",
+  );
   assert.equal(reviewsCopy.issue.timeline, "Timeline");
-  assert.equal(reviewsCopy.issue.superseded, "Superseded");
-  assert.equal(reviewsCopy.list.githubIssue, "GitHub issue");
-  assert.equal(reviewsCopy.list.githubPull, "GitHub pull request");
+  assert.equal(reviewsCopy.list.githubIssue, "Issue");
+  assert.equal(reviewsCopy.list.githubPull, "PR");
   assert.equal(
     reviewsCopy.loadError.description,
     "GitHub or the runs API did not answer. This page updates when the site is next published.",
@@ -1438,7 +1591,8 @@ test("issues views drop the inline preview form and keep the shared frame", () =
     assert.match(source, /ReviewAppearanceFrame/);
   }
   assert.match(frame, /ThemeScope/);
-  assert.match(frame, /width="wide"/);
+  assert.match(frame, /width="full"/);
+  assert.match(frame, /zk-header-max-width/);
   assert.match(frame, /parseReviewAppearance\(/);
   assert.match(frame, /window\.location\.search/);
   assert.match(frame, /hasReviewAppearanceQuery/);
@@ -1581,7 +1735,12 @@ test("list and timeline views read from issue records, not a PR console", () => 
 test("list rows are closed native details; GitHub links stay in the panel", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   assert.match(list, /<details data-issues-row=""/);
-  assert.match(list, /<summary className="flex min-h-target cursor-pointer list-none/);
+  assert.match(list, /<summary className="flex min-h-target cursor-pointer list-none items-start/);
+  assert.match(list, /<Surface variant="solid" elevation=\{1\} radius="md" padding="sm"/);
+  assert.match(list, /<Stack className="w-fit self-start">/);
+  assert.match(list, /entriesNewestFirst\(entries\)/);
+  assert.match(list, /headlineOutcome/);
+  assert.doesNotMatch(list, /min-h-target w-fit/);
   assert.match(list, /\[&::-webkit-details-marker\]:hidden/);
   assert.doesNotMatch(list, /\sopen[=\s>{]/);
   assert.doesNotMatch(list, /Accordion/);
@@ -1629,7 +1788,10 @@ test("list and timeline rows use row padding, not section padding", () => {
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
   assert.match(list, /content-shrink flex-1 flex-wrap items-center max-md:flex-col max-md:items-stretch/);
   assert.match(list, /py-row focus-ring-control/);
-  assert.match(row, /flex-wrap items-center border-b border-border py-row/);
+  assert.match(row, /border-b border-border py-row/);
+  assert.match(row, /max-md:flex-col max-md:items-start/);
+  assert.match(row, /hit-target/);
+  assert.doesNotMatch(row, /min-h-target/);
   assert.doesNotMatch(timeline, /max-md:flex-col/);
   assert.doesNotMatch(list, /py-section-sm/);
   assert.doesNotMatch(row, /py-section-sm/);
@@ -1643,9 +1805,9 @@ test("list stays in the shared wide frame and stacks title then meta below md", 
   assert.doesNotMatch(list, /ReviewSampleNotice/);
   assert.match(list, /<ReviewAppearanceFrame>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
   assert.match(list, /<ReviewAppearanceFrame>[\s\S]*copy\.list\.unlinkedTitle[\s\S]*<\/ReviewAppearanceFrame>/);
-  assert.match(frame, /width="wide"/);
-  assert.doesNotMatch(frame, /width="full"/);
-  assert.doesNotMatch(list, /width="full"/);
+  assert.match(frame, /width="full"/);
+  assert.match(frame, /zk-header-max-width/);
+  assert.doesNotMatch(frame, /width="wide"/);
   assert.doesNotMatch(list, /MarketingSiteHeader|MobileHeader|pathname/);
   assert.doesNotMatch(frame, /pathname/);
   assert.equal([...list.matchAll(/<details /g)].length, 2);
@@ -1662,7 +1824,8 @@ test("timeline rows show score, superseded, and endedAt-aware UpdatedAgo", () =>
   const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   assert.match(row, /score=\{entry\.score \?\? null\}/);
-  assert.match(row, /entry\.superseded === true/);
+  assert.match(row, /entry\.superseded !== true/);
+  assert.match(row, /copy\.issue\.replaced/);
   assert.match(row, /entryUpdatedAt\(entry\)/);
   assert.doesNotMatch(row, /new Date\(entry\.startedAt\)/);
   assert.match(list, /summedDurationMs/);
@@ -2326,7 +2489,7 @@ test("live-backed issue runs mount AgentConsole; index-only runs redirect", () =
   assert.doesNotMatch(feature, /UnlinkedRunView/);
   assert.equal(existsSync(join(reviewsRoot, "ui/review-run-view.tsx")), false);
   assert.match(row, /target="_blank"/);
-  assert.match(row, /rel="noreferrer"/);
+  assert.match(row, /rel="noopener noreferrer"/);
   assert.doesNotMatch(row, /ReviewConsole/);
   assert.doesNotMatch(row, /AgentConsole/);
   assert.doesNotMatch(layout, /SiteLayout/);
