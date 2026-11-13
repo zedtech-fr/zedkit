@@ -48,7 +48,7 @@ test("home visitor copy carries no repo internals or literal backticks (#1090)",
   await expect(page.getByRole("link", { name: /manifesto/i })).toHaveCount(0);
 });
 
-test("home hero matches the mockup first screen: clause, prompt, glass card (#118, #247, #258)", async ({
+test("home hero matches the mockup first screen: two-beat title, prompt, glass card (#118, #247, #258)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
