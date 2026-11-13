@@ -241,18 +241,18 @@ Summarize business model, customers, journeys, policies, brand, and design signa
 
 Open **`templates/README.md`** in this skill folder (after install: `.agents/skills/setup-ai/templates/README.md`). Copy from the **`templates/`** files below; replace fiction with repo facts. **Personas:** the `setup` preset already installed `.agents/personas.md` from `templates/personas-v2.template.md` — **edit the installed v2 file in place** (do not recopy the template over it).
 
-| Artifact          | Path                                          | Template                                             |
-| ----------------- | --------------------------------------------- | ---------------------------------------------------- |
-| Product summary   | `.agents/product.md`                          | `templates/product.template.md`                      |
-| Domain rules      | `.agents/domain/<area>.md`                    | `templates/domain/booking.template.md` (rename area) |
-| Nested rules      | `<folder>/AGENTS.md` per folder that differs  | `templates/nested-agents.template.md`                |
-| Tokenomics        | `.agents/tokenomics.md`                       | kit stub (fill cells, then `zedkit-ai sync`)         |
-| Personas v2       | `.agents/personas.md`                         | edit the installed v2 file in place                  |
-| Design / identity | `.agents/design.md` (with **Identity rules**) | `templates/design.template.md`                       |
-| Glossary          | `GLOSSARY.md` or `.agents/glossary.md`        | `templates/glossary.template.md`                     |
-| Setup map         | `.agents/README.md`                           | `templates/agents-readme.template.md`                |
-| Atlas             | `.agents/atlas.md`                            | kit stub (already installed; fill, never recopy)     |
-| Cursor map        | `.cursor/README.md` (when Cursor is wired)    | `templates/cursor-readme.template.md`                |
+| Artifact          | Path                                                             | Template                                             |
+| ----------------- | ---------------------------------------------------------------- | ---------------------------------------------------- |
+| Product summary   | `.agents/product.md`                                             | `templates/product.template.md`                      |
+| Domain rules      | `.agents/domain/<area>.md`                                       | `templates/domain/booking.template.md` (rename area) |
+| Nested rules      | `<folder>/AGENTS.md` per folder that differs                     | `templates/nested-agents.template.md`                |
+| Tokenomics        | `.agents/tokenomics.md`                                          | kit stub (fill cells, then `zedkit-ai sync`)         |
+| Personas v2       | `.agents/personas.md`                                            | edit the installed v2 file in place                  |
+| Design / identity | `.agents/design.md` (with **Identity rules**)                    | `templates/design.template.md`                       |
+| Glossary          | `GLOSSARY.md` or `.agents/glossary.md`                           | `templates/glossary.template.md`                     |
+| Setup map         | `.agents/README.md`                                              | `templates/agents-readme.template.md`                |
+| Atlas             | `.agents/atlas.md` (+ `.agents/atlas/<topic>.md` for long traps) | kit stub (already installed; fill, never recopy)     |
+| Cursor map        | `.cursor/README.md` (when Cursor is wired)                       | `templates/cursor-readme.template.md`                |
 
 **Rules come from the reading log** (`.agents/setup-log/reading.md`), not from the templates: every merged rule lands in exactly one home (domain file for `domain` and `business` lanes, `design.md` **Identity rules** for `identity`, a nested `AGENTS.md` for folder-specific `architecture` and `convention`, root `AGENTS.md` for repo-wide ones) and keeps its `file:line` and `source: owner` answers. A repo with money, state or policy in its code and no domain file is an incomplete setup. **Visual signature:** when the repo's stylesheets or token files define colours and fonts, `design.md` also carries a **Signature** section (`templates/design.template.md`): colour roles with exact variable names and values, font families by role, the accent role and whether the code uses it as the primary action, and the exact alias exceptions, each with `file:line`. Improve mode keeps those rows as written; changing one needs the owner's word. Keep a host rule that tells authors to use numeric or default-scale classes (`p-4`, `gap-2`, `text-sm`, `grid-cols-3`, `w-1/2`) unless the owner has recorded a yes for the semantic-only migration (`source: owner`). Follow [design-policy.md](design-policy.md) Setup. That file stays the rule for kit-owned files. When readers found such a host rule and no recorded yes exists, ask the semantic-only question in the batched interview if a slot remains; otherwise keep the host rule and list it in `.agents/product.md` open questions. A harness auto-skip is not a yes. Exact question: Semantic-only class migration: replace host numeric / default-scale class rules (`p-4`, `text-sm`, `grid-cols-3`, `w-1/2`) with design-policy.md? Options: yes (record `source: owner`) / keep host rules.
 
@@ -268,9 +268,9 @@ Root `AGENTS.md` must state, in the How-to-work bullets (keep the file short): l
 
 ### Atlas (after nested files)
 
-`.agents/atlas.md` is the lookup the next session reads before it searches: where things live, the repo's own words, the exact commands, the reasons. The kit stub is installed; fill it **in place** from what this run already proved, and add nothing the reading log does not back.
+`.agents/atlas.md` is the lookup the next session reads before it searches: where things live, the repo's own words, the exact commands, the reasons. The kit stub is installed; fill it **in place** from what this run already proved, and add nothing the reading log does not back. A trap that does not fit one line goes in `.agents/atlas/<topic>.md`; the index row points at that file.
 
-- **Where**: one row per entry point, folder note and file a newcomer would hunt for (generated vs source, the file that owns a rule), each with its trap. Entry paths in backticks; `validate` opens every one.
+- **Where**: one row per entry point, folder note and file a newcomer would hunt for (generated vs source, the file that owns a rule), each with its trap. Entry paths in backticks; `validate` opens every one (including paths inside a linked topic file).
 - **Words**: the names people use in chat and commands that differ from the code's, each with its home.
 - **Run**: the **Observed commands** you ran, the gate loop per area, and the commands that look right and fail (the trap goes in Note).
 - **Why**: only decisions a newcomer would undo by mistake; one line, linking the rule or domain row that owns it. Never copy the rule.
