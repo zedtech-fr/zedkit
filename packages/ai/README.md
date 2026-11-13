@@ -259,14 +259,18 @@ CLAUDE.md -> AGENTS.md
 .cursor/rules/project.mdc  one always-on rule pointing at AGENTS.md
 .agents/tokenomics.md      model and effort per kind x stakes (yours to edit)
 .agents/atlas.md           lookup: where things live, words, commands, why
+.agents/atlas/<topic>.md   optional: long traps the index row points at
 ```
 
 `atlas.md` is project memory, not a doc to keep growing. Agents read it before
 they search and fix one row when a search or a correction taught them something
-(skill `rules-upkeep`); `setup-ai` fills it from the reading log. `validate`
+(skill `rules-upkeep`); `setup-ai` fills it from the reading log. Long traps
+belong in `.agents/atlas/<topic>.md` with the index row as a pointer. `validate`
 fails when it passes 150 lines or a row in its **Where** table names a path
-that no longer exists; `validate --setup` also needs the file and three
-**Where** rows. `init` and `setup` install an empty stub and never overwrite it.
+that no longer exists (including paths inside a linked topic file). It warns
+(exit 0) above 24 KB or 280 characters on a Where row. `validate --setup` also
+needs the file and three **Where** rows. `init` and `setup` install an empty
+stub and never overwrite it.
 
 One source (`.agents/`), thin per-tool links. Nested `AGENTS.md` files hold
 per-folder rules. When to call which subagent: the

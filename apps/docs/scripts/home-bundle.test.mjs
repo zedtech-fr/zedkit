@@ -327,7 +327,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     typographyCss,
     /#home-page \[data-home-hero-lead\] \[data-home-hero-sub\] \{[^}]*--zk-type-lead-/,
   );
-  const atlas = readFileSync(join(root, ".agents/atlas.md"), "utf8");
+  const atlas = readFileSync(join(root, ".agents/atlas/home.md"), "utf8");
   assert.match(
     atlas,
     /Overlay body tokens on `#home-page \[data-home-hero-lead\] \[data-home-hero-sub\]` in `docs-typography\.css` \(never lead\)/,

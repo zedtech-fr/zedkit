@@ -35,7 +35,7 @@ Drop rows the preset did not install. Add a row when you add a command.
 
 ## Atlas
 
-`.agents/atlas.md` is the lookup: where things live, the repo's words, exact commands, reasons. Read it before you search; fix one row when a search or a correction taught you something. `zedkit-ai validate` fails on a path that no longer exists. Skill `rules-upkeep` says how.
+`.agents/atlas.md` is the lookup: where things live, the repo's words, exact commands, reasons. Read it before you search; open `.agents/atlas/<topic>.md` when the Entry names one. Fix one row when a search or a correction taught you something. `zedkit-ai validate` fails on a path that no longer exists. Skill `rules-upkeep` says how.
 
 ## Always-on vs globbed
 

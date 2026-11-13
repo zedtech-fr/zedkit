@@ -500,7 +500,9 @@
     "rules-upkeep/SKILL.md": [
       "0ccc740a0f8bb74b",
       "0d2761c612845a3f",
+      "4968e7f42d308c50",
       "6f34f239393784c9",
+      "d575757d1d9e2d5f",
       "d6fb47f4420df478"
     ],
     "setup-ai/SKILL.md": [
@@ -508,6 +510,7 @@
       "06c4b8695c60b01f",
       "07746260b8316c0f",
       "0c3cadacde77f2a1",
+      "0f2fb7599668cc66",
       "14c4519b0d1f87bf",
       "16d70aa0a4cf17b6",
       "18891cafb880ac3f",
@@ -528,6 +531,7 @@
       "54555b0da7ae1ace",
       "551fca6b06a1ee1b",
       "588ba26a4f4ac425",
+      "58ae0a9bde94e0f3",
       "598134c7fa7e7e8c",
       "5b183daa1f9016e8",
       "5baf9fec21e005fe",
@@ -544,10 +548,12 @@
       "7d3aeccbb4333561",
       "84af3978f8c94818",
       "85211b90410a98c3",
+      "8c31dad39b7d1fb5",
       "8c62f09d6d8fe021",
       "8d131eb3be90938d",
       "904dfff5bf46c602",
       "95817b319b01c034",
+      "96450e86603221e0",
       "a11656fdf61474f1",
       "a722b36a6c2f0d0d",
       "a8fe18ed44fb3279",
@@ -557,6 +563,8 @@
       "b1432fadd96b6842",
       "b34ed9e88ee75057",
       "b46bb07fa17258be",
+      "b7f06039cf1d80ba",
+      "b9cb57d35accb230",
       "bad21f1e223ab5f8",
       "bf2b48875a6967a5",
       "c5792138d63b8b95",
@@ -572,12 +580,14 @@
       "d9c1aa03e14f7514",
       "d9ea0d97a15baee3",
       "ddfa3628506e8f47",
+      "e262ce6fdaa1ceb8",
       "e3c35b59a3e2a486",
       "e9dacc1d3e9cff31",
       "efa2c18973ea5eae",
       "f20a0c936da56207",
       "f371ef0a1f87e9dc",
       "f5db3fdf34069c77",
+      "f8dece843794776c",
       "f8fd7f376891f3c6",
       "f9fc2ff520aff886",
       "ffba6af27182f008"
@@ -590,7 +600,9 @@
       "dcb51676aa1e7178"
     ],
     "setup-ai/templates/README.md": [
+      "59c63bdda774cd02",
       "71b4aa8b5f581b4f",
+      "8ad8ed23ffceed8e",
       "a4e712160d0ea83d",
       "f58eb8c3d2d63b6d",
       "faadcc594977e257"
@@ -601,6 +613,7 @@
       "50dd1d704abae9e8",
       "7c49f8701aa6508f",
       "85529934114bc573",
+      "8e2b2c1afacd1918",
       "97241a22fc35d60b"
     ],
     "setup-ai/templates/catalog/add-capability/SKILL.md.tmpl": [
@@ -716,10 +729,12 @@
       "3330364b305e78df",
       "3b07acca0143018b",
       "3f0ef947067dea65",
+      "a6e46eb7dcd273d6",
       "aca5b5da590ee90a",
       "b03405c19aba6a88",
       "b099fdf43d1df00a",
       "b6765720efd2cb31",
+      "e0bc6a137658d8ed",
       "e5bce5b4a3018268"
     ],
     "zedkit-ai/SKILL.md": ["2744d7819af35a89"],

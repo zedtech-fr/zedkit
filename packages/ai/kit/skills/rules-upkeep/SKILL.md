@@ -27,20 +27,20 @@ Skip a note, a question, or a nit the diff ignored. Skip a one-off bug of the fe
 3. Change every file the decision touches, and no more. Link to the canonical text instead of copying it. An agent file gets a pointer; the rule stays the source of truth.
 4. Removing a rule needs the user's confirmation. Atlas rows are facts, not rules: fix or delete a stale one without asking.
 5. If you added a command, skill, or always-on rule, update the map (`.agents/README.md`, and `.cursor/README.md` when that file exists).
-6. **Atlas.** If `.agents/atlas.md` exists, add or fix one row for what the work taught: where it lives, the wording, the exact command, or the reason (link the owner, never copy it). Fix a wrong row in place, delete a row one search finds, and keep the file under its cap. Open every path you write. When the work moves a file, renames a path or changes a command a row names, fix that row in the same change; a recent `Checked` date is not proof. In a read-only task (audit, review, research) write nothing: list the rows to add, fix or drop under `Atlas:` in the report.
+6. **Atlas.** If `.agents/atlas.md` exists, add or fix one row for what the work taught: where it lives, the wording, the exact command, or the reason (link the owner, never copy it). Fix a wrong row in place, delete a row one search finds, and keep the index under its cap (150 lines; `validate` warns above 24 KB or 280 characters per Where row). Long traps, paths and commands go in `.agents/atlas/<topic>.md`; the index row stays a pointer to that file. Open every path you write. When the work moves a file, renames a path or changes a command a row names, fix that row (and its topic file) in the same change; a recent `Checked` date is not proof. In a read-only task (audit, review, research) write nothing: list the rows to add, fix or drop under `Atlas:` in the report.
 7. Finish with the **Rules** section below. Silence is not a valid outcome.
 
 ## Where things go
 
-| Content                                           | Home                                                 |
-| ------------------------------------------------- | ---------------------------------------------------- |
-| Non-negotiables for the whole repo, commands, map | root `AGENTS.md`, short (it is always loaded)        |
-| Rules for one folder                              | `AGENTS.md` in that folder (read when working there) |
-| A repeatable workflow with steps                  | a skill                                              |
-| A persona with a narrow job and fresh context     | a subagent                                           |
-| Where a thing lives, a term, a command, a reason  | `.agents/atlas.md`: one row, fixed in place, bounded |
-| A short cross-cutting gate                        | always-on Cursor rule (`alwaysApply: true`)          |
-| Area-specific procedure                           | globbed Cursor rule, never appended to an always-on  |
+| Content                                           | Home                                                                   |
+| ------------------------------------------------- | ---------------------------------------------------------------------- |
+| Non-negotiables for the whole repo, commands, map | root `AGENTS.md`, short (it is always loaded)                          |
+| Rules for one folder                              | `AGENTS.md` in that folder (read when working there)                   |
+| A repeatable workflow with steps                  | a skill                                                                |
+| A persona with a narrow job and fresh context     | a subagent                                                             |
+| Where a thing lives, a term, a command, a reason  | `.agents/atlas.md` index row; long traps in `.agents/atlas/<topic>.md` |
+| A short cross-cutting gate                        | always-on Cursor rule (`alwaysApply: true`)                            |
+| Area-specific procedure                           | globbed Cursor rule, never appended to an always-on                    |
 
 Do not write down what the code already shows (file lists, signatures). Write only what a reader cannot get from the code: the why, the limits, the traps.
 
