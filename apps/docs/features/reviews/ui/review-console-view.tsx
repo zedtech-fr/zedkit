@@ -7,6 +7,7 @@
  * Customer personas: hurried visitor on a phone reading a recorded run; maintainer reproducing a look via share link.
  * UI decisions:
  * - Full-viewport kit AgentConsole — because: hurried visitor reads the same shell as the hosted live view without another origin.
+ * - Finding, code, and transcript slots are hairline, unsheened, unshadowed page-fill surfaces — because: a hurried visitor on a phone reads the verdict on a foundations card, not a frosted Glass slab.
  * - Appearance strip above the console, not in the decision card — because: maintainer paints identity without mixing controls into the verdict.
  * - Back links in that chrome — because: dropping the marketing header must not strand the visitor.
  */
@@ -24,6 +25,7 @@ import {
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { issuePath } from "../model/review-routes";
 import { ReviewConsoleAppearanceFrame } from "./review-console-appearance";
+import "./review-console-surfaces.css";
 
 export function ReviewConsoleView({
   issueNumber,
