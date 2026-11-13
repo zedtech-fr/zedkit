@@ -78,7 +78,7 @@ test("look form tabs are named and KeepBar sits after both modes", () => {
 });
 
 test("the editor owns Classic/Expert tabs; the dock embeds panels in the drawer header", () => {
-  const form = read("features/identity/ui/identity-look-form.tsx");
+  const form = read("features/identity/editor/ui/identity-look-form.tsx");
   assert.match(form, /tabs = "owned"/);
   assert.match(form, /tabs === "embedded"/);
   assert.match(form, /defaultMode\?: "simple" \| "expert"/);
