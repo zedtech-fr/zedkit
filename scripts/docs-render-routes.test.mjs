@@ -48,6 +48,26 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
+test("reviews feature files map to the public issues index", () => {
+  assert.deepEqual(routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"]), [
+    "/issues",
+  ]);
+  assert.deepEqual(routesFromFiles(["apps/docs/app/(run-console)/issues/[n]/runs/[id]/page.tsx"]), [
+    "/issues",
+  ]);
+});
+
+test("reviews diffs also add published index-only run pages when they are in the sitemap", () => {
+  assert.deepEqual(
+    docsRenderRoutes({
+      files: ["apps/docs/features/reviews/ui/review-console-surfaces.css"],
+      manifest: buttonManifest,
+      sitemapRoutes: ["/", "/issues", "/issues/108/runs/run-108-impl", "/issues/93/runs/run-93-impl"],
+    }).sort(),
+    ["/issues", "/issues/108/runs/run-108-impl", "/issues/93/runs/run-93-impl"].sort(),
+  );
+});
+
 test("docs identity feature modules map to the editor route", () => {
   assert.deepEqual(
     routesFromFiles([

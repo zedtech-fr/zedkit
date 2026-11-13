@@ -242,6 +242,12 @@ describe("visual-verify helpers", () => {
       "/docs/ui/trigger-actions-with-buttons",
     ]);
     expect(routesFromFiles(["apps/docs/app/docs/[[...slug]]/page.tsx"])).toEqual([]);
+    expect(
+      routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"]).sort(),
+    ).toEqual(["/issues"]);
+    expect(routesFromFiles(["apps/docs/app/(run-console)/issues/[n]/runs/[id]/page.tsx"])).toEqual([
+      "/issues",
+    ]);
   });
 
   it("maps docs identity feature modules to the editor route", () => {
