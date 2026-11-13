@@ -2,7 +2,7 @@
 // Original work by the same author.
 /* global document, getComputedStyle, window -- page.evaluate browser scope */
 import { spawnSync } from "node:child_process";
-import { createReadStream, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { createReadStream, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
 import { dirname, extname, join, resolve, sep } from "node:path";
@@ -16,6 +16,12 @@ export const VIEWPORT_HEIGHT = 900;
 export const DEFAULT_LOOKS = ["mist", "press", "tide", "volt", "maison", "glass"];
 export const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"];
 export const PEER_MISSING = "PEER_MISSING";
+export const BAD_FLAG = "BAD_FLAG";
+export const HIT_TARGET_MIN = 24;
+export const HIT_FAIL_CAP = 5;
+export const MAX_FLAG_BYTES = 1024 * 1024;
+export const MAX_PNG_BYTES = 8 * 1024 * 1024;
+export const MAX_DIR_ENTRIES = 256;
 export const PEER_HINT = "install `@playwright/test` and run `playwright install chromium`";
 
 const MIME = {
@@ -53,6 +59,28 @@ export function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
+export function mdCell(value) {
+  const text = String(value ?? "").replaceAll(/[|\r\n]+/gu, " ").trim();
+  return text || "—";
+}
+
+export function pngDataUri(path) {
+  const st = tryCatch(() => statSync(path));
+  if (!st.ok || !st.value.isFile() || st.value.size > MAX_PNG_BYTES) return "";
+  return `data:image/png;base64,${readFileSync(path).toString("base64")}`;
+}
+
+function uniqueName(used, base) {
+  let name = base;
+  let n = 2;
+  while (used.has(name)) {
+    name = `${base}-${n}`;
+    n += 1;
+  }
+  used.add(name);
+  return name;
+}
+
 export function isFaviconRequest(url) {
   const parsed = tryCatch(() => new URL(url));
   const path = parsed.ok ? parsed.value.pathname : String(url);
@@ -82,6 +110,34 @@ export function copySitsWithBlock(button, frame) {
   );
 }
 
+export function identitiesFromChangedFiles(files) {
+  let full = false;
+  const touched = [];
+  for (const file of files) {
+    const n = file.replaceAll("\\", "/");
+    const look = /(?:^|\/)identities\/([^/]+)\.css$/iu.exec(n);
+    if (look) {
+      const id = look[1].toLowerCase();
+      if (!touched.includes(id)) touched.push(id);
+      continue;
+    }
+    if (/identities[^/]*\.css$/iu.test(n)) {
+      full = true;
+      continue;
+    }
+    if (/(?:^|\/)(?:tokens?|styles)\.(?:css|ts)$/iu.test(n)) {
+      full = true;
+      continue;
+    }
+    if (!/packages\/ui\/src\/.+\.tsx$/u.test(n)) continue;
+    if (/\.(?:test|spec)\./u.test(n)) continue;
+    full = true;
+  }
+  if (full) return [...DEFAULT_LOOKS];
+  return touched;
+}
+
+/** CI six-look trigger. Lockstep with scripts/docs-render-routes.mjs; evidence looks use identitiesFromChangedFiles. */
 export function looksGridTriggered(files) {
   return files.some((file) => {
     const n = file.replaceAll("\\", "/");
@@ -148,6 +204,73 @@ export function visualReferencePath(ticket) {
   return match?.[1] ?? null;
 }
 
+export function ticketStateNames(ticket) {
+  const match = /^\*{0,2}States:\*{0,2}\s*(.+)$/mu.exec(ticket);
+  if (!match) return { skip: false, unverified: [] };
+  const line = match[1].trim();
+  if (/^no transient states$/iu.test(line)) return { skip: true, unverified: [] };
+  return { skip: false, unverified: line.split(",").map((s) => s.trim()).filter(Boolean) };
+}
+
+function flagError(message) {
+  const error = new Error(message);
+  error.code = BAD_FLAG;
+  return error;
+}
+
+export function parseStatesFile(raw) {
+  const parsed = tryCatch(() => JSON.parse(raw));
+  if (!parsed.ok) return err(flagError(`invalid --states: ${parsed.error.message}`));
+  if (!Array.isArray(parsed.value)) return err(flagError("invalid --states: must be a JSON array"));
+  const states = [];
+  for (const row of parsed.value) {
+    if (!row || typeof row !== "object" || typeof row.name !== "string" || !row.name.trim()) {
+      return err(flagError("invalid --states: entries need a name"));
+    }
+    if ("click" in row && row.click != null && typeof row.click !== "string") {
+      return err(flagError("invalid --states: click must be a string"));
+    }
+    const click = typeof row.click === "string" && row.click.trim() ? row.click.trim() : undefined;
+    states.push(click ? { name: row.name.trim(), click } : { name: row.name.trim() });
+  }
+  return ok(states);
+}
+
+function loadStatesOption(cwd, statesPath) {
+  if (!statesPath) return ok([]);
+  const full = resolve(cwd, statesPath);
+  const st = tryCatch(() => statSync(full));
+  if (!st.ok || !st.value.isFile()) return err(flagError(`missing --states: ${statesPath}`));
+  if (st.value.size > MAX_FLAG_BYTES) return err(flagError("invalid --states: file too large"));
+  const raw = tryCatch(() => readFileSync(full, "utf8"));
+  if (!raw.ok) return err(flagError(`unreadable --states: ${statesPath}`));
+  return parseStatesFile(raw.value);
+}
+
+function loadMockupOption(cwd, mockupPath) {
+  if (!mockupPath) return ok(null);
+  const full = resolve(cwd, mockupPath);
+  if (!existsSync(full)) return err(flagError(`missing --mockup: ${mockupPath}`));
+  return ok(full);
+}
+
+export function resolveMockupForWidth(spec, route, width, cwd) {
+  if (!spec) return null;
+  const root = resolve(cwd ?? ".", spec);
+  if (!existsSync(root)) return null;
+  if (statSync(root).isFile()) return root;
+  const named = join(root, `${routeStem(route)}-${width}.png`);
+  if (existsSync(named) && statSync(named).isFile()) return named;
+  const byWidth = join(root, `${width}.png`);
+  if (existsSync(byWidth) && statSync(byWidth).isFile()) return byWidth;
+  const listing = tryCatch(() => readdirSync(root));
+  if (!listing.ok || listing.value.length > MAX_DIR_ENTRIES) return null;
+  const pngs = listing.value.filter((name) => name.toLowerCase().endsWith(".png"));
+  if (pngs.length !== 1) return null;
+  const only = join(root, pngs[0]);
+  return statSync(only).isFile() ? only : null;
+}
+
 export function sanitizeBranch(name) {
   const cleaned = name.replace(/[^A-Za-z0-9._-]+/gu, "-").replace(/^-+|-+$/gu, "");
   return cleaned || "HEAD";
@@ -176,10 +299,20 @@ export function cellHasVerdict(cell) {
   return cell.collection === "ok" && "overflow" in cell;
 }
 
+function hitLabel(cell) {
+  if (!cellHasVerdict(cell)) return "—";
+  if (!cell.hitTargets?.fail) return "ok";
+  const first = cell.hitTargets.failed?.[0];
+  if (!first) return "fail";
+  const role = first.role ? `[${first.role}]` : "";
+  const box = first.box ? ` ${first.box.w}×${first.box.h}` : "";
+  return `fail ${first.tag}${role}${box}`;
+}
+
 export function markdownTable(report) {
   const header =
-    "| route | width | mode | look | collection | overflow | new serious axe | h1 | h1 size | lines | h1 share of viewport |";
-  const sep = "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |";
+    "| route | width | mode | look | state | collection | overflow | hit | new serious axe | h1 | h1 size | lines | h1 share of viewport |";
+  const sep = "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |";
   const rows = report.cells.map((cell) => {
     const overflow = cellHasVerdict(cell) ? (cell.overflow ? "fail" : "ok") : "—";
     const axe = cellHasVerdict(cell) ? (cell.axeNew.length ? cell.axeNew.join(",") : "0") : "—";
@@ -187,9 +320,18 @@ export function markdownTable(report) {
     const size = cell.h1?.fontSize ?? "—";
     const lines = cell.h1?.lines ?? "—";
     const share = cell.h1?.share === undefined ? "—" : cell.h1.share.toFixed(2);
-    return `| ${cell.route} | ${cell.width} | ${cell.mode} | ${cell.identity ?? "—"} | ${cell.collection} | ${overflow} | ${axe} | ${h1} | ${size} | ${lines} | ${share} |`;
+    return `| ${mdCell(cell.route)} | ${mdCell(cell.width)} | ${mdCell(cell.mode)} | ${mdCell(cell.identity ?? "—")} | ${mdCell(cell.state ?? "—")} | ${mdCell(cell.collection)} | ${mdCell(overflow)} | ${mdCell(hitLabel(cell))} | ${mdCell(axe)} | ${mdCell(h1)} | ${mdCell(size)} | ${mdCell(lines)} | ${mdCell(share)} |`;
   });
   return [header, sep, ...rows].join("\n");
+}
+
+export function formatReportText(report, recordPath) {
+  const lines = [markdownTable(report)];
+  if (report.statesUnverified?.length) {
+    lines.push(`statesUnverified: ${report.statesUnverified.map((n) => mdCell(n)).join(", ")}`);
+  }
+  lines.push(report.ok ? "pass" : "fail", recordPath);
+  return `${lines.join("\n")}\n`;
 }
 
 export function baselineAxeIds(record) {
@@ -221,6 +363,8 @@ export function parseVisualVerifyArgs(args) {
         out: { type: "string" },
         md: { type: "string" },
         ticket: { type: "string" },
+        states: { type: "string" },
+        mockup: { type: "string" },
         manifest: { type: "string" },
         help: { type: "boolean", short: "h" },
         cwd: { type: "string" },
@@ -252,6 +396,8 @@ export function parseVisualVerifyArgs(args) {
     out: v.out,
     md: v.md,
     ticket: v.ticket,
+    states: v.states,
+    mockup: v.mockup,
     manifest: v.manifest,
     help: v.help === true,
     cwd: v.cwd,
@@ -402,7 +548,7 @@ async function readCollection(page) {
 }
 
 async function readPageFacts(page) {
-  return page.evaluate(() => {
+  return page.evaluate(({ minTarget, failCap }) => {
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 1;
     const h1s = [...document.querySelectorAll("h1")];
     const h1 = h1s[0];
@@ -445,8 +591,68 @@ async function readPageFacts(page) {
         clippedNodes.push(el);
       }
     }
-    return { overflow, h1: h1Facts, copy, clipped: clippedNodes.length > 0, clippedCount: clippedNodes.length };
-  });
+    const hitSelector =
+      "a, button, input, select, textarea, [role=button], [role=link], [role=tab], [role=menuitem], [role=checkbox], [role=radio], [role=switch], [role=combobox]";
+    let hitMin = Infinity;
+    let hitCount = 0;
+    let hitFail = false;
+    const failed = [];
+    const overlaps = (a, b) => a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
+    for (const el of document.querySelectorAll(hitSelector)) {
+      const cs = getComputedStyle(el);
+      if (cs.display === "inline" || cs.display === "none" || cs.visibility === "hidden") continue;
+      if (cs.pointerEvents === "none") continue;
+      if (el.disabled || el.hasAttribute("disabled")) continue;
+      const rect = el.getBoundingClientRect();
+      let box = { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
+      for (const pseudo of ["::before", "::after"]) {
+        const p = getComputedStyle(el, pseudo);
+        const pw = Number.parseFloat(p.width);
+        const ph = Number.parseFloat(p.height);
+        const pl = Number.parseFloat(p.left);
+        const pt = Number.parseFloat(p.top);
+        if (!Number.isFinite(pw) || !Number.isFinite(ph) || (pw <= 0 && ph <= 0)) continue;
+        if (!Number.isFinite(pl) || !Number.isFinite(pt)) continue;
+        const pbox = {
+          left: rect.left + pl,
+          top: rect.top + pt,
+          right: rect.left + pl + pw,
+          bottom: rect.top + pt + ph,
+        };
+        if (!overlaps(box, pbox)) continue;
+        box = {
+          left: Math.min(box.left, pbox.left),
+          top: Math.min(box.top, pbox.top),
+          right: Math.max(box.right, pbox.right),
+          bottom: Math.max(box.bottom, pbox.bottom),
+        };
+      }
+      const width = box.right - box.left;
+      const height = box.bottom - box.top;
+      const side = Math.min(width, height);
+      if (!Number.isFinite(side) || side <= 0) continue;
+      hitCount += 1;
+      if (side < hitMin) hitMin = side;
+      if (side < minTarget) {
+        hitFail = true;
+        if (failed.length < failCap) {
+          failed.push({
+            tag: el.tagName.toLowerCase(),
+            role: el.getAttribute("role") || undefined,
+            box: { w: Math.round(width), h: Math.round(height) },
+          });
+        }
+      }
+    }
+    return {
+      overflow,
+      h1: h1Facts,
+      copy,
+      clipped: clippedNodes.length > 0,
+      clippedCount: clippedNodes.length,
+      hitTargets: { fail: hitFail, count: hitCount, min: hitCount === 0 ? null : hitMin, failed },
+    };
+  }, { minTarget: HIT_TARGET_MIN, failCap: HIT_FAIL_CAP });
 }
 
 async function selectedContrast(page) {
@@ -474,15 +680,20 @@ function cellFailed(cell) {
   if (cell.axeNew.length > 0) return true;
   if (cell.selectedContrast?.fail) return true;
   if (cell.copyButtons?.fail) return true;
+  if (cell.hitTargets?.fail) return true;
   if (cell.h1.count !== 1 || cell.h1.fontSize === 0) return true;
   return false;
 }
 
+async function screenshotHtml(page, html, dest) {
+  await page.setContent(html, { waitUntil: "domcontentloaded" });
+  await page.screenshot({ path: dest, fullPage: true });
+}
+
 async function stitchSheet(page, shots, dest, mockup) {
-  const cells = shots.map((shot) => ({ src: `data:image/png;base64,${readFileSync(shot.path).toString("base64")}`, label: shot.label }));
-  if (mockup && existsSync(mockup)) {
-    cells.push({ src: `data:image/png;base64,${readFileSync(mockup).toString("base64")}`, label: "reference" });
-  }
+  const cells = shots.map((shot) => ({ src: pngDataUri(shot.path), label: shot.label })).filter((c) => c.src);
+  const mockSrc = mockup && existsSync(mockup) ? pngDataUri(mockup) : "";
+  if (mockSrc) cells.push({ src: mockSrc, label: "reference" });
   const html = `<!doctype html><html lang="en"><head><title>Contact sheet</title><style>
     body{margin:0;background:#111;color:#eee;font:12px sans-serif}
     .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px}
@@ -490,17 +701,44 @@ async function stitchSheet(page, shots, dest, mockup) {
   </style></head><body><div class="g">${cells
     .map((c) => `<figure><img src="${c.src}" alt=""><figcaption>${escapeHtml(c.label)}</figcaption></figure>`)
     .join("")}</div></body></html>`;
-  await page.setContent(html, { waitUntil: "domcontentloaded" });
-  await page.screenshot({ path: dest, fullPage: true });
+  await screenshotHtml(page, html, dest);
+}
+
+async function stitchPair(page, columns, dest) {
+  const head = columns.map((col) => {
+    const look = col.look ? ` ${col.look}` : "";
+    return `<th>${escapeHtml(`${col.width} ${col.mode}${look}`)}</th>`;
+  }).join("");
+  const pageRow = columns
+    .map((col) => `<td><img src="${col.pageSrc}" alt=""></td>`)
+    .join("");
+  const mockRow = columns
+    .map((col) => `<td>${col.mockupSrc ? `<img src="${col.mockupSrc}" alt="">` : "<p>no mockup</p>"}</td>`)
+    .join("");
+  const html = `<!doctype html><html lang="en"><head><title>Pair</title><style>
+    body{margin:0;background:#111;color:#eee;font:12px sans-serif}
+    table{border-collapse:collapse;width:100%}
+    th,td{padding:8px;vertical-align:top;text-align:left}
+    img{width:100%;height:auto;display:block}
+  </style></head><body><table>
+    <thead><tr><th></th>${head}</tr></thead>
+    <tbody>
+      <tr><th>page</th>${pageRow}</tr>
+      <tr><th>mockup</th>${mockRow}</tr>
+    </tbody>
+  </table></body></html>`;
+  await screenshotHtml(page, html, dest);
 }
 
 function failedCell(route, width, mode, identity, reason, extras = {}) {
   return { route, width, mode, identity, ...collectionFailedRecord(reason), ...extras };
 }
 
-async function runOneCell({ context, origin, route, width, mode, identity, outDir, AxeBuilder, baselineIds }) {
+async function runOneCell({ context, origin, route, width, mode, identity, outDir, AxeBuilder, baselineIds, state, usedShots }) {
   const pageResult = await tryCatchAsync(() => context.newPage());
-  if (!pageResult.ok) return { cell: failedCell(route, width, mode, identity, pageResult.error.message), shot: null };
+  if (!pageResult.ok) {
+    return { cell: failedCell(route, width, mode, identity, pageResult.error.message, state?.name ? { state: state.name } : {}), shot: null };
+  }
   const page = pageResult.value;
   const measured = await tryCatchAsync(async () => {
     await page.setViewportSize({ width, height: VIEWPORT_HEIGHT });
@@ -529,13 +767,29 @@ async function runOneCell({ context, origin, route, width, mode, identity, outDi
       },
       { nextMode: mode, nextIdentity: identity },
     );
-    const collection = await readCollection(page);
+    if (state?.click) {
+      const clicked = await tryCatchAsync(() => page.locator(state.click).click({ timeout: 2000 }));
+      if (!clicked.ok) {
+        return {
+          cell: failedCell(route, width, mode, identity, `state:${state.name}`, {
+            pageerror: pageerrors.length,
+            pageerrors,
+            consoleErrors: consoles.length,
+            httpErrors: httpErrors.length,
+            state: state.name,
+          }),
+          shot: null,
+        };
+      }
+    }
     const extras = {
       pageerror: pageerrors.length,
       pageerrors,
       consoleErrors: consoles.length,
       httpErrors: httpErrors.length,
+      ...(state?.name ? { state: state.name } : {}),
     };
+    const collection = await readCollection(page);
     if (!collection.ok) {
       return { cell: failedCell(route, width, mode, identity, collection.reason, extras), shot: null };
     }
@@ -556,10 +810,13 @@ async function runOneCell({ context, origin, route, width, mode, identity, outDi
       pageerrors.push(`axe: ${axeRun.error.message}`);
       extras.pageerror = pageerrors.length;
     }
-    const shotPath = join(outDir, `${[routeStem(route), width, mode, identity ?? "default"].join("-")}.png`);
+    const shotParts = [routeStem(route), width, mode, identity ?? "default"];
+    if (state?.name) shotParts.push(routeStem(state.name.replaceAll(/\s+/gu, "-")));
+    const shotPath = join(outDir, `${uniqueName(usedShots ?? new Set(), shotParts.join("-"))}.png`);
     await page.screenshot({ path: shotPath, fullPage: false });
     const selected = await selectedContrast(page);
     const copyFail = facts.copy.some((pair) => !pair.frame || !copySitsWithBlock(pair.button, pair.frame));
+    const label = `${width} ${mode}${identity ? ` ${identity}` : ""}${state?.name ? ` ${state.name}` : ""}`;
     return {
       cell: {
         route,
@@ -570,6 +827,7 @@ async function runOneCell({ context, origin, route, width, mode, identity, outDi
         overflow: facts.overflow,
         clipped: facts.clipped,
         clippedCount: facts.clippedCount,
+        hitTargets: facts.hitTargets,
         ...extras,
         axeNew,
         axeIds,
@@ -578,16 +836,44 @@ async function runOneCell({ context, origin, route, width, mode, identity, outDi
         h1: facts.h1,
         screenshot: shotPath,
       },
-      shot: { path: shotPath, label: `${width} ${mode}${identity ? ` ${identity}` : ""}` },
+      shot: { path: shotPath, label },
     };
   });
   await tryCatchAsync(() => page.close());
-  if (!measured.ok) return { cell: failedCell(route, width, mode, identity, measured.error.message), shot: null };
+  if (!measured.ok) {
+    return { cell: failedCell(route, width, mode, identity, measured.error.message, state?.name ? { state: state.name } : {}), shot: null };
+  }
   return measured.value;
 }
 
 export async function runVisualVerify(options, deps = {}) {
   const cwd = options.cwd ?? process.cwd();
+  const statesLoaded = loadStatesOption(cwd, options.states);
+  if (!statesLoaded.ok) return err(statesLoaded.error);
+  const mockupLoaded = loadMockupOption(cwd, options.mockup);
+  if (!mockupLoaded.ok) return err(mockupLoaded.error);
+  let ticketText = "";
+  if (options.ticket && existsSync(resolve(cwd, options.ticket))) {
+    ticketText = readFileSync(resolve(cwd, options.ticket), "utf8");
+  }
+  const ticketStates = ticketStateNames(ticketText);
+  const states = options.states ? statesLoaded.value : [];
+  const statesTicket = ticketStates.skip ? [] : ticketStates.unverified;
+  const captured = new Set(states.map((s) => s.name));
+  const statesUnverified = ticketStates.skip
+    ? []
+    : options.states
+      ? statesTicket.filter((name) => !captured.has(name))
+      : statesTicket;
+  const warnings = [];
+  if (options.states && statesUnverified.length > 0) {
+    warnings.push(`--states does not cover ticket States: ${statesUnverified.join(", ")}`);
+  }
+  let mockupRoot = mockupLoaded.value;
+  if (!mockupRoot) {
+    const rel = visualReferencePath(ticketText);
+    if (rel && existsSync(resolve(cwd, rel))) mockupRoot = resolve(cwd, rel);
+  }
   const loadPw = deps.loadPlaywright ?? loadPlaywright;
   const loadAxeBuilder = deps.loadAxe ?? loadAxe;
   const playwright = await loadPw();
@@ -607,8 +893,9 @@ export async function runVisualVerify(options, deps = {}) {
   const routes = unionRoutes(fromDiff, options.routes ?? []);
   if (routes.length === 0) return err(new Error("no routes: pass --routes or --changed"));
 
-  const looksOn = options.identities !== undefined || looksGridTriggered(files);
-  const identities = looksOn ? (options.identities ?? DEFAULT_LOOKS) : [undefined];
+  const fileLooks = identitiesFromChangedFiles(files);
+  const looksOn = options.identities !== undefined || fileLooks.length > 0;
+  const identities = looksOn ? (options.identities ?? (fileLooks.length > 0 ? fileLooks : DEFAULT_LOOKS)) : [undefined];
   if (looksOn && identities.length === 0) return err(new Error("no identities: pass --identities <id,id>"));
 
   let baselineIds = new Set();
@@ -620,13 +907,6 @@ export async function runVisualVerify(options, deps = {}) {
       baselineIds = baselineAxeIds(raw.value);
     }
   }
-
-  let ticketText = "";
-  if (options.ticket && existsSync(resolve(cwd, options.ticket))) {
-    ticketText = readFileSync(resolve(cwd, options.ticket), "utf8");
-  }
-  const mockupRel = visualReferencePath(ticketText);
-  const mockup = mockupRel && existsSync(resolve(cwd, mockupRel)) ? resolve(cwd, mockupRel) : null;
 
   const widths = options.widths ?? WIDTHS;
   const modes = options.modes ?? MODES;
@@ -657,9 +937,14 @@ export async function runVisualVerify(options, deps = {}) {
   const context = contextResult.value;
   const cells = [];
   const contactSheets = [];
+  const pairs = [];
+  const usedShots = new Set();
+  const pairMode = modes[0];
+  const pairLook = identities[0];
   const run = await tryCatchAsync(async () => {
     for (const route of routes) {
       const shots = [];
+      const pairPageByWidth = new Map();
       for (const width of widths) {
         for (const mode of modes) {
           for (const identity of identities) {
@@ -673,21 +958,76 @@ export async function runVisualVerify(options, deps = {}) {
               outDir,
               AxeBuilder,
               baselineIds,
+              usedShots,
             });
             cells.push(one.cell);
-            if (one.shot) shots.push(one.shot);
+            if (one.shot) {
+              shots.push(one.shot);
+              if (mode === pairMode && identity === pairLook) pairPageByWidth.set(width, one.shot.path);
+            }
+            for (const state of states) {
+              const extra = await runOneCell({
+                context,
+                origin,
+                route,
+                width,
+                mode,
+                identity,
+                outDir,
+                AxeBuilder,
+                baselineIds,
+                state,
+                usedShots,
+              });
+              cells.push(extra.cell);
+              if (extra.shot) shots.push(extra.shot);
+            }
           }
         }
       }
+      const sheetMockup = mockupRoot
+        ? widths.map((w) => resolveMockupForWidth(mockupRoot, route, w, cwd)).find(Boolean) ?? null
+        : null;
       const sheetPath = join(outDir, `sheet-${routeStem(route)}.png`);
       const sheet = await tryCatchAsync(async () => {
         const sheetPage = await context.newPage();
         await sheetPage.setViewportSize({ width: 1200, height: 800 });
-        await stitchSheet(sheetPage, shots, sheetPath, mockup);
+        await stitchSheet(sheetPage, shots, sheetPath, sheetMockup);
         await sheetPage.close();
         return { route, path: sheetPath };
       });
       if (sheet.ok) contactSheets.push(sheet.value);
+      if (mockupRoot) {
+        const columns = [];
+        for (const width of widths) {
+          const pagePath = pairPageByWidth.get(width);
+          if (!pagePath || !existsSync(pagePath)) continue;
+          const mockPath = resolveMockupForWidth(mockupRoot, route, width, cwd);
+          const mockSrc = mockPath && existsSync(mockPath) ? pngDataUri(mockPath) : "";
+          const pageSrc = pngDataUri(pagePath);
+          if (!pageSrc) continue;
+          columns.push({
+            width,
+            mode: pairMode,
+            look: pairLook ?? "",
+            pageSrc,
+            mockupSrc: mockSrc,
+          });
+        }
+        if (columns.some((col) => col.mockupSrc) && columns.length > 0) {
+          const pairPath = join(outDir, `pair-${routeStem(route)}.png`);
+          const pair = await tryCatchAsync(async () => {
+            const pairPage = await context.newPage();
+            await pairPage.setViewportSize({ width: 1200, height: 800 });
+            await stitchPair(pairPage, columns, pairPath);
+            await pairPage.close();
+            return { route, path: pairPath };
+          });
+          if (pair.ok) pairs.push(pair.value);
+        } else if (options.mockup) {
+          warnings.push(`unresolvable --mockup for ${route}: no matching PNG`);
+        }
+      }
     }
   });
   await tryCatchAsync(() => context.close());
@@ -707,17 +1047,24 @@ export async function runVisualVerify(options, deps = {}) {
     routes,
     cells,
     contactSheets,
+    pairs,
+    statesTicket,
+    statesUnverified,
+    warnings,
     ok: okRun,
   };
   const recordPath = join(outDir, "manifest.json");
   writeFileSync(recordPath, `${JSON.stringify(report, null, 2)}\n`);
-  const table = markdownTable(report);
-  writeFileSync(join(outDir, "summary.md"), `${table}\n\n${okRun ? "pass" : "fail"}\n${recordPath}\n`);
+  writeFileSync(join(outDir, "summary.md"), formatReportText(report, recordPath));
   return ok(report);
 }
 
 function isPeerFailure(error) {
   return error.code === PEER_MISSING || String(error.message).startsWith("install `");
+}
+
+function isFlagFailure(error) {
+  return error.code === BAD_FLAG;
 }
 
 export async function visualVerifyMain(args, sinks, deps) {
@@ -740,16 +1087,16 @@ export async function visualVerifyMain(args, sinks, deps) {
   const result = await runVisualVerify(parsed.value, deps);
   if (!result.ok) {
     sinks.err(`error: ${result.error.message}`);
-    return isPeerFailure(result.error) ? 2 : 1;
+    return isPeerFailure(result.error) || isFlagFailure(result.error) ? 2 : 1;
   }
-  const table = markdownTable(result.value);
-  sinks.out(table);
-  sinks.out(result.value.ok ? "pass" : "fail");
-  sinks.out(join(result.value.outDir, "manifest.json"));
+  for (const warning of result.value.warnings ?? []) sinks.err(`warning: ${warning}`);
+  const recordPath = join(result.value.outDir, "manifest.json");
+  const text = formatReportText(result.value, recordPath);
+  for (const line of text.trimEnd().split("\n")) sinks.out(line);
   if (parsed.value.md) {
     const mdPath = resolve(parsed.value.cwd ?? process.cwd(), parsed.value.md);
     mkdirSync(dirname(mdPath), { recursive: true });
-    writeFileSync(mdPath, `${table}\n`);
+    writeFileSync(mdPath, `${markdownTable(result.value)}\n`);
   }
   return result.value.ok ? 0 : 1;
 }
