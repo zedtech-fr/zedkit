@@ -57,10 +57,10 @@ describe("ci-required aggregate", () => {
 });
 
 describe("docs-render job", () => {
+  const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+
   it("reuses docs-out, sets DOCS_ROUTES, and runs e2e:routes", () => {
-    const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.notEqual(job, "", "docs-render job block not found");
-    assert.match(job, /timeout-minutes: 6/);
     assert.match(job, /needs: \[changes, docs-build\]/);
     assert.match(job, /e2e:routes/);
     assert.match(job, /DOCS_ROUTES/);
@@ -78,6 +78,35 @@ describe("docs-render job", () => {
     assert.match(job, /docs-render-results/);
     assert.match(job, /if: failure\(\)/);
     assert.match(job, /apps\/docs\/test-results\//);
+  });
+
+  it("chooses full vs touched via --mode, HEAD_REF, and a 6/25 timeout", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    assert.match(job, /--mode/);
+    assert.ok(job.includes("HEAD_REF: ${{ github.head_ref }}"));
+    assert.match(job, /timeout-minutes: \$\{\{[^}]*\b25\b[^}]*\b6\b[^}]*\}\}/);
+    assert.match(job, /\[ "\$MODE" = "full" \]/);
+    assert.match(job, /unset DOCS_ROUTES/);
+    assert.match(job, /unset DOCS_LOOKS/);
+  });
+});
+
+describe("nightly Chromium sitemap", () => {
+  const nightly = readFileSync(join(root, ".github/workflows/nightly-docs-cross-browser.yml"), "utf8");
+
+  it("runs e2e:routes without DOCS_ROUTES on a 25-minute Chromium job", () => {
+    const job =
+      nightly.split(/^ {2}docs-render-chromium:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(job, "", "docs-render-chromium job block not found");
+    assert.match(job, /timeout-minutes: 25/);
+    assert.match(job, /e2e:routes/);
+    assert.match(job, /DOCS_E2E_PROJECT: chromium/);
+    assert.doesNotMatch(job, /DOCS_ROUTES/);
+    assert.doesNotMatch(job, /DOCS_LOOKS/);
+    const smoke = nightly.split(/^ {2}docs-smoke-cross-browser:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.match(smoke, /firefox/);
+    assert.match(smoke, /webkit/);
+    assert.doesNotMatch(smoke, /e2e:routes/);
   });
 });
 
