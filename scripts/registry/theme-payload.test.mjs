@@ -20,3 +20,13 @@ test("copy theme keeps later :root blocks and media, not only the first colour b
   assert.ok(identity);
   assert.equal(payload.cssVars.theme["text-heading"], "1.5rem");
 });
+
+test("hit-target coarse override is a components-layer rule, not nested in the utility", () => {
+  const payload = generateThemePayload(root);
+  const hit = payload.css["@utility hit-target"];
+  assert.ok(hit?.["&::before"]);
+  assert.equal(hit["@media (pointer: coarse), (max-width: 40rem)"], undefined);
+  const coarse = payload.css["@layer components"]?.["@media (pointer: coarse), (max-width: 40rem)"];
+  assert.equal(coarse?.[".hit-target::before"]?.width, "var(--spacing-tap)");
+  assert.equal(coarse?.[".hit-target::before"]?.height, "var(--spacing-tap)");
+});

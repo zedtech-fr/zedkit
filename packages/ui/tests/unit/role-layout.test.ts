@@ -209,12 +209,16 @@ describe("layout job classes", () => {
   });
 
   it("keeps a 24px hit area on small controls, and the tap size on touch", () => {
-    const block = css.slice(css.indexOf("@utility hit-target"));
-    const hit = block.slice(0, block.indexOf("@utility", 1));
-    expect(hit).toContain("width: max(100%, 24px);");
-    expect(hit).toContain("height: max(100%, 24px);");
-    expect(hit).toContain("width: var(--spacing-tap);");
-    expect(hit).toContain("height: var(--spacing-tap);");
+    const utilityStart = css.indexOf("@utility hit-target");
+    const utility = css.slice(utilityStart, css.indexOf("@layer components", utilityStart));
+    expect(utility).toContain("width: max(100%, 24px);");
+    expect(utility).toContain("height: max(100%, 24px);");
+    expect(utility).not.toMatch(/@media \(pointer: coarse\)/);
+
+    const layer = css.slice(css.indexOf("@layer components"));
+    const hitTap = layer.slice(layer.indexOf(".hit-target::before"), layer.indexOf("}", layer.indexOf(".hit-target::before")));
+    expect(hitTap).toContain("width: var(--spacing-tap);");
+    expect(hitTap).toContain("height: var(--spacing-tap);");
   });
 
   it("keeps the chosen select value on one line", () => {

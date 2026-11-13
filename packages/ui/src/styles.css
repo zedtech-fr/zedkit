@@ -908,18 +908,14 @@ section[data-gallery-section].border-b:last-child {
     width: max(100%, 24px);
     height: max(100%, 24px);
   }
-  @media (pointer: coarse), (max-width: 40rem) {
-    &::before {
-      width: var(--spacing-tap);
-      height: var(--spacing-tap);
-    }
-  }
 }
 
 /*
  * Link badges keep their small visual size. The hit area is at least the
  * 24px floor on every pointer, and the labelled tap size on touch or a
- * narrow screen.
+ * narrow screen. Coarse/narrow `hit-target` lives here too: nested
+ * `@media` + `&::before` inside `@utility` compiles to invalid
+ * `@media (pointer::before: coarse)`.
  */
 @layer components {
   a[class*="px-badge-inline"] {
@@ -935,6 +931,10 @@ section[data-gallery-section].border-b:last-child {
     }
   }
   @media (pointer: coarse), (max-width: 40rem) {
+    .hit-target::before {
+      width: var(--spacing-tap);
+      height: var(--spacing-tap);
+    }
     a[class*="px-badge-inline"]::after {
       width: 100%;
       height: 100%;
