@@ -99,11 +99,22 @@ export function assertValidateOk(result) {
   if (result.code !== 0) {
     throw new Error(`validate failed: code=${result.code} out=${result.out} err=${result.err}`);
   }
-  const out = result.out.trim();
-  if (!out.startsWith("ok — structural kit checks only")) {
+  const lines = result.out
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length > 0);
+  const okLines = lines.filter((line) => line.startsWith("ok — structural kit checks only"));
+  if (okLines.length !== 1) {
     throw new Error(`validate changed contract: ${result.out}`);
   }
-  if (!out.includes("NOT checked by validate")) {
+  if (!okLines[0].includes("NOT checked by validate")) {
     throw new Error(`validate missing scope disclaimer: ${result.out}`);
+  }
+  const deprecation =
+    /^commands\/[\w.-]+\.md: warning: command "[\w.-]+" is deprecated; use \/zedkit-ai/;
+  const unexpected = lines.filter((line) => line !== okLines[0] && !deprecation.test(line));
+  if (unexpected.length > 0) {
+    throw new Error(`validate unexpected output: ${unexpected.join("\n")}`);
   }
 }

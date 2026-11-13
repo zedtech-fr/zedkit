@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { tempDir } from "./helpers.js";
+import { failingIssues, tempDir } from "./helpers.js";
 
 function install(dest: string, options: Omit<Parameters<typeof installKit>[0], "dest"> = {}) {
   const result = installKit({ dest, providers: [], ...options });
@@ -50,7 +50,7 @@ describe("personas template per preset", () => {
     for (const preset of Object.keys(manifest.value.presets)) {
       const dest = tempDir();
       install(dest, { preset });
-      expect(validateKit(join(dest, ".agents")), preset).toEqual([]);
+      expect(failingIssues(validateKit(join(dest, ".agents"))), preset).toEqual([]);
     }
   });
 
@@ -62,7 +62,7 @@ describe("personas template per preset", () => {
     expect(again.filter((a) => a.kind === "copy" || a.kind === "link" || a.kind === "write")).toEqual([]);
     expect(personas(dest)).toBe(first);
     expect(existsSync(join(dest, ".agents/personas.kit.md"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("adopt keeps a user's personas.md and writes a kit sidecar", () => {
@@ -75,6 +75,6 @@ describe("personas template per preset", () => {
     expect(actions).toContainEqual(
       expect.objectContaining({ kind: "copy", path: join(".agents", "personas.kit.md") }),
     );
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 });

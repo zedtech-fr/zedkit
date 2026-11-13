@@ -15,7 +15,7 @@ import {
 } from "#kit.js";
 import { lensClosureIssues, setLensStatus } from "#lenses.js";
 import { validateKit } from "#validate.js";
-import { skillDirs, tempDir } from "./helpers.js";
+import { failingIssues, skillDirs, tempDir } from "./helpers.js";
 
 function install(dest: string, preset: string): void {
   const result = installKit({ dest, preset, providers: [] });
@@ -143,7 +143,7 @@ describe("preset closure", () => {
       expect(result.ok, preset).toBe(true);
       if (!result.ok) continue;
       const agentsRoot = join(dest, ".agents");
-      expect(validateKit(agentsRoot), preset).toEqual([]);
+      expect(failingIssues(validateKit(agentsRoot)), preset).toEqual([]);
       const skills = dirs(join(agentsRoot, "skills"));
       const agents = mdNames(join(agentsRoot, "agents"));
       const installed = new Set([...skills, ...agents]);
@@ -445,7 +445,7 @@ describe("preset closure", () => {
     expect(existsSync(join(dest, ".agents/skills/triage/SKILL.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/commands/triage.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("flags a /name in the kit universe that the preset does not install", () => {
@@ -509,7 +509,7 @@ describe("preset closure", () => {
       const handoff = join(dest, ".agents/skills/handoff/SKILL.md");
       expect(existsSync(handoff), `${preset} installs handoff`).toBe(true);
       expect(readFileSync(handoff, "utf8")).toContain("Durable deliverables");
-      const found = validateKit(join(dest, ".agents")).map(
+      const found = failingIssues(validateKit(join(dest, ".agents"))).map(
         (issue) => `${issue.path}: ${issue.message}`,
       );
       expect(found.some((entry) => entry.includes('"handoff"')), `${preset}: ${found.join("\n")}`).toBe(false);

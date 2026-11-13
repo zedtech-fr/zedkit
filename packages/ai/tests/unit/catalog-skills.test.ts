@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { kitDir } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { put, tempDir } from "./helpers.js";
+import { failingIssues, put, tempDir } from "./helpers.js";
 
 const catalog = join(kitDir(), "skills", "setup-ai", "templates", "catalog");
 const names = readdirSync(catalog).sort();
@@ -48,7 +48,7 @@ describe("catalog skills are ready to install", () => {
       const dir = join(root, ".agents", "skills", name);
       mkdirSync(dir, { recursive: true });
       copyFileSync(join(catalog, name, "SKILL.md.tmpl"), join(dir, "SKILL.md"));
-      expect(validateKit(join(root, ".agents"))).toEqual([]);
+      expect(failingIssues(validateKit(join(root, ".agents")))).toEqual([]);
       const links = [
         ...readFileSync(join(dir, "SKILL.md"), "utf8").matchAll(
           /\]\(([^)#\s]+)\)/gu,
