@@ -48,6 +48,30 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
+test("maps AI setup sources and guides MDX to the human walkthrough route", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "packages/ai/kit/cursor-onboarding.md",
+      "apps/docs/public/ai/setup.md",
+      "apps/docs/prose/guides/ai/setup.mdx",
+      "apps\\docs\\prose\\guides\\index.mdx",
+      "apps/docs/prose/guides/snippets/ui-add.sh",
+      "README.md",
+    ]).sort(),
+    ["/docs", "/docs/ai/setup"],
+  );
+});
+
+test("AI setup sources map to the walkthrough, not the host fallback", () => {
+  assert.deepEqual(
+    docsRenderRoutes({
+      files: ["packages/ai/kit/cursor-onboarding.md"],
+      manifest: buttonManifest,
+    }),
+    ["/docs/ai/setup"],
+  );
+});
+
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({

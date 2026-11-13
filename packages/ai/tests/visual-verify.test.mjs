@@ -73,6 +73,18 @@ h1{font-size:24px}
 .scroll{width:80px;overflow:auto;white-space:nowrap}
 </style></head><body><h1>Scroller</h1><p class="scroll" tabindex="0">this text is much too long to fit</p></body></html>`;
 
+const WORD_ROLL_CLIP = `<!doctype html><html lang="en"><head><title>Roll</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.mask{width:40px;height:20px;overflow:hidden;white-space:nowrap}
+</style></head><body><h1>Roll</h1><span data-word-roll-clip="" class="mask">this text is much too long to fit</span></body></html>`;
+
+const RADIX_SCROLL = `<!doctype html><html lang="en"><head><title>Scroll area</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.view{width:80px;height:40px;overflow:hidden}
+</style></head><body><h1>Scroll area</h1><div data-radix-scroll-area-viewport="" class="view">this text is much too long and tall to fit in the viewport box at all</div></body></html>`;
+
 const BARE = `<!doctype html><html lang="en"><head><title>Bare</title></head><body><h1>Bare</h1><p>No stylesheet.</p></body></html>`;
 
 const SMALL_TARGET = `<!doctype html><html lang="en"><head><title>Small</title><style>
@@ -118,6 +130,15 @@ html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px}
 button.tiny{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;font-size:10px;line-height:16px}
 </style></head><body><h1>Disabled</h1><button class="tiny" type="button" disabled>x</button></body></html>`;
+
+const SR_ONLY_SKIP = `<!doctype html><html lang="en"><head><title>Skip</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;display:block}
+</style></head><body>
+<a class="sr-only" href="#main">Skip to content</a>
+<main id="main"><h1>Skip</h1><p>Readable body copy.</p></main>
+</body></html>`;
 
 const BOOM = `<!doctype html><html lang="en"><head><title>Boom</title><style>
 html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
@@ -188,6 +209,8 @@ function fixtureDir() {
   writeFileSync(join(dir, "low-contrast.html"), LOW_CONTRAST);
   writeFileSync(join(dir, "clipped.html"), CLIPPED);
   writeFileSync(join(dir, "scroller.html"), SCROLLER);
+  writeFileSync(join(dir, "word-roll.html"), WORD_ROLL_CLIP);
+  writeFileSync(join(dir, "radix-scroll.html"), RADIX_SCROLL);
   writeFileSync(join(dir, "bare.html"), BARE);
   writeFileSync(join(dir, "tabs.html"), TABS);
   writeFileSync(join(dir, "small.html"), SMALL_TARGET);
@@ -197,6 +220,7 @@ function fixtureDir() {
   writeFileSync(join(dir, "aria-hidden.html"), ARIA_HIDDEN_TARGET);
   writeFileSync(join(dir, "pointer-none.html"), POINTER_NONE_TARGET);
   writeFileSync(join(dir, "disabled.html"), DISABLED_TARGET);
+  writeFileSync(join(dir, "sr-only.html"), SR_ONLY_SKIP);
   writeFileSync(join(dir, "states.html"), STATES);
   writeFileSync(join(dir, "boom.html"), BOOM);
   return dir;
@@ -221,6 +245,19 @@ describe("visual-verify helpers", () => {
       "/docs/ui/trigger-actions-with-buttons",
     ]);
     expect(routesFromFiles(["apps/docs/app/docs/[[...slug]]/page.tsx"])).toEqual([]);
+  });
+
+  it("maps AI setup sources and guides MDX to the human walkthrough route", () => {
+    expect(
+      routesFromFiles([
+        "packages/ai/kit/cursor-onboarding.md",
+        "apps/docs/public/ai/setup.md",
+        "apps/docs/prose/guides/ai/setup.mdx",
+        "apps\\docs\\prose\\guides\\index.mdx",
+        "apps/docs/prose/guides/snippets/ui-add.sh",
+        "README.md",
+      ]).sort(),
+    ).toEqual(["/docs", "/docs/ai/setup"]);
   });
 
   it("turns the looks grid on for tokens, primitives, and identity sheets", () => {
@@ -656,6 +693,20 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
   });
 
+  it("does not treat the kit word-roll animation mask as clipped text", async () => {
+    const { result } = await runRoutes(["/word-roll"], { widths: [375], modes: ["light"] });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
+  });
+
+  it("does not treat a Radix scroll viewport as clipped text", async () => {
+    const { result } = await runRoutes(["/radix-scroll"], { widths: [375], modes: ["light"] });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
+  });
+
   it("fails collection with no CSS and writes no pass verdict", async () => {
     const { result } = await runRoutes(["/bare"]);
     expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
@@ -723,6 +774,10 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(disabled.result.ok, disabled.result.ok ? "" : disabled.result.error.message).toBe(true);
     expect(disabled.result.value.ok).toBe(true);
     expect(disabled.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
+    const srOnly = await runRoutes(["/sr-only"], { widths: [375], modes: ["light"] });
+    expect(srOnly.result.ok, srOnly.result.ok ? "" : srOnly.result.error.message).toBe(true);
+    expect(srOnly.result.value.ok).toBe(true);
+    expect(srOnly.result.value.cells.every((c) => c.hitTargets?.fail === false && c.clipped === false)).toBe(true);
   });
 
   it("captures --states clicks as extra cells and skips no transient states", async () => {

@@ -56,6 +56,12 @@ const SOURCES = [
   "apps/docs/prose/guides/ai/setup.mdx",
 ];
 
+test("AI setup guide pins the Muse skill-name fallback", () => {
+  const guide = read("apps/docs/prose/guides/ai/setup.mdx");
+  assert.match(guide, /invoke the `zedkit-ai` skill by name/);
+  assert.match(guide, /does not scan `\.agents\/commands`/);
+});
+
 test("ai setup docs name real CLI commands and flags", () => {
   const { commands, flags } = cliSurface();
   for (const rel of SOURCES) {

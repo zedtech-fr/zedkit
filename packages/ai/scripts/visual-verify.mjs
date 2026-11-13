@@ -173,6 +173,13 @@ export function routesFromFiles(files, manifest) {
         routes.add(`/${segs.join("/")}`);
       }
     }
+    const guide = /(?:^|\/)apps\/docs\/prose\/guides\/(.+)\.mdx$/u.exec(n);
+    if (guide && !guide[1].includes("snippets/")) {
+      routes.add(guide[1] === "index" ? "/docs" : `/docs/${guide[1]}`);
+    }
+    if (n.endsWith("packages/ai/kit/cursor-onboarding.md") || n.endsWith("apps/docs/public/ai/setup.md")) {
+      routes.add("/docs/ai/setup");
+    }
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
     }
@@ -575,9 +582,23 @@ async function readPageFacts(page) {
         frame: fr ? { left: fr.left, right: fr.right, top: fr.top, bottom: fr.bottom } : null,
       };
     });
+    const skipTags = new Set(["HTML", "BODY", "PRE", "CODE", "INPUT", "TEXTAREA", "SELECT"]);
+    const visuallyHidden = (el, cs) => {
+      if ((el.clientWidth ?? 0) <= 1 && (el.clientHeight ?? 0) <= 1) return true;
+      const box = el.getBoundingClientRect();
+      if (box.width <= 1 && box.height <= 1) return true;
+      if (el.classList?.contains("sr-only")) return true;
+      const clip = (cs.clip ?? "").replace(/\s+/gu, "").toLowerCase();
+      if (/^rect\((?:0|0px),(?:0|0px),(?:0|0px),(?:0|0px)\)$/u.test(clip)) return true;
+      const clipPath = (cs.clipPath ?? "").replace(/\s+/gu, "").toLowerCase();
+      return /^(?:inset\((?:50%|100%)(?:(?:50%|100%)){0,3}\)|circle\(0(?:px)?\))$/u.test(clipPath);
+    };
     const clippedNodes = [];
     for (const el of document.body.querySelectorAll("*")) {
       const cs = getComputedStyle(el);
+      if (skipTags.has(el.tagName) || visuallyHidden(el, cs)) continue;
+      if (el.hasAttribute("data-allow-clip") || el.hasAttribute("data-word-roll-clip")) continue;
+      if (el.hasAttribute("data-radix-scroll-area-viewport")) continue;
       const ox = cs.overflowX;
       const oy = cs.overflowY;
       if (ox === "auto" || ox === "scroll" || oy === "auto" || oy === "scroll") continue;
@@ -601,6 +622,7 @@ async function readPageFacts(page) {
       if (cs.display === "inline" || cs.display === "none" || cs.visibility === "hidden") continue;
       if (cs.pointerEvents === "none") continue;
       if (el.disabled || el.hasAttribute("disabled")) continue;
+      if (visuallyHidden(el, cs)) continue;
       const rect = el.getBoundingClientRect();
       let box = { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
       for (const pseudo of ["::before", "::after"]) {
