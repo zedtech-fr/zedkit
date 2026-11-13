@@ -19,7 +19,7 @@ function ofToken(
 }
 
 describe("identityContrastWarnings", () => {
-  it("accepts every shipped preset on text, accent, and border in light and dark", () => {
+  it("accepts every shipped preset on text and accent in light and dark", () => {
     for (const tokens of Object.values(identityPresets)) {
       expect(identityContrastWarnings(tokens)).toEqual([]);
     }
@@ -37,7 +37,7 @@ describe("identityContrastWarnings", () => {
     expect(ofToken(tokens, "foreground", "light")).toEqual([]);
   });
 
-  it("warns only on the docs-default light hairline border at 3:1", () => {
+  it("does not warn on a decorative light hairline border", () => {
     const tokens = identityTokenSchema.parse({
       ...identityPresets.glass,
       light: {
@@ -48,15 +48,8 @@ describe("identityContrastWarnings", () => {
         border: "240 5.9% 90%",
       },
     });
-    const warnings = identityContrastWarnings(tokens);
-    expect(warnings).toEqual([
-      expect.objectContaining({
-        scheme: "light",
-        token: "border",
-        min: 3,
-        ratio: 1.27,
-      }),
-    ]);
+    expect(identityContrastWarnings(tokens)).toEqual([]);
+    expect(ofToken(tokens, "border", "light")).toEqual([]);
   });
 
   it("warns when light foreground matches the background", () => {
@@ -128,21 +121,28 @@ describe("identityContrastWarnings", () => {
     if (fixed.success) expect(ofToken(fixed.data, "primaryForeground", "light")).toEqual([]);
   });
 
-  it("warns when light border matches the background", () => {
+  it("does not warn when a decorative border matches the background", () => {
     const tokens = identityTokenSchema.parse({
       ...identityPresets.press,
       light: { ...identityPresets.press.light, border: identityPresets.press.light.background },
     });
-    const warnings = ofToken(tokens, "border", "light");
-    expect(warnings).toHaveLength(1);
-    expect(warnings[0]?.min).toBe(3);
-    expect(warnings[0]?.ratio).toBeLessThan(3);
-    const fixed = parseIdentityTokens({
-      ...tokens,
-      light: { ...tokens.light, border: warnings[0]?.suggestedForeground },
+    expect(ofToken(tokens, "border", "light")).toEqual([]);
+  });
+
+  it("still warns when a user edit matches text to the background", () => {
+    const tokens = identityTokenSchema.parse({
+      ...identityPresets.glass,
+      light: {
+        ...identityPresets.glass.light,
+        background: "0 0% 100%",
+        foreground: "0 0% 100%",
+        mutedForeground: "240 5% 32%",
+        border: "240 5.9% 90%",
+      },
     });
-    expect(fixed.success).toBe(true);
-    if (fixed.success) expect(ofToken(fixed.data, "border", "light")).toEqual([]);
+    const warnings = ofToken(tokens, "foreground", "light");
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]?.min).toBe(4.5);
   });
 });
 

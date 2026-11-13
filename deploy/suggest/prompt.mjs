@@ -18,7 +18,7 @@ tokens: only the fields you change. Every other field stays exactly as in "curre
 - fontSans and fontDisplay: one of the exact strings in "fonts". Nothing else.
 - light and dark: objects with any of background, foreground, primary, primaryForeground, accent, border, mutedForeground. Each is HSL channels written "H S% L%", for example "240 10% 3.9%", with no hsl() wrapper.
 
-Quality: foreground on background, primaryForeground on primary and mutedForeground on background at least 4.5:1; accent and border on background at least 3:1. Do this in both light and dark. Dark is its own palette, not an inversion.
+Quality: foreground on background, primaryForeground on primary and mutedForeground on background at least 4.5:1; accent on background at least 3:1 (focus ring). Decorative border/separator is not a contrast target. Do this in both light and dark. Dark is its own palette, not an inversion.
 
 Make the result recognisably shaped by the request: its mood, audience, density, type and palette. Do not hand back a stock look. When the request is a follow-up about one thing (type, density, hierarchy, colour, radius, contrast, mood), change only that and keep every other field identical to "current".
 

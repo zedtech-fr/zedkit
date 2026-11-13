@@ -65,10 +65,18 @@ test("docsSiteDefaultTokens overlays every Classic field the docs shell pins, an
   assert.deepEqual(docs.dark, glass.dark);
 });
 
-test("docs defaults still fail the 3:1 light border check, so the dock footer must count every warning", () => {
-  const warnings = identityContrastWarnings(docsSiteDefaultTokens());
-  assert.equal(warnings.filter((warning) => warning.min === 4.5).length, 0);
-  assert.equal(warnings.filter((warning) => warning.min === 3 && warning.token === "border" && warning.scheme === "light").length, 1);
+test("docs defaults yield no contrast warnings, so the dock footer stays quiet", () => {
+  assert.deepEqual(identityContrastWarnings(docsSiteDefaultTokens()), []);
+});
+
+test("a user edit that matches text to the background still warns", () => {
+  const docs = docsSiteDefaultTokens();
+  const broken = { ...docs, light: { ...docs.light, foreground: docs.light.background } };
+  const warnings = identityContrastWarnings(broken).filter(
+    (warning) => warning.token === "foreground" && warning.scheme === "light",
+  );
+  assert.equal(warnings.length, 1);
+  assert.equal(warnings[0]?.min, 4.5);
 });
 
 test("Classic colour defaults match the measured site hexes", () => {

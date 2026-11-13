@@ -79,7 +79,7 @@ function useDockSiteTokens() {
  * Client personas:  Integrating developers and coding agents who restyle the docs site from the dock, then copy the look. They are comfortable with Classic tokens and only sometimes open Expert.
  * Customers:        The same visitors reading the docs on a laptop or a phone.
  * Customer personas: Hurried phone reader (one-handed, bottom sheet) and laptop reader (side panel while the page stays usable). Assumed from `.agents/product.md` and the live dock, not from interviews.
- * UI decisions:     `direction="right" mobile="sheet"` because the laptop customer keeps a side editor and the phone customer gets a bottom sheet. Classic/Expert tabs sit in the fixed drawer header because a hurried reader switches modes without losing the field they were scanning. Contrast status in the footer counts every warning because the doubtful client must hear the same 3:1 border miss the checker lists. Non-modal so the page stays reachable because the client is comparing the live site while editing.
+ * UI decisions:     `direction="right" mobile="sheet"` because the laptop customer keeps a side editor and the phone customer gets a bottom sheet. Classic/Expert tabs sit in the fixed drawer header because a hurried reader switches modes without losing the field they were scanning. Contrast status in the footer counts checker warnings (text 4.5, accent/focus 3:1), not decorative separators, because a default look with a quiet hairline is not a bug. Non-modal so the page stays reachable because the client is comparing the live site while editing.
  */
 function IdentityDockWidget() {
   const pathname = usePathname();

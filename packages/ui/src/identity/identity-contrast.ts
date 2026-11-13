@@ -4,6 +4,7 @@ const AA_BODY = 4.5;
 const AA_UI = 3;
 
 type Hsl = { h: number; s: number; l: number };
+/** `border` stays on the public warning type for labels; the checker does not emit it (decorative separator). */
 type ContrastToken = "foreground" | "primaryForeground" | "mutedForeground" | "accent" | "border";
 type IdentityContrastWarning = {
   scheme: "light" | "dark";
@@ -84,7 +85,8 @@ function pairWarnings(scheme: "light" | "dark", pair: IdentityTokens["light"]): 
     warningFor(scheme, "primaryForeground", pair.primaryForeground, pair.primary, AA_BODY),
     warningFor(scheme, "mutedForeground", pair.mutedForeground, pair.background, AA_BODY),
     warningFor(scheme, "accent", pair.accent, pair.background, AA_UI),
-    warningFor(scheme, "border", pair.border, pair.background, AA_UI),
+    // --border is a decorative separator; WCAG 1.4.11 does not require 3:1.
+    // shortcut: compact tokens alias --input to border; field-border 3:1 stays on identity CSS sheets until Classic can edit them apart
   ];
 }
 
@@ -125,13 +127,12 @@ function darkPairFromLight(light: IdentityTokens["light"]): IdentityTokens["dark
   const bgHsl = parseHsl(background);
   if (!bgHsl) return { ...inverted, background };
   const next = { ...inverted, background };
-  for (const token of ["foreground", "primaryForeground", "mutedForeground", "accent", "border"] as const) {
+  for (const token of ["foreground", "primaryForeground", "mutedForeground", "accent"] as const) {
     const colour = parseHsl(next[token]);
     if (!colour) continue;
-    const background =
-      token === "primaryForeground" ? parseHsl(next.primary) : token === "mutedForeground" ? bgHsl : bgHsl;
+    const background = token === "primaryForeground" ? parseHsl(next.primary) : bgHsl;
     if (!background) continue;
-    const min = token === "accent" || token === "border" ? AA_UI : AA_BODY;
+    const min = token === "accent" ? AA_UI : AA_BODY;
     if (contrastRatio(colour, background) < min) next[token] = nudgeForeground(colour, background, min);
   }
   return next;
