@@ -292,8 +292,9 @@ jobs:
           retention-days: 14
       # test:registry imports built dists (ui via the docs identity tests
       # and deploy token parity, seo via docs generate/check helpers,
-      # server via deploy hostname-guard parity) but runs on every
-      # affected scope — including ones that skip both Build steps above.
+      # server via deploy hostname-guard parity, live via reviews
+      # github.ts / runs-api.ts) but runs on every affected scope —
+      # including ones that skip both Build steps above.
       # Build exactly that set here, unconditionally; turbo ^build pulls
       # their deps, and the turbo cache makes it a no-op when already built.
       - name: Build (registry deps)
@@ -306,6 +307,7 @@ jobs:
             --filter=@zedtech/zedkit-seo \
             --filter=@zedtech/zedkit-ui \
             --filter=@zedtech/zedkit-server \
+            --filter=@zedtech/zedkit-live \
             "${extra[@]}"
       # deploy/* needs Docker + rsync; Self-hosted runners drop privileges and
       # do not mount docker.sock — keep those tests on github-hosted only.

@@ -95,6 +95,21 @@ describe("test:registry globs", () => {
   it("knip script is exact-pinned (no floating major)", () => {
     assert.match(pkg.scripts.knip, /^pnpm dlx knip@\d+\.\d+\.\d+$/);
   });
+
+  it("registry-deps build includes every dist test:registry imports", () => {
+    const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    const registryDeps =
+      checks.split(/- name: Build \(registry deps\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
+    assert.notEqual(registryDeps, "", "Build (registry deps) step not found");
+    for (const pkg of [
+      "@zedtech/zedkit-seo",
+      "@zedtech/zedkit-ui",
+      "@zedtech/zedkit-server",
+      "@zedtech/zedkit-live",
+    ]) {
+      assert.ok(registryDeps.includes(`--filter=${pkg}`), `registry-deps omitted ${pkg}`);
+    }
+  });
 });
 
 function knipJsonc() {
