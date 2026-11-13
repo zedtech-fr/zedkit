@@ -645,8 +645,6 @@ for (const dir of ["components", "features"]) {
   if (!existsSync(join(APP, dir))) continue;
   for (const file of tsxFiles(join(APP, dir))) {
     const rel = file.slice(APP.length + 1);
-    // Chrome already used layout <div> under ui/; this lot is a path move.
-    if (rel.startsWith("components/site-chrome/")) continue;
     errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
   }
 }
