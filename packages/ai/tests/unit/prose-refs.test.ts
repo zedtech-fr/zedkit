@@ -104,6 +104,17 @@ describe("prose references", () => {
     expect(checked).toBeGreaterThan(0);
   });
 
+  it("catalog install page does not advertise leftover commands as live slash commands", () => {
+    const prose = readFileSync(
+      join(repoRoot(), "apps/docs/prose/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo.mdx"),
+      "utf8",
+    );
+    expect(prose).not.toContain("Bundled slash commands");
+    expect(prose).not.toContain("`/orchestrate`");
+    expect(prose).toContain("/zedkit-ai <request>");
+    expect(prose).toMatch(/Deprecated leftover command files/);
+  });
+
   it("resolves every CLI flag and value in ZedKit AI command examples to USAGE", () => {
     const { flags, presets, providers } = cliContract();
     let checked = 0;

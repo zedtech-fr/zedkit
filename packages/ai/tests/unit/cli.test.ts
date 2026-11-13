@@ -16,24 +16,13 @@ function run(...argv: string[]): { code: number; text: string; errors: string } 
 const VALIDATE_OK =
   "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate";
 
-function expectValidateOk(dest: string, allowDeprecationWarnings = false): void {
+function expectValidateOk(dest: string): void {
   const result = run("validate", dest);
   expect(result.code).toBe(0);
   expect(result.errors).toBe("");
   const lines = result.text.split("\n");
   expect(lines.at(-1)).toBe(VALIDATE_OK);
-  const extra = lines.slice(0, -1).filter((line) => line !== "");
-  if (!allowDeprecationWarnings) {
-    expect(extra).toEqual([]);
-    return;
-  }
-  expect(
-    extra.every((line) =>
-      /: warning: command "[^"]+" is deprecated; use \/zedkit-ai <request> \(delete the file or run sync --prune --provider …; prune keeps edited copies\)$/.test(
-        line,
-      ),
-    ),
-  ).toBe(true);
+  expect(lines.slice(0, -1).filter((line) => line !== "")).toEqual([]);
 }
 
 describe("cli", () => {
@@ -60,7 +49,9 @@ describe("cli", () => {
     expect(text).toContain("preset starter:");
     expect(text).toContain("preset core:");
     expect(text).toContain("agents: explorer");
-    expect(text).toContain("commands: review");
+    expect(text).toContain("commands: zedkit-ai");
+    expect(text).not.toMatch(/^commands: review/m);
+    expect(text).toContain("deprecated: review");
   });
 
   it("init installs into the given directory", () => {
@@ -86,7 +77,7 @@ describe("cli", () => {
     expect(existsSync(join(dest, ".agents/skills/domain-modeling/SKILL.md"))).toBe(true);
   });
 
-  it("setup exits 0 with phase C checklist when package.json is malformed", () => {
+  it("setup exits 0 with the product.md next-step when package.json is malformed", () => {
     const dest = tempDir();
     put(dest, "package.json", "{ broken\n");
     const { code, text } = run("setup", dest, "--provider", "cursor");
@@ -634,7 +625,7 @@ providers:
       const result = run("validate", dir);
       expect(result.code).toBe(0);
       expect(result.text).toContain("zk-alpha");
-      expect(result.text).toContain("slash commands still run your old skill names");
+      expect(result.text).toContain("leftover commands still run the original skill names");
       expect(result.text).toContain("ok");
     });
 

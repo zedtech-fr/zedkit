@@ -110,7 +110,7 @@ export function adoptReconcileLines(agentsDir: string): string[] {
     .sort();
   if (sidecars.length === 0) return [];
   return [
-    `adopt: slash commands still run your old skill names (${sidecars.join(", ")}). Diff skills/<name> with skills/zk-<name>, keep one, delete the other, and set name: back to <name>`,
+    `adopt: leftover commands still run the original skill names (${sidecars.join(", ")}). Compare skills/<name> with skills/zk-<name>, keep one folder, delete the other, and restore name: to <name>`,
   ];
 }
 

@@ -56,16 +56,23 @@ the installed agent roster, decomposes work, dispatches self-contained briefs
 (see `parallel-work`), aggregates evidence, and runs `verifier` before closing.
 It never edits files. Limits by default: six subagents per wave, twelve total,
 depth one, one retry per failed unit; no destructive git or deploy actions
-without explicit approval. Invoke it via the `orchestrate` skill or `/orchestrate`.
+without explicit approval. Invoke it via the `orchestrate` skill or
+`/zedkit-ai` with that request.
 
 ### Commands
 
-Bundled slash commands (each runs its skill on the command arguments):
+Presets install one slash command: `/zedkit-ai`. Use `/zedkit-ai <request>`
+(for example `/zedkit-ai review the diff`).
+
+Deprecated leftover command files (not installed on a fresh preset;
+`validate` warns if they remain):
 
 <DocsKitNameList
   kind="command"
   names={["review", "plan", "challenge", "implement", "setup-ai", "pr", "handoff", "audit", "orchestrate", "research", "improve-config", "from-audit", "to-audit"]}
 />.
+
+Use `/zedkit-ai <request>` instead of those names.
 
 Each file starts with frontmatter (`name`, one-line `description`,
 `model: inherit`, `disallowedTools` for read-only agents) at

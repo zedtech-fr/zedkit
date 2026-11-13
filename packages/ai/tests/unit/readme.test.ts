@@ -5,12 +5,13 @@ import { kitDir, readManifest } from "#kit.js";
 import { shippedNames } from "./helpers.js";
 
 describe("package README", () => {
-  it("documents the one-command install and leftover stems", () => {
+  it("documents the one-command install and leftover command files", () => {
     const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
     expect(readme).toMatch(/Presets install one command: `\/zedkit-ai`/);
     expect(readme).toMatch(/Every preset\ninstalls only `\/zedkit-ai`/);
     expect(readme).toContain("/zedkit-ai <request>");
-    expect(readme).toContain("sync --prune --provider");
+    expect(readme).toContain("npx @zedtech/zedkit-ai sync --prune --provider");
+    expect(readme).toContain("## Upgrading from 1.1.x");
     expect(readme).not.toMatch(/full still installs the full agent and command lists/);
   });
 

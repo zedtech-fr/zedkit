@@ -10,7 +10,7 @@ import {
   installNextStepLines,
   prettierHintLines,
 } from "./install-next-step.js";
-import { kitDir, readManifest } from "./kit.js";
+import { deprecatedCommandNames, ENTRY_COMMAND, kitDir, readManifest } from "./kit.js";
 import { loadAgent, loadPolicy, resolveRoute, type Route } from "./route.js";
 import { scanRepo } from "./scan.js";
 import { inSync, isCheckedUnchanged, syncKit } from "./sync.js";
@@ -540,9 +540,12 @@ function runList(args: string[], sinks: Sinks): number {
     );
   }
   sinks.out(`agents: ${manifest.value.agents.join(", ")}`);
-  sinks.out(
-    `commands: ${(manifest.value.commands ?? []).join(", ") || "(none)"}`,
-  );
+  const commands = manifest.value.commands ?? [];
+  sinks.out(`commands: ${commands.includes(ENTRY_COMMAND) ? ENTRY_COMMAND : "(none)"}`);
+  const deprecated = deprecatedCommandNames(manifest.value);
+  if (deprecated.length > 0) {
+    sinks.out(`deprecated: ${deprecated.join(", ")}`);
+  }
   return 0;
 }
 
