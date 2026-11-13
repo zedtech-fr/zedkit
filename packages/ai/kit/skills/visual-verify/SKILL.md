@@ -18,10 +18,15 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   `--base` defaults to origin/dev, else origin/main, else `HEAD~1`, else
   `HEAD`.
 - **Routes:** `--changed` or `--routes auto` (diff via the route map: App
-  Router `page` files, optional `--manifest` `source` → `/docs/ui/<slug>`)
-  union `--routes`. Omitted `--routes` implies `--changed`. Unknown files
-  add no extra route. A host fixed set is passed by the host
-  `visual:verify` script (or equivalent), not invented here.
+  Router `page` files, `apps/docs/prose/guides/**/*.mdx` → `/docs/<slug>`
+  (`index` → `/docs`; skip `snippets/`), AI setup sources
+  `packages/ai/kit/cursor-onboarding.md` and `apps/docs/public/ai/setup.md`
+  → `/docs/ai/setup`, public review files (`features/reviews`, issues App
+  Router, `tests/evidence/issues`) → `/issues`, optional `--manifest`
+  `source` → `/docs/ui/<slug>`) union `--routes`. Omitted `--routes`
+  implies `--changed`. Unknown files add no extra route. A host fixed set
+  is passed by the host `visual:verify` script (or equivalent), not
+  invented here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
   dark. Full **looks grid** (every shipped look × both modes) only when a
   token, a primitive, or a shared identity sheet (`identities.css`)
@@ -74,7 +79,10 @@ screenshot on the **default** tree, then clicks:
 - `scrollWidth` ≤ `innerWidth` (1px tolerance)
 - no clipped text (`overflow: hidden|clip` with `scrollWidth` /
   `scrollHeight` past the box, or an unintended ellipsis; skip
-  `overflow: auto|scroll`)
+  `overflow: auto|scroll`, Radix `[data-radix-scroll-area-viewport]`,
+  `data-allow-clip`, `[data-word-roll-clip]`, HTML, BODY, PRE, CODE, INPUT, TEXTAREA, SELECT, and visually
+  hidden nodes: `sr-only`, clip-rect 0, 1×1 boxes — same idea as docs-render
+  `clipped-text.mjs` plus the kit word-roll animation mask)
 - 0 `pageerror`, 0 console errors, 0 responses ≥ 400 (favicon 404s ignored)
 - axe `wcag2a` / `wcag2aa` / `wcag21aa` / `wcag22aa` with 0 **new**
   serious or critical vs the host baseline
@@ -86,8 +94,9 @@ screenshot on the **default** tree, then clicks:
 - hit targets ≥ 24px on visible `a`/`button`/`input`/`select`/`textarea`
   and button/link/tab/menuitem/checkbox/radio/switch/combobox roles.
   Skip `display:inline`, `pointer-events:none`, `disabled`,
-  `visibility:hidden`, `display:none`, zero-size boxes, and
-  `aria-hidden="true"` with `tabIndex < 0` (Radix native select). Union the
+  `visibility:hidden`, `display:none`, zero-size boxes, visually hidden
+  nodes (`sr-only`, clip-rect 0, 1×1), and `aria-hidden="true"` with
+  `tabIndex < 0` (Radix native select). Union the
   border box with an **overlapping** `::before` / `::after` (distant
   pseudos do not count). This host is intentionally stricter than SC
   2.5.8 (inline only; no equivalent/essential/user-agent/Spacing). If a
