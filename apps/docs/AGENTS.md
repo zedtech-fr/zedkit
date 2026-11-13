@@ -50,6 +50,9 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list, docs, identity). Ports/adapters/model only where there is I/O.
+  Identity dock kit/React lives under `features/identity/dock/ui/` (`feature-folders`
+  `**/ui/**`); copy under `features/identity/dock/i18n/`. `app/provider.tsx` imports
+  those files directly; do not add a `dock/index.tsx` barrel.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
   is dissolving; do not add a fifth home there. `REQUIRED_GLOBS` is empty

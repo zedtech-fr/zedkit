@@ -212,7 +212,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const manifestoCopy = readFileSync(join(homeI18n, "home-manifesto-copy.ts"), "utf8");
   const closingCopy = readFileSync(join(homeI18n, "home-closing-copy.ts"), "utf8");
   const looksCopy = readFileSync(join(homeI18n, "home-identity-looks-copy.ts"), "utf8");
-  const dockCopy = readFileSync(join(app, "components/i18n/identity-dock-copy.ts"), "utf8");
+  const dockCopy = readFileSync(join(app, "features/identity/dock/i18n/identity-dock-copy.ts"), "utf8");
   const order = [
     ...src.matchAll(
       /<Home(SameIdea|SixSentences|Paste|Identities|Limits|Manifesto|Closing|ComponentFamilies|Secondary)Section/g,
