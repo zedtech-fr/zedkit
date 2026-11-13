@@ -1,8 +1,8 @@
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { ATLAS_MAX_LINES, checkAtlas } from "#atlas.js";
+import { ATLAS_MAX_BYTES, ATLAS_MAX_LINES, ATLAS_MAX_ROW_CHARS, checkAtlas } from "#atlas.js";
 import { main } from "#cli.js";
 import { kitDir } from "#kit.js";
 import { put, tempDir } from "./helpers.js";
@@ -237,6 +237,86 @@ describe("checkAtlas", () => {
     expect(checkAtlas(root, join(root, ".agents")).map((i) => i.message).join("\n")).toContain("lines");
   });
 
+  it("warns without failing when the atlas exceeds the byte cap", () => {
+    const fat = `# Atlas\n\n<!-- ${"x".repeat(ATLAS_MAX_BYTES)} -->\n\n## Where\n\n${HEAD}| A | \`a.md\` | why | 2026-01-01 |\n`;
+    const root = project(fat);
+    put(root, "a.md", "x");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues.some((issue) => issue.message.startsWith("warning:") && issue.message.includes("bytes"))).toBe(true);
+    expect(issues.some((issue) => issue.message.includes("shrink the index"))).toBe(true);
+    expect(issues.some((issue) => !issue.message.startsWith("warning:"))).toBe(false);
+    expect(run("validate", root).code).toBe(0);
+  });
+
+  it("warns without failing when a Where row exceeds the character cap", () => {
+    const why = "w".repeat(ATLAS_MAX_ROW_CHARS);
+    const root = project(atlas(`| Long | \`a.md\` | ${why} | 2026-01-01 |`));
+    put(root, "a.md", "x");
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message.startsWith("warning:")).toBe(true);
+    expect(issues[0]?.message).toContain("characters");
+    expect(issues[0]?.message).toContain("point Entry at that file");
+    expect(run("validate", root).code).toBe(0);
+  });
+
+  it("counts Where row length in Unicode code points, not UTF-16 units", () => {
+    const why = "👍".repeat(124);
+    const root = project(atlas(`| Emoji | \`a.md\` | ${why} | 2026-01-01 |`));
+    put(root, "a.md", "x");
+    const line = readFileSync(join(root, ".agents/atlas.md"), "utf8").split("\n").find((l) => l.includes("| Emoji |"));
+    expect(line).toBeDefined();
+    expect(line!.length).toBeGreaterThan(ATLAS_MAX_ROW_CHARS);
+    expect([...line!].length).toBeLessThanOrEqual(ATLAS_MAX_ROW_CHARS);
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("is silent on a compact atlas under both soft caps", () => {
+    const root = project(atlas("| A | `a.md` | why | 2026-01-01 |"));
+    put(root, "a.md", "x");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("follows a linked topic file and reports a stale path there", () => {
+    const root = project(atlas("| Auth | `.agents/atlas/auth.md` | why | 2026-01-01 |"));
+    put(
+      root,
+      ".agents/atlas/auth.md",
+      `# Auth\n\n## Where\n\n${HEAD}| Auth | \`src/auth/\` | why | 2026-01-01 |\n`,
+    );
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("src/auth/");
+    expect(issues[0]?.path).toContain("auth.md");
+  });
+
+  it("reports a linked topic file that exists but cannot be read", () => {
+    const root = project(atlas("| Auth | `.agents/atlas/auth.md` | why | 2026-01-01 |"));
+    mkdirSync(join(root, ".agents/atlas/auth.md"), { recursive: true });
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues.some((issue) => issue.message.includes("cannot be read"))).toBe(true);
+  });
+
+  it("does not hang when a topic file points at itself", () => {
+    const root = project(atlas("| Auth | `.agents/atlas/auth.md` | why | 2026-01-01 |"));
+    put(
+      root,
+      ".agents/atlas/auth.md",
+      `# Auth\n\n## Where\n\n${HEAD}| Auth | \`.agents/atlas/auth.md\` | why | 2026-01-01 |\n`,
+    );
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("does not follow markdown outside .agents/atlas/", () => {
+    const root = project(atlas("| Auth | `.agents/notes.md` | why | 2026-01-01 |"));
+    put(
+      root,
+      ".agents/notes.md",
+      `## Where\n\n${HEAD}| Nested | \`missing/path.ts\` | why | 2026-01-01 |\n`,
+    );
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
   it("when required: a missing atlas, or fewer than three Where rows, fails", () => {
     const empty = tempDir();
     expect(checkAtlas(empty, join(empty, ".agents"), { required: true })[0]?.message).toContain("no atlas");
@@ -262,6 +342,15 @@ describe("the kit stub and this repo's own atlas", () => {
 
   it("keeps every entry path of this repo's atlas true", () => {
     expect(checkAtlas(repo, join(repo, ".agents"))).toEqual([]);
+    const text = readFileSync(join(repo, ".agents/atlas.md"), "utf8");
+    expect(Buffer.byteLength(text, "utf8")).toBeLessThanOrEqual(ATLAS_MAX_BYTES);
+    expect(text.split("\n").length).toBeLessThanOrEqual(ATLAS_MAX_LINES);
+    const where = text.slice(text.indexOf("## Where"), text.indexOf("## Words"));
+    const unmatched = where
+      .split("\n")
+      .filter((l) => l.startsWith("|") && !l.includes("| Topic |") && !/^\| ---/.test(l))
+      .filter((l) => (l.match(/`/g) ?? []).length % 2 !== 0);
+    expect(unmatched).toEqual([]);
   });
 
   it("validate reports a stale row", () => {

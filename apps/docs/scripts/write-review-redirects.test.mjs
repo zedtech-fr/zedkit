@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -84,12 +84,8 @@ test("writes stub html for /reviews and every snapshot pull request URL", async 
       assert.match(runHtml, /location\.replace/);
     }
   }
-  const issueRun = readFileSync(join(dir, "issues/108/runs/run-108-impl.html"), "utf8");
-  assert.match(issueRun, /location\.replace/);
-  assert.match(issueRun, new RegExp(HOSTED_LIVE_HREF_PREFIX.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-  const unlinkedRun = readFileSync(join(dir, "issues/pr/54/runs/run-54-review.html"), "utf8");
-  assert.match(unlinkedRun, /location\.replace/);
-  assert.match(unlinkedRun, /\/issues\/pr\/54/);
+  assert.equal(existsSync(join(dir, "issues/108/runs/run-108-impl.html")), false);
+  assert.equal(existsSync(join(dir, "issues/pr/54/runs/run-54-review.html")), false);
   const root = readFileSync(join(dir, "reviews.html"), "utf8");
   assert.match(root, /\/issues/);
   for (const n of RETIRED_REVIEW_PR_NUMBERS) {

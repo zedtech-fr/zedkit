@@ -173,9 +173,9 @@ test("the identity form lives in the editor panel, not the catalog", () => {
 });
 
 test("the dock drawer is the customize form, with no Conversation tab or AI input", () => {
-  const widget = read("features/identity/ui/identity-dock-widget.tsx");
-  const panel = read("features/identity/ui/identity-dock-assistant-panel.tsx");
-  const customize = read("features/identity/ui/identity-dock-customize.tsx");
+  const widget = read("features/identity/dock/ui/identity-dock-widget.tsx");
+  const panel = read("features/identity/dock/ui/identity-dock-assistant-panel.tsx");
+  const customize = read("features/identity/dock/ui/identity-dock-customize.tsx");
   assert.match(widget, /IdentityDockAssistantPanel/);
   assert.match(panel, /IdentityDockCustomize/);
   assert.doesNotMatch(panel, /ViewSwitch/);
@@ -199,14 +199,14 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(customize, /data-dock-contrast/);
   assert.match(panel, /dispatchIdentityEditorDraftApply/);
   assert.doesNotMatch(read("features/identity/ui/identity-editor-draft-apply.ts"), /Use this look/);
-  assert.doesNotMatch(read("features/identity/ui/use-creator-handoff.ts"), /placed in the form|form is filled/);
+  assert.doesNotMatch(read("features/identity/dock/ui/use-creator-handoff.ts"), /placed in the form|form is filled/);
   assert.doesNotMatch(read("components/i18n/identity-assistant-copy.ts"), /preview above/);
 });
 
 test("the dock footer is Reset only, not Apply or Preview", () => {
-  const panel = read("features/identity/ui/identity-dock-assistant-panel.tsx");
-  const bar = read("features/identity/ui/identity-dock-action-bar.tsx");
-  const copy = read("components/i18n/identity-dock-copy.ts");
+  const panel = read("features/identity/dock/ui/identity-dock-assistant-panel.tsx");
+  const bar = read("features/identity/dock/ui/identity-dock-action-bar.tsx");
+  const copy = read("features/identity/dock/i18n/identity-dock-copy.ts");
   const editorCopy = read("components/i18n/identity-editor-copy.ts");
   assert.match(panel, /IdentityDockActionBar/);
   assert.match(bar, /data-dock-action-bar/);
@@ -223,14 +223,14 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   assert.doesNotMatch(editorCopy, /applyHint:/);
   assert.doesNotMatch(editorCopy, /applied:/);
   assert.doesNotMatch(bar, /Textarea|PromptInput|BriefForm/);
-  const widget = read("features/identity/ui/identity-dock-widget.tsx");
+  const widget = read("features/identity/dock/ui/identity-dock-widget.tsx");
   assert.match(widget, /panelRef\.current\?\.focus\(\)/);
   assert.doesNotMatch(widget, /aria-label="Drag to resize"/);
 });
 
 test("the custom identity bar is Reset when the look differs, not a separate apply step", () => {
-  const copy = read("features/identity/i18n/custom-identity-bar-copy.ts");
-  const bar = read("features/identity/ui/custom-identity-bar.tsx");
+  const copy = read("features/identity/dock/i18n/custom-identity-bar-copy.ts");
+  const bar = read("features/identity/dock/ui/custom-identity-bar.tsx");
   assert.match(copy, /badge: "Custom identity active"/);
   assert.match(copy, /reset: "Reset"/);
   assert.doesNotMatch(copy, /You applied/);

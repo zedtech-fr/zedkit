@@ -5,7 +5,7 @@ import {
   fetchGithubReviewFallbacks,
   type GithubFetchOptions,
 } from "./github.ts";
-import { fetchRunsIndex } from "./runs-api.ts";
+import { fetchRunsIndex, runsApiBaseEnvName } from "./runs-api.ts";
 import {
   mergePublicIndex,
   PUBLIC_INDEX_KIND,
@@ -142,10 +142,6 @@ export function createPublicReviewPort(options: CreatePublicReviewPortOptions = 
       return (await load()).hasLoadError();
     },
   };
-}
-
-function runsApiBaseEnvName(): string {
-  return ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
 }
 
 export function createSiteReviewPort(): ReviewPort {

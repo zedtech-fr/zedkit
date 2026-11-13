@@ -24,7 +24,7 @@ import {
   readIdentityDockPersist,
   writeIdentityDockPersist,
   type IdentityDockPersistRead,
-} from "@/features/identity/ui/identity-dock-persist";
+} from "@/features/identity/dock/ui/identity-dock-persist";
 import { useAssistantNetwork } from "@/features/identity/ui/use-assistant-network";
 
 type IdentityAssistantStore = {

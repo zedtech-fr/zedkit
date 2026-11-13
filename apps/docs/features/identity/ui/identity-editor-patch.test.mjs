@@ -8,7 +8,7 @@ import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 registerDocsAlias(import.meta.url);
 
 const { acceptedIdentityTokens, patchTokens } = await import("./identity-editor-patch.ts");
-const { isLightKey } = await import("@/lib/identity-editor-search");
+const { isLightKey } = await import("@/features/identity/ui/identity-editor-search.ts");
 
 const TOKENS = identityPresets.mist;
 
