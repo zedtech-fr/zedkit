@@ -55,4 +55,4 @@ independent review and a `Human validation:` line.
 Commit on a work branch. If HEAD is trunk or the host integration branch,
 create a work branch from it before the first commit. After
 definition-of-done, open a pull request against the integration branch
-the host AGENTS.md names. Drafting a PR body is not that step.<!-- if:skill=pr --> When the change is a UI surface, that body's `## Evidence` follows skill `pr`.<!-- /if -->
+the host AGENTS.md names. Drafting a PR body is not that step.<!-- if:skill=pr --> When the change touches `*.tsx`/`*.jsx`/`*.css` outside tests, that body's `## Evidence` follows skill `pr`.<!-- /if -->

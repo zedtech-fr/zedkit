@@ -18,10 +18,10 @@ Use this template for writing the PR body:
 
 ## Evidence
 
-Required on a UI surface; omit on non-UI. Link `summary.md` or the visual-verify run record and published PNGs.
+Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Link the visual-verify run record (`evidence/<branch>/manifest.json`) and linked/contact-sheet PNGs. Links, not inlined binaries.
 
-- **Before:** <PNG or run-record link>
-  **After:** <PNG or run-record link>
+- **Before:** ![short alt of the previous UI](<PNG or run-record link>)
+  **After:** ![short alt of the changed UI](<PNG or run-record link>)
 
 ## Merge Danger
 
@@ -159,7 +159,7 @@ You may use one of these, you may use several, it is unlikely you will use all o
 
 ### Evidence
 
-Required on a UI surface (`*.tsx` / `*.jsx` / `*.css`; omit on non-UI). Link `summary.md` when `zedkit-ai evidence` exists, otherwise the visual-verify run record and published PNGs. Links, not inlined binaries.
+Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Link the visual-verify run record (`evidence/<branch>/manifest.json`) and linked/contact-sheet PNGs. Links, not inlined binaries. Give alt text on embedded Before/After PNGs. Docs (`.mdx` / `.html` / `.md`) and canvas/WebGL `.ts` are not this trigger.
 
 ### Merge Danger
 
