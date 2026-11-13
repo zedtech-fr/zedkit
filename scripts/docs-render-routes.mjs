@@ -2,7 +2,8 @@
 // Touched-route list for the docs-render job. Dep-free (fs/path only) so it
 // runs under the same --filter="@zedtech/zedkit-docs..." install as docs-smoke.
 // Keep slugNeed / routesFromFiles / looksGridTriggered in sync with
-// packages/ai/scripts/visual-verify.mjs.
+// packages/ai/scripts/visual-verify.mjs. Evidence look picking is
+// identitiesFromChangedFiles there, not this boolean.
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";

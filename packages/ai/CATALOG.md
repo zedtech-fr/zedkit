@@ -153,7 +153,7 @@ CLI equivalent: `zedkit-ai sync --provider cursor,claude --check` (`--kit <dir>`
 - Status: alpha
 - Short name: EvidenceCli
 - Audience: Agents finishing Visual work who need one host command for screenshots and blocking measures.
-- Purpose: Screenshot a route matrix, run axe, overflow and clipped-text checks, and write a run record plus summary.md.
+- Purpose: Screenshot a route matrix, run axe, overflow, clipped-text and 24px hit-target checks; optional --states and --mockup.
 - When to use: After Visual work, before pasting the PR Evidence table, on a served origin or a static export.
 - When not to use: For a docs-site e2e journey — use the host Playwright specs instead. Playwright and axe stay optional peers.
 - See also: `Run one gate command and keep a log that setup validation accepts`
