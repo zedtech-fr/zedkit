@@ -15,6 +15,7 @@ const stylesPath = join(root, "packages/ui/src/styles.css");
 const identitiesCssPath = join(root, "packages/ui/src/identities.css");
 const shellPath = join(app, "app/docs-shell-tokens.css");
 const homeCssPath = join(app, "app/(home)/_home/home.css");
+const homeLookTabsPath = join(app, "app/(home)/_home/home-identity-looks-tabs.tsx");
 
 function read(path) {
   return readFileSync(path, "utf8");
@@ -242,8 +243,11 @@ test("html mist caption reads stock styles.css, not the scoped-mist reset", () =
 test("look tabs selected chip keeps 4.5:1 inverted ink on fill", () => {
   const shell = loadShell();
   assert.doesNotMatch(shell.css, /#home-page \[data-slot="tabs-trigger"\]\[data-state="active"\]/);
-  const snap = ruleBody(read(homeCssPath), /^#home-page \[data-look-tab\]$/, "look tab snap");
-  assert.match(snap.replace(/\s+/g, " "), /transition-property:\s*none/);
+  // Evidence emulates reduced motion. A snap inside the no-preference gate never
+  // runs; ungated transition: none in home.css fails the motion-gate test.
+  const tabs = read(homeLookTabsPath);
+  assert.match(tabs, /data-look-tab=""[\s\S]*?transition-none/);
+  assert.doesNotMatch(stripComments(read(homeCssPath)), /\[data-look-tab\][^{]*\{[^}]*transition/);
   const rule = ruleBody(
     read(homeCssPath),
     /^#home-page \[data-look-tab\]\[data-state="active"\]$/,
