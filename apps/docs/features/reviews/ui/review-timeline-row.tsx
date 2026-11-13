@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
-import { Stack, Text, UpdatedAgo, formatDuration } from "@zedtech/zedkit-ui";
+import { ChevronRight, ExternalLink } from "lucide-react";
+import { Button, Stack, Text, UpdatedAgo, formatDuration } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { displayModelLabels } from "../model/display-model";
@@ -13,6 +13,11 @@ import { LatestStatusMark } from "./issue-status";
 
 const compactLinkClass =
   "hit-target inline-flex w-fit items-center gap-icon text-dense text-info link-offset hover:underline focus-ring";
+
+const rowClass = "border-b border-border py-row";
+
+const logCellClass =
+  "block cursor-pointer rounded-md border-b border-border py-row text-foreground no-underline hover:bg-muted hover:no-underline focus-ring-control active:bg-secondary";
 
 export function CompactLogLink({
   href,
@@ -53,14 +58,54 @@ function replacementCopy(entry: TimelineEntry, copy: ReviewsCopy): string | null
   return entry.status === "failed" ? copy.issue.failedReplaced : copy.issue.replaced;
 }
 
-export function TimelineRow({
-  entry,
+function TimelineRowLink({
   href,
   copy,
+  children,
+}: {
+  href: string;
+  copy: ReviewsCopy;
+  children: ReactNode;
+}) {
+  const opens = copy.list.opensInNewTab;
+  if (href.startsWith("https:")) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={logCellClass}>
+        {children}
+        <Text as="span" className="sr-only">
+          {` (${opens})`}
+        </Text>
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={logCellClass}>
+      {children}
+    </Link>
+  );
+}
+
+function ViewLogAffordance({ copy }: { copy: ReviewsCopy }) {
+  return (
+    <Button asChild variant="secondary" size="sm" className="text-dense">
+      <Text as="span">
+        {copy.issue.viewLog}
+        <ChevronRight aria-hidden="true" />
+      </Text>
+    </Button>
+  );
+}
+
+function TimelineRowBody({
+  entry,
+  copy,
+  log,
+  className,
 }: {
   entry: TimelineEntry;
-  href: string | null;
   copy: ReviewsCopy;
+  log: boolean;
+  className?: string | undefined;
 }) {
   const label = copy.type[entry.type];
   const replacement = replacementCopy(entry, copy);
@@ -70,7 +115,7 @@ export function TimelineRow({
   const finishedPrefix = entry.status === "running" ? undefined : copy.list.finished;
 
   return (
-    <Stack gap="tight" className="border-b border-border py-row">
+    <Stack gap="tight" className={className}>
       <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
         <Text className="font-medium">{label}</Text>
         {entry.verdict !== null ? (
@@ -103,12 +148,27 @@ export function TimelineRow({
           {...(finishedPrefix === undefined ? {} : { prefix: finishedPrefix })}
           className="whitespace-nowrap"
         />
-        {href === null ? null : (
-          <CompactLogLink href={href} copy={copy}>
-            {copy.issue.viewLog}
-          </CompactLogLink>
-        )}
+        {log ? <ViewLogAffordance copy={copy} /> : null}
       </Stack>
     </Stack>
+  );
+}
+
+export function TimelineRow({
+  entry,
+  href,
+  copy,
+}: {
+  entry: TimelineEntry;
+  href: string | null;
+  copy: ReviewsCopy;
+}) {
+  if (href === null) {
+    return <TimelineRowBody entry={entry} copy={copy} log={false} className={rowClass} />;
+  }
+  return (
+    <TimelineRowLink href={href} copy={copy}>
+      <TimelineRowBody entry={entry} copy={copy} log />
+    </TimelineRowLink>
   );
 }

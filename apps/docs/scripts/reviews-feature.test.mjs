@@ -1800,6 +1800,32 @@ test("list and timeline rows use row padding, not section padding", () => {
   assert.doesNotMatch(frame, /children\(panel\)/);
 });
 
+test("timeline step cells are one log link with a View log button", () => {
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.match(row, /function TimelineRowLink/);
+  assert.match(row, /<Link href=\{href\} className=\{logCellClass\}>/);
+  assert.match(row, /cursor-pointer/);
+  assert.match(row, /focus-ring-control/);
+  assert.match(row, /hover:bg-muted/);
+  assert.match(row, /active:bg-secondary/);
+  assert.match(row, /variant="secondary"/);
+  assert.match(row, /size="sm"/);
+  assert.match(row, /copy\.issue\.viewLog/);
+  assert.match(row, /ChevronRight/);
+  assert.match(row, /<Button asChild variant="secondary"/);
+  assert.doesNotMatch(row, /<Button(?![^>]*asChild)/);
+  assert.doesNotMatch(row, /CompactLogLink href=\{href\}/);
+  assert.match(list, /<TimelineRow entry=\{entry\} href=\{entry\.liveUrl\}/);
+  assert.match(timeline, /<TimelineRow entry=\{entry\} href=\{entry\.liveUrl\}/);
+  assert.match(list, /GithubRefLink href=\{githubIssueHref/);
+  assert.match(list, /githubPullHref/);
+  const panelLinksThenRows = /PanelOutcome[\s\S]*links[\s\S]*TimelineRow/;
+  assert.match(list, panelLinksThenRows);
+  assert.doesNotMatch(row, /githubIssueHref|githubPullHref/);
+});
+
 test("list stays in the shared wide frame and stacks title then meta below md", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
@@ -2469,11 +2495,13 @@ test("share URL merge keeps appearance query and hash together", () => {
   );
 });
 
-test("appearance share write keeps the selection hash", () => {
+test("appearance share write stays a model helper; the console frame does not write", () => {
   const src = readFileSync(join(reviewsRoot, "ui", "review-console-appearance.tsx"), "utf8");
-  assert.match(src, /mergeReviewShareUrl/);
-  assert.match(src, /writeConsoleShareSearch/);
-  assert.match(src, /window\.location\.hash/);
+  const href = readFileSync(join(reviewsRoot, "model", "live-console-href.ts"), "utf8");
+  assert.match(href, /writeConsoleShareSearch/);
+  assert.doesNotMatch(src, /mergeReviewShareUrl/);
+  assert.doesNotMatch(src, /writeConsoleShareSearch/);
+  assert.doesNotMatch(src, /history\.replaceState/);
   assert.doesNotMatch(
     readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8"),
     /mergeReviewShareUrl/,
@@ -2527,8 +2555,12 @@ test("live console host calms finding surfaces without restyling the kit specime
   assert.match(consoleView, /pane-shrink/);
   assert.match(consoleView, /min-h-floor/);
   assert.match(consoleView, /runId/);
-  assert.match(appearance, /min-h-floor/);
   assert.match(appearance, /data-review-console/);
+  assert.match(appearance, /hasReviewAppearanceQuery/);
+  assert.match(appearance, /identity=\{pin \? appearance\.identity : undefined\}/);
+  assert.match(appearance, /mode=\{pin \? appearance\.mode : undefined\}/);
+  assert.doesNotMatch(appearance, /min-h-floor/);
+  assert.doesNotMatch(appearance, /LookField|IdentitySelect|DensitySelect|consoleAppearanceCopy/);
   assert.doesNotMatch(consoleView, /variant="glass"/);
   assert.doesNotMatch(consoleView, /hover-lift/);
   assert.doesNotMatch(consoleView, /IdentityLookForm/);
