@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { SkipLink } from "@/ui/skip-link";
+import { SkipLink } from "@/components/site-chrome/skip-link";
 
 import { rootLayoutCopy } from "@/app/i18n/root-layout-copy";
 import { docsPageMetadata } from "@/lib/docs-metadata";

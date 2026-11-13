@@ -55,11 +55,12 @@ test("critical-states first-issue-open click matches the list row", () => {
   const states = JSON.parse(readFileSync(join(evidenceDir, "critical-states.json"), "utf8"));
   assert.equal(states.length, 1);
   assert.equal(states[0]?.name, "First issue open");
-  assert.equal(states[0]?.click, "main details[data-issues-row] > summary");
+  assert.equal(states[0]?.click, "main [data-issues-row]");
   const list = readFileSync(
     join(dirname(fileURLToPath(import.meta.url)), "../features/reviews/ui/review-list-view.tsx"),
     "utf8",
   );
   assert.match(list, /data-issues-row=""/);
-  assert.match(list, /querySelectorAll\("main details\[data-issues-row\]"\)/);
+  assert.doesNotMatch(list, /<details /);
+  assert.doesNotMatch(list, /querySelectorAll\("main details\[data-issues-row\]"\)/);
 });
