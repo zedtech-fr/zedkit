@@ -264,12 +264,12 @@ One source (`.agents/`), thin per-tool links. Nested `AGENTS.md` files hold
 per-folder rules. When to call which subagent: the
 [agents catalog](../../docs/agents-catalog.md).
 
-Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
-`handoff`, `audit`, `orchestrate`, `research`, `improve-config`, `from-audit`,
-`to-audit`, `fix`, `improve-from-review`, `quick-wins`, `triage`, `zedkit-ai`) are 3-6 line files: each runs its skill on the command arguments
-(or the current context). Both tools also list skills as `/` commands
-nowadays; the files stay as the explicit one-keystroke path and as fallback
-when the skills link is not followed.
+Presets install one command: `/zedkit-ai`. It classifies the request and
+routes to the matching skill (`/zedkit-ai review the diff`, `/zedkit-ai plan
+this`). Leftover stems in `kit/commands/` are 3-6 line files; `validate`
+warns, and `sync --prune --provider …` drops copies that still match the kit
+file (edited copies stay). If you still type `/review` or `/plan`, use
+`/zedkit-ai <request>` instead.
 
 ## The kit
 
@@ -293,25 +293,25 @@ when the skills link is not followed.
 from that material, every claim tagged verbatim, inference or absent;
 technical audits skip the source quota and the wait-for-question stop).
 
-**Entry points (one command per phase):** a casual search or inventory is
-deep too — load `audit` even without `/audit`. Named commands each hand to
-`orchestrate` (read tokenomics, pick a build team) unless already running as
-that playbook.
-`review`, `plan`, `challenge`, `implement`, `from-audit` (audit → revalidated plan),
-`to-audit` (questions → audit), `quick-wins` (one topic, two modes).
-`/fix` does not: one defect stays inline, with its check.
-`/improve-from-review` applies a punchlist in the conversation, then
-encodes a reusable miss (`rules-upkeep`). `plan` / `challenge` / `review` and the
-audit playbooks also carry "go deep, be strict, and be brutally honest". They live in the `setup` and
-`core` presets; the detailed skills stay reusable and are never copied into
-them. Starter stays the small preset and does not ship these three commands.
+**Entry points:** `/zedkit-ai <request>` is the installed command on every
+preset. A casual search or inventory is deep too — load `audit` even without
+an old `/audit` stem. Named playbooks (`review`, `plan`, `challenge`,
+`implement`, `from-audit` (audit → revalidated plan), `to-audit` (questions →
+audit), `quick-wins` (one topic, two modes)) hand to `orchestrate` (read
+tokenomics, pick a build team) unless already running as that playbook.
+`/zedkit-ai fix …` stays inline: one defect, with its check.
+`/zedkit-ai` with `improve-from-review` applies a punchlist in the conversation,
+then encodes a reusable miss (`rules-upkeep`). `plan` / `challenge` / `review`
+and the audit playbooks also carry "go deep, be strict, and be brutally honest".
+Those skills live in the `setup` and `core` presets; starter stays the small
+preset and does not ship them.
 
-**Quick wins.** `/quick-wins audit <topic>` returns a short ranked set and
-changes nothing. `/quick-wins implement <findings or topic>` rechecks each
+**Quick wins.** `/zedkit-ai quick-wins audit <topic>` returns a short ranked set and
+changes nothing. `/zedkit-ai quick-wins implement <findings or topic>` rechecks each
 finding against the current tree, then ships one small batch. One defect
-with a known check is `/fix`, not this command. `/audit` stays the thorough
+with a known check is `/zedkit-ai fix …`, not this playbook. `/zedkit-ai audit …` stays the thorough
 investigation (coverage map, findings by kind; it fixes only when the same
-request asks). `/to-audit` answers an open question. `/quick-wins` is one scope.
+request asks). `/zedkit-ai to-audit` answers an open question. `/zedkit-ai quick-wins` is one scope.
 
 **Skills vendored (MIT):** `ponytail` (+ review, audit, debt, gain, help) and
 the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,
@@ -322,14 +322,15 @@ director briefs — the full table (role + when to call) lives in
 `docs/agents-catalog.md`, the installed set in `kit.json`.
 
 **Presets:** `starter` (default: onboard, review, done — nine skills, three
-subagents, three commands), `setup` (starter plus domain modeling, the review
+subagents, `/zedkit-ai`), `setup` (starter plus domain modeling, the review
 lenses, retro, rules-upkeep, and the subagents named under **Setup preset**), `core` (planning, implement, and the rest;
 `zedkit-ai list` shows the skill list), and `full` (every skill). Keep the
 skill count low: every skill's name and description is loaded into context
 up front (Codex caps that list at about 2%
 of the context window and shortens descriptions past it). With `starter`,
-`setup` or `core`, only that preset's subagents and commands are copied;
-`full` still installs the full agent and command lists from `kit.json`.
+`setup` or `core`, only that preset's subagents are copied;
+`full` still installs the full agent list from `kit.json`. Every preset
+installs only `/zedkit-ai`.
 
 ## Choices worth knowing
 

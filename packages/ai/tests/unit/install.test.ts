@@ -129,6 +129,14 @@ describe("installKit", () => {
     ).toBe(true);
   });
 
+  it("leftover plan.md closes /plan in leftover fix.md on starter", () => {
+    const dest = tempDir();
+    install(dest, { preset: "starter", providers: [] });
+    put(dest, ".agents/commands/plan.md", COMMAND("review"));
+    put(dest, ".agents/skills/fix/SKILL.md", `${SKILL("fix")}\nStop and point at \`/plan\`.\n`);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
+  });
+
   it("starter lenses.md marks uninstalled runners planned and installed ones exists", () => {
     const dest = tempDir();
     install(dest, { providers: [] });
@@ -389,7 +397,7 @@ describe("installKit", () => {
     const dest = tempDir();
     put(dest, ".cursor/skills/team-own/SKILL.md", "team\n");
     put(dest, ".cursor/agents/explorer.md", "custom explorer\n");
-    put(dest, ".cursor/commands/zedkit-ai.md", "custom review\n");
+    put(dest, ".cursor/commands/zedkit-ai.md", "custom command\n");
     const actions = install(dest, { providers: ["cursor"], adopt: true });
     expect(
       readFileSync(join(dest, ".cursor/skills/team-own/SKILL.md"), "utf8"),
@@ -398,7 +406,7 @@ describe("installKit", () => {
       "custom explorer\n",
     );
     expect(readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8")).toBe(
-      "custom review\n",
+      "custom command\n",
     );
     expect(existsSync(join(dest, ".cursor/agents/explorer.kit.md"))).toBe(true);
     expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.kit.md"))).toBe(true);
@@ -487,6 +495,33 @@ describe("installKit", () => {
       providers: [],
     });
     expect(full.ok).toBe(true);
+  });
+
+  it("installs a custom kit whose commands /ref each other without a zedkit-ai entry", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({
+        presets: { tiny: ["alpha"] },
+        agents: [],
+        commands: ["alpha", "beta"],
+      }),
+    );
+    put(kit, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nRun \`/beta\`.\n`);
+    put(kit, "commands/alpha.md", `${COMMAND("alpha")}\nAlso \`/beta\`.\n`);
+    put(kit, "commands/beta.md", `${COMMAND("beta")}\nAlso \`/alpha\`.\n`);
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
+    const dest = tempDir();
+    const result = installKit({ dest, kit, preset: "tiny", providers: [] });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(existsSync(join(dest, ".agents/commands/alpha.md"))).toBe(true);
+      expect(existsSync(join(dest, ".agents/commands/beta.md"))).toBe(true);
+      expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(false);
+    }
   });
 
   it("installs personas.md from the template, keeps an existing one", () => {

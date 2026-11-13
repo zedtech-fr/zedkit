@@ -28,7 +28,7 @@ describe("install next step hints", () => {
     const root = tempDir();
     put(root, ".agents/product.md", "# Product\n");
     const lines = installNextStepLines(root, ["cursor"]);
-    expect(lines).toContain("next: validate, then phase E score");
+    expect(lines).toContain("next: validate, then score the setup");
     expect(lines.some((line) => line.includes("phase C adds"))).toBe(false);
     expect(lines.some((line) => line.includes("/zedkit-ai"))).toBe(false);
   });

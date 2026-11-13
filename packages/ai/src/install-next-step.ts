@@ -110,7 +110,7 @@ export function adoptReconcileLines(agentsDir: string): string[] {
     .sort();
   if (sidecars.length === 0) return [];
   return [
-    `adopt: commands still run your old skill names (${sidecars.join(", ")}). Diff skills/<name> with skills/zk-<name>, keep one, delete the other, and set name: back to <name>`,
+    `adopt: slash commands still run your old skill names (${sidecars.join(", ")}). Diff skills/<name> with skills/zk-<name>, keep one, delete the other, and set name: back to <name>`,
   ];
 }
 
@@ -121,10 +121,10 @@ export function installNextStepLines(
 ): string[] {
   // Setup artifacts already exist: do not send the user back to /zedkit-ai setup.
   const lines = existsSync(join(root, ".agents", "product.md"))
-    ? ["next: validate, then phase E score"]
+    ? ["next: validate, then score the setup"]
     : [
         "next: run /zedkit-ai (or the setup-ai skill), then npx @zedtech/zedkit-ai validate",
-        "note: setup+validate ok ≠ product.md; phase C adds product.md, domain/*.md, personas.md, design.md, glossary — .agents/skills/setup-ai/templates/README.md",
+        "note: setup and validate do not write product.md; /zedkit-ai adds product.md, domain/*.md, personas.md, design.md, glossary — .agents/skills/setup-ai/templates/README.md",
         "note: /zedkit-ai (or the setup-ai skill) reads the code first with read-only subagents (npx @zedtech/zedkit-ai scan sizes them), asks only what the code cannot answer, and writes domain rules, nested AGENTS.md and .agents/tokenomics.md, then runs zedkit-ai sync",
       ];
   if (

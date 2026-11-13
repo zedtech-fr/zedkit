@@ -2,9 +2,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, sep } from "node:path";
 import { withoutMarkers } from "./conditional.js";
+import { ENTRY_COMMAND } from "./kit.js";
 
 const NAME = "[a-z0-9]+(?:-[a-z0-9]+)*";
-const ENTRY_COMMAND = "zedkit-ai";
 
 // Host slash commands and filesystem roots share the /name shape.
 // shortcut: denylist, extend when a skill uses a new non-skill /name.
@@ -113,7 +113,7 @@ function kindOf(name: string, universe: RefUniverse): "skill" | "agent" | "comma
   return undefined;
 }
 
-/** Refs whose demanded kind is missing (Skill-tool/"skill `x`" = skill, "agent `x`" = agent, /name = command if the kit defines one, else any kind; a kit command other than the entry is satisfied when the entry is installed and, if a skill of that stem exists, that skill is installed; bare backticked/hyphenated words match any kind in kit-origin files; /self satisfied). */
+/** Refs whose demanded kind is missing (Skill-tool/"skill `x`" = skill, "agent `x`" = agent, /name = command if the kit defines one, else any kind; an installed command satisfies its own /ref; a kit command other than the entry is also satisfied when the entry is installed and, if a skill of that stem exists, that skill is installed; bare backticked/hyphenated words match any kind in kit-origin files; /self satisfied). */
 export function danglingKitRefs(
   files: readonly RefFile[],
   installed: RefUniverse,
@@ -122,9 +122,9 @@ export function danglingKitRefs(
   const issues: SkillRefIssue[] = [];
   const all = new Set([...installed.skills, ...installed.agents, ...installed.commands]);
   const commandClosed = (name: string): boolean => {
-    if (name === ENTRY_COMMAND) return installed.commands.has(name);
+    if (installed.commands.has(name)) return true;
     const skillOk = !universe.skills.has(name) || installed.skills.has(name);
-    return installed.commands.has(ENTRY_COMMAND) && skillOk;
+    return name !== ENTRY_COMMAND && installed.commands.has(ENTRY_COMMAND) && skillOk;
   };
   const present = (name: string, kind: "skill" | "agent" | "command"): boolean =>
     kind === "command" ? commandClosed(name) : all.has(name);

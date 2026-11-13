@@ -61,7 +61,7 @@ function expectGenerated(path: string, name: string, sourceName = name): void {
 
 const MINE_SKILL = "# mine team skill\n";
 const MINE_AGENT = "# my explorer\n";
-const MINE_COMMAND = "# my review\n";
+const MINE_COMMAND = "# my command\n";
 
 /** A team-owned provider layer: real dirs with user files colliding with kit names. */
 function seedRealProviderDirs(dest: string, provider: "cursor" | "claude"): void {

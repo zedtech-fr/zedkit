@@ -297,7 +297,7 @@ function checkCommand(
   if (deprecated.has(base) && shipsEntry) {
     issues.push({
       path,
-      message: `warning: command "${base}" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)`,
+      message: `warning: command "${base}" is deprecated; use /zedkit-ai <request> (delete the file or run sync --prune --provider …; prune keeps edited copies)`,
     });
   }
   if (!NAME.test(base) || base.length > MAX_NAME) {

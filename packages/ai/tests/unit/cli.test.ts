@@ -29,7 +29,7 @@ function expectValidateOk(dest: string, allowDeprecationWarnings = false): void 
   }
   expect(
     extra.every((line) =>
-      /: warning: command "[^"]+" is deprecated; use \/zedkit-ai \(delete the file or run sync --prune --provider …\)$/.test(
+      /: warning: command "[^"]+" is deprecated; use \/zedkit-ai <request> \(delete the file or run sync --prune --provider …; prune keeps edited copies\)$/.test(
         line,
       ),
     ),
@@ -123,21 +123,21 @@ describe("cli", () => {
     expect(run("setup", dest, "--provider", "cursor").code).toBe(0);
     expect(existsSync(join(dest, ".agents/skills/domain-modeling/SKILL.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/product-director.md"))).toBe(true);
-    expectValidateOk(dest, true);
+    expectValidateOk(dest);
     const again = run("setup", dest, "--provider", "cursor");
     expect(again.code).toBe(0);
     const writes = again.text.split("\n").filter((line) => /^(copy|link|write)\s/u.test(line));
     expect(writes).toEqual([]);
   });
 
-  it("setup re-run does not send the user back to /setup-ai once product.md exists", () => {
+  it("setup re-run does not send the user back to /zedkit-ai once product.md exists", () => {
     const dest = tempDir();
     const first = run("setup", dest, "--provider", "cursor");
     expect(first.text).toContain("next: run /zedkit-ai");
     put(dest, ".agents/product.md", "# Product\n");
     const again = run("setup", dest, "--provider", "cursor");
     expect(again.code).toBe(0);
-    expect(again.text).toContain("next: validate, then phase E score");
+    expect(again.text).toContain("next: validate, then score the setup");
     const hints = again.text.split("\n").filter((line) => /^(next|note):/u.test(line));
     expect(hints.some((line) => line.includes("/setup-ai"))).toBe(false);
   });
@@ -158,7 +158,7 @@ describe("cli", () => {
     expect(readFileSync(join(dest, ".cursor/skills/team-own/SKILL.md"), "utf8")).toBe("team\n");
     expect(readFileSync(join(dest, ".cursor/agents/explorer.md"), "utf8")).toBe("custom explorer\n");
     expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe("custom review\n");
-    expectValidateOk(dest, true);
+    expectValidateOk(dest);
   });
 
   it("init wires cursor when asked", () => {
@@ -634,7 +634,7 @@ providers:
       const result = run("validate", dir);
       expect(result.code).toBe(0);
       expect(result.text).toContain("zk-alpha");
-      expect(result.text).toContain("commands still run your old skill names");
+      expect(result.text).toContain("slash commands still run your old skill names");
       expect(result.text).toContain("ok");
     });
 

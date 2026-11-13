@@ -60,8 +60,8 @@ export function runEmptyRepoTutorial(dir) {
   if (list.code !== 0) {
     throw new Error(`list failed: code=${list.code} out=${list.out} err=${list.err}`);
   }
-  if (!list.out.includes("explorer") || !list.out.includes("review")) {
-    throw new Error(`list should name subagents and commands: ${list.out}`);
+  if (!list.out.includes("explorer") || !list.out.includes("zedkit-ai")) {
+    throw new Error(`list should name subagents and the entry command: ${list.out}`);
   }
   const init = capture(["init", dir, "--provider", "cursor", "--preset", "full"]);
   if (init.code !== 0) {

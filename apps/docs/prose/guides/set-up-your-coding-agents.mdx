@@ -36,7 +36,7 @@ In your repo root:
 {{snippet:ai-tutorial-list.sh}}
 ```
 
-You should see preset names, subagents (for example `explorer`), and commands (for example `review`) printed on stdout — same checks as `packages/ai/tests/unit/cli.test.ts` (`list`).
+You should see preset names, subagents (for example `explorer`), and the entry command (`zedkit-ai`) printed on stdout — same checks as `packages/ai/tests/unit/cli.test.ts` (`list`).
 
 ### 2. Copy the kit into the repo
 
@@ -44,7 +44,7 @@ You should see preset names, subagents (for example `explorer`), and commands (f
 {{snippet:ai-tutorial-init.sh}}
 ```
 
-`init` **never overwrites** existing files; it skips paths that already exist ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). This tutorial uses `--preset full` so every bundled command (for example `audit`) has its skill on disk — `validate` checks that link ([`kit.json`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/kit/kit.json)). For Cursor it adds `.cursor/rules/project.mdc` and copies skills into `.agents/`.
+`init` **never overwrites** existing files; it skips paths that already exist ([`install.ts`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/src/install.ts)). This tutorial uses `--preset full` so every bundled skill is on disk (the installed command is still only `/zedkit-ai`) — `validate` checks that link ([`kit.json`](https://github.com/zedtech-fr/zedkit/blob/main/packages/ai/kit/kit.json)). For Cursor it adds `.cursor/rules/project.mdc` and copies skills into `.agents/`.
 
 Preview without writing:
 
@@ -76,10 +76,10 @@ Ask your agent to run the bundled `setup-ai` skill (copied under `.agents/skills
 
 ### 5. Hand it a bigger task
 
-When the work spans several steps or review lenses, use `/orchestrate` with the
-goal in one line (for example `/orchestrate add auth and document the API`). The
-orchestrator agent frames the work, dispatches specialists, and returns one
-aggregated report without editing files itself.
+When the work spans several steps or review lenses, use `/zedkit-ai` with the
+goal in one line (for example `/zedkit-ai add auth and document the API`). The
+entry command classifies the request, dispatches specialists, and returns one
+aggregated report.
 
 ## Scenario — repo that already has `AGENTS.md`
 

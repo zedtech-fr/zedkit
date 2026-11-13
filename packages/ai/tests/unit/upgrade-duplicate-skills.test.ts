@@ -142,7 +142,7 @@ describe("Upgrading Cursor+Muse with a personalized orchestrate skill", () => {
     expect(readFileSync(sidecarFile, "utf8")).toBe("---\nname: [broken\n---\nbody\n");
   });
 
-  it("the orchestrate command keeps a unique skill target after migration", () => {
+  it("the orchestrate skill keeps a unique skill target after migration", () => {
     const dest = tempDir();
     seedLegacyCursorMuse(dest);
     setup(dest);
