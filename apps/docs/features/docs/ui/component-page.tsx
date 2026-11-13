@@ -12,7 +12,7 @@ import { highlightedTs } from "./highlighted-code";
 import { componentPageCopy } from "../i18n/component-page-copy";
 import type { AdoptionPlan } from "@/lib/adoption-types";
 import { kitUiSourceUrl } from "@/lib/site-links.mjs";
-import { OffPathLink } from "@/components/site-chrome/off-path-link";
+import { OffPathLink } from "@/ui/off-path-link";
 
 export interface CatalogExample {
   title: string;

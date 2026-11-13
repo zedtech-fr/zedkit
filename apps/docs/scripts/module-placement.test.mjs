@@ -236,10 +236,10 @@ describe("checkPlacement fixtures", () => {
   it("absorbs a new single-owner file under a directory glob", () => {
     const result = checkPlacement(
       {
-        files: ["app/x/page.tsx", "components/foo/new.tsx"],
-        edges: [{ from: "app/x/page.tsx", to: "components/foo/new.tsx" }],
+        files: ["app/x/page.tsx", "ui/home/new.tsx"],
+        edges: [{ from: "app/x/page.tsx", to: "ui/home/new.tsx" }],
       },
-      { dead: [], singleOwner: [], globs: ["components/foo/**"], edges: [] },
+      { dead: [], singleOwner: [], globs: ["ui/home/**"], edges: [] },
     );
     assert.deepEqual(result.newViolations, []);
     assert.deepEqual(result.stale, []);
@@ -566,6 +566,17 @@ describe("ESLint one-way imports", () => {
     const messages = await lintText(
       join(repoRoot, "apps/docs/components/placement-probe.tsx"),
       'import { x } from "../app/layout";\n',
+    );
+    assert.ok(
+      messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
+      messages.map((m) => `${m.ruleId}: ${m.message}`).join("\n"),
+    );
+  });
+
+  it("fails a nested ui file importing ../../app/", async () => {
+    const messages = await lintText(
+      join(repoRoot, "apps/docs/ui/placement-probe.tsx"),
+      'import { x } from "../../app/layout";\n',
     );
     assert.ok(
       messages.some((m) => m.ruleId === "no-restricted-imports" && /may not import app or features/i.test(m.message)),
