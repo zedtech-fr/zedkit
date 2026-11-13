@@ -30,6 +30,7 @@ import {
   type ReviewAppearance,
 } from "../model/review-appearance";
 import { consoleAppearanceCopy, type ConsoleAppearanceCopy } from "../i18n/review-console-copy";
+import { writeConsoleShareSearch } from "../model/live-console-href";
 import { mergeReviewShareUrl } from "../model/selection";
 
 const looks = identities.filter((item) =>
@@ -37,13 +38,17 @@ const looks = identities.filter((item) =>
 );
 
 function writeShareUrl(appearance: ReviewAppearance) {
-  const query = serializeReviewAppearance(appearance);
   window.history.replaceState(
     null,
     "",
     mergeReviewShareUrl({
       pathname: window.location.pathname,
-      search: query,
+      search: writeConsoleShareSearch({
+        appearanceSearch: serializeReviewAppearance(appearance),
+        currentSearch: window.location.search,
+        pathname: window.location.pathname,
+        hash: window.location.hash,
+      }),
       hash: window.location.hash,
     }),
   );

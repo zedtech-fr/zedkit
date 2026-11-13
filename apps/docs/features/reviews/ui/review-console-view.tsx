@@ -13,6 +13,7 @@
  * - Back links in that chrome — because: dropping the marketing header must not strand the visitor.
  */
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   AgentConsole,
@@ -25,51 +26,98 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { issuePath } from "../model/review-routes";
+import { issuePath, unlinkedPrPath } from "../model/review-routes";
 import { ReviewConsoleAppearanceFrame } from "./review-console-appearance";
 import "./review-console-surfaces.css";
 
+function ReviewConsoleChrome({
+  issueNumber,
+  unlinkedPr,
+  runId,
+  status,
+  copy,
+  panel,
+}: {
+  issueNumber?: number | null | undefined;
+  unlinkedPr?: number | null | undefined;
+  runId: string;
+  status?: ReactNode | undefined;
+  copy: ReviewsCopy;
+  panel: ReactNode;
+}) {
+  return (
+    <Stack gap="sm" className="shrink-0 surface-pad-sm">
+      <Heading level={1} typeRole="title">
+        {copy.run.title}
+      </Heading>
+      <Stack direction="horizontal" gap="sm" className="flex-wrap">
+        {issueNumber != null ? (
+          <Button asChild variant="link" size="sm" className="min-h-target">
+            <Link href={issuePath(issueNumber)}>{copy.run.backToIssue}</Link>
+          </Button>
+        ) : null}
+        {issueNumber == null && unlinkedPr != null ? (
+          <Button asChild variant="link" size="sm" className="min-h-target">
+            <Link href={unlinkedPrPath(unlinkedPr)}>{copy.run.backToUnlinked}</Link>
+          </Button>
+        ) : null}
+        <Button asChild variant="link" size="sm" className="min-h-target">
+          <Link href="/issues">{copy.run.backToList}</Link>
+        </Button>
+      </Stack>
+      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+        <Heading level={1} typeRole="small">
+          {copy.run.title} {runId}
+        </Heading>
+        {status}
+      </Stack>
+      {panel}
+    </Stack>
+  );
+}
+
 export function ReviewConsoleView({
   issueNumber,
+  unlinkedPr,
   runId,
   run,
   items,
   decision,
+  selectedId,
+  onSelectedIdChange,
+  status,
   copy,
 }: {
-  issueNumber: number;
+  issueNumber?: number | null | undefined;
+  unlinkedPr?: number | null | undefined;
   runId: string;
   run: AgentConsoleRun;
   items: readonly AgentConsoleItem[];
   decision: AgentConsoleDecision | null;
+  selectedId?: string | undefined;
+  onSelectedIdChange?: ((id: string) => void) | undefined;
+  status?: ReactNode | undefined;
   copy: ReviewsCopy;
 }) {
   return (
     <ReviewConsoleAppearanceFrame>
       {(panel) => (
         <>
-          <Stack gap="sm" className="shrink-0 surface-pad-sm">
-            <Heading level={1} typeRole="title">
-              {copy.run.title}
-            </Heading>
-            <Stack direction="horizontal" gap="sm" className="flex-wrap">
-              <Button asChild variant="link" size="sm" className="min-h-target">
-                <Link href={issuePath(issueNumber)}>{copy.run.backToIssue}</Link>
-              </Button>
-              <Button asChild variant="link" size="sm" className="min-h-target">
-                <Link href="/issues">{copy.run.backToList}</Link>
-              </Button>
-            </Stack>
-            <Heading level={1} typeRole="small">
-              {copy.run.title} {runId}
-            </Heading>
-            {panel}
-          </Stack>
+          <ReviewConsoleChrome
+            issueNumber={issueNumber}
+            unlinkedPr={unlinkedPr}
+            runId={runId}
+            status={status}
+            copy={copy}
+            panel={panel}
+          />
           <AgentConsole
             className="h-full pane-shrink content-shrink flex-1 overflow-hidden [&_[data-slot=app-shell-menu]_button]:min-h-floor"
             run={run}
             items={items}
             decision={decision}
+            {...(selectedId === undefined ? {} : { selectedId })}
+            {...(onSelectedIdChange === undefined ? {} : { onSelectedIdChange })}
           />
         </>
       )}
