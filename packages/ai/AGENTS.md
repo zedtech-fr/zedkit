@@ -37,6 +37,8 @@
 7. Installer never overwrites. `--adopt` keeps a different user file and
    writes a kit sidecar (`*.kit.md` or `zk-<name>`); a copy that already
    matches the kit is skipped. Commands keep the old skill name.
+   `sync --prune` of a leftover command drops a provider copy only when it
+   is the kit command link or current kit bytes.
    `setup` and `validate` print how to keep one copy. `validate` stays green. The
    reconciliation steps are in this package's README. Per-skill provider
    links cover dirs that exist under `.agents/skills`, not only the preset

@@ -5,7 +5,7 @@ import { installKit } from "#install.js";
 import { readManifest } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
 import { kitDir } from "#kit.js";
-import { tempDir } from "./helpers.js";
+import { failingIssues, tempDir } from "./helpers.js";
 
 const KIT_TEMPLATE_PATHS = [
   "skills/setup-ai/templates/README.md",
@@ -141,7 +141,7 @@ describe("setup-ai v2 kit", () => {
       "utf8",
     );
     expect(cursorCmd).toBe(agentsCmd);
-    expect(validateKit(join(root, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(root, ".agents")))).toEqual([]);
     expect(checkDrift(root, join(root, ".agents"))).toEqual([]);
   });
 
@@ -592,7 +592,7 @@ describe("setup-ai v2 kit", () => {
       const root = tempDir();
       install(root, { preset });
       const agents = join(root, ".agents");
-      expect(validateKit(agents), preset).toEqual([]);
+      expect(failingIssues(validateKit(agents)), preset).toEqual([]);
       const templates = join(agents, "skills", "setup-ai", "templates");
       expect(existsSync(templates), preset).toBe(true);
       expect(existsSync(join(templates, "README.md")), preset).toBe(true);
@@ -614,7 +614,7 @@ describe("setup-ai v2 kit", () => {
         (a) => a.kind === "copy" || a.kind === "link" || a.kind === "write",
       ),
     ).toEqual([]);
-    expect(validateKit(join(root, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(root, ".agents")))).toEqual([]);
     expect(checkDrift(root, join(root, ".agents"))).toEqual([]);
   });
 

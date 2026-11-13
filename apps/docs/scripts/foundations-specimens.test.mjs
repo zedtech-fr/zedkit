@@ -192,6 +192,8 @@ test("guide wires Color and Type only and does not import dropped bands", () => 
   const color = readApp(`${FOUNDATIONS_UI}/foundations-color.tsx`);
   assert.doesNotMatch(color, /data-site-action/);
   assert.match(color, /ThemeScope identity="glass"/);
+  assert.match(color, /<ThemeScope identity="glass">\{chip\}<\/ThemeScope>/);
+  assert.doesNotMatch(color, /<ThemeScope identity="glass">\{mark\}/);
   assert.doesNotMatch(color, /variant="glass"/);
   assert.doesNotMatch(color, /#[0-9A-Fa-f]{3,8}/);
   assert.match(color, /data-foundations-swatch/);
@@ -244,6 +246,9 @@ test("hero is a grey band with 40px title overlay, intro, and glass callout", ()
     typography,
     /\[data-foundations-hero\][\s\S]{0,200}--zk-type-h1-size:\s*var\(--zk-foundations-title-size\)/,
   );
+  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,500}--foreground:\s*240 10% 3\.9%/);
+  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,500}--muted-foreground:\s*240 5% 32%/);
+  assert.match(typography, /\[data-foundations-hero\][\s\S]{0,600}color:\s*hsl\(var\(--foreground\)\)/);
   assert.match(typography, /\[data-palette-dots\][\s\S]{0,300}repeat\(auto-fit, minmax\(/);
 });
 
@@ -267,6 +272,11 @@ test("foundations chrome skips docs article chrome and keeps search", () => {
   assert.match(nav, /isFoundationsPath/);
   assert.match(headers, /isFoundationsPath/);
   assert.match(headers, /FoundationsDesktopHeader/);
+  assert.match(headers, /SiteSearchTrigger className="lg:hidden"/);
+  assert.match(headers, /SiteFullSearchTrigger className="max-lg:hidden"/);
+  const tokens = readApp("app/docs-shell-tokens.css");
+  assert.match(tokens, /#nd-docs-layout:not\(:has\(#nd-sidebar\)\)/);
+  assert.match(tokens, /--fd-sidebar-col:\s*0px/);
   assert.doesNotMatch(mdxComponents, /FoundationsHero/);
   assert.match(layout, /sidebar=\{\{\s*enabled:\s*!isFoundationsPath\(pathname\),\s*collapsible:\s*false\s*\}\}/);
   assert.match(layout, /themeSwitch=\{\{\s*enabled:\s*false\s*\}\}/);

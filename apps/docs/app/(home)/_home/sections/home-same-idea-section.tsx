@@ -25,6 +25,7 @@ function SameIdeaWindow({ id }: { id: SameIdeaCardId }) {
       direction="horizontal"
       gap="sm"
       data-home-same-idea-window={id}
+      data-allow-clip=""
       className={cn(
         "pointer-events-none text-primary-foreground",
         id === "ui" ? "bg-accent" : "bg-primary",

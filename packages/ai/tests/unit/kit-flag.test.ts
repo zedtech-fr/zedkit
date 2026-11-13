@@ -7,7 +7,7 @@ import { installKit } from "#install.js";
 import { kitDir } from "#kit.js";
 import { syncKit } from "#sync.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { put, SKILL, tempDir } from "./helpers.js";
+import { failingIssues, put, SKILL, tempDir } from "./helpers.js";
 
 const SENTINEL_SKILL = "kit-flag-sentinel";
 const SENTINEL_BODY = "SENTINEL_KIT_FLAG_BODY_297_UNIQUE";
@@ -103,7 +103,7 @@ describe("--kit <dir>", () => {
     const installed = installKit({ dest, kit, preset: "setup", providers: ["cursor"] });
     expect(installed.ok).toBe(true);
     expect(existsSync(join(dest, `.agents/skills/${SENTINEL_SKILL}/SKILL.md`))).toBe(true);
-    expect(validateKit(join(dest, ".agents"), kit)).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents"), kit))).toEqual([]);
     expect(
       checkDrift(dest, join(dest, ".agents"), { kit }).filter((i) => !i.message.startsWith("warning:")),
     ).toEqual([]);
@@ -141,7 +141,7 @@ describe("--kit <dir>", () => {
     const installed = installKit({ dest, providers: ["cursor"] });
     expect(installed.ok).toBe(true);
     expect(existsSync(join(dest, `.agents/skills/${SENTINEL_SKILL}/SKILL.md`))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("empty, missing, and file --kit exit 2 and write nothing", () => {

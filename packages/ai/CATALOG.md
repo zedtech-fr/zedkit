@@ -144,3 +144,25 @@ if (!inSync(actions.value)) process.exitCode = 1;
 ```
 
 CLI equivalent: `zedkit-ai sync --provider cursor,claude --check` (`--kit <dir>` is a local kit directory, omit = bundled).
+
+## Screenshot routes and fail on axe, overflow, and clipped text
+
+- Import: `@zedtech/zedkit-ai` (CLI bin, not a JavaScript module)
+- Bin: `zedkit-ai evidence`
+- Wraps: `@playwright/test`, `@axe-core/playwright`
+- Status: alpha
+- Short name: EvidenceCli
+- Audience: Agents finishing Visual work who need one host command for screenshots and blocking measures.
+- Purpose: Screenshot a route matrix, run axe, overflow, clipped-text and 24px hit-target checks; optional --states and --mockup.
+- When to use: After Visual work, before pasting the PR Evidence table, on a served origin or a static export.
+- When not to use: For a docs-site e2e journey — use the host Playwright specs instead. Playwright and axe stay optional peers.
+- See also: `Run one gate command and keep a log that setup validation accepts`
+
+```ts
+// package.json
+{
+  "scripts": {
+    "visual:verify": "zedkit-ai evidence --dir ./out --routes auto --out evidence/run"
+  }
+}
+```

@@ -60,8 +60,10 @@ zedkit-ai <command>
       copy is replaced, any other file is kept (Muse does not write a
       sidecar). Generated files whose source agent is gone are removed
       (--no-prune keeps them); --prune with --provider also removes those of
-      a provider left out. --check writes nothing and exits 1 when anything
-      is out of date. --allow-fast writes a fast model id, and only when the
+      a provider left out, and leftover deprecated command stubs whose bytes
+      still match the current kit file (not user-edited provider copies).
+      --check writes nothing and exits 1 when anything is out of date.
+      --allow-fast writes a fast model id, and only when the
       user explicitly requested fast mode in this request; validate and
       init/setup take the same flag. Without --provider the layers are inferred from
       non-empty .cursor/ and .claude/ and from Muse-native marked files in
@@ -72,18 +74,39 @@ zedkit-ai <command>
       START:, output, END:, CAUSE: when killed or out of memory, and
       EXIT:<code> as the last line. Caps the V8 heap at 4096 MB unless
       NODE_OPTIONS sets one; exits with the command's code.
-  visual-verify [--url <origin> | --dir <static-export>] [--changed]
-      [--base <ref>] [--cwd <dir>] [--routes <path,path>] [--identities <id,id>]
+  visual-verify [--url <origin> | --base-url <origin> | --dir <static-export>]
+      [--changed] [--base <ref>] [--cwd <dir>] [--routes <path,path|auto>]
+      [--widths <n,n>] [--modes <mode,mode>] [--identities <id,id>]
       [--baseline <run-record.json>] [--out <dir>] [--md <file>]
-      [--ticket <file>] [--manifest <docs-manifest.json>]
+      [--ticket <file>] [--states <file>] [--mockup <file-or-dir>]
+      [--manifest <docs-manifest.json>]
       Render touched routes at 375, 809 and 1440 in light and dark.
-      Writes a run record (evidence/<branch>/manifest.json), one contact
-      sheet PNG per route, and a Markdown table. Collection failed (no CSS
-      or fonts) exits 1 with no verdict. Overflow, page/console/HTTP errors
-      (favicon 404s ignored), a new serious axe violation, selected contrast
-      below 4.5, a Copy button off its block, or an h1 count other than 1
-      also exit 1. Missing Playwright/axe peers exit 2.
-      --base defaults to origin/dev, else origin/main, else HEAD~1, else HEAD.
-      --cwd is the git and path root (default: process cwd).
+      Writes a run record (evidence/<branch>/manifest.json), summary.md,
+      one contact sheet PNG per route, an optional side-by-side mockup PNG,
+      and a Markdown table. Collection failed (no CSS or fonts, or a timed-out
+      state click) exits 1 with no verdict. Overflow, clipped text, hit targets
+      under 24px, page/console/HTTP errors (favicon 404s ignored), a new serious
+      axe violation, selected contrast below 4.5, a Copy button off its block, or
+      an h1 count other than 1 also exit 1. Missing Playwright/axe peers, bad
+      flags, invalid --states, and missing --states/--mockup files exit 2.
+      --routes auto is --changed. --widths and --modes default to 375,809,1440
+      and light,dark. --states is a JSON array of {name, click?}; extra cells
+      after the default tree. --mockup is a file or directory of width PNGs
+      (wins over Visual reference:); the pair PNG does not fail the run.
+      Unresolvable directory PNGs warn on stderr. --base defaults to origin/dev,
+      else origin/main, else HEAD~1, else HEAD. --cwd is the git and path root
+      (default: process cwd).
+  evidence [--base-url <origin> | --url <origin> | --dir <static-export>]
+      [--routes <path,path|auto>] [--changed] [--base <ref>] [--cwd <dir>]
+      [--widths <n,n>] [--modes <mode,mode>] [--identities <id,id>]
+      [--baseline <run-record.json>] [--out <dir>] [--md <file>]
+      [--ticket <file>] [--states <file>] [--mockup <file-or-dir>]
+      [--manifest <docs-manifest.json>]
+      Public name for visual-verify. Same crawl, same exits. Writes
+      summary.md next to the run record. --routes auto is --changed.
+      --widths and --modes default to 375,809,1440 and light,dark.
+      --states is a JSON array of {name, click?}; extra cells after the default
+      tree. --mockup is a file or directory of width PNGs (wins over Visual
+      reference:); the pair PNG does not fail the run.
   list
       Show presets, subagents and commands.

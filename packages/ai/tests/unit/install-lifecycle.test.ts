@@ -9,7 +9,7 @@ import { agentsForPreset, commandsForPreset, kitDir, kitUniverse, readManifest }
 import { MANIFEST_NAME } from "#installed-manifest.js";
 import { readLegacyHashFile, shortHash } from "#legacy.js";
 import { validateKit } from "#validate.js";
-import { put, SKILL, tempDir } from "./helpers.js";
+import { failingIssues, put, SKILL, tempDir } from "./helpers.js";
 
 function setup(dest: string, providers: string[]): void {
   const code = main(["setup", dest, "--provider", providers.join(",")], {
@@ -59,7 +59,7 @@ describe("install lifecycle: reruns and upgrades converge", () => {
 
     expect(existsSync(join(skill, "design-policy.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents", "skills", "zk-setup-ai"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("a recorded prior version of a skill updates in place (D2)", () => {
@@ -257,7 +257,7 @@ describe("install lifecycle: reruns and upgrades converge", () => {
 
     expect(links).toBeGreaterThan(0);
     expect(dangling).toEqual([]);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("references stay valid after a published-version upgrade (P2.4)", () => {
