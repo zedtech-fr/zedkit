@@ -25,6 +25,12 @@ test("identity node tests share registerDocsAlias instead of an inline @/ shim",
   for (const rel of IDENTITY_ALIAS_TESTS) {
     const src = readFileSync(join(app, rel), "utf8");
     assert.match(src, /registerDocsAlias/, rel);
+    assert.match(src, /from ["']#scripts\/register-docs-alias\.mjs["']/, rel);
     assert.equal(src.includes("data:text/javascript"), false, `${rel} still inlines the @/ shim`);
   }
+});
+
+test("docs package maps #scripts/* so colocated tests skip ../../../scripts", () => {
+  const pkg = JSON.parse(readFileSync(join(app, "package.json"), "utf8"));
+  assert.equal(pkg.imports["#scripts/*"], "./scripts/*");
 });

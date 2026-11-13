@@ -41,12 +41,14 @@ const docsFeatureAppBan = {
 };
 
 // `#*` is a gitignore comment, so hash subpaths need `regex` (not `group`).
+// `#*` maps to app/; `#scripts/*` is the colocated node-test loader (same
+// shape as packages/ui `#preview/*`) and is not an app import.
 const docsHashImportBan = {
-  regex: "^#",
+  regex: "^#(?!scripts/)",
   message: docsAppFeatureBan.message,
 };
 const docsFeatureHashImportBan = {
-  regex: "^#",
+  regex: "^#(?!scripts/)",
   message: docsFeatureAppBan.message,
 };
 

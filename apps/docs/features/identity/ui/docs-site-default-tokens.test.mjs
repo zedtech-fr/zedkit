@@ -6,7 +6,7 @@ import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import { registerDocsAlias } from "../../../scripts/register-docs-alias.mjs";
+import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 
 registerDocsAlias(import.meta.url);
 
