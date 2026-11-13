@@ -200,7 +200,7 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(panel, /dispatchIdentityEditorDraftApply/);
   assert.doesNotMatch(read("features/identity/ui/identity-editor-draft-apply.ts"), /Use this look/);
   assert.doesNotMatch(read("features/identity/dock/ui/use-creator-handoff.ts"), /placed in the form|form is filled/);
-  assert.doesNotMatch(read("components/i18n/identity-assistant-copy.ts"), /preview above/);
+  assert.doesNotMatch(read("features/identity/dock/i18n/identity-assistant-copy.ts"), /preview above/);
 });
 
 test("the dock footer is Reset only, not Apply or Preview", () => {
