@@ -13,7 +13,7 @@ export function AppShellTriggerDemo() {
   return (
     <AppShell
       className={cn(
-        "h-frame pane-shrink overflow-hidden rounded-lg border",
+        "h-frame pane-shrink overflow-y-auto rounded-lg border bg-background",
         mobile && "[&_[data-slot=app-shell-menu]]:flex [&>aside]:hidden",
       )}
       sidebarTrigger={<Button variant="outline">{appShellMobileDrawerCopy.menuTrigger}</Button>}
@@ -25,7 +25,7 @@ export function AppShellTriggerDemo() {
               {NAV.map((item, index) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href="#example"
                   aria-current={index === 0 ? "page" : undefined}
                   className={linkClassName}
                 >

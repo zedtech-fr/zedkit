@@ -911,15 +911,16 @@ section[data-gallery-section].border-b:last-child {
 }
 
 /*
- * Link badges keep their small visual size. The hit area is at least the
- * 24px floor on every pointer, and the labelled tap size on touch or a
- * narrow screen. Coarse/narrow `hit-target` lives here too: nested
- * `@media` + `&::before` inside `@utility` compiles to invalid
- * `@media (pointer::before: coarse)`.
+ * Link badges keep a 24px min box on every pointer. A ::after hit area
+ * still expands to the tap size on a coarse pointer or a narrow screen.
+ * Coarse/narrow `hit-target` lives here too: nested `@media` + `&::before`
+ * inside `@utility` compiles to invalid `@media (pointer::before: coarse)`.
  */
 @layer components {
   a[class*="px-badge-inline"] {
     position: relative;
+    min-width: 24px;
+    min-height: 24px;
     &::after {
       content: "";
       position: absolute;
