@@ -7,10 +7,11 @@ import {
   fetchActiveHeroRun,
   followRunHref,
   heroRunTitle,
+  heroStepLabel,
   liveUpdateMessage,
   nextLivePollMs,
+  resolveRunsApiBase,
   type HeroActiveRun,
-  type HeroStepKey,
   type HeroStepStatus,
 } from "./home-hero-active-run";
 import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "./home-rhythm";
@@ -27,13 +28,8 @@ const COMBINED_STEPS = [
   { beat: "done", label: copy.stepDone, text: copy.combinedDone, issue: false },
 ] as const;
 
-const STEP_LABEL: Record<HeroStepKey, string> = {
-  plan: copy.stepPlan,
-  build: copy.stepBuild,
-  check: copy.stepCheck,
-  fix: copy.stepFix,
-  done: copy.stepDone,
-};
+const HERO_LINK_CLASS =
+  "inline-flex min-h-target w-fit items-center text-dense text-muted-foreground link-offset focus-ring hover:underline";
 
 const STEP_STATUS_COPY: Record<HeroStepStatus, string> = {
   pending: copy.statusPending,
@@ -84,11 +80,11 @@ function LiveRows({ run }: { run: HeroActiveRun }) {
             data-hero-run-status={step.status}
           >
             <Text as="span" className="font-semibold">
-              {STEP_LABEL[step.key]}
+              {heroStepLabel(step.key, copy)}
             </Text>
             <div className="inline-flex content-shrink flex-wrap items-center gap-icon">
               <StatusDot tone={dot.tone} pulse={dot.pulse} />
-              <Text as="span" variant="muted">
+              <Text as="span" variant="muted" className="line-clamp-1">
                 {STEP_STATUS_COPY[step.status]}
                 {step.summary === null ? "" : ` · ${step.summary}`}
               </Text>
@@ -102,30 +98,28 @@ function LiveRows({ run }: { run: HeroActiveRun }) {
 
 function PlaceholderLinks() {
   return (
-    <HomeLink
-      href="/issues?open=first"
-      className={`inline-flex min-h-target w-fit items-center text-muted-foreground link-offset focus-ring hover:underline ${HOME_METADATA_TEXT_CLASS}`}
-    >
-      {copy.viewPublicRun}
-    </HomeLink>
+    <Stack direction="horizontal" gap="md" className="min-h-target flex-wrap">
+      <HomeLink href="/issues?open=first" className={HERO_LINK_CLASS}>
+        {copy.viewPublicRun}
+      </HomeLink>
+    </Stack>
   );
 }
 
 function LiveLinks({ run }: { run: HeroActiveRun }) {
   const follow = followRunHref(run);
-  const linkClass = `inline-flex min-h-target w-fit items-center text-muted-foreground link-offset focus-ring hover:underline ${HOME_METADATA_TEXT_CLASS}`;
   return (
-    <Stack direction="horizontal" gap="md" className="flex-wrap">
+    <Stack direction="horizontal" gap="md" className="min-h-target flex-wrap">
       {follow === null ? null : follow.offPath ? (
-        <OffPathLink href={follow.href} className={linkClass}>
+        <OffPathLink href={follow.href} className={HERO_LINK_CLASS}>
           {copy.followRun}
         </OffPathLink>
       ) : (
-        <HomeLink href={follow.href} className={linkClass}>
+        <HomeLink href={follow.href} className={HERO_LINK_CLASS}>
           {copy.followRun}
         </HomeLink>
       )}
-      <HomeLink href="/issues" className={linkClass}>
+      <HomeLink href="/issues" className={HERO_LINK_CLASS}>
         {copy.allRuns}
       </HomeLink>
     </Stack>
@@ -147,12 +141,12 @@ function RunCard({
   const pauseLabel = live === null ? (paused ? copy.playMotion : copy.pauseMotion) : paused ? copy.playLive : copy.pauseLive;
   const control = paused ? copy.play : copy.pause;
   const title = live === null ? copy.emptyStateTitle : heroRunTitle(live, copy);
-  const caption = live === null ? copy.caption : copy.liveCaption;
+  const caption = live === null ? copy.caption : paused ? copy.liveCaptionPaused : copy.liveCaption;
 
   return (
     <Surface variant="glass" elevation={3} radius="xl" padding="card" className="relative flex flex-col gap-stack-md">
       <Stack direction="horizontal" gap="sm" className="justify-between">
-        <Text className="font-semibold wrap-anywhere">{title}</Text>
+        <Text className="line-clamp-2 font-semibold wrap-anywhere">{title}</Text>
         <Button
           type="button"
           variant="ghost"
@@ -180,23 +174,34 @@ function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
   const [live, setLive] = useState<HeroActiveRun | null>(null);
 
   useEffect(() => {
-    const delay = nextLivePollMs(paused);
+    const envValue = process.env.NEXT_PUBLIC_ZEDOS_RUNS_API_BASE;
+    const base = resolveRunsApiBase({
+      ...(envValue === undefined ? {} : { envValue }),
+      hostname: window.location.hostname,
+    });
+    const delay = nextLivePollMs(paused, base);
     if (delay === null) return;
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
-    const envValue = process.env.NEXT_PUBLIC_ZEDOS_RUNS_API_BASE;
+
+    const schedule = () => {
+      if (cancelled || controller.signal.aborted) return;
+      timer = setTimeout(tick, delay);
+    };
 
     const tick = () => {
       void fetchActiveHeroRun({
         ...(envValue === undefined ? {} : { envValue }),
         hostname: window.location.hostname,
         signal: controller.signal,
-      }).then((result) => {
-        if (cancelled || controller.signal.aborted) return;
-        if (result.ok) setLive(result.value);
-        timer = setTimeout(tick, delay);
-      });
+      })
+        .then((result) => {
+          if (cancelled || controller.signal.aborted) return;
+          if (result.ok) setLive(result.value);
+        })
+        .catch(() => undefined)
+        .then(schedule, schedule);
     };
 
     tick();
@@ -219,12 +224,11 @@ export function HomeHeroIllustration() {
   const motionOk = useMotionPreference() === "no-preference";
   const [paused, setPaused] = useState(false);
   const live = useActiveHeroRun(paused);
-  const groupLabel = live === null ? copy.caption : liveUpdateMessage(live, copy);
 
   return (
     <div
       role="group"
-      aria-label={groupLabel}
+      aria-label={copy.stageLabel}
       data-home-hero-preview=""
       data-hero-run-stage=""
       data-hero-run-live={live === null ? undefined : ""}
@@ -233,7 +237,7 @@ export function HomeHeroIllustration() {
       className="relative content-shrink overflow-clip"
     >
       <p role="status" className="sr-only">
-        {live === null ? "" : liveUpdateMessage(live, copy)}
+        {live === null ? "" : liveUpdateMessage(live, copy, paused)}
       </p>
       <div
         {...HOME_PARALLAX_SCROLL_PROPS}

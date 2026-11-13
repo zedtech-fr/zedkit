@@ -7,9 +7,12 @@
  *
  * Motion, all off under `prefers-reduced-motion` and `data-motion="reduce"`:
  *   1. load: the lead rises block by block, then the glass stage enters;
- *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop; Pause sets animation-play-state;
+ *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop unless
+ *      the card is live (`[data-hero-run-live]` sets `animation: none`); Pause sets
+ *      animation-play-state on steps, the drift blob, and kit `.status-ping`;
  *   3. one decorative blob on the purple stage drifts (`zk-home-float`).
- * Reduced motion shows the final card, no Pause control, no displacement.
+ * Reduced motion shows the final card, no displacement. Pause stays mounted
+ * invisible on the placeholder (hydration); it is visible for a live run.
  */
 #home-page [data-home-hero] {
   min-width: 0;
@@ -122,11 +125,6 @@
   border-top: var(--zk-border-width, 1px) solid hsl(var(--border) / 0.6);
 }
 
-#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="pending"],
-#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="skipped"] {
-  opacity: 0.4;
-}
-
 #home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="failed"] {
   color: hsl(var(--destructive));
 }
@@ -185,7 +183,8 @@
   }
 
   #home-page [data-hero-run-stage][data-paused] [data-hero-run-step],
-  #home-page [data-hero-run-stage][data-paused] [data-hero-run-drift] {
+  #home-page [data-hero-run-stage][data-paused] [data-hero-run-drift],
+  #home-page [data-hero-run-stage][data-paused] .status-ping {
     animation-play-state: paused;
   }
   }

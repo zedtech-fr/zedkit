@@ -6,6 +6,7 @@ import {
   fetchActiveHeroRun,
   followRunHref,
   heroRunTitle,
+  heroStepLabel,
   liveUpdateMessage,
   nextLivePollMs,
   parseActiveRunsEnvelope,
@@ -177,17 +178,23 @@ test("malformed envelopes are errors so the card can keep the placeholder", () =
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ pr: -1 })])).ok, false);
 });
 
-test("polling continues while not paused, including empty and failed loads", () => {
-  assert.equal(nextLivePollMs(false), ACTIVE_HERO_POLL_MS);
-  assert.equal(nextLivePollMs(true), null);
+test("polling continues while not paused when a base is resolvable", () => {
+  const base = "https://dev.zedkit.app";
+  assert.equal(nextLivePollMs(false, base), ACTIVE_HERO_POLL_MS);
+  assert.equal(nextLivePollMs(true, base), null);
+  assert.equal(nextLivePollMs(false, null), null);
 });
 
-test("live status copy names a failed step", () => {
+test("live status copy names the active or failed step", () => {
+  const run = parseActiveRunsEnvelope(envelope([runRow()])).value[0];
+  assert.equal(heroStepLabel("build", copy), "Build");
+  assert.match(liveUpdateMessage(run, copy), /Build in progress/);
+  assert.match(liveUpdateMessage(run, copy, true), /Live updates paused/);
   const failedSteps = steps("check").map((row) =>
     row.key === "check" ? { ...row, status: "failed", summary: "hand-made button" } : row,
   );
-  const run = parseActiveRunsEnvelope(envelope([runRow({ steps: failedSteps })])).value[0];
-  assert.match(liveUpdateMessage(run, copy), /Failed: Check/);
+  const failed = parseActiveRunsEnvelope(envelope([runRow({ steps: failedSteps })])).value[0];
+  assert.match(liveUpdateMessage(failed, copy), /Failed: Check/);
 });
 
 test("fetch maps an active run and falls back when the list is empty", async () => {

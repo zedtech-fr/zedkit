@@ -101,8 +101,9 @@ export function activeRunsUrl(base: string): string {
   return `${root}?${new URLSearchParams({ active: "1", limit: "1" })}`;
 }
 
-export function nextLivePollMs(paused: boolean): number | null {
-  return paused ? null : ACTIVE_HERO_POLL_MS;
+export function nextLivePollMs(paused: boolean, base: string | null): number | null {
+  if (paused || base === null) return null;
+  return ACTIVE_HERO_POLL_MS;
 }
 
 function asTitle(value: unknown): string | null | undefined {
@@ -177,6 +178,29 @@ export function selectActiveHeroRun(runs: readonly HeroActiveRun[]): HeroActiveR
   return runs[0] ?? null;
 }
 
+export type HeroStepCopy = {
+  stepPlan: string;
+  stepBuild: string;
+  stepCheck: string;
+  stepFix: string;
+  stepDone: string;
+};
+
+export function heroStepLabel(key: HeroStepKey, copy: HeroStepCopy): string {
+  switch (key) {
+    case "plan":
+      return copy.stepPlan;
+    case "build":
+      return copy.stepBuild;
+    case "check":
+      return copy.stepCheck;
+    case "fix":
+      return copy.stepFix;
+    case "done":
+      return copy.stepDone;
+  }
+}
+
 export function heroRunTitle(
   run: HeroActiveRun,
   copy: { issueFallback: (n: number) => string; prFallback: (n: number) => string; untitled: string },
@@ -194,32 +218,22 @@ export function followRunHref(run: HeroActiveRun): FollowRunHref | null {
   return null;
 }
 
-export function liveUpdateMessage(
-  run: HeroActiveRun,
-  copy: {
-    liveCaption: string;
-    issueFallback: (n: number) => string;
-    prFallback: (n: number) => string;
-    untitled: string;
-    statusFailed: string;
-    stepPlan: string;
-    stepBuild: string;
-    stepCheck: string;
-    stepFix: string;
-    stepDone: string;
-  },
-): string {
+export type HeroLiveCopy = HeroStepCopy & {
+  issueFallback: (n: number) => string;
+  prFallback: (n: number) => string;
+  untitled: string;
+  liveStatus: (title: string, step: string) => string;
+  liveStatusPaused: (title: string) => string;
+  liveStatusFailed: (title: string, step: string) => string;
+};
+
+export function liveUpdateMessage(run: HeroActiveRun, copy: HeroLiveCopy, paused = false): string {
   const title = heroRunTitle(run, copy);
   const failed = run.steps.find((step) => step.status === "failed");
-  const stepLabel = {
-    plan: copy.stepPlan,
-    build: copy.stepBuild,
-    check: copy.stepCheck,
-    fix: copy.stepFix,
-    done: copy.stepDone,
-  };
-  if (failed === undefined) return `${copy.liveCaption} ${title}`;
-  return `${copy.liveCaption} ${title}. ${copy.statusFailed}: ${stepLabel[failed.key]}`;
+  if (failed !== undefined) return copy.liveStatusFailed(title, heroStepLabel(failed.key, copy));
+  if (paused) return copy.liveStatusPaused(title);
+  const active = run.steps.find((step) => step.status === "active");
+  return copy.liveStatus(title, active === undefined ? "" : heroStepLabel(active.key, copy));
 }
 
 export type FetchActiveHeroRunOptions = {
