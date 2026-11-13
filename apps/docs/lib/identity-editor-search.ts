@@ -7,7 +7,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { inferKeptDark } from "./identity-recipe.ts";
+import { LIGHT_KEYS, inferKeptDark } from "./identity-recipe.ts";
 
 const SCALAR_KEYS = [
   "spacing",
@@ -26,16 +26,6 @@ const FONT_KEYS = ["fontSans", "fontDisplay"] as const;
 
 /** Every single-value token the link carries, in link order. */
 const VALUE_KEYS = [...SCALAR_KEYS, ...FONT_KEYS] as const;
-
-const LIGHT_KEYS = [
-  "background",
-  "foreground",
-  "primary",
-  "primaryForeground",
-  "accent",
-  "border",
-  "mutedForeground",
-] as const;
 
 function clonePreset(id: IdentityId): IdentityTokens {
   const preset = identityPresets[id];
@@ -129,7 +119,6 @@ export {
   LIGHT_KEYS,
   SCALAR_KEYS,
   VALUE_KEYS,
-  inferKeptDark,
   isLightKey,
   parseIdentityEditorSearch,
   serializeIdentityEditorSearch,
