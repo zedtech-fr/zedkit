@@ -85,6 +85,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. | `agent-console.test.tsx` | 2026-11-12 |
+| Persistent shell and page transition | `packages/ui/src/layout/persistent-shell.tsx` | Slot host in a layout ancestor; trap: do not wrap fumadocs `DocsLayout` children. `PageTransition` uses named motions. | `@zedtech/zedkit-ui` | 2026-11-13 |
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |

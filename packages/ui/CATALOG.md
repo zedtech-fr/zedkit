@@ -648,7 +648,7 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - Purpose: One faithful loading skeleton per kit component shape, each a named live zone.
 - When to use: As a `Suspense` fallback matching the component that will land.
 - When not to use: For freeform blocks — use a plain `Skeleton`; for named operations — use `StatusLabel`.
-- See also: `Show loading placeholder blocks`
+- See also: `Show loading placeholder blocks`, `Show a route-shaped skeleton while the next page loads`
 - Examples: In Suspense, Standalone
 - A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
 - Registry: card-skeleton
@@ -665,6 +665,38 @@ import { Card, CardContent, CardSkeleton } from "@zedtech/zedkit-ui";
 ```ts
 import { CardSkeleton } from "@zedtech/zedkit-ui";
 {loading ? <CardSkeleton label="Loading report" /> : <ReportCard />}
+```
+
+## Show a route-shaped skeleton while the next page loads
+
+- Import: `@zedtech/zedkit-ui` — `DocsPageSkeleton`, `DocsPageSkeletonProps`, `ListPageSkeleton`, `ListPageSkeletonProps`, `DetailPageSkeleton`, `DetailPageSkeletonProps`
+- Wraps: `(none)`
+- Status: beta
+- Short name: Route skeletons
+- Audience: Developers replacing a spinner or generic loader between pages.
+- Purpose: Docs, list, and detail page skeletons composed from existing zone skeletons so the wait matches the page that lands.
+- When to use: As `loading.tsx` or a `Suspense` fallback for a whole page, not a single card.
+- When not to use: For one card, table, or panel — use `CardSkeleton` / `DataTableSkeleton` / `DetailPanelSkeleton`. For a named operation — use `StatusLabel`.
+- See also: `Load each zone with a faithful skeleton`, `Keep chrome mounted across client navigations`
+- Examples: Docs page, List page, Detail page
+- A11y: Each composed zone is `role="status"` with `aria-label` from `label` (default `messages.loading`). Nested zone skeletons keep their own names. The label is not shown visually.
+- Troubleshooting: Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only.
+
+```ts
+import { DocsPageSkeleton } from "@zedtech/zedkit-ui";
+export default function Loading() {
+  return <DocsPageSkeleton label="Loading page" />;
+}
+```
+
+```ts
+import { ListPageSkeleton } from "@zedtech/zedkit-ui";
+<ListPageSkeleton label="Loading catalog" cards={3} />
+```
+
+```ts
+import { DetailPageSkeleton } from "@zedtech/zedkit-ui";
+<DetailPageSkeleton label="Loading item" rows={4} />
 ```
 
 ## Name an operation in progress
@@ -1268,7 +1300,7 @@ export function LogPane({ children }: { children: ReactNode }) {
 - Examples: Next.js root, Inner scroll container
 - A11y: Jumps instantly by default and always under `prefers-reduced-motion: reduce`; `behavior="smooth"` only applies when motion is allowed. Does not move focus. Back/forward (popstate) navigations are skipped so the browser restores the previous position.
 - Composition: Renders nothing; `useScrollReset` is the same behaviour as a hook. Router-agnostic — the app passes the route key.
-- See also: `Render a route as a modal over the list`
+- See also: `Render a route as a modal over the list`, `Keep chrome mounted across client navigations`
 
 ```ts
 "use client";
@@ -1283,6 +1315,39 @@ export function RouteScroll() {
 import { useScrollReset } from "@zedtech/zedkit-ui";
 const getMain = useCallback(() => document.querySelector<HTMLElement>("main"), []);
 useScrollReset(pathname, { target: getMain });
+```
+
+## Keep chrome mounted across client navigations
+
+- Import: `@zedtech/zedkit-ui` — `PersistentShell`, `PersistentShellProps`, `PageTransition`, `PageTransitionProps`, `PageTransitionPreset`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: PersistentShell
+- Audience: Developers whose shared header, sidebar, or docks look like they remount on every click.
+- Purpose: Slot host and named-motion wrap so header, sidebar, and docks stay mounted while only the article fades.
+- When to use: In a layout that is a common ancestor of the routes that must share chrome. Pass `routeKey` (pathname) the same way as `ScrollReset`.
+- When not to use: For an admin sidebar and topbar — use `AppShell`. Do not wrap fumadocs `DocsLayout` children (that steals grid areas). Do not pass `routeKey` and also remount via Next `template.tsx`.
+- See also: `Reveal and react with motion on any element`, `Lay out an admin page (sidebar + topbar + header)`, `Reset scroll on route change`, `Show a route-shaped skeleton while the next page loads`
+- Examples: Layout ancestor, With a route key
+- A11y: `motion-settle` / `motion-reveal` already stop under `prefers-reduced-motion` and `data-motion="reduce"`, leaving content visible in place. The shell adds no landmarks; keep skip-link and `#main-content` on the article.
+- Troubleshooting: Chrome remounts — the shell is not in a layout ancestor of both routes. The fade plays twice — use `routeKey` or a remounting `template.tsx`, not both. Nothing fades — check reduced motion and `data-motion`.
+
+```ts
+import { PersistentShell } from "@zedtech/zedkit-ui";
+export default function DocsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <PersistentShell header={<SiteHeader />} sidebar={<DocsNav />}>
+      {children}
+    </PersistentShell>
+  );
+}
+```
+
+```ts
+"use client";
+import { PageTransition } from "@zedtech/zedkit-ui";
+import { usePathname } from "next/navigation";
+<PageTransition routeKey={usePathname()} preset="settle">{article}</PageTransition>
 ```
 
 ## Show toast notifications

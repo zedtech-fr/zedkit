@@ -579,6 +579,19 @@ export interface DetailItem {
     value: React_2.ReactNode;
 }
 
+// @public
+export function DetailPageSkeleton(input: DetailPageSkeletonProps): JSX.Element;
+
+// @public (undocumented)
+export interface DetailPageSkeletonProps {
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    label?: string;
+    // (undocumented)
+    rows?: number;
+}
+
 // @public (undocumented)
 export function DetailPanel(input: DetailPanelProps): React_2.JSX.Element;
 
@@ -656,6 +669,17 @@ export function DialogTrigger(input: React_2.ComponentProps<typeof DialogPrimiti
 
 // @public
 export function discardCustomIdentity(storageKey?: string): void;
+
+// @public
+export function DocsPageSkeleton(input: DocsPageSkeletonProps): JSX.Element;
+
+// @public (undocumented)
+export interface DocsPageSkeletonProps {
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    label?: string;
+}
 
 // Warning: (ae-forgotten-export) The symbol "DrawerRootProps" needs to be exported by the entry point index.d.ts
 //
@@ -1258,6 +1282,19 @@ export function Label(input: LabelProps): React_2.JSX.Element;
 // @public (undocumented)
 export type LabelProps = React_2.ComponentProps<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>;
 
+// @public
+export function ListPageSkeleton(input: ListPageSkeletonProps): JSX.Element;
+
+// @public (undocumented)
+export interface ListPageSkeletonProps {
+    // (undocumented)
+    cards?: number;
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    label?: string;
+}
+
 // @public (undocumented)
 export function LivePulse(input: LivePulseProps): JSX.Element;
 
@@ -1425,6 +1462,18 @@ export interface PageHeaderSkeletonProps {
 }
 
 // @public (undocumented)
+export function PageTransition(input: PageTransitionProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type PageTransitionPreset = "settle" | "reveal";
+
+// @public (undocumented)
+export interface PageTransitionProps extends React_2.ComponentProps<"div"> {
+    preset?: PageTransitionPreset;
+    routeKey?: string;
+}
+
+// @public (undocumented)
 export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
     spacing: string;
     borderWidth: string;
@@ -1456,6 +1505,19 @@ export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
     shadowSm: string;
     shadowMd: string;
 }>;
+
+// @public
+export function PersistentShell(input: PersistentShellProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface PersistentShellProps extends React_2.ComponentProps<"div"> {
+    // (undocumented)
+    dock?: React_2.ReactNode;
+    // (undocumented)
+    header?: React_2.ReactNode;
+    // (undocumented)
+    sidebar?: React_2.ReactNode;
+}
 
 // @public (undocumented)
 export function Popover(input: PopoverProps): React_2.JSX.Element;

@@ -2,6 +2,7 @@ export { zedkitUiMessagesEn, zedkitUiMessagesFr, type ZedkitUiMessages } from ".
 export { ZedkitUiProvider, useUiMessages } from "./ui-provider.js";
 export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./feedback/alert.js";
 export { AppShell, type AppShellProps } from "./layout/app-shell.js";
+export { PersistentShell, type PersistentShellProps } from "./layout/persistent-shell.js";
 export {
   AgentConsole,
   type AgentConsoleDecision,
@@ -135,6 +136,11 @@ export {
   type AnimateProps,
   type AnimateTrigger,
 } from "./motion/animate.js";
+export {
+  PageTransition,
+  type PageTransitionPreset,
+  type PageTransitionProps,
+} from "./motion/page-transition.js";
 export { MotionScript, type MotionScriptProps } from "./motion/motion-script.js";
 export {
   MOTION_CHANGE_EVENT,
@@ -266,6 +272,14 @@ export { CardSkeleton, type CardSkeletonProps } from "./surfaces/card-skeleton.j
 export { DataTableSkeleton, type DataTableSkeletonProps } from "./data-table/data-table-skeleton.js";
 export { DetailPanelSkeleton, type DetailPanelSkeletonProps } from "./layout/detail-panel-skeleton.js";
 export { PageHeaderSkeleton, type PageHeaderSkeletonProps } from "./layout/page-header-skeleton.js";
+export {
+  DetailPageSkeleton,
+  DocsPageSkeleton,
+  ListPageSkeleton,
+  type DetailPageSkeletonProps,
+  type DocsPageSkeletonProps,
+  type ListPageSkeletonProps,
+} from "./layout/route-skeletons.js";
 export { closeRoute, type CloseRouteOptions } from "./close-route.js";
 export {
   ScrollReset,
