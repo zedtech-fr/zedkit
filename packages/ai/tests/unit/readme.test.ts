@@ -4,18 +4,15 @@ import { describe, expect, it } from "vitest";
 import { kitDir, readManifest } from "#kit.js";
 import { shippedNames } from "./helpers.js";
 
-function readmeCommands(): string[] {
-  const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
-  const block = /^Commands \(([\s\S]*?)\) are 3-6 line files/m.exec(readme);
-  expect(block, "README commands list").not.toBeNull();
-  return [...(block?.[1] ?? "").matchAll(/`([a-z][a-z0-9-]*)`/g)].map((m) => m[1] ?? "");
-}
-
 describe("package README", () => {
-  it("lists exactly the manifest commands, in order", () => {
-    const manifest = readManifest();
-    if (!manifest.ok) throw manifest.error;
-    expect(readmeCommands()).toEqual(manifest.value.commands ?? []);
+  it("documents the one-command install and leftover command files", () => {
+    const readme = readFileSync(fileURLToPath(new URL("../../README.md", import.meta.url)), "utf8");
+    expect(readme).toMatch(/Presets install one command: `\/zedkit-ai`/);
+    expect(readme).toMatch(/Every preset\ninstalls only `\/zedkit-ai`/);
+    expect(readme).toContain("/zedkit-ai <request>");
+    expect(readme).toContain("npx @zedtech/zedkit-ai sync --prune --provider");
+    expect(readme).toContain("## Upgrading from 1.1.x");
+    expect(readme).not.toMatch(/full still installs the full agent and command lists/);
   });
 
   it("keeps every command file within the claimed 3-6 lines", () => {

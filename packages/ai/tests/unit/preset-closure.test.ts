@@ -95,24 +95,7 @@ describe("preset closure", () => {
       "event-contracts",
       "test-runner",
     ]);
-    expect(commandsForPreset(manifest.value, "setup")).toEqual([
-      "setup-ai",
-      "review",
-      "plan",
-      "challenge",
-      "implement",
-      "pr",
-      "orchestrate",
-      "improve-config",
-      "research",
-      "from-audit",
-      "to-audit",
-      "fix",
-      "improve-from-review",
-      "quick-wins",
-      "triage",
-      "zedkit-ai",
-    ]);
+    expect(commandsForPreset(manifest.value, "setup")).toEqual(["zedkit-ai"]);
   });
 
   it("every preset with the orchestrate skill ships the plan and implement playbooks, except documented-lean starter", () => {
@@ -431,7 +414,7 @@ describe("preset closure", () => {
       true,
     );
     expect(existsSync(join(dest, ".agents/commands/improve-config.md"))).toBe(
-      true,
+      false,
     );
     expect(existsSync(join(dest, ".agents/skills/from-audit/SKILL.md"))).toBe(
       true,
@@ -439,16 +422,17 @@ describe("preset closure", () => {
     expect(existsSync(join(dest, ".agents/skills/to-audit/SKILL.md"))).toBe(
       true,
     );
-    expect(existsSync(join(dest, ".agents/commands/from-audit.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/commands/to-audit.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/commands/challenge.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/from-audit.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/to-audit.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/challenge.md"))).toBe(false);
     expect(existsSync(join(dest, ".agents/skills/triage/SKILL.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/commands/triage.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/triage.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
     expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
-  it("flags a /name in the kit universe that the preset does not install", () => {
+  it("flags /plan on starter where the plan skill is not installed", () => {
     const dest = tempDir();
     install(dest, "starter");
     appendFileSync(
@@ -461,6 +445,19 @@ describe("preset closure", () => {
     expect(found).toContain(
       'skills/review/SKILL.md: references command "plan", which this preset does not install',
     );
+  });
+
+  it("allows /plan on setup when the plan skill and zedkit-ai are installed", () => {
+    const dest = tempDir();
+    install(dest, "setup");
+    appendFileSync(
+      join(dest, ".agents/skills/review/SKILL.md"),
+      "\nRun `/plan` before merging.\n",
+    );
+    const found = validateKit(join(dest, ".agents")).map(
+      (issue) => `${issue.path}: ${issue.message}`,
+    );
+    expect(found.some((entry) => entry.includes('command "plan"'))).toBe(false);
   });
 
   it("flags /audit on setup where the command is not installed", () => {

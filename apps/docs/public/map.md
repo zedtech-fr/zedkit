@@ -12,7 +12,7 @@ Install only the setup-able packages the user named, in a safe order, and emit o
 | --- | --- | --- | --- | --- | --- |
 | UI | Tailwind-wired React components, Glass fonts, a styled Save button | React 19 + Tailwind v4 app | Not a React+Tailwind app; user did not ask for UI | https://zedkit.app/ui/setup.md | `Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md` |
 | Nest | `createNestApp` bootstrap with validation, logs, docs | Existing NestJS app | Not a Nest app (this file does not scaffold; point start-one requests at the human walkthrough) | https://zedkit.app/nest/setup.md | `Set up zedkit Nest on this repo following https://zedkit.app/nest/setup.md` |
-| AI | Agent instructions, skills, `/setup-ai`, `validate` | A git repo; a coding agent | User did not ask for AI | https://zedkit.app/ai/setup.md | `Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md` |
+| AI | Agent instructions, skills, `/zedkit-ai`, `validate` | A git repo; a coding agent | User did not ask for AI | https://zedkit.app/ai/setup.md | `Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md` |
 
 Paste prompts:
 
@@ -33,7 +33,7 @@ Completion: the requested set is written down (possibly empty → suggest).
 
 ## Order
 
-When several are requested, run them **UI → Nest → AI**. UI and Nest first so `/setup-ai` can read the host they leave behind. Skip any package that was not requested.
+When several are requested, run them **UI → Nest → AI**. UI and Nest first so `/zedkit-ai` can read the host they leave behind. Skip any package that was not requested.
 
 Sequence each requested file in that order. Do not re-run that package's done-check as a process-wide gate yet.
 

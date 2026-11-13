@@ -35,8 +35,9 @@ function cliInvocations(text) {
   const flags = [];
   for (const line of text.split("\n")) {
     // Per-line match: each line is tested independently, so no match can span lines by construction.
-    if (!/(?:@zedtech\/)?zedkit-ai(@[\w.-]+)?[ \t]+[a-z]/.test(line)) continue;
-    const cmd = line.match(/(?:@zedtech\/)?zedkit-ai(?:@[\w.-]+)?[ \t]+([a-z][a-z-]*)/);
+    // Slash `/zedkit-ai …` is the entry command, not `zedkit-ai <cli-subcommand>`.
+    if (!/(?<!\/)(?:@zedtech\/)?zedkit-ai(@[\w.-]+)?[ \t]+[a-z]/.test(line)) continue;
+    const cmd = line.match(/(?<!\/)(?:@zedtech\/)?zedkit-ai(?:@[\w.-]+)?[ \t]+([a-z][a-z-]*)/);
     if (cmd) commands.push(cmd[1]);
     for (const m of line.matchAll(/--[a-z][a-z-]*/g)) flags.push(m[0]);
   }
@@ -100,6 +101,12 @@ test("an invalid pinned command and flag are surfaced for rejection", () => {
   assert.ok(bad.commands.length > 0 && bad.flags.length > 0, "negative fixture parsed nothing — vacuous");
   for (const cmd of bad.commands) assert.ok(!commands.has(cmd), `bogus command unexpectedly known: ${cmd}`);
   for (const flag of bad.flags) assert.ok(!flags.has(flag), `bogus flag unexpectedly known: ${flag}`);
+});
+
+test("a slash-command /zedkit-ai request is not a CLI subcommand", () => {
+  const parsed = cliInvocations("run `/zedkit-ai set up this repo from what it contains`");
+  assert.deepEqual(parsed.commands, []);
+  assert.deepEqual(parsed.flags, []);
 });
 
 test("a version pin at end of line does not bridge into the next line", () => {

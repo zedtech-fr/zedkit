@@ -844,13 +844,13 @@ describe("validateKit: deprecated commands", () => {
     expect(issues).toContainEqual({
       path: "commands/plan.md",
       message:
-        'warning: command "plan" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)',
+        'warning: command "plan" is deprecated; use /zedkit-ai <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)',
     });
     expect(issues.filter((issue) => issue.message.startsWith("warning: command"))).toEqual([
       {
         path: "commands/plan.md",
         message:
-          'warning: command "plan" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)',
+          'warning: command "plan" is deprecated; use /zedkit-ai <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)',
       },
     ]);
   });
@@ -881,7 +881,7 @@ describe("validateKit: deprecated commands", () => {
     expect(code).toBe(0);
     expect(errors).toEqual([]);
     expect(out.join("\n")).toContain(
-      'commands/plan.md: warning: command "plan" is deprecated; use /zedkit-ai (delete the file or run sync --prune --provider …)',
+      'commands/plan.md: warning: command "plan" is deprecated; use /zedkit-ai <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)',
     );
     expect(out.join("\n")).toContain("ok — structural kit checks only");
   });
