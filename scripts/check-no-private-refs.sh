@@ -17,10 +17,8 @@ fail=0
 
 # pnpm-lock.yaml is machine-generated: integrity hashes are random base64 and
 # will eventually contain any short word pattern. Excluded from the content
-# scan (it cannot carry a prose reference). Binary files (evidence PNGs,
-# fonts, etc.) are skipped the same way: compressed bytes collide with short
-# denylist tokens without being a prose reference. `git grep -I` is that skip.
-hits=$(git grep -IinE -e "$patterns" -- . ':!pnpm-lock.yaml' ':!*.png' | denylist_filter_hits || true)
+# scan (it cannot carry a prose reference).
+hits=$(git grep -inE -e "$patterns" -- . ':!pnpm-lock.yaml' | denylist_filter_hits || true)
 if [ -n "$hits" ]; then
   echo "private project references in tracked file contents:"
   echo "$hits"
@@ -36,7 +34,7 @@ fi
 
 untracked=$(git ls-files --others --exclude-standard || true)
 if [ -n "$untracked" ]; then
-  untracked_hits=$(git ls-files -z --others --exclude-standard | xargs -0 grep -IHinE -e "$patterns" -- | denylist_filter_hits || true)
+  untracked_hits=$(printf '%s\n' "$untracked" | xargs grep -HinE -e "$patterns" -- 2>/dev/null | denylist_filter_hits || true)
   if [ -n "$untracked_hits" ]; then
     echo "private project references in untracked file contents:"
     echo "$untracked_hits"

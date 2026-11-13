@@ -41,8 +41,6 @@ html.dark[data-identity] #nd-mobile-nav {
 html[data-docs-shell][data-identity] {
   --zk-site-page: 0 0% 100%;
   --zk-site-band: 0 0% 98%;
-  --zk-site-ink: 240 10% 3.9%;
-  --zk-site-body: 240 5% 32%;
   --zk-site-hairline: 240 5.9% 90%;
   --zk-site-action: 240 5.9% 10%;
   --zk-site-action-foreground: 0 0% 98%;

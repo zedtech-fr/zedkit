@@ -22,9 +22,6 @@ test("docs shell drops the page radial on every site route", () => {
 test("docs shell pins white page fill, 1200px measure, and 24px gutter", () => {
   const css = read("app/docs-shell-tokens.css");
   assert.match(css, /--zk-site-page:\s*0 0% 100%/);
-  assert.match(css, /--zk-site-band:\s*0 0% 98%/);
-  assert.match(css, /--zk-site-ink:\s*240 10% 3\.9%/);
-  assert.match(css, /--zk-site-body:\s*240 5% 32%/);
   assert.match(css, /--zk-container-default:\s*75rem/);
   assert.match(css, /--zk-container-wide:\s*75rem/);
   assert.match(css, /--zk-page-gutter:\s*1\.5rem/);

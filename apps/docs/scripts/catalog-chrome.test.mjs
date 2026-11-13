@@ -18,7 +18,7 @@ function functionSource(src, name) {
 }
 
 test("catalog desktop header is marketing chrome: search and GitHub, no version or theme", () => {
-  const headers = read("ui/site-headers.tsx");
+  const headers = read("components/site-chrome/site-headers.tsx");
   assert.match(headers, /SiteFullSearchTrigger/);
   assert.doesNotMatch(headers, /KitVersionLabel/);
   assert.doesNotMatch(headers, /ThemeSwitch|SiteThemeSwitch|data-theme-toggle/);
@@ -34,7 +34,7 @@ test("catalog desktop header is marketing chrome: search and GitHub, no version 
 });
 
 test("home desktop header still has Get started and no docs search", () => {
-  const headers = read("ui/site-headers.tsx");
+  const headers = read("components/site-chrome/site-headers.tsx");
   const home = functionSource(headers, "HomeDesktopHeader");
   assert.match(home, /HomeGetStartedAction/);
   assert.match(home, /HomeGitHubLink/);
@@ -42,7 +42,7 @@ test("home desktop header still has Get started and no docs search", () => {
 });
 
 test("issues and other marketing routes use the shared marketing desktop bar, not fumadocs Header", () => {
-  const headers = read("ui/site-headers.tsx");
+  const headers = read("components/site-chrome/site-headers.tsx");
   const marketing = functionSource(headers, "MarketingSiteHeader");
   assert.doesNotMatch(marketing, /isHomePath/);
   assert.doesNotMatch(marketing, /isCatalogPath/);
@@ -58,20 +58,20 @@ test("issues and other marketing routes use the shared marketing desktop bar, no
 });
 
 test("home desktop header is the home layout slot, not an isHomePath branch", () => {
-  const headers = read("ui/site-headers.tsx");
+  const headers = read("components/site-chrome/site-headers.tsx");
   const homeHeader = functionSource(headers, "HomeMarketingHeader");
   assert.match(homeHeader, /MobileHeader/);
   assert.match(homeHeader, /HomeDesktopHeader/);
   const homeLayout = read("app/(home)/layout.tsx");
   assert.match(homeLayout, /header=\{HomeMarketingHeader\}/);
-  const siteLayout = read("ui/site-layout.tsx");
+  const siteLayout = read("components/site-chrome/site-layout.tsx");
   assert.match(siteLayout, /header = MarketingSiteHeader/);
   const siteGroup = read("app/(site)/layout.tsx");
   assert.doesNotMatch(siteGroup, /header=\{/);
 });
 
 test("docs desktop header is the marketing pattern: search and GitHub, no version, theme, or Get started", () => {
-  const headers = read("ui/site-headers.tsx");
+  const headers = read("components/site-chrome/site-headers.tsx");
   assert.match(headers, /data-docs-header/);
   const docs = functionSource(headers, "DocsDesktopHeader");
   assert.match(docs, /mark="docs"/);
