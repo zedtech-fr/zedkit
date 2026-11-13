@@ -13,7 +13,7 @@ import {
   type SharedProps,
 } from "fumadocs-ui/components/dialog/search";
 import { cn, surfaceGlassPanelClass } from "@zedtech/zedkit-ui";
-import { useDocsStaticSearch } from "@/lib/use-docs-static-search";
+import { useDocsStaticSearch } from "./use-docs-static-search";
 
 /**
  * Static search dialog: queries the build-time index

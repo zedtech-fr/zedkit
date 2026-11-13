@@ -1,5 +1,3 @@
-import { docsOmitNeed } from "../scripts/docs-omitted-needs.mjs";
-
 /** Sidebar group labels, home-family order then leftover. */
 const GROUPS = ["Actions", "Forms", "Overlays", "Data and states", "More"];
 
@@ -78,14 +76,14 @@ function groupForNeed(need, source) {
  * Fumadocs `meta.json` `pages` for the UI folder: separators plus slugs.
  * Installed fumadocs-core@16.17.10 parses `---Label---` as a sidebar heading.
  *
- * @param {{ needs: Array<{ need: string, slug: string }>, sourceByNeed?: Record<string, string | undefined> }} input
+ * @param {{ needs: Array<{ need: string, slug: string }>, sourceByNeed?: Record<string, string | undefined>, omitNeed: (need: string) => boolean }} input
  * @returns {string[]}
  */
-export function uiSidebarPages({ needs, sourceByNeed = {} }) {
+export function uiSidebarPages({ needs, sourceByNeed = {}, omitNeed }) {
   const published = [];
   const seen = new Set();
   for (const item of needs) {
-    if (docsOmitNeed(item.need)) continue;
+    if (omitNeed(item.need)) continue;
     if (seen.has(item.slug)) {
       throw new Error(`ui sidebar: duplicate slug "${item.slug}"`);
     }
