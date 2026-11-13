@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Fails if any docs Playwright spec is registered in neither the smoke
-# nor the e2e script (orphan specs silently never run in CI).
+# Fails if any docs Playwright spec is registered in neither smoke,
+# e2e, nor e2e:routes (orphan specs silently never run in CI).
 # Specs resolve against playwright.config.ts baseURL; an origin in a spec
 # fights whatever is already on :3100. SPECS_DIR overrides the origin scan
 # root (tests).
@@ -15,7 +15,7 @@ for spec in $specs; do
   name=$(basename "$spec")
   case "$blob" in
     *"$name"*) ;;
-    *) echo "orphan spec (not in smoke or e2e): $spec"; fail=1 ;;
+    *) echo "orphan spec (not in smoke, e2e, or e2e:routes): $spec"; fail=1 ;;
   esac
 done
 
