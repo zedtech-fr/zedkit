@@ -49,6 +49,9 @@ export function ReviewConsoleView({
       {(panel) => (
         <>
           <Stack gap="sm" className="shrink-0 surface-pad-sm">
+            <Heading level={1} typeRole="title">
+              {copy.run.title}
+            </Heading>
             <Stack direction="horizontal" gap="sm" className="flex-wrap">
               <Button asChild variant="link" size="sm" className="min-h-target">
                 <Link href={issuePath(issueNumber)}>{copy.run.backToIssue}</Link>

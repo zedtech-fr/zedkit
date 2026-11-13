@@ -48,11 +48,17 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
-test("reviews feature files map to the public issues index", () => {
+test("public review files map to /issues", () => {
   assert.deepEqual(routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"]), [
     "/issues",
   ]);
   assert.deepEqual(routesFromFiles(["apps/docs/app/(run-console)/issues/[n]/runs/[id]/page.tsx"]), [
+    "/issues",
+  ]);
+  assert.deepEqual(routesFromFiles(["apps/docs/tests/evidence/issues/issues-list-1440.png"]), [
+    "/issues",
+  ]);
+  assert.deepEqual(routesFromFiles(["apps/docs/scripts/issues-evidence-artifacts.test.mjs"]), [
     "/issues",
   ]);
 });

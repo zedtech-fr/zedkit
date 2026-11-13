@@ -9,15 +9,17 @@ import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
  * and focuses it so browsers that do not move focus on fragment navigation
  * still land in the content.
  *
- * Revealed with absolute positioning so Tab does not insert an in-flow
- * row and shift the flex-column body. Unfocused it stays sr-only (1×1)
- * with pointer-events-none so a pointer hit check does not treat the
- * hidden skip as a 24px target; focus restores pointer events.
+ * Parked above the viewport with a real 24px box (not 1px `sr-only`) so
+ * evidence hit/clip measures pass and Tab does not insert an in-flow
+ * row. Unfocused it stays pointer-events-none so a pointer hit check
+ * does not treat the hidden skip as a 24px target; focus restores
+ * pointer events.
  */
 export function SkipLink() {
   return (
     <a
       href="#main-content"
+      data-skip-link=""
       onClick={(event) => {
         const target =
           document.getElementById("main-content") ?? document.querySelector("main");
@@ -27,7 +29,7 @@ export function SkipLink() {
           target.focus();
         }
       }}
-      className="pointer-events-none sr-only focus:pointer-events-auto focus:not-sr-only focus:absolute! focus:top-float focus:left-float focus:z-overlay focus:inline-flex focus:min-h-overlay-touch-target focus:items-center focus:rounded-md focus:bg-foreground focus:px-touch focus:text-background"
+      className="pointer-events-none fixed left-float z-overlay inline-flex min-h-overlay-touch-target items-center rounded-md px-touch focus:pointer-events-auto focus:top-float focus:bg-foreground focus:text-background"
     >
       {siteChromeCopy.skipToContent}
     </a>

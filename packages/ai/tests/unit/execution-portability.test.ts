@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { kitDir } from "#kit.js";
+import { deprecatedCommandNames, kitDir, readManifest } from "#kit.js";
 
 function kit(rel: string): string {
   return readFileSync(join(kitDir(), rel), "utf8").replace(/\s+/g, " ");
@@ -118,5 +118,27 @@ describe("execution portability", () => {
     expect(review).toContain("upstream source and diff comparison");
     expect(review).toContain("PR description alone is not proof");
     expect(review).toContain("starts from `standard`");
+  });
+
+  it("leftover command stubs deprecate in place and still run the original skill", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    const leftovers = deprecatedCommandNames(manifest.value);
+    expect(leftovers.length).toBeGreaterThan(0);
+    for (const stem of leftovers) {
+      const text = readFileSync(join(kitDir(), "commands", `${stem}.md`), "utf8");
+      expect(text, stem).toContain(
+        `Deprecated: use \`/zedkit-ai <request>\`. Forwarding as route \`${stem}\`.`,
+      );
+      expect(text, stem).toContain("$ARGUMENTS");
+      const skill = stem === "improve-config" ? "rules-upkeep" : stem;
+      expect(text, stem).toContain(`\`${skill}\``);
+      expect(text, stem).not.toMatch(/\bspawn\b/);
+      expect(text, stem).not.toContain("tokenomics");
+      expect(text, stem).not.toContain("zedkit-ai route");
+      expect(text, stem).not.toContain("run the `zedkit-ai` skill");
+    }
+    const entry = readFileSync(join(kitDir(), "commands", "zedkit-ai.md"), "utf8");
+    expect(entry).not.toContain("Deprecated:");
   });
 });

@@ -8,10 +8,9 @@ for (const path of ["/", "/docs/set-up-your-coding-agents"]) {
     const main = page.locator("main").first();
 
     const hiddenBox = await skip.boundingBox();
-    expect(
-      hiddenBox === null || hiddenBox.width <= 1 || hiddenBox.height <= 1,
-      "skip link stays visually hidden until focused",
-    ).toBe(true);
+    expect(hiddenBox, "skip link keeps a 24px box off-screen until focused").not.toBeNull();
+    expect(hiddenBox!.height).toBeGreaterThanOrEqual(24);
+    expect(hiddenBox!.y + hiddenBox!.height).toBeLessThanOrEqual(1);
 
     const mainYBefore = (await main.boundingBox())?.y ?? Number.NaN;
 
