@@ -1,11 +1,11 @@
 import { SidebarProvider, SidebarTrigger, useSidebar } from "fumadocs-ui/layouts/docs/slots/sidebar";
-import { DocsContainer } from "@/ui/docs-container";
-import { DocsSidebar } from "@/ui/docs-sidebar";
+import { DocsContainer } from "@/components/site-chrome/docs-container";
+import { DocsSidebar } from "@/components/site-chrome/docs-sidebar";
 import {
   SiteFullSearchTrigger,
   SiteSearchTrigger,
   SiteThemeSwitch,
-} from "@/ui/site-chrome";
+} from "@/components/site-chrome/site-chrome";
 
 // Server-safe module on purpose: these objects are spread inside server layouts.
 // Exported from the "use client" site-chrome.tsx they arrived as opaque client

@@ -250,7 +250,7 @@ test("ButtonSizesDemo still documents extra sizes, icon, asChild, and saving", (
 });
 
 test("docs chrome keeps header search and does not duplicate it in a fumadocs slot", () => {
-  const slots = read("ui/site-chrome-slots.ts");
+  const slots = read("components/site-chrome/site-chrome-slots.ts");
   const docsStart = slots.indexOf("export const docsChromeSlots");
   assert.notEqual(docsStart, -1, "missing docsChromeSlots");
   const docs = slots.slice(docsStart);
@@ -262,9 +262,9 @@ test("docs chrome keeps header search and does not duplicate it in a fumadocs sl
 
 test("phone docs page tree is a kit Drawer in the docs shell, not an in-flow list", () => {
   const css = read("app/docs-shell-tokens.css");
-  const container = read("ui/docs-container.tsx");
-  const sidebar = read("ui/docs-sidebar.tsx");
-  const header = read("ui/mobile-header.tsx");
+  const container = read("components/site-chrome/docs-container.tsx");
+  const sidebar = read("components/site-chrome/docs-sidebar.tsx");
+  const header = read("components/site-chrome/mobile-header.tsx");
   assert.doesNotMatch(container, /gridTemplate\s*:/);
   assert.doesNotMatch(container, /grid-template\s*:/);
   assert.doesNotMatch(container, /\bstyle=/);
@@ -295,7 +295,7 @@ test("phone docs page tree is a kit Drawer in the docs shell, not an in-flow lis
 });
 
 test("docs page-tree items are a flex column with 44px rows, not unstyled /base leaves", () => {
-  const sidebar = read("ui/docs-sidebar.tsx");
+  const sidebar = read("components/site-chrome/docs-sidebar.tsx");
   assert.match(sidebar, /flex min-h-target w-full items-center/);
   assert.match(sidebar, /<Stack gap="tight"/);
   assert.match(sidebar, /SidebarFolderContent/);

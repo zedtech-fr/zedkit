@@ -56,15 +56,15 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/provider.tsx` imports dock files directly; do not add a `dock/index.tsx` or
   `editor/index.tsx` barrel.
 - Docs-site composed UI used by two or more domains, with no domain words:
-  `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
-  is dissolving; do not add a fifth home there. `REQUIRED_GLOBS` is empty
+  `components/` (chrome in `components/site-chrome/`). `ui/` is dissolved;
+  do not add files there. `REQUIRED_GLOBS` is empty
   after the home lot. Directory globs silently absorb new files; do not add
   under them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order:
   move the files, regen, drop the glob, regen again.
 - Pure helpers used by two or more domains (and `.mjs` shared with
   `scripts/generate.mjs`): `lib/`.
 - Domain-free code: a zedkit package (check zedkit first).
-- One-way imports: `app → features → components/ui → lib`. A feature does
+- One-way imports: `app → features → components → lib`. A feature does
   not import another feature or app (compose in the route and pass props).
   A `_<name>` folder is imported only from its own route subtree.
   `prose/guides/` may import `features/docs` (docs-domain guides composing
@@ -158,7 +158,7 @@ reject dead `/r/<name>.json` links.
   clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
   ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
   Home smoke exact-text must quote a string from
-  `app/(home)/_home/i18n/*-copy.ts` or `ui/i18n/site-chrome-copy.ts`; do not
+  `app/(home)/_home/i18n/*-copy.ts` or `components/site-chrome/i18n/site-chrome-copy.ts`; do not
   invent a sentence in the spec.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set

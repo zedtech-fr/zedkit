@@ -1513,10 +1513,16 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a newer run");
   assert.equal(reviewsCopy.issue.viewLog, "View log");
   assert.equal(reviewsCopy.list.took, "Took");
+  assert.equal(reviewsCopy.list.duration, "Duration");
   assert.equal(reviewsCopy.list.finished, "Finished");
+  assert.equal(reviewsCopy.list.started, "Started");
   assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
+  assert.equal(reviewsCopy.list.openList, "Issue list");
+  assert.equal(reviewsCopy.list.missing, "This issue or pull request is not on the public list.");
+  assert.equal(reviewsCopy.list.missingNext, "Choose another from the list.");
+  assert.equal(reviewsCopy.issue.missing, "This issue is not on the public list.");
   assert.equal(
     reviewsCopy.unlinked.missing,
     "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
@@ -1525,7 +1531,7 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
   assert.equal(
     reviewsCopy.list.description,
-    "Public work log: open a row to see how each issue was planned, built, and reviewed.",
+    "Public work log of how each issue was planned, built, and reviewed.",
   );
   assert.equal(
     reviewsCopy.metadata.list.description,
@@ -1674,7 +1680,7 @@ test("list view shows a static load error and does not ship a sample notice", ()
   assert.doesNotMatch(list, /window\.location\.reload/);
   assert.doesNotMatch(list, /ReviewSampleNotice/);
   assert.doesNotMatch(list, /showSampleNotice/);
-  for (const file of ["review-pr-view.tsx", "review-timeline-row.tsx"]) {
+  for (const file of ["review-pr-view.tsx", "review-timeline-row.tsx", "review-issue-detail.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.doesNotMatch(source, /ReviewSampleNotice/);
     assert.doesNotMatch(source, /showSampleNotice/);
@@ -1717,46 +1723,90 @@ test("found /issues pages pass issuesIndexRobots", () => {
 
 test("list and timeline views read from issue records, not a PR console", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  assert.match(list, /githubIssueHref/);
+  assert.match(detail, /githubIssueHref/);
   assert.match(list, /copy\.list\.unlinkedTitle/);
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
   assert.match(list, /copy\.type\[last\.type\]/);
   assert.match(list, /aria-label=\{copy\.list\.title\}/);
-  assert.match(list, /aria-labelledby=\{unlinkedHeadingId\}/);
+  assert.doesNotMatch(list, /<nav /);
+  assert.doesNotMatch(list, /<div[\s>/]/);
+  assert.match(list, /<Stack gap="sm" className="surface-pad-md">/);
+  assert.doesNotMatch(list, /<ul[^>]*aria-label=\{copy\.list\.unlinkedTitle\}/);
+  assert.match(list, /SidebarNavGroup/);
   assert.match(list, /runCountLabel/);
   assert.match(timeline, /TimelineRow/);
   assert.match(timeline, /entry\.liveUrl/);
   assert.match(timeline, /aria-labelledby/);
   assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
   assert.doesNotMatch(list, /ReviewConsole/);
+  assert.doesNotMatch(detail, /ReviewConsole/);
   assert.doesNotMatch(timeline, /ReviewConsole/);
 });
 
-test("list rows are closed native details; GitHub links stay in the panel", () => {
+test("list is a master-detail workspace; GitHub links stay in the detail", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
-  assert.match(list, /<details data-issues-row=""/);
-  assert.match(list, /<summary className="flex min-h-target cursor-pointer list-none items-start/);
-  assert.match(list, /<Surface variant="solid" elevation=\{1\} radius="md" padding="sm"/);
-  assert.match(list, /<Stack className="w-fit self-start">/);
-  assert.match(list, /entriesNewestFirst\(entries\)/);
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
+  const css = readFileSync(join(reviewsRoot, "ui/review-list.css"), "utf8");
+  assert.match(list, /data-issues-workspace=""/);
+  assert.match(list, /data-issues-aside=""/);
+  assert.match(list, /data-issues-detail=""/);
+  assert.match(list, /data-issues-row=""/);
+  assert.doesNotMatch(list, /<details /);
+  assert.doesNotMatch(list, /<summary /);
+  assert.match(detail, /<Card>/);
+  assert.match(detail, /CardHeader/);
+  assert.match(detail, /<DetailPanel variant="grid"/);
+  assert.doesNotMatch(detail, /function GithubRefLink/);
+  assert.doesNotMatch(detail, /^["']use client["']/m);
+  assert.match(detail, /level=\{3\}/);
+  assert.match(detail, /entriesNewestFirst\(entries\)/);
   assert.match(list, /headlineOutcome/);
   assert.doesNotMatch(list, /min-h-target w-fit/);
-  assert.match(list, /\[&::-webkit-details-marker\]:hidden/);
-  assert.doesNotMatch(list, /\sopen[=\s>{]/);
   assert.doesNotMatch(list, /Accordion/);
+  assert.doesNotMatch(list, /AppShell/);
   assert.doesNotMatch(list, /issueRunPath/);
   assert.doesNotMatch(list, /unlinkedRunPath/);
   assert.doesNotMatch(list, /unlinkedPrPath/);
   assert.doesNotMatch(list, /timelineHref/);
   assert.doesNotMatch(list, /timelineLabel/);
-  assert.match(list, /aria-label=\{copy\.issue\.timeline\}/);
-  assert.match(list, /githubIssueHref\(issue\.number\)/);
-  assert.match(list, /githubPullHref/);
-  assert.match(list, /copy\.issue\.timelineEmpty/);
+  assert.match(detail, /aria-labelledby=\{headingId\}/);
+  assert.match(detail, /githubIssueHref/);
+  assert.match(detail, /githubPullHref/);
+  assert.match(detail, /copy\.issue\.timelineEmpty/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /\/runs\/`/);
   assert.doesNotMatch(list, /\/runs\/\$\{/);
+  assert.doesNotMatch(css, /\[data-issues-workspace\]/);
+  assert.match(css, /min-width: 48rem/);
+  assert.match(css, /100svh - var\(--zk-site-header-height\)/);
+  assert.equal([...css.matchAll(/flex-direction: column/g)].length, 1);
+  assert.match(list, /SidebarNavItem/);
+  assert.match(list, /OutcomeStatus/);
+  assert.match(list, /w-app-shell-sidebar/);
+  assert.match(list, /p-app-shell-padding/);
+  assert.match(list, /DrawerTrigger/);
+  assert.match(list, /max-md:hidden/);
+  assert.match(list, /copy\.list\.openList/);
+  assert.match(list, /copy\.list\.missing/);
+  assert.match(list, /copy\.list\.missingNext/);
+  assert.doesNotMatch(list, /copy\.issue\.missing/);
+  assert.match(list, /aria-labelledby=\{detailHeadingId\}/);
+  assert.match(list, /id=\{detailHeadingId\}/);
+  assert.match(list, /level=\{2\}/);
+  assert.match(list, /<Text as="p" className="sr-only" aria-live="polite">/);
+  assert.doesNotMatch(list, /<article[^>]*aria-live/);
+  assert.doesNotMatch(list, /\/\* eslint-disable jsx-a11y/);
+  assert.match(list, /eslint-disable-line jsx-a11y\/no-noninteractive-tabindex/);
+  assert.doesNotMatch(list, /<DrawerBody[^>]*aria-label=/);
+  assert.match(list, /issueFullTitle/);
+  assert.doesNotMatch(list, /#\$\{issue\.number\} \$\{issue\.title\}/);
+  assert.doesNotMatch(detail, /#\$\{issue\.number\} \$\{issue\.title\}/);
+  assert.match(list, /shouldScrollSelectedIssue/);
+  assert.match(list, /DrawerTitle className="sr-only">\{copy\.list\.openList\}/);
+  assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
+  assert.doesNotMatch(list, /\?\? items\[0\]/);
 });
 
 test("detail timelines keep port order and do not import entriesNewestFirst", () => {
@@ -1775,10 +1825,12 @@ test("unlinked and timeline links take their accessible name from visible title 
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
   assert.doesNotMatch(list, /<summary[^>]*aria-label/);
+  assert.match(timeline, /issueFullTitle\(issue\)/);
+  assert.doesNotMatch(timeline, /#\$\{issue\.number\} \$\{issue\.title\}/);
   assert.match(timeline, /href=\{entry\.liveUrl\}/);
   assert.match(row, /copy\.type\[entry\.type\]/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
-  assert.doesNotMatch(row, /aria-label/);
+  assert.match(row, /ariaLabel=\{`\$\{copy\.issue\.viewLog\}/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
 });
 
@@ -1787,9 +1839,9 @@ test("list and timeline rows use row padding, not section padding", () => {
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
   const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
-  assert.match(list, /content-shrink flex-1 flex-wrap items-center max-md:flex-col max-md:items-stretch/);
-  assert.match(list, /py-row focus-ring-control/);
-  assert.match(row, /border-b border-border py-row/);
+  assert.match(list, /SidebarNavItem/);
+  assert.match(list, /md:w-app-shell-sidebar/);
+  assert.match(row, /py-row/);
   assert.match(row, /max-md:flex-col max-md:items-start/);
   assert.match(row, /hit-target/);
   assert.doesNotMatch(row, /min-h-target/);
@@ -1800,22 +1852,29 @@ test("list and timeline rows use row padding, not section padding", () => {
   assert.doesNotMatch(frame, /children\(panel\)/);
 });
 
-test("list stays in the shared wide frame and stacks title then meta below md", () => {
+test("list stays in the shared wide frame and uses kit console nav rows", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
   assert.doesNotMatch(list, /ReviewSampleNotice/);
-  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
-  assert.match(list, /<ReviewAppearanceFrame>[\s\S]*copy\.list\.unlinkedTitle[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(list, /<ReviewAppearanceFrame layout=\{empty \? "page" : "workspace"\}>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(list, /copy\.list\.unlinkedTitle/);
+  assert.match(list, /IssuesWorkspace/);
   assert.match(frame, /width="full"/);
   assert.match(frame, /zk-header-max-width/);
   assert.doesNotMatch(frame, /width="wide"/);
   assert.doesNotMatch(list, /MarketingSiteHeader|MobileHeader|pathname/);
   assert.doesNotMatch(frame, /pathname/);
-  assert.equal([...list.matchAll(/<details /g)].length, 2);
-  assert.match(list, /<RowSummary[\s\S]*meta=\{[\s\S]*UpdatedAgo/);
-  assert.match(list, /<StepsPanel[\s\S]*copy\.issue\.timelineEmpty/);
-  assert.match(list, /entriesNewestFirst\(entries\)/);
-  assert.match(list, /issueOpenTarget/);
+  assert.equal([...list.matchAll(/<details /g)].length, 0);
+  assert.match(list, /IssueListRow[\s\S]*OutcomeStatus/);
+  assert.match(frame, /"data-issues-layout": "workspace"/);
+  assert.match(list, /layout=\{empty \? "page" : "workspace"\}/);
+  assert.match(list, /sidebar=\{list\(true\)\}/);
+  assert.match(list, /drawerSidebar=\{list\(false\)\}/);
+  assert.match(list, /\[`#\$\{entry\.number\}`, meta, label\]/);
+  assert.match(list, /md:focus-ring/);
+  assert.match(list, /p-app-shell-padding focus-ring md:pane-shrink/);
+  assert.doesNotMatch(list, /border-b muted-wash/);
+  assert.match(list, /resolveIssueOpenId/);
   assert.match(list, /addEventListener\("hashchange"/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
@@ -1830,8 +1889,9 @@ test("timeline rows show score, superseded, and endedAt-aware UpdatedAgo", () =>
   assert.match(row, /copy\.issue\.failedReplaced/);
   assert.match(row, /entryUpdatedAt\(entry\)/);
   assert.doesNotMatch(row, /new Date\(entry\.startedAt\)/);
-  assert.match(list, /summedDurationMs/);
-  assert.match(list, /formatDuration/);
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
+  assert.match(detail, /summedDurationMs/);
+  assert.match(detail, /formatDuration/);
   assert.doesNotMatch(list, /from "next\/link"/);
 });
 
