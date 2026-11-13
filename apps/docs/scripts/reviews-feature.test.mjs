@@ -786,6 +786,28 @@ test("headlineOutcome is null for completed work with no review", () => {
   assert.equal(headlineOutcome([entry({ type: "implement" })]), null);
 });
 
+test("headlineOutcome prefers a later failed step over an older review verdict", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+      endedAt: "2026-11-10T17:20:00.000Z",
+    }),
+    entry({
+      id: "failed-later",
+      type: "improve",
+      status: "failed",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:20:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "failed");
+});
+
 test("headlineOutcome badges a failed step that finished after a later-started completed step", () => {
   const outcome = headlineOutcome([
     entry({
@@ -1715,7 +1737,7 @@ test("list rows are closed native details; GitHub links stay in the panel", () =
   assert.match(list, /<details data-issues-row=""/);
   assert.match(list, /<summary className="flex min-h-target cursor-pointer list-none items-start/);
   assert.match(list, /<Surface variant="solid" elevation=\{1\} radius="md" padding="sm"/);
-  assert.match(list, /w-fit self-start/);
+  assert.match(list, /<Stack className="w-fit self-start">/);
   assert.match(list, /entriesNewestFirst\(entries\)/);
   assert.match(list, /headlineOutcome/);
   assert.doesNotMatch(list, /min-h-target w-fit/);

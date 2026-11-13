@@ -82,13 +82,16 @@ export type HeadlineOutcome = {
 };
 
 /**
- * Scan headline: running wins, else the newest review verdict, else the
- * newest finished failed step (`latestFinishedEntry`). Completed-only
- * work returns null (no badge).
+ * Scan headline: running wins, else a newest-finished failure, else the
+ * newest review verdict. Completed-only work returns null (no badge).
  */
 export function headlineOutcome(entries: readonly TimelineEntry[]): HeadlineOutcome | null {
   if (entries.some((entry) => entry.status === "running")) {
     return { kind: "status", status: "running", score: null };
+  }
+  const last = latestFinishedEntry(entries);
+  if (last?.status === "failed") {
+    return { kind: "status", status: "failed", score: null };
   }
   let review: TimelineEntry | null = null;
   for (const entry of entries) {
@@ -97,10 +100,6 @@ export function headlineOutcome(entries: readonly TimelineEntry[]): HeadlineOutc
   }
   if (review !== null && review.verdict !== null) {
     return { kind: "verdict", verdict: review.verdict, score: review.score ?? null };
-  }
-  const last = latestFinishedEntry(entries);
-  if (last?.status === "failed") {
-    return { kind: "status", status: "failed", score: null };
   }
   return null;
 }
