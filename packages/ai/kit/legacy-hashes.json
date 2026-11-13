@@ -193,7 +193,8 @@
     "fix": ["192977d8f6e185e4"],
     "improve-from-review": ["4c8d27d400069cce"],
     "quick-wins": ["6b1fa1643ed8031e"],
-    "triage": ["5efc9e333284648e"]
+    "triage": ["5efc9e333284648e"],
+    "zedkit-ai": ["446c6d4489fa6d96"]
   },
   "skills": {
     "adversarial-tests/SKILL.md": ["5e5da22c554500e3"],
@@ -680,6 +681,8 @@
       "8c29724d176c9a6d",
       "f7fd4c59787acde1"
     ],
-    "visual-verify/SKILL.md": ["b03405c19aba6a88"]
+    "visual-verify/SKILL.md": ["3b07acca0143018b", "b03405c19aba6a88"],
+    "zedkit-ai/SKILL.md": ["2744d7819af35a89"],
+    "zedkit-ai/routes.md": ["afe7165be9d98456"]
   }
 }

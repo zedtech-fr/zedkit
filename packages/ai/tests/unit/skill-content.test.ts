@@ -87,6 +87,7 @@ describe("skill content conventions", () => {
     const template = readFileSync(join(kitDir(), "AGENTS.template.md"), "utf8");
     expect(template).toContain("Depth first");
     expect(template).toMatch(/are there other\/unused/u);
+    expect(template).toContain("skill `zedkit-ai`");
     const audit = readFileSync(
       join(kitDir(), "skills", "audit", "SKILL.md"),
       "utf8",
