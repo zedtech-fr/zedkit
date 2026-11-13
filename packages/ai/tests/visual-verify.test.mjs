@@ -353,6 +353,30 @@ describe("visual-verify helpers", () => {
     ).toEqual(["/docs", "/docs/foundations"]);
   });
 
+  it("maps docs guide feature modules to /docs/<slug> when there is no mdx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/features/docs/guides/foundations/ui/foundations-color.tsx",
+        "apps/docs/features/docs/guides/foundations/i18n/foundations-copy.ts",
+        "apps/docs/features/docs/guides/foundations/ui/foundations-hero.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/docs/foundations"]);
+    expect(
+      routesFromFiles([
+        "apps\\docs\\features\\docs\\guides\\maturity-and-compatibility\\ui\\maturity-compatibility-view.tsx",
+      ]),
+    ).toEqual(["/docs/maturity-and-compatibility"]);
+    expect(
+      routesFromFiles(["apps/docs/features/docs/guides/foundations/ui/foundations-hero.test.mjs"]),
+    ).toEqual([]);
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("apps/docs/features/docs/guides/<slug>/**");
+  });
+
   it("maps AI setup sources to /docs/ai/setup", () => {
     expect(
       routesFromFiles(["packages/ai/kit/cursor-onboarding.md", "apps/docs/public/ai/setup.md"]).sort(),

@@ -20,7 +20,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | UI DoD v2 (matrix, blocking measures, evidence lens) | `.agents/atlas/visual-verify.md` | Rendering checks on UI surfaces; `UNSEEN` caps Confidence at 6. | `@zedtech/zedkit-ai` | 2026-11-12 |
 | PR Evidence on UI bodies | `.agents/atlas/visual-verify.md` | Skill `pr` ### Evidence owns the rule; not Visual work evidence. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Installer, sync, validate, route, scan CLI | `.agents/atlas/ai-kit.md` | `cli.ts` parses flags; one concern per other module. | `src/index.ts` | 2026-11-13 |
-| zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. | `@zedtech/zedkit-ai` | 2026-11-13 |
+| zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. Guide UI folders map to `/docs/<slug>`. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Kit tests | `.agents/atlas/ai-kit.md` | One file per behavior; `helpers.ts` has `put`, `tempDir`, `run`. | `pnpm --filter @zedtech/zedkit-ai test` | 2026-11-13 |
 | Slash commands | `.agents/atlas/ai-kit.md` | A command only names a skill; procedure lives in SKILL.md. | `command-shape.test.ts` | 2026-11-13 |
 | Entry command `/zedkit-ai` | `.agents/atlas/ai-kit.md` | Classifier then Route card then `orchestrate`; not CLI `route`. | `@zedtech/zedkit-ai` | 2026-11-13 |
@@ -46,7 +46,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Catalog entries of a package | `.agents/atlas/publishing.md` | Every `src/index.ts` export needs a CATALOG row; Purpose ≤160. | `pnpm catalog:check` | 2026-11-11 |
 | JSON-LD React script tag | `.agents/atlas/seo.md` | Import from `@zedtech/zedkit-seo/react`; escape `<` after stringify. | `@zedtech/zedkit-seo` | 2026-11-13 |
 | Live sources and JSON fetch | `.agents/atlas/live.md` | One-shot `Result` GET in live; injectable `fetch`/`sleep`. | `pnpm --filter @zedtech/zedkit-live test` | 2026-11-12 |
-| Docs site looks | `.agents/atlas/design-system.md` | Owner table by layer: link, never copy. Quiet-glass mockup is git-only. Foundations heading copy needs 24px under dense looks. | `apps/docs/scripts/check.mjs` | 2026-11-13 |
+| Docs site looks | `.agents/atlas/design-system.md` | Owner table by layer: link, never copy. Quiet-glass mockup is git-only. Foundations heading copy needs 24px under dense looks. Reading tokens follow the active theme. | `apps/docs/scripts/check.mjs` | 2026-11-13 |
 | Docs maturity-and-compatibility guide | `.agents/atlas/docs-site.md` | L7 folder shape; prose imports the view (knip entry). | `pnpm catalog:check` | 2026-11-12 |
 | Docs raw-layout and spelling guards | `.agents/atlas/docs-site.md` | Whole-file regex on components/features; do not import `check.mjs`. | `apps/docs/scripts/check.mjs` | 2026-11-11 |
 | Docs site primary nav | `.agents/atlas/docs-site.md` | Shared primary list; docs desktop header above the shell. | `apps/docs/components/site-chrome/docs-container.tsx` | 2026-11-13 |
