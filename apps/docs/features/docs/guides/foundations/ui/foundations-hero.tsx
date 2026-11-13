@@ -6,8 +6,8 @@ import { foundationsCopy as copy } from "../i18n/foundations-copy";
  * Métier: public TypeScript kit; this site is the reading surface for the packages.
  * Client personas: integrating developers who own a consuming app and need the site frame rules in one place.
  * Customers: those same developers (the docs site is the product surface).
- * Customer personas: first visit or restyle pass at 1440 and 390; hurried; want Color and Type on the first screens.
- * UI decisions: grey header band + glass callout, because customer = developer judging the site frame.
+ * Customer personas: first visit or restyle pass at 390, 809, and 1440; hurried; need the first screen to say what the site gives them.
+ * UI decisions: grey header band + glass-on-panel as the first screen, Color / Type stay below as proof, because customer = developer judging the site frame.
  *   Title overlay 40px on this hero only, because the display specimen below stays 48px.
  * #73-thread vs mockup: panel fill is flat bg-primary, not a 135-degree gradient with halos.
  */
