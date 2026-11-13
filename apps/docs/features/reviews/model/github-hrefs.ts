@@ -7,3 +7,7 @@ export function githubIssueHref(n: number): string {
 export function githubPullHref(n: number): string {
   return `https://github.com/${GITHUB_REPO}/pull/${n}`;
 }
+
+export function issueFullTitle(issue: { number: number; title: string }): string {
+  return `#${issue.number} ${issue.title}`;
+}

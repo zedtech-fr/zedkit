@@ -13,6 +13,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import { issueFullTitle } from "../model/github-hrefs";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { TimelineRow } from "./review-timeline-row";
@@ -35,7 +36,7 @@ function Timeline({
       {entries.length === 0 ? (
         <EmptyState description={empty} />
       ) : (
-        <ul aria-labelledby={headingId}>
+        <ul aria-labelledby={headingId} className="flex list-none flex-col gap-stack-sm">
           {entries.map((entry) => (
             <li key={entry.id}>
               <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
@@ -57,7 +58,7 @@ export function ReviewPrView({
   return (
     <ReviewAppearanceFrame>
       <PageHeader
-        title={`#${issue.number} ${issue.title}`}
+        title={issueFullTitle(issue)}
         back={
           <Button asChild variant="link" size="sm" className="min-h-target">
             <Link href="/issues">{copy.issue.back}</Link>

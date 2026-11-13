@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { ExternalLink } from "lucide-react";
 import { cn, Text } from "@zedtech/zedkit-ui";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 
 type OffPathLinkProps = Omit<ComponentProps<typeof Link>, "target" | "rel" | "prefetch">;
 

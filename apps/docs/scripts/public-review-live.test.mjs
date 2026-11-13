@@ -595,6 +595,7 @@ test("site factory assembles the runs-API origin env name", () => {
 test("client review files never mention GitHub token env names", () => {
   for (const file of [
     "ui/review-list-view.tsx",
+    "ui/review-issue-detail.tsx",
     "ui/review-pr-view.tsx",
     "ui/review-timeline-row.tsx",
     "ui/appearance-panel.tsx",

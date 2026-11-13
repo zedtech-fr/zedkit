@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { Badge, Button, Stack, StatusDot, Surface, Text, useMotionPreference } from "@zedtech/zedkit-ui";
-import { OffPathLink } from "@/ui/off-path-link";
+import { OffPathLink } from "@/components/site-chrome/off-path-link";
 import {
   fetchActiveHeroRun,
   followRunHref,
