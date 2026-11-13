@@ -551,6 +551,21 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
   bottom: auto;
 }
 
+/* Full Search is a Fumadocs button, not kit Button: keep the 2px control ring. */
+[data-search]:focus-visible,
+[data-search-full]:focus-visible {
+  outline: var(--ring-width-control, 2px) solid hsl(var(--ring));
+}
+
+/*
+ * Page-tree links: pin the 24px floor on the interactive node (desktop
+ * #nd-sidebar and the phone drawer clone). Fumadocs defaults can ignore
+ * a Tailwind min-h on a wrapper.
+ */
+[data-docs-tree-item] {
+  min-height: max(24px, var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
+}
+
 /* Site header sits above the docs shell; sidebar sticks under it. */
 @media (min-width: 48rem) {
   #nd-docs-layout [data-sidebar-placeholder] {
