@@ -149,6 +149,11 @@ test("parseLiveConsoleLocation reads id, item, and hash item", () => {
   });
   assert.equal(parseLiveConsoleLocation("?id=run-1&item=main", "#item=other").itemId, "main");
   assert.equal(parseLiveConsoleLocation("", "", "run-1").runId, "run-1");
+  assert.deepEqual(parseLiveConsoleLocation("?item=lens-1", "", "run-1"), {
+    runId: "run-1",
+    itemId: "lens-1",
+    reason: "ok",
+  });
   assert.equal(parseLiveConsoleLocation("").reason, "missing-id");
   assert.equal(parseLiveConsoleLocation("?id=..").reason, "invalid-id");
   assert.equal(parseLiveConsoleLocation("?id=run-1&item=" + "x".repeat(81)).itemId, null);
@@ -195,6 +200,7 @@ test("liveRunApiUrl uses the assembled service path and never a token", () => {
     `https://dev.zedkit.app/${liveServiceName()}/live/run-1/api/run?item=main&v=abc`,
   );
   assert.doesNotMatch(url, /[?&]t=/);
+  assert.equal(liveRunApiUrl("https://dev.zedkit.app", ".."), null);
   assert.doesNotMatch(readFileSync(join(reviewsRoot, "adapters/live-run-api.ts"), "utf8"), /t=/);
 });
 
@@ -202,6 +208,18 @@ test("liveRunsApiBase prefers the env origin and defaults to the hosted origin",
   const name = ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
   assert.equal(liveRunsApiBase({ [name]: "https://example.com/runs/" }), "https://example.com/runs");
   assert.equal(liveRunsApiBase({}), "https://dev.zedkit.app");
+  assert.match(
+    readFileSync(join(reviewsRoot, "adapters/runs-api.ts"), "utf8"),
+    /export function runsApiBaseEnvName/,
+  );
+  assert.doesNotMatch(
+    readFileSync(join(reviewsRoot, "adapters/live.ts"), "utf8"),
+    /function runsApiBaseEnvName/,
+  );
+  assert.doesNotMatch(
+    readFileSync(join(reviewsRoot, "adapters/live-run-api.ts"), "utf8"),
+    /function runsApiBaseEnvName/,
+  );
 });
 
 test("poll interval is slower when the tab is hidden", () => {
@@ -209,6 +227,8 @@ test("poll interval is slower when the tab is hidden", () => {
   assert.equal(liveRunPollIntervalMs(true), LIVE_RUN_HIDDEN_POLL_MS);
   assert.equal(isLiveRunActive("running"), true);
   assert.equal(isLiveRunActive("starting"), true);
+  assert.equal(isLiveRunActive("Running"), true);
+  assert.equal(isLiveRunActive(" STARTING "), true);
   assert.equal(isLiveRunActive("completed"), false);
   assert.equal(isLiveRunActive("failed"), false);
 });
@@ -446,6 +466,10 @@ test("live console UI uses kit states and does not duplicate AgentConsole", () =
   assert.match(view, /LivePulse/);
   assert.match(view, /UpdatedAgo/);
   assert.match(view, /liveConsoleCopy\.unauthorized/);
+  assert.match(view, /parseLiveConsoleLocation\(/);
+  assert.match(view, /window\.location\.search/);
+  assert.match(view, /live\.status\.kind === "invalid"/);
+  assert.match(view, /liveConsoleCopy\.error/);
   assert.match(states, /liveConsoleCopy\.retry/);
   assert.match(view, /subscribe/);
   assert.match(compose, /subscribeLiveRun/);

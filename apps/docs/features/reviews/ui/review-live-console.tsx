@@ -48,6 +48,26 @@ function writeItemLocation(runId: string, itemId: string) {
   );
 }
 
+function useConsoleItemId(runId: string, itemIdProp?: string | null) {
+  const [itemId, setItemId] = useState<string | null>(itemIdProp ?? null);
+  const [locationReady, setLocationReady] = useState(itemIdProp !== undefined);
+  useEffect(() => {
+    if (itemIdProp !== undefined) {
+      setItemId(itemIdProp);
+      setLocationReady(true);
+      return;
+    }
+    const location = parseLiveConsoleLocation(
+      window.location.search,
+      window.location.hash,
+      runId,
+    );
+    setItemId(location.itemId);
+    setLocationReady(true);
+  }, [itemIdProp, runId]);
+  return { itemId, setItemId, locationReady };
+}
+
 function useLiveConsole({
   runId,
   itemId: itemIdProp,
@@ -56,22 +76,19 @@ function useLiveConsole({
   subscribe,
 }: {
   runId: string;
-  itemId: string | null;
+  itemId?: string | null;
   initial: PublicLiveRun | null;
   runsBase: string | undefined;
   subscribe: LiveRunSubscribe;
 }) {
-  const [itemId, setItemId] = useState(itemIdProp);
+  const { itemId, setItemId, locationReady } = useConsoleItemId(runId, itemIdProp);
   const [status, setStatus] = useState<LiveConsoleStatus>(() =>
     initial === null ? { kind: "loading" } : readyFromLive(initial),
   );
   const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
-    setItemId(itemIdProp);
-  }, [itemIdProp]);
-
-  useEffect(() => {
+    if (!locationReady) return;
     const stop = subscribe({
       runId,
       itemId,
@@ -89,11 +106,12 @@ function useLiveConsole({
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [runId, itemId, retryKey, runsBase, subscribe]);
+  }, [runId, itemId, retryKey, runsBase, subscribe, locationReady]);
 
   return {
     itemId,
     setItemId,
+    locationReady,
     status,
     retry: () => {
       setStatus(initial === null ? { kind: "loading" } : readyFromLive(initial));
@@ -165,12 +183,12 @@ export function ReviewLiveConsole({
 }: ReviewLiveConsoleProps) {
   const live = useLiveConsole({
     runId,
-    itemId: itemIdProp ?? null,
     initial: initial ?? null,
     runsBase,
     subscribe,
+    ...(itemIdProp === undefined ? {} : { itemId: itemIdProp }),
   });
-  if (live.status.kind === "loading") return <ConsoleLoading />;
+  if (!live.locationReady || live.status.kind === "loading") return <ConsoleLoading />;
   if (live.status.kind === "unauthorized") {
     return (
       <ConsoleNotice
@@ -179,12 +197,12 @@ export function ReviewLiveConsole({
       />
     );
   }
-  if (live.status.kind === "not-found" || live.status.kind === "invalid") {
+  if (live.status.kind === "not-found") {
     return (
       <ConsoleNotice title={liveConsoleCopy.notFound.title} description={liveConsoleCopy.notFound.description} />
     );
   }
-  if (live.status.kind === "error") {
+  if (live.status.kind === "invalid" || live.status.kind === "error") {
     return (
       <ConsoleNotice
         title={liveConsoleCopy.error.title}

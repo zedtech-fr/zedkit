@@ -584,8 +584,12 @@ test("readGithubToken prefers the dedicated env and ignores blanks", () => {
 
 test("site factory assembles the runs-API origin env name", () => {
   const live = readFileSync(join(reviewsRoot, "adapters/live.ts"), "utf8");
-  assert.match(live, /_RUNS_API_BASE/);
+  const runsApi = readFileSync(join(reviewsRoot, "adapters/runs-api.ts"), "utf8");
+  assert.match(live, /runsApiBaseEnvName/);
+  assert.match(runsApi, /_RUNS_API_BASE/);
+  assert.doesNotMatch(live, /_RUNS_API_BASE/);
   assert.doesNotMatch(live, new RegExp(["ZE", "DOS"].join("")));
+  assert.doesNotMatch(runsApi, new RegExp(["ZE", "DOS"].join("")));
 });
 
 test("client review files never mention GitHub token env names", () => {

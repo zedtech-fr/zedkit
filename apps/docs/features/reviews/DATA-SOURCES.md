@@ -24,10 +24,13 @@ publish — never sample rows. The ErrorState links to All issues.
 The live console (`/issues/run?id=` and baked `/issues/N/runs/<id>`) is
 the exception: the browser GETs `{base}/<live-service>/live/<runId>/api/run`
 with `credentials: omit`, no `t=` token, and optional `item` / `v`
-query params. `204` plus `X-Live-Version` means unchanged. Private runs
-are `401`. The client polls about every 2s while the run is `starting`
-or `running` (6s when the tab is hidden) and stops on a terminal status,
-`401`, `404`, invalid JSON, or a non-retryable error.
+query params. Baked pages still read `?item=` / `#item=` from the URL
+(the path already has the run id). `204` plus `X-Live-Version` means
+unchanged. Private runs are `401`. The client polls about every 2s while
+the run is `starting` or `running` (case-insensitive; 6s when the tab is
+hidden) and stops on a terminal status, `401`, `404`, invalid JSON, or a
+non-retryable error. A malformed payload uses the error notice with Retry,
+not the not-found copy.
 
 `kind: public-github-runs` is the production merge. Fixture JSON for
 the snapshot parser (`public-stand-in`, `generated-run-index`) lives

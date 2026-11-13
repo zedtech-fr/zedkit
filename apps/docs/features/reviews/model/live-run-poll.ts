@@ -18,7 +18,8 @@ export function liveRunPollIntervalMs(hidden: boolean): number {
 }
 
 export function isLiveRunActive(status: string): boolean {
-  return status === "running" || status === "starting";
+  const normalized = status.trim().toLowerCase();
+  return normalized === "running" || normalized === "starting";
 }
 
 export function isUnchangedLiveRunResult(_previous: LiveRunApiResult, next: LiveRunApiResult): boolean {

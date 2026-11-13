@@ -10,7 +10,7 @@ import type {
   TimelineEntryStatus,
   TimelineEntryType,
 } from "../ports/review-port";
-import { toLiveConsoleHref } from "./live-console-href.ts";
+import { LIVE_CONSOLE_RUN_ID_PATTERN, toLiveConsoleHref } from "./live-console-href.ts";
 
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
@@ -21,7 +21,7 @@ const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/
 const UNSAFE_PATH_PATTERN = /\/home\/|\/Users\/|\\Users\\/;
 
 /** Path-safe run ids only: no `..`, slashes, or spaces. */
-export const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+export const RUN_ID_PATTERN = LIVE_CONSOLE_RUN_ID_PATTERN;
 
 /** Staging hosted-console href prefix. Folder token is assembled (hygiene bans). */
 export const HOSTED_LIVE_HREF_PREFIX = `https://dev.zedkit.app/${[["ze", "dos"].join(""), "bot"].join("-")}/live/`;

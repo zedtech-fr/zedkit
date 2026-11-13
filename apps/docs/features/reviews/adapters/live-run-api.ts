@@ -25,7 +25,7 @@ import type {
   LiveVerdict,
   PublicLiveRun,
 } from "../ports/review-port";
-import { liveServiceName } from "./runs-api.ts";
+import { liveServiceName, runsApiBaseEnvName } from "./runs-api.ts";
 
 export type { LiveRunApiResult } from "../ports/live-run-port.ts";
 export {
@@ -49,10 +49,6 @@ export type FetchLiveRunApiOptions = {
   signal?: AbortSignal | undefined;
 };
 
-function runsApiBaseEnvName(): string {
-  return ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
-}
-
 export function liveRunsApiBase(env: Record<string, string | undefined> = process.env): string {
   const fromEnv = env[runsApiBaseEnvName()]?.trim() ?? "";
   if (fromEnv !== "") return fromEnv.replace(/\/$/, "");
@@ -63,8 +59,9 @@ export function liveRunApiUrl(
   base: string,
   runId: string,
   query: { item?: string | null | undefined; version?: string | null | undefined } = {},
-): string {
-  const id = sanitizeLiveConsoleRunId(runId) ?? "_";
+): string | null {
+  const id = sanitizeLiveConsoleRunId(runId);
+  if (id === null) return null;
   const root = `${base.replace(/\/$/, "")}/${liveServiceName()}/live/${id}/api/run`;
   const params = new URLSearchParams();
   const item = sanitizeLiveConsoleItemId(query.item ?? null);
@@ -423,6 +420,9 @@ export async function fetchLiveRunApi(options: FetchLiveRunApiOptions): Promise<
     item: options.itemId,
     version: options.version,
   });
+  if (url === null) {
+    return { kind: "invalid", error: new PermanentError("live run: invalid run id") };
+  }
   const fetchImpl = options.fetch ?? globalThis.fetch;
   const init: RequestInit = {
     method: "GET",
