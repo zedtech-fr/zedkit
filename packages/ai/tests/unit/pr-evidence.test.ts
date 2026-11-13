@@ -62,7 +62,7 @@ describe("pr skill Evidence contract", () => {
     expect(section).toContain("gitignored");
     expect(section).toContain("run record (`evidence/<branch>/manifest.json`)");
     expect(section).toContain("no PNG bytes, no data URIs");
-    expect(section).toContain("`![alt](attached-url)`");
+    expect(section).toContain("embedded with Markdown image syntax is a link the host may render");
   });
 
   it("tells implement that a UI PR body's ## Evidence is required per skill pr", () => {

@@ -158,7 +158,7 @@ You may use one of these, you may use several, it is unlikely you will use all o
 
 Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Non-test: not under `tests/` or `__tests__/`, not `*.test.*` / `*.spec.*` / `*.stories.*`. Docs (`.mdx` / `.html` / `.md`), canvas/WebGL `.ts`, `*.scss`, and `*.vue` are not this trigger.
 
-Paste the visual-verify stdout table into the PR (skill `visual-verify`). Attach contact-sheet PNGs with a GitHub upload (or the host's equivalent) so reviewers can open them. The local run record (`evidence/<branch>/manifest.json`) is gitignored and is not itself the review surface. Links, not inlined binaries (no PNG bytes, no data URIs). Markdown `![alt](attached-url)` is a link the host may render.
+Paste the visual-verify stdout table into the PR (skill `visual-verify`). Attach contact-sheet PNGs with a GitHub upload (or the host's equivalent) so reviewers can open them. The local run record (`evidence/<branch>/manifest.json`) is gitignored and is not itself the review surface. Links, not inlined binaries (no PNG bytes, no data URIs). An uploaded image embedded with Markdown image syntax is a link the host may render.
 
 - **Before:** ![short alt of the previous UI](<attached PNG URL>)
   **After:** ![short alt of the changed UI](<attached PNG URL>)
