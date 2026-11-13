@@ -80,7 +80,7 @@ screenshot on the **default** tree, then clicks:
 - no clipped text (`overflow: hidden|clip` with `scrollWidth` /
   `scrollHeight` past the box, or an unintended ellipsis; skip
   `overflow: auto|scroll`, Radix `[data-radix-scroll-area-viewport]`,
-  `data-allow-clip`, `[data-word-roll-clip]`, PRE/CODE, and visually
+  `data-allow-clip`, `[data-word-roll-clip]`, HTML, BODY, PRE, CODE, INPUT, TEXTAREA, SELECT, and visually
   hidden nodes: `sr-only`, clip-rect 0, 1×1 boxes — same idea as docs-render
   `clipped-text.mjs` plus the kit word-roll animation mask)
 - 0 `pageerror`, 0 console errors, 0 responses ≥ 400 (favicon 404s ignored)

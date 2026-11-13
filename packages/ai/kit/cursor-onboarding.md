@@ -33,7 +33,7 @@ This walkthrough targets `@zedtech/zedkit-ai` **1.2.0** (the current published v
 3. **Run setup-ai** (repo audit, discovery interview, plan, and tailored instructions):
 
    - **Cursor:** In Cursor, run **`/zedkit-ai set up this repo from what it contains`** (or ask the agent to run the `setup-ai` skill). Read the skill, then print its intro first — before any repo reads, inventory, or writes — and **continue in the same turn** straight into phase A without waiting for a reply. The only stop points are the phase B batched interview, plan approval before writes, and the final report.
-   - **Muse:** Open Muse for this repo and paste **`zedkit-ai: set up this repo from what it contains`** (same phases as above). Muse does not scan `.agents/commands` — invoke the `zedkit-ai` skill by name.
+   - **Muse:** Open Muse for this repo and paste **`zedkit-ai: set up this repo from what it contains`** (same phases as above). Muse does not scan `.agents/commands`; invoke the `zedkit-ai` skill by name.
    - **Claude Code / Codex / other agent:** Paste the same intent: run the `setup-ai` skill from the kit through verify, following its intro and phases (no skipping the batched interview).
 
    Follow the skill through **verify**: run the gate commands it lists, apply the approved plan, finish the report.

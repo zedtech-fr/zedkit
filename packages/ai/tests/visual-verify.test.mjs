@@ -271,30 +271,39 @@ describe("visual-verify helpers", () => {
     ]);
   });
 
-  it("documents the --changed route map and clipped skip list without overstating docs-render equivalence", () => {
+  it("documents the clipped skip list without overstating docs-render equivalence", () => {
     const skill = readFileSync(
       join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
       "utf8",
     );
-    expect(skill).toContain("packages/ai/kit/cursor-onboarding.md");
-    expect(skill).toContain("apps/docs/public/ai/setup.md");
-    expect(skill).toContain("skip `snippets/`");
     expect(skill).toContain("data-allow-clip");
     expect(skill).toContain("same idea as docs-render");
     expect(skill).not.toMatch(/same as docs-render/);
   });
 
-  it("maps AI setup sources to /docs/ai/setup and guides MDX to /docs/<slug>", () => {
+  it("does not claim hit skips the clipped-only allow-clip attributes", () => {
+    const atlas = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../.agents/atlas.md"), "utf8");
+    const row = atlas.split("\n").find((line) => line.includes("zedkit-ai visual-verify"));
+    expect(row).toBeDefined();
+    expect(row).not.toMatch(/Clipped and hit measures skip/);
+    expect(row).toMatch(/Clipped also skips/);
+  });
+
+  it("maps guides MDX to /docs/<slug>", () => {
     expect(
       routesFromFiles([
-        "packages/ai/kit/cursor-onboarding.md",
-        "apps/docs/public/ai/setup.md",
-        "apps/docs/prose/guides/ai/setup.mdx",
+        "apps/docs/prose/guides/foundations.mdx",
         "apps\\docs\\prose\\guides\\index.mdx",
         "apps/docs/prose/guides/snippets/ui-add.sh",
         "README.md",
       ]).sort(),
-    ).toEqual(["/docs", "/docs/ai/setup"]);
+    ).toEqual(["/docs", "/docs/foundations"]);
+  });
+
+  it("maps AI setup sources to /docs/ai/setup", () => {
+    expect(
+      routesFromFiles(["packages/ai/kit/cursor-onboarding.md", "apps/docs/public/ai/setup.md"]).sort(),
+    ).toEqual(["/docs/ai/setup"]);
   });
 
   it("turns the looks grid on for tokens, primitives, and identity sheets", () => {

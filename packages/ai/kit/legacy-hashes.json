@@ -504,6 +504,7 @@
       "d6fb47f4420df478"
     ],
     "setup-ai/SKILL.md": [
+      "00a214632d879d35",
       "06c4b8695c60b01f",
       "07746260b8316c0f",
       "0c3cadacde77f2a1",
@@ -519,9 +520,12 @@
       "312dc85e9b723299",
       "36787fa5600e9565",
       "3fc684fac0f2b7c2",
+      "404c3684ef9fd28b",
+      "44f7a0c669771e5b",
       "474cf3fa0d6dad70",
       "4c6dc934a0cc8e02",
       "53f71f6d905308c6",
+      "54555b0da7ae1ace",
       "551fca6b06a1ee1b",
       "588ba26a4f4ac425",
       "598134c7fa7e7e8c",
@@ -712,11 +716,13 @@
       "3330364b305e78df",
       "3b07acca0143018b",
       "3f0ef947067dea65",
+      "aca5b5da590ee90a",
       "b03405c19aba6a88",
       "b099fdf43d1df00a",
-      "b6765720efd2cb31"
+      "b6765720efd2cb31",
+      "e5bce5b4a3018268"
     ],
     "zedkit-ai/SKILL.md": ["2744d7819af35a89"],
-    "zedkit-ai/routes.md": ["afe7165be9d98456"]
+    "zedkit-ai/routes.md": ["afe7165be9d98456", "bbccaaa65d311fad"]
   }
 }

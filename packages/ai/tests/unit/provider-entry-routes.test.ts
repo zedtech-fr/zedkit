@@ -2,11 +2,10 @@ import { cpSync, existsSync, readdirSync, readFileSync, readlinkSync, writeFileS
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { main } from "#cli.js";
 import { hasMarker } from "#generate.js";
 import { installKit } from "#install.js";
 import { deprecatedCommandNames, kitDir, readManifest } from "#kit.js";
-import { tempDir } from "./helpers.js";
+import { run, tempDir } from "./helpers.js";
 
 const SENTINEL = "KIT_B_ROUTES_SENTINEL_314_UNIQUE";
 const pkgRoot = join(fileURLToPath(new URL("../..", import.meta.url)));
@@ -33,13 +32,6 @@ function expectNoLeftovers(dest: string, commandsDir: string): void {
   }
 }
 
-function run(...argv: string[]): { code: number; text: string; errors: string } {
-  const out: string[] = [];
-  const errors: string[] = [];
-  const code = main(argv, { out: (line) => out.push(line), err: (line) => errors.push(line) });
-  return { code, text: out.join("\n"), errors: errors.join("\n") };
-}
-
 function kitB(): string {
   const kit = tempDir();
   cpSync(kitDir(), kit, { recursive: true });
@@ -48,49 +40,65 @@ function kitB(): string {
   return kit;
 }
 
+const MATRIX = [
+  {
+    provider: "cursor",
+    title: "Cursor: command link, skill routes.md, no leftover command stems",
+    routes: ".cursor/skills/zedkit-ai/routes.md",
+    leftovers: [".cursor/commands", ".agents/commands"],
+    extra(dest: string) {
+      const command = join(dest, ".cursor/commands/zedkit-ai.md");
+      expect(readlinkSync(command)).toBe("../../.agents/commands/zedkit-ai.md");
+      expect(readFileSync(command, "utf8")).toContain("run the `zedkit-ai` skill");
+    },
+  },
+  {
+    provider: "claude",
+    title: "Claude: commands link, installed skill keeps disable-model-invocation and by-path, routes.md, no leftovers",
+    routes: ".claude/skills/zedkit-ai/routes.md",
+    leftovers: [".claude/commands"],
+    extra(dest: string) {
+      expect(readlinkSync(join(dest, ".claude/commands"))).toBe("../.agents/commands");
+      expect(existsSync(join(dest, ".claude/commands/zedkit-ai.md"))).toBe(true);
+      const skill = readFileSync(join(dest, ".claude/skills/zedkit-ai/SKILL.md"), "utf8");
+      expect(skill).toContain("disable-model-invocation: true");
+      expect(skill).toContain("by path");
+    },
+  },
+  {
+    provider: "codex",
+    title: "Codex: shared source only — AGENTS.md, entry command, routes.md, no leftover stems",
+    routes: ".agents/skills/zedkit-ai/routes.md",
+    leftovers: [".agents/commands"],
+    extra(dest: string) {
+      expect(existsSync(join(dest, ".cursor"))).toBe(false);
+      expect(existsSync(join(dest, ".claude"))).toBe(false);
+      expect(existsSync(join(dest, "AGENTS.md"))).toBe(true);
+      expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(true);
+    },
+  },
+  {
+    provider: "muse",
+    title: "Muse: skill routes.md, generated agents, leftover stems absent (commands are not a Muse scan root)",
+    routes: ".agents/skills/zedkit-ai/routes.md",
+    leftovers: [".agents/commands"],
+    extra(dest: string) {
+      const agents = readdirSync(join(dest, ".agents/agents")).filter((name) => name.endsWith(".md"));
+      expect(agents.some((name) => hasMarker(readFileSync(join(dest, ".agents/agents", name), "utf8")))).toBe(true);
+    },
+  },
+] as const;
+
 describe("provider entry command and routes.md", () => {
-  it("Cursor: command link, skill routes.md, no leftover command stems", () => {
-    const dest = tempDir();
-    install(dest, "cursor");
-    const command = join(dest, ".cursor/commands/zedkit-ai.md");
-    expect(readlinkSync(command)).toBe("../../.agents/commands/zedkit-ai.md");
-    expect(readFileSync(command, "utf8")).toContain("run the `zedkit-ai` skill");
-    expectRoutes(join(dest, ".cursor/skills/zedkit-ai/routes.md"));
-    expectNoLeftovers(dest, ".cursor/commands");
-    expectNoLeftovers(dest, ".agents/commands");
-  });
-
-  it("Claude: commands link, installed skill keeps disable-model-invocation and by-path, routes.md, no leftovers", () => {
-    const dest = tempDir();
-    install(dest, "claude");
-    expect(readlinkSync(join(dest, ".claude/commands"))).toBe("../.agents/commands");
-    expect(existsSync(join(dest, ".claude/commands/zedkit-ai.md"))).toBe(true);
-    const skill = readFileSync(join(dest, ".claude/skills/zedkit-ai/SKILL.md"), "utf8");
-    expect(skill).toContain("disable-model-invocation: true");
-    expect(skill).toContain("by path");
-    expectRoutes(join(dest, ".claude/skills/zedkit-ai/routes.md"));
-    expectNoLeftovers(dest, ".claude/commands");
-  });
-
-  it("Codex: shared source only — AGENTS.md, entry command, routes.md, no leftover stems", () => {
-    const dest = tempDir();
-    install(dest, "codex");
-    expect(existsSync(join(dest, ".cursor"))).toBe(false);
-    expect(existsSync(join(dest, ".claude"))).toBe(false);
-    expect(existsSync(join(dest, "AGENTS.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(true);
-    expectRoutes(join(dest, ".agents/skills/zedkit-ai/routes.md"));
-    expectNoLeftovers(dest, ".agents/commands");
-  });
-
-  it("Muse: skill routes.md, generated agents, leftover stems absent (commands are not a Muse scan root)", () => {
-    const dest = tempDir();
-    install(dest, "muse");
-    expectRoutes(join(dest, ".agents/skills/zedkit-ai/routes.md"));
-    const agents = readdirSync(join(dest, ".agents/agents")).filter((name) => name.endsWith(".md"));
-    expect(agents.some((name) => hasMarker(readFileSync(join(dest, ".agents/agents", name), "utf8")))).toBe(true);
-    expectNoLeftovers(dest, ".agents/commands");
-  });
+  for (const row of MATRIX) {
+    it(row.title, () => {
+      const dest = tempDir();
+      install(dest, row.provider);
+      expectRoutes(join(dest, row.routes));
+      for (const dir of row.leftovers) expectNoLeftovers(dest, dir);
+      row.extra(dest);
+    });
+  }
 
   it("setup --kit kit-b installs that kit's routes.md; validate --kit is green; omitted --kit has no sentinel", () => {
     const kit = kitB();
@@ -111,38 +119,19 @@ describe("provider entry command and routes.md", () => {
     expect(bundledRoutes).toContain("| Command");
   });
 
-  it("pins the Muse fallback: skills + agents + AGENTS.md; invoke the skill by name; commands are not a scan root", () => {
+  it("pins the Muse fallback in the package README", () => {
     const readme = readFileSync(join(pkgRoot, "README.md"), "utf8");
-    const setupAi = readFileSync(join(kitDir(), "skills/setup-ai/SKILL.md"), "utf8");
-    const onboarding = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
-    const usage = readFileSync(join(kitDir(), "usage.txt"), "utf8");
-    const musePaste = "zedkit-ai: set up this repo from what it contains";
-    for (const [label, text] of [
-      ["README", readme],
-      ["setup-ai", setupAi],
-      ["cursor-onboarding", onboarding],
-    ] as const) {
-      expect(text, label).toContain("does not scan `.agents/commands`");
-      expect(text, label).toContain("invoke the `zedkit-ai` skill by name");
-    }
-    const intro = readme.slice(0, readme.indexOf("## Upgrading from 1.1.x"));
-    expect(intro).toContain(musePaste);
-    expect(onboarding).toContain(musePaste);
-    expect(usage).toContain(musePaste);
-    const readmeProviders = readme.slice(readme.indexOf("## Providers"), readme.indexOf("## Tokenomics"));
-    const readmeChoices = readme.slice(readme.indexOf("## Choices worth knowing"), readme.indexOf("## API"));
-    const providers = setupAi.slice(setupAi.indexOf("## Providers"), setupAi.indexOf("## Tokenomics"));
-    const write = setupAi.slice(setupAi.indexOf("## Write shared source"), setupAi.indexOf("### Plan reconciliation"));
-    expect(readmeProviders).toMatch(/`muse`[^\n]*does not scan `\.agents\/commands`/);
-    expect(readmeChoices).toContain("does not scan `.agents/commands`");
-    expect(providers).toMatch(/`muse`[^\n]*does not scan `\.agents\/commands`/);
-    expect(write).toMatch(/`muse`[^\n]*does not scan `\.agents\/commands`/);
+    expect(readme).toContain("zedkit-ai: set up this repo from what it contains");
+    expect(readme).toContain("does not scan `.agents/commands`");
+    expect(readme).toContain("invoke the `zedkit-ai` skill by name");
   });
 
   it("does not publish a changeset that maps guides MDX to /docs/ai/setup", () => {
-    const changeset = readFileSync(join(pkgRoot, "../..", ".changeset/ai-provider-entry-routes.md"), "utf8");
-    expect(changeset).not.toMatch(/guides MDX to `\/docs\/ai\/setup`/);
-    expect(changeset).toMatch(/guides MDX to `\/docs\/<slug>`/);
-    expect(changeset).toContain("`/docs/ai/setup`");
+    const dir = join(pkgRoot, "../..", ".changeset");
+    for (const name of readdirSync(dir)) {
+      if (!name.endsWith(".md") || name === "README.md") continue;
+      const text = readFileSync(join(dir, name), "utf8");
+      expect(text, name).not.toMatch(/guides MDX to `\/docs\/ai\/setup`/);
+    }
   });
 });

@@ -48,17 +48,22 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
-test("maps AI setup sources to /docs/ai/setup and guides MDX to /docs/<slug>", () => {
+test("maps guides MDX to /docs/<slug>", () => {
   assert.deepEqual(
     routesFromFiles([
-      "packages/ai/kit/cursor-onboarding.md",
-      "apps/docs/public/ai/setup.md",
-      "apps/docs/prose/guides/ai/setup.mdx",
+      "apps/docs/prose/guides/foundations.mdx",
       "apps\\docs\\prose\\guides\\index.mdx",
       "apps/docs/prose/guides/snippets/ui-add.sh",
       "README.md",
     ]).sort(),
-    ["/docs", "/docs/ai/setup"],
+    ["/docs", "/docs/foundations"],
+  );
+});
+
+test("maps AI setup sources to /docs/ai/setup", () => {
+  assert.deepEqual(
+    routesFromFiles(["packages/ai/kit/cursor-onboarding.md", "apps/docs/public/ai/setup.md"]).sort(),
+    ["/docs/ai/setup"],
   );
 });
 
