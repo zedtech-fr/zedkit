@@ -242,6 +242,8 @@ test("html mist caption reads stock styles.css, not the scoped-mist reset", () =
 test("look tabs selected chip keeps 4.5:1 inverted ink on fill", () => {
   const shell = loadShell();
   assert.doesNotMatch(shell.css, /#home-page \[data-slot="tabs-trigger"\]\[data-state="active"\]/);
+  const rest = ruleBody(read(homeCssPath), /^#home-page \[data-look-tab\]$/, "look tab rest");
+  assert.match(rest.replace(/\s+/g, " "), /transition-property:\s*none/);
   const rule = ruleBody(
     read(homeCssPath),
     /^#home-page \[data-look-tab\]\[data-state="active"\]$/,
