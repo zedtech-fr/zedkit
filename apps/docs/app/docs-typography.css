@@ -309,9 +309,9 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
 }
 
 #home-page [data-home-hero-lead] [data-home-hero-sub] {
-  font-size: var(--zk-type-lead-size);
-  font-weight: var(--zk-type-lead-weight);
-  line-height: var(--zk-type-lead-leading);
+  font-size: var(--zk-type-body-size);
+  font-weight: var(--zk-type-body-weight);
+  line-height: var(--zk-type-body-leading);
 }
 
 #scenarios [data-slot="card-title"] {

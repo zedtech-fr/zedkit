@@ -59,10 +59,7 @@ test("home hero matches the mockup first screen: clause, prompt, glass card (#11
   await expect(page.locator("[data-home-hero-lead]").getByRole("link")).toHaveCount(0);
   await expect(page.getByText("See a real issue, end to end")).toHaveCount(0);
 
-  await expect(page.locator("[data-home-hero-sub]")).toContainText(
-    "zedkit is a set of kits your coding agent installs itself.",
-  );
-  await expect(page.locator("[data-home-hero-sub]")).toContainText("definition of done");
+  await expect(page.locator("[data-home-hero-sub]")).toHaveText(homeHeroCopy.hero.sub);
   await expect(
     page.locator("[data-home-hero-prompt]").getByText(MAP_AI_UI_SETUP_MINI_PROMPT),
   ).toBeVisible();
@@ -72,7 +69,7 @@ test("home hero matches the mockup first screen: clause, prompt, glass card (#11
   await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
-  await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
+  await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
   await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();
   await expect(page.getByText("An illustration of one run, not a recording.")).toBeVisible();
   await expect(page.locator("[data-hero-run-stage]")).toBeVisible();
@@ -156,7 +153,7 @@ test("home hero at 390 is headline-first; the glass card follows (#118)", async 
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
-  await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
+  await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
   const order = await page.evaluate(() => {
     const lead = document.querySelector("[data-home-hero-lead]");
     const stage = document.querySelector("[data-hero-run-stage]");

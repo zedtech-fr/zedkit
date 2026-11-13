@@ -59,7 +59,7 @@ test("retired interactive home hero cluster is gone (#265)", () => {
   assert.doesNotMatch(rhythm, /HOME_HERO_PREVIEW_SHELL_CLASS|HOME_GALLERY_PREVIEW_SHELL_CLASS|HOME_MOBILE_INTERACTIVE_DEMO_MAX_TOP_PX/);
   assert.doesNotMatch(
     rhythm,
-    /HOME_CARD_GRID_TWO_COL|HOME_CARD_GRID_THREE_COL|HOME_CARD_GRID_FOUR_COL|HOME_CARD_TITLE_CLASS|HOME_SMALL_TEXT_CLASS/,
+    /HOME_CARD_CONTENT_GAP|HOME_CARD_GRID_TWO_COL|HOME_CARD_GRID_THREE_COL|HOME_CARD_GRID_FOUR_COL|HOME_CARD_TITLE_CLASS|HOME_SMALL_TEXT_CLASS/,
   );
   const goneCss = [
     "app/docs-shell-tokens.css",
@@ -104,20 +104,23 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /title: "Code that\u2019s checked\. Screens that match\."/);
   assert.match(
     copy,
-    /subAi: "gives your coding agent a team\u2019s habits: a plan, a second pair of eyes, a definition of done\."/,
+    /sub: "AI brings the workflow rules and checks; UI brings the components and the look, from one map in the repo\."/,
   );
+  assert.doesNotMatch(copy, /subLead:|subAiName:|subAi:|subUiName:|subUi:/);
   assert.match(copy, /titleClause: "From the agent you already use\."/);
   assert.match(copy, /titleCategory: "Open source · MIT · by Zed Tech"/);
-  assert.doesNotMatch(copy, /heroKits:|promptCaptionSingle:|HeroKitId|dueDatesTitle:|aiPlan:|settingsTitle:/);
+  assert.doesNotMatch(copy, /heroKits:|promptCaption:|promptCaptionSingle:|HeroKitId|dueDatesTitle:|aiPlan:|settingsTitle:/);
   assert.match(copy, /emptyStateTitle: "Add an empty state to the tasks list"/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
   assert.match(copy, /Check/);
   assert.match(copy, /Fix/);
   assert.match(copy, /Done/);
-  assert.match(lead, /typeRole="lead"/);
+  assert.match(lead, /typeRole="body"/);
+  assert.doesNotMatch(lead, /typeRole="lead"/);
   assert.match(lead, /data-home-hero-sub/);
   assert.match(lead, /text-muted-foreground/);
+  assert.doesNotMatch(lead, /variant="muted"/);
   assert.match(lead, /homeHeroCopy\.hero\.titleClause/);
   assert.doesNotMatch(lead, /^["']use client["']/m);
   assert.match(lead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
@@ -139,15 +142,12 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(illustration, /data-hero-run-drift/);
   assert.doesNotMatch(illustration, /SettingsCard|AI_STEPS|HeroKitId|kit ===/);
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
-  assert.match(
-    copy,
-    /promptCaption: "Edit the prompt to name the kits you want — add Nest if you want it too\. The setup installs in the right order\."/,
-  );
+  assert.doesNotMatch(copy, /promptCaption:/);
   assert.match(lead, /aria-label=\{homeHeroCopy\.hero\.promptAriaLabel\}/);
-  assert.match(lead, /aria-describedby="home-hero-prompt-caption"/);
-  assert.match(lead, /id="home-hero-prompt-caption"/);
-  assert.match(lead, /homeHeroCopy\.hero\.promptCaption/);
-  assert.doesNotMatch(lead, /promptCaptionSingle/);
+  assert.doesNotMatch(lead, /aria-describedby/);
+  assert.doesNotMatch(lead, /home-hero-prompt-caption/);
+  assert.doesNotMatch(lead, /promptCaption/);
+  assert.match(lead, /homeHeroCopy\.hero\.sub/);
   assert.doesNotMatch(copy, /facts:/);
   assert.doesNotMatch(illustration, /IdentityLookForm|AgentConsole|ThemeScope/);
   assert.match(illustration, /data-hero-run-stage/);
@@ -307,6 +307,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.doesNotMatch(sixSentencesCopy, /What you see is MIT/);
   const heroCss = readFileSync(join(app, "app/home-hero.css"), "utf8");
   const signatureCss = readFileSync(join(app, "app/docs-signature.css"), "utf8");
+  const typographyCss = readFileSync(join(app, "app/docs-typography.css"), "utf8");
   assert.match(heroCss, /#home-page \[data-home-hero-lead\] h1/);
   assert.match(heroCss, /max-width:\s*48rem/);
   assert.match(heroCss, /#home-page \[data-home-hero-sub\]/);
@@ -314,6 +315,21 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(heroCss, /#home-page \[data-home-hero-band\]/);
   assert.match(heroCss, /padding-top:\s*var\(--zk-section-md\)/);
   assert.doesNotMatch(signatureCss, /\[data-home-hero-lead\] h1/);
+  assert.match(
+    typographyCss,
+    /#home-page \[data-home-hero-lead\] \[data-home-hero-sub\] \{[^}]*font-size:\s*var\(--zk-type-body-size\)/,
+  );
+  assert.doesNotMatch(
+    typographyCss,
+    /#home-page \[data-home-hero-lead\] \[data-home-hero-sub\] \{[^}]*--zk-type-lead-/,
+  );
+  const atlas = readFileSync(join(root, ".agents/atlas.md"), "utf8");
+  assert.match(
+    atlas,
+    /Overlay body tokens on `#home-page \[data-home-hero-lead\] \[data-home-hero-sub\]` in `docs-typography\.css` \(never lead\)/,
+  );
+  assert.match(atlas, /`cn` keeps `text-zk-type-body` with `text-muted-foreground`/);
+  assert.doesNotMatch(atlas, /loses `text-zk-type-body` to tailwind-merge/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.doesNotMatch(tokens, /\[data-home-hero-band\]/);
   assert.match(tokens, /\[data-home-six-sentences/);
@@ -443,6 +459,14 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(
     tokens,
     /#home-page \[data-home-same-idea-lands\] \{[^}]*background-color:\s*hsl\(var\(--zk-site-action\)\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page \[data-home-same-idea-lands\] \{[^}]*margin-top:\s*var\(--zk-section-pad\)/,
+  );
+  assert.match(
+    tokens,
+    /#home-page \[data-home-same-idea-lands\] \{[^}]*margin-bottom:\s*calc\(-1 \* var\(--zk-section-pad\)\)/,
   );
   assert.match(pasteCopy, /Paste one line\. Go to lunch\./);
   assert.match(

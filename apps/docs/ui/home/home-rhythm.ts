@@ -4,7 +4,6 @@
  * and card grids inside each band.
  */
 export const HOME_SECTION_CONTENT_GAP = "list" as const;
-export const HOME_CARD_CONTENT_GAP = "lg" as const;
 
 /**
  * Same-idea cards: one column until `lg`, then three. Not an `md` pair and

@@ -61,7 +61,8 @@ test.describe("home paste band", () => {
       `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`,
     );
     await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
-    await expect(page.getByText(homeHeroCopy.hero.promptCaption)).toBeVisible();
+    await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
+    await expect(page.locator("[data-home-hero-sub]")).toHaveText(homeHeroCopy.hero.sub);
 
     await page.setViewportSize({ width: 320, height: 844 });
     await expect(page.locator("#paste")).toBeVisible();
