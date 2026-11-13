@@ -1,13 +1,19 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
 import { componentPageHeaderMeta, componentPageSections } from "../features/docs/component-page-sections.mjs";
 import { declarationOrigin } from "../features/docs/declared-props.mjs";
 import { partitionPropsEntries } from "../features/docs/props-priority.mjs";
-import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
-import { docsLayoutTree } from "../lib/docs-layout-tree.mjs";
+import { uiSidebarGroupFor, uiSidebarPages } from "../features/docs/ui-sidebar-nav.mjs";
+import { docsLayoutTree } from "../app/docs/[[...slug]]/_docs/docs-layout-tree.mjs";
 import { kitUiSourceUrl, SITE_GITHUB_URL } from "../lib/site-links.mjs";
+import { docsOmitNeed } from "./docs-omitted-needs.mjs";
+
+const here = dirname(fileURLToPath(import.meta.url));
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -257,6 +263,7 @@ function slugsOf(pages) {
 
 test("uiSidebarPages groups Badge, Toaster, and DetailPanel with home-example order", () => {
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs: [
       { need: "Show a status or count badge", slug: "show-a-status-or-count-badge" },
       { need: "Trigger actions with buttons", slug: "trigger-actions-with-buttons" },
@@ -297,6 +304,7 @@ test("uiSidebarPages groups Badge, Toaster, and DetailPanel with home-example or
 
 test("uiSidebarPages drops omitted identity needs and sends unknown source to More", () => {
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs: [
       { need: "Design your identity", slug: "design-your-identity" },
       { need: "Switch the visual identity with one attribute", slug: "switch-the-visual-identity-with-one-attribute" },
@@ -322,6 +330,7 @@ test("uiSidebarPages skips an empty group and lists every published slug once", 
     { need: "Lay out an admin page (sidebar + topbar + header)", slug: "lay-out-an-admin-page-sidebar-topbar-header" },
   ];
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs,
     sourceByNeed: {
       "Collect text input with a label": "forms/input.tsx",
@@ -347,6 +356,7 @@ test("uiSidebarPages throws on a duplicate slug", () => {
   assert.throws(
     () =>
       uiSidebarPages({
+        omitNeed: docsOmitNeed,
         needs: [
           { need: "Trigger actions with buttons", slug: "shared" },
           { need: "Collect text input with a label", slug: "shared" },
@@ -362,6 +372,7 @@ test("uiSidebarPages throws on a duplicate slug", () => {
 
 test("uiSidebarPages does not throw for a new source folder", () => {
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs: [{ need: "Motion helper", slug: "motion-helper" }],
     sourceByNeed: { "Motion helper": "motion.css" },
   });
@@ -372,6 +383,18 @@ test("uiSidebarGroupFor maps Button to Actions", () => {
   assert.equal(uiSidebarGroupFor("Trigger actions with buttons", "button/button.tsx"), "Actions");
   assert.equal(uiSidebarGroupFor("Show a status or count badge", "feedback/badge.tsx"), "Actions");
   assert.equal(uiSidebarGroupFor("Unknown need", "mystery/x.tsx"), "More");
+});
+
+test("generate.mjs passes docsOmitNeed into uiSidebarPages", () => {
+  const src = readFileSync(join(here, "generate.mjs"), "utf8");
+  assert.match(src, /from "\.\.\/features\/docs\/ui-sidebar-nav\.mjs"/);
+  assert.match(src, /uiSidebarPages\(\{[^}]*omitNeed:\s*docsOmitNeed/);
+});
+
+test("ui-sidebar-nav.mjs does not import scripts", () => {
+  const src = readFileSync(join(here, "../features/docs/ui-sidebar-nav.mjs"), "utf8");
+  assert.doesNotMatch(src, /from ["'][^"']*scripts\//);
+  assert.doesNotMatch(src, /docs-omitted-needs/);
 });
 
 test("docsLayoutTree on a UI slug is the job-grouped folder, not package folders", () => {

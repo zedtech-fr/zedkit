@@ -17,7 +17,7 @@ import { DocsAppLink } from "@/ui/docs-app-link";
 const AnimateObserver = dynamic(() => import("@zedtech/zedkit-ui").then((mod) => ({ default: mod.AnimateObserver })), {
   ssr: false,
 });
-const StaticSearchDialog = dynamic(() => import("../components/search"));
+const StaticSearchDialog = dynamic(() => import("@/features/docs/ui/search"));
 
 /** Client wrapper: search dialog JS loads on first open, not on every page. */
 export function Provider({ children }: { children: ReactNode }) {

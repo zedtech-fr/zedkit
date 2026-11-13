@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -283,6 +283,25 @@ describe("live docs tree", () => {
       "See apps/docs/AGENTS.md File placement; baseline apps/docs/scripts/module-placement.baseline.json. Move the file; never extend the baseline.";
     assert.deepEqual(ids(result.newViolations), [], `new: ${ids(result.newViolations).join("\n")}\n${hint}`);
     assert.deepEqual(ids(result.stale), [], `stale: ${ids(result.stale).join("\n")}\n${hint}`);
+  });
+
+  it("imports catch-all docs chrome from _docs and search from the docs feature", () => {
+    const page = readFileSync(join(docsRoot, "app/docs/[[...slug]]/page.tsx"), "utf8");
+    assert.match(page, /from "\.\/_docs\/docs-main-content"/);
+    const layout = readFileSync(join(docsRoot, "app/docs/[[...slug]]/layout.tsx"), "utf8");
+    assert.match(layout, /from "\.\/_docs\/docs-layout-tree\.mjs"/);
+    const provider = readFileSync(join(docsRoot, "app/provider.tsx"), "utf8");
+    assert.match(provider, /import\("@\/features\/docs\/ui\/search"\)/);
+    assert.doesNotMatch(provider, /components\/search/);
+  });
+
+  it("does not leave shims at the old docs layout and search paths", () => {
+    assert.equal(existsSync(join(docsRoot, "ui/docs-main-content.tsx")), false);
+    assert.equal(existsSync(join(docsRoot, "lib/docs-layout-tree.mjs")), false);
+    assert.equal(existsSync(join(docsRoot, "lib/ui-sidebar-nav.mjs")), false);
+    assert.equal(existsSync(join(docsRoot, "lib/docs-search-ranking.mjs")), false);
+    assert.equal(existsSync(join(docsRoot, "lib/use-docs-static-search.ts")), false);
+    assert.equal(existsSync(join(docsRoot, "components/search.tsx")), false);
   });
 
   it("imports MDX tags from features/docs and keeps MdxPre in components", () => {

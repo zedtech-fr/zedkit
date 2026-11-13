@@ -20,14 +20,11 @@
     "components/identity-editor-export.tsx",
     "components/identity-editor-panel.tsx",
     "components/identity-editor-toolbar.tsx",
-    "components/search.tsx",
     "components/use-creator-handoff.ts",
     "components/use-identity-dock-keyboard.ts",
     "lib/brief-specimen-domain.ts",
     "lib/creator-handoff.ts",
     "lib/creator-session-brief.ts",
-    "lib/docs-layout-tree.mjs",
-    "lib/docs-search-ranking.mjs",
     "lib/docs-site-look.ts",
     "lib/identity-assistant-limits.ts",
     "lib/identity-assistant-store.tsx",
@@ -47,15 +44,13 @@
     "lib/identity-tokens-parse.ts",
     "lib/review-appearance.ts",
     "lib/use-assistant-network.ts",
-    "lib/use-docs-static-search.ts",
     "ui/route-scroll-reset.tsx",
     "ui/site-chrome-a11y.tsx",
     "ui/skip-link.tsx",
     "ui/theme-color-meta.tsx"
   ],
   "globs": [
-    "ui/home/**",
-    "ui/docs-main-content.tsx"
+    "ui/home/**"
   ],
   "edges": []
 }

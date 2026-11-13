@@ -50,5 +50,5 @@ Path: `apps/docs/prose/guides/<slug>.mdx` (plus `index.mdx` for `/docs`).
 
 The generator writes `content/docs/**/meta.json`. Do not hand-edit those files.
 UI pages are listed under Actions, Forms, Overlays, Data and states, then More
-(`uiSidebarPages` in `lib/ui-sidebar-nav.mjs`). Other packages stay a
+(`uiSidebarPages` in `features/docs/ui-sidebar-nav.mjs`). Other packages stay a
 catalog-order slug list. Page files and URLs stay `/docs/<folder>/<slug>`.

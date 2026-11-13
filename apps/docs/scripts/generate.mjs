@@ -24,7 +24,7 @@ import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
 import { buildLlmsFull, truncateDescription } from "@zedtech/zedkit-seo";
 import { LLMS_FULL_SCOPE_LINE } from "./check-seo-export.mjs";
 import { componentPageSections } from "../features/docs/component-page-sections.mjs";
-import { uiSidebarGroupFor, uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
+import { uiSidebarGroupFor, uiSidebarPages } from "../features/docs/ui-sidebar-nav.mjs";
 import { docsOmitNeed, hrefForOmittedNeed } from "./docs-omitted-needs.mjs";
 import {
   readAgentOnboardingMarkdown,
@@ -569,7 +569,7 @@ export function generate(outDir) {
         const source = rich[item.need]?.source;
         if (typeof source === "string") sourceByNeed[item.need] = source;
       }
-      metaPages = uiSidebarPages({ needs: published, sourceByNeed });
+      metaPages = uiSidebarPages({ needs: published, sourceByNeed, omitNeed: docsOmitNeed });
     }
     writeFileSync(join(dir, "meta.json"), `${JSON.stringify({ title: pkg, pages: metaPages }, null, 2)}\n`);
   }
