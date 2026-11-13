@@ -13,8 +13,7 @@
  * - Expanded panel is a solid Surface (elevation 1) with the latest outcome, total duration, finish time, and compact Issue/PR links — because: a visitor with no internal context should read the outcome in two seconds. Summary has no nested links and no GitHub issue/PR text (WCAG 2.5.3). Headline is running, else a newest-finished failure, else the newest review verdict.
  * - `/issues/N` and `/issues/pr/:n` timelines stay chronological stacked rows with type, muted models, duration, verdict/score, replacement copy — because: hurried visitor follows plan → implement → review → follow-up. Completed is not badged; only running, didn't-finish, and review verdicts are.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
- * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
- * - Index-only `/issues/N/runs/<id>` (and unlinked run URLs) redirect to the allowlisted hosted-console href, or to the issue / unlinked page when that href is missing — because: bot comments still resolve, and the public runs API has no transcript to render here. Static export overwrites those HTML files with the same stub writer as `/reviews`.
+ * - `/issues/run?id=` and baked `/issues/N/runs/<id>` (and unlinked run URLs) mount the shared kit live console — because: hurried visitor reads the public run on zedkit, including runs created after the last static export.
  * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground. The console uses `ReviewConsoleAppearanceFrame` (dense strip) only.
  * - Empty state says no public runs yet — because: the visitor always has a next thought.
  * - Load error uses the route PageHeader plus kit ErrorState with an All issues link and no Retry — because: a nested URL must not keep the list heading (WCAG 2.4.6), the HTML is baked at build time so a reload would serve the same page, and the visitor still needs a way off the dead-end.
@@ -29,11 +28,11 @@
 import { notFound, redirect } from "next/navigation";
 
 import { createSiteReviewPort } from "./adapters/live";
+import { liveRunsApiBase } from "./adapters/live-run-api";
 import { reviewsCopy } from "./i18n/reviews-copy";
 import { parsePrNumber } from "./model/pr-number";
 import {
   issueIndexRobotsFrom,
-  issuePath,
   linkedPrFallbackPath,
   linkedPrRunFallbackPath,
   listIssueParamsFrom,
@@ -44,18 +43,16 @@ import {
   listUnlinkedRunParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
-  runRedirectTarget,
-  unlinkedPrPath,
 } from "./model/review-routes";
-import { toAgentConsole } from "./model/to-agent-console";
 import { isRunRecord } from "./ports/review-port";
-import { ReviewConsoleView } from "./ui/review-console-view";
+import { ReviewLiveConsole, ReviewLiveConsoleFromSearch } from "./compose";
 import { ReviewLoadErrorView } from "./ui/review-load-error-view";
 import { ReviewNotFoundView } from "./ui/review-not-found-view";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 
 const port = createSiteReviewPort();
+const runsBase = liveRunsApiBase();
 
 async function reviewLoadErrorView(header: { title: string; description: string }) {
   if (await port.hasLoadError()) {
@@ -147,20 +144,18 @@ export async function ReviewIssueRunFeature({
     if (loadError !== null) return loadError;
     notFound();
   }
-  if (isRunRecord(run)) {
-    redirect(runRedirectTarget(run.liveUrl, issuePath(issue.number)));
-  }
-  const mapped = toAgentConsole(run);
   return (
-    <ReviewConsoleView
-      issueNumber={issue.number}
+    <ReviewLiveConsole
       runId={id}
-      run={mapped.run}
-      items={mapped.items}
-      decision={mapped.decision ?? null}
-      copy={reviewsCopy}
+      issueNumber={issue.number}
+      initial={isRunRecord(run) ? null : run}
+      runsBase={runsBase}
     />
   );
+}
+
+export function ReviewLiveConsoleSearchFeature() {
+  return <ReviewLiveConsoleFromSearch runsBase={runsBase} />;
 }
 
 export async function ReviewUnlinkedRunFeature({
@@ -175,7 +170,7 @@ export async function ReviewUnlinkedRunFeature({
     number === null ? null : await port.getUnlinkedPullRequest(number);
   const run = number === null ? null : await port.getUnlinkedRun(number, id);
   if (pullRequest !== null && run !== null) {
-    redirect(runRedirectTarget(run.liveUrl, unlinkedPrPath(pullRequest.number)));
+    return <ReviewLiveConsole runId={id} unlinkedPr={pullRequest.number} runsBase={runsBase} />;
   }
   const resolved = number === null ? null : await port.resolvePr(number);
   if (resolved !== null && resolved.runIds.includes(id)) {
@@ -253,3 +248,4 @@ export async function listReviewRunParams() {
 }
 
 export { parsePrNumber, reviewsCopy };
+export { liveConsoleCopy } from "./i18n/review-live-console-copy";
