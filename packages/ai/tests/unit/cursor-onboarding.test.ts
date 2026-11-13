@@ -14,12 +14,13 @@ describe("cursor onboarding copy", () => {
     expect(mini).toContain("https://zedkit.app/ai/setup.md");
   });
 
-  it("documents setup and /setup-ai in cursor-onboarding.md", () => {
+  it("documents setup and /zedkit-ai in cursor-onboarding.md", () => {
     const md = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
     const pkg = JSON.parse(readFileSync(join(pkgRoot, "package.json"), "utf8")) as { version: string };
     // Expectations derive from the candidate package version: only the prose names the selected published target.
     expect(md).toContain(`npx @zedtech/zedkit-ai@${pkg.version} setup --provider cursor`);
-    expect(md).toContain("/setup-ai");
+    expect(md).toContain("/zedkit-ai");
+    expect(md).toContain("setup-ai");
     expect(md).toContain(`npx @zedtech/zedkit-ai@${pkg.version} validate`);
     expect(md).toContain("current published version");
     expect(md).toContain(`npx @zedtech/zedkit-ai@${pkg.version} sync`);

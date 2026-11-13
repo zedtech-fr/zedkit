@@ -16,24 +16,13 @@ function run(...argv: string[]): { code: number; text: string; errors: string } 
 const VALIDATE_OK =
   "ok \u2014 structural kit checks only (skills, agents, commands, wiring, tokenomics, atlas paths); browser rendering, focus, hosting and on-target behavior are NOT checked by validate";
 
-function expectValidateOk(dest: string, allowDeprecationWarnings = false): void {
+function expectValidateOk(dest: string): void {
   const result = run("validate", dest);
   expect(result.code).toBe(0);
   expect(result.errors).toBe("");
   const lines = result.text.split("\n");
   expect(lines.at(-1)).toBe(VALIDATE_OK);
-  const extra = lines.slice(0, -1).filter((line) => line !== "");
-  if (!allowDeprecationWarnings) {
-    expect(extra).toEqual([]);
-    return;
-  }
-  expect(
-    extra.every((line) =>
-      /: warning: command "[^"]+" is deprecated; use \/zedkit-ai \(delete the file or run sync --prune --provider …\)$/.test(
-        line,
-      ),
-    ),
-  ).toBe(true);
+  expect(lines.slice(0, -1).filter((line) => line !== "")).toEqual([]);
 }
 
 describe("cli", () => {
@@ -60,7 +49,9 @@ describe("cli", () => {
     expect(text).toContain("preset starter:");
     expect(text).toContain("preset core:");
     expect(text).toContain("agents: explorer");
-    expect(text).toContain("commands: review");
+    expect(text).toContain("commands: zedkit-ai");
+    expect(text).not.toMatch(/^commands: review/m);
+    expect(text).toContain("deprecated: review");
   });
 
   it("init installs into the given directory", () => {
@@ -68,24 +59,25 @@ describe("cli", () => {
     const { code, text } = run("init", dest, "--target", "claude");
     expect(code).toBe(0);
     expect(text).toContain("AGENTS.md");
-    expect(text).toContain("/setup-ai");
+    expect(text).toContain("/zedkit-ai");
     expect(existsSync(join(dest, ".agents/skills/ground-truth/SKILL.md"))).toBe(true);
     expect(existsSync(join(dest, "CLAUDE.md"))).toBe(true);
     expect(existsSync(join(dest, ".cursor"))).toBe(false);
   });
 
-  it("setup installs with setup preset and prints the /setup-ai next step", () => {
+  it("setup installs with setup preset and prints the /zedkit-ai next step", () => {
     const dest = tempDir();
     const { code, text } = run("setup", dest, "--provider", "cursor");
     expect(code).toBe(0);
-    expect(text).toContain("/setup-ai");
+    expect(text).toContain("/zedkit-ai");
     expect(text).toContain("validate");
     expect(text).toContain("product.md");
-    expect(existsSync(join(dest, ".cursor/commands/setup-ai.md"))).toBe(true);
+    expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.md"))).toBe(true);
+    expect(existsSync(join(dest, ".cursor/commands/setup-ai.md"))).toBe(false);
     expect(existsSync(join(dest, ".agents/skills/domain-modeling/SKILL.md"))).toBe(true);
   });
 
-  it("setup exits 0 with phase C checklist when package.json is malformed", () => {
+  it("setup exits 0 with the product.md next-step when package.json is malformed", () => {
     const dest = tempDir();
     put(dest, "package.json", "{ broken\n");
     const { code, text } = run("setup", dest, "--provider", "cursor");
@@ -122,21 +114,21 @@ describe("cli", () => {
     expect(run("setup", dest, "--provider", "cursor").code).toBe(0);
     expect(existsSync(join(dest, ".agents/skills/domain-modeling/SKILL.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/product-director.md"))).toBe(true);
-    expectValidateOk(dest, true);
+    expectValidateOk(dest);
     const again = run("setup", dest, "--provider", "cursor");
     expect(again.code).toBe(0);
     const writes = again.text.split("\n").filter((line) => /^(copy|link|write)\s/u.test(line));
     expect(writes).toEqual([]);
   });
 
-  it("setup re-run does not send the user back to /setup-ai once product.md exists", () => {
+  it("setup re-run does not send the user back to /zedkit-ai once product.md exists", () => {
     const dest = tempDir();
     const first = run("setup", dest, "--provider", "cursor");
-    expect(first.text).toContain("next: run /setup-ai");
+    expect(first.text).toContain("next: run /zedkit-ai");
     put(dest, ".agents/product.md", "# Product\n");
     const again = run("setup", dest, "--provider", "cursor");
     expect(again.code).toBe(0);
-    expect(again.text).toContain("next: validate, then phase E score");
+    expect(again.text).toContain("next: validate, then score the setup");
     const hints = again.text.split("\n").filter((line) => /^(next|note):/u.test(line));
     expect(hints.some((line) => line.includes("/setup-ai"))).toBe(false);
   });
@@ -157,7 +149,7 @@ describe("cli", () => {
     expect(readFileSync(join(dest, ".cursor/skills/team-own/SKILL.md"), "utf8")).toBe("team\n");
     expect(readFileSync(join(dest, ".cursor/agents/explorer.md"), "utf8")).toBe("custom explorer\n");
     expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe("custom review\n");
-    expectValidateOk(dest, true);
+    expectValidateOk(dest);
   });
 
   it("init wires cursor when asked", () => {
@@ -175,8 +167,10 @@ describe("cli", () => {
     expect(existsSync(join(codex, ".cursor"))).toBe(false);
     const all = tempDir();
     expect(run("init", all, "--provider", "all").code).toBe(0);
-    expect(existsSync(join(all, ".claude/commands/review.md"))).toBe(true);
-    expect(existsSync(join(all, ".cursor/commands/review.md"))).toBe(true);
+    expect(existsSync(join(all, ".claude/commands/zedkit-ai.md"))).toBe(true);
+    expect(existsSync(join(all, ".cursor/commands/zedkit-ai.md"))).toBe(true);
+    expect(existsSync(join(all, ".claude/commands/review.md"))).toBe(false);
+    expect(existsSync(join(all, ".cursor/commands/review.md"))).toBe(false);
   });
 
   it("init rejects an unknown provider", () => {
@@ -187,12 +181,12 @@ describe("cli", () => {
 
   it("init --adopt keeps a colliding cursor command and writes a kit sidecar", () => {
     const dest = tempDir();
-    put(dest, ".cursor/commands/review.md", "mine\n");
+    put(dest, ".cursor/commands/zedkit-ai.md", "mine\n");
     const { code, text } = run("init", dest, "--provider", "cursor", "--adopt");
     expect(code).toBe(0);
     expect(text).toContain("kept user file");
-    expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe("mine\n");
-    expect(existsSync(join(dest, ".cursor/commands/review.kit.md"))).toBe(true);
+    expect(readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8")).toBe("mine\n");
+    expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.kit.md"))).toBe(true);
   });
 
   it("init --dry-run writes nothing", () => {
@@ -631,7 +625,7 @@ providers:
       const result = run("validate", dir);
       expect(result.code).toBe(0);
       expect(result.text).toContain("zk-alpha");
-      expect(result.text).toContain("commands still run your old skill names");
+      expect(result.text).toContain("leftover commands still run the original skill names");
       expect(result.text).toContain("ok");
     });
 

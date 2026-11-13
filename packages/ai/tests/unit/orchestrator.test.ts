@@ -50,17 +50,17 @@ describe("orchestrator agent", () => {
   // in a single `it` exceed the 20 s testTimeout and abort before the
   // validateKit assertion prints. Keep the timeout; split the matrix.
   it.each([
-    ["starter", "cursor", false],
-    ["starter", "claude", false],
-    ["core", "cursor", true],
-    ["core", "claude", true],
-    ["full", "cursor", true],
-    ["full", "claude", true],
-  ] as const)("installs orchestrator files for %s + %s", (preset, provider, hasOrchestrate) => {
+    ["starter", "cursor"],
+    ["starter", "claude"],
+    ["core", "cursor"],
+    ["core", "claude"],
+    ["full", "cursor"],
+    ["full", "claude"],
+  ] as const)("installs orchestrator files for %s + %s", (preset, provider) => {
     const dest = tempDir();
     install(dest, { preset, providers: [provider] });
     expect(existsSync(join(dest, ".agents/agents/orchestrator.md"))).toBe(true);
-    expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(hasOrchestrate);
+    expect(existsSync(join(dest, ".agents/commands/orchestrate.md"))).toBe(false);
     expect(existsSync(join(dest, `.${provider}/agents/orchestrator.md`))).toBe(true);
     expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });

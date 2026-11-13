@@ -3,11 +3,11 @@ zedkit-ai <command>
   setup [dir] [--provider ...] [--preset starter|setup|core|full] [--kit <dir>] [--dry-run] [--allow-fast]
       One-shot onboarding: preset setup by default (override with --preset);
       same as init --adopt (keeps your existing agent files on collision).
-      Then run /setup-ai in your agent.
+      Then run /zedkit-ai (or the setup-ai skill) in your agent.
       --kit is a local kit directory (omit = bundled kit). Pass it again on
       later sync and validate; it is not remembered.
   init [dir] [--preset starter|setup|core|full] [--provider ...] [--kit <dir>] [--adopt] [--dry-run] [--allow-fast]
-      Copy skills, subagents, commands and an AGENTS.md template into dir
+      Copy skills, subagents, the /zedkit-ai command and an AGENTS.md template into dir
       (default .), then wire the providers (default all). Never overwrites
       existing files (an existing AGENTS.md without the ladder gets the
       ladder section appended). --adopt keeps a colliding user file and

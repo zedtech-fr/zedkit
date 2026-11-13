@@ -142,14 +142,14 @@ describe("Upgrading Cursor+Muse with a personalized orchestrate skill", () => {
     expect(readFileSync(sidecarFile, "utf8")).toBe("---\nname: [broken\n---\nbody\n");
   });
 
-  it("the orchestrate command keeps a unique skill target after migration", () => {
+  it("the orchestrate skill keeps a unique skill target after migration", () => {
     const dest = tempDir();
     seedLegacyCursorMuse(dest);
     setup(dest);
     revertSidecarName(dest);
     setup(dest);
 
-    expect(existsSync(join(dest, ".agents", "commands", "orchestrate.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents", "commands", "orchestrate.md"))).toBe(false);
     const issues = failingIssues(validateKit(join(dest, ".agents")));
     expect(issues.filter((issue) => issue.path.includes("orchestrate"))).toEqual([]);
     expect(claimants(join(dest, ".agents"), "orchestrate")).toEqual(["orchestrate"]);

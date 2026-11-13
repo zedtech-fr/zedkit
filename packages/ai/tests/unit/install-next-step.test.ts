@@ -15,21 +15,22 @@ describe("install next step hints", () => {
     expect(repoUsesPrettier(root)).toBe(true);
   });
 
-  it("includes phase C checklist and no prettier lines when Prettier is not used", () => {
+  it("includes the /zedkit-ai next-step and no prettier lines when Prettier is not used", () => {
     const root = tempDir();
     const lines = installNextStepLines(root, ["cursor"]);
-    expect(lines[0]).toContain("/setup-ai");
+    expect(lines[0]).toContain("/zedkit-ai");
+    expect(lines[0]).toContain("setup-ai");
     expect(lines.some((line) => line.includes("product.md"))).toBe(true);
     expect(lines.some((line) => line.startsWith("prettier:"))).toBe(false);
   });
 
-  it("points past phase C instead of repeating it when product.md already exists", () => {
+  it("points past the /zedkit-ai next-step when product.md already exists", () => {
     const root = tempDir();
     put(root, ".agents/product.md", "# Product\n");
     const lines = installNextStepLines(root, ["cursor"]);
-    expect(lines).toContain("next: validate, then phase E score");
+    expect(lines).toContain("next: validate, then score the setup");
     expect(lines.some((line) => line.includes("phase C adds"))).toBe(false);
-    expect(lines.some((line) => line.includes("/setup-ai"))).toBe(false);
+    expect(lines.some((line) => line.includes("/zedkit-ai"))).toBe(false);
   });
 
   it("prints exact .prettierignore lines when Prettier is configured and paths are missing", () => {
