@@ -89,19 +89,22 @@ function UnlinkedListRow({
   const last = latestEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
   const label = outcomeLabel(outcome, copy);
+  const typeLabel = last ? copy.type[last.type] : undefined;
+  const runsLabel = runCountLabel(runCount, copy);
+  const name = [`#${entry.number}`, typeLabel, runsLabel, label].filter(Boolean).join(", ");
   return (
     <SidebarNavItem
       asChild
       active={active}
       status={<OutcomeStatus outcome={outcome} />}
-      meta={last ? copy.type[last.type] : undefined}
-      count={runCountLabel(runCount, copy)}
+      meta={typeLabel === undefined ? runsLabel : `${typeLabel} · ${runsLabel}`}
+      {...(label === null ? {} : { count: label })}
     >
       <a
         href={`#pr-${entry.number}`}
         {...(withIds ? { id: `pr-${entry.number}` } : {})}
         data-issues-row=""
-        {...(label ? { "aria-label": `#${entry.number}, ${label}` } : {})}
+        aria-label={name}
       >
         #{entry.number}
       </a>
@@ -195,6 +198,7 @@ function IssuesPane({
       <aside
         data-issues-aside=""
         tabIndex={0}
+        aria-label={copy.list.title}
         className="flex w-full shrink-0 flex-col border-b muted-wash max-md:hidden md:pane-shrink md:w-app-shell-sidebar md:overflow-y-auto md:border-r md:border-b-0 md:focus-ring"
       >
         {sidebar}
@@ -221,10 +225,10 @@ function IssuesPane({
           </DrawerHeader>
           <DrawerBody
             tabIndex={0}
+            aria-label={copy.list.openList}
             className="focus-ring"
             onClick={(event) => {
-              const target = event.target;
-              if (target instanceof Element && target.closest("a")) setOpen(false);
+              if (event.target instanceof Element && event.target.closest("a")) setOpen(false);
             }}
           >
             {drawerSidebar}
@@ -268,7 +272,7 @@ function IssuesWorkspace({
           ) : selected?.kind === "pr" ? (
             <UnlinkedDetail entry={selected.pull} copy={copy} headingId={detailHeadingId} />
           ) : (
-            <EmptyState description={copy.issue.missing} />
+            <EmptyState title={copy.list.missing} description={copy.list.missingNext} />
           )}
         </article>
       }

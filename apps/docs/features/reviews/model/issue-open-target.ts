@@ -13,7 +13,7 @@ export function issueOpenTarget(search: string, hash: string): "first" | string 
 /**
  * First id when the URL has no target or asks for first.
  * A well-formed `#issue-n` / `#pr-n` that is not on the list returns
- * `null` so the page can show `copy.issue.missing` instead of silently
+ * `null` so the page can show `copy.list.missing` instead of silently
  * opening another row while the stale hash stays in the URL.
  */
 export function resolveIssueOpenId(

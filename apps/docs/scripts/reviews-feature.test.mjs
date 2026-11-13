@@ -1519,6 +1519,8 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
   assert.equal(reviewsCopy.list.openList, "Issue list");
+  assert.equal(reviewsCopy.list.missing, "This item is not on the public list.");
+  assert.equal(reviewsCopy.list.missingNext, "Choose another from the list.");
   assert.equal(reviewsCopy.issue.missing, "This issue is not on the public list.");
   assert.equal(
     reviewsCopy.unlinked.missing,
@@ -1781,7 +1783,9 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.match(list, /DrawerTrigger/);
   assert.match(list, /max-md:hidden/);
   assert.match(list, /copy\.list\.openList/);
-  assert.match(list, /copy\.issue\.missing/);
+  assert.match(list, /copy\.list\.missing/);
+  assert.match(list, /copy\.list\.missingNext/);
+  assert.doesNotMatch(list, /copy\.issue\.missing/);
   assert.match(list, /aria-live="polite"/);
   assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
   assert.doesNotMatch(list, /\?\? items\[0\]/);

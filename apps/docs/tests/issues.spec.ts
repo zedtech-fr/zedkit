@@ -77,8 +77,12 @@ test("unknown issue hash shows a missing note instead of the first issue", async
     return;
   }
   await expect(first).not.toHaveAttribute("aria-current", "page");
-  await expect(page.locator("[data-issues-detail]")).toContainText(reviewsCopy.issue.missing);
+  await expect(page.locator("[data-issues-detail]")).toContainText(reviewsCopy.list.missing);
+  await expect(page.locator("[data-issues-detail]")).toContainText(reviewsCopy.list.missingNext);
   await expect(page).toHaveURL(/#issue-999999/);
+  await page.goto("/issues#pr-999999", { waitUntil: "networkidle" });
+  await expect(page.locator("[data-issues-detail]")).toContainText(reviewsCopy.list.missing);
+  await expect(page).toHaveURL(/#pr-999999/);
 });
 
 test("issues heading lines up with the header brand at 1440", async ({ page }) => {
