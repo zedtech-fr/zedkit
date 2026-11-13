@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
 
@@ -24,7 +26,7 @@ for (const theme of ["light", "dark"] as const) {
         await expect(header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true })).toHaveCount(0);
         await expect(header.locator('a[aria-label*="GitHub"]')).toHaveCount(0);
         await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
-        await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+        await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
       }
 
       await page.locator("#get-started").scrollIntoViewIfNeeded();
@@ -45,7 +47,7 @@ test("catalog header keeps search and GitHub text, not theme or version", async 
     header.locator('[data-search], [aria-label="Search documentation"]').filter({ visible: true }).first(),
   ).toBeVisible();
   await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
-  await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
+  await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toHaveCount(0);
   const heights = await page.evaluate(() => {
     const measure = (el: Element | null) => (el ? el.getBoundingClientRect().height : 0);
     const nav = document.querySelector("#nd-nav nav");

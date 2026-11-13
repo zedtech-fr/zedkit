@@ -45,7 +45,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal("guides" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.github, "GitHub");
   assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
-  assert.equal(siteChromeCopy.getStarted, "Get started");
+  assert.equal(siteChromeCopy.getStarted, "Try it yourself");
   assert.equal(siteChromeCopy.footer.credit, "by Zed Tech · MIT");
   assert.equal("maintainer" in siteChromeCopy.footer, false);
   assert.equal(siteChromeCopy.footer.links.docs, "Docs");
@@ -106,7 +106,20 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(docsSidebar, /siteChromeCopy\.nav\.docsNavigation/);
   assert.doesNotMatch(docsSidebar, /"Docs pages"|"Documentation"/);
   const searchTrigger = read("components/site-chrome/site-chrome.tsx");
-  assert.match(searchTrigger, /siteChromeCopy\.search\.triggerAriaLabel/);
+  const iconStart = searchTrigger.indexOf("export function SiteSearchTrigger");
+  const fullStart = searchTrigger.indexOf("export function SiteFullSearchTrigger");
+  const icon = searchTrigger.slice(iconStart, fullStart);
+  const full = searchTrigger.slice(fullStart);
+  assert.match(icon, /siteChromeCopy\.search\.triggerAriaLabel/);
+  assert.match(icon, /label=\{label\}/);
+  assert.doesNotMatch(full, /triggerAriaLabel/);
+  const spread = full.indexOf("{...props}");
+  const ariaOmit = full.indexOf("aria-label={undefined}");
+  const titleOmit = full.indexOf("title={undefined}");
+  assert.notEqual(spread, -1);
+  assert.ok(ariaOmit > spread, "full Search must drop slot aria-label after spread");
+  assert.ok(titleOmit > spread, "full Search must drop slot title after spread");
+  assert.match(full, /focus-ring-control/);
   assert.doesNotMatch(searchTrigger, /"Search documentation"|"Search the documentation"/);
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
   assert.match(homeActions, /siteChromeCopy\.getStarted/);
@@ -126,6 +139,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   const shell = read("app/docs-shell-tokens.css");
   assert.match(shell, /\[data-skip-link\]/);
   assert.match(shell, /bottom:\s*100%/);
+  assert.match(shell, /\[data-search\]:focus-visible/);
+  assert.match(shell, /outline:\s*var\(--ring-width-control/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
   const offPath = read("components/site-chrome/off-path-link.tsx");
   const a11y = read("components/site-chrome/site-chrome-a11y.tsx");
@@ -153,7 +168,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
   assert.doesNotMatch(consumers, /"Docs pages"|"Documentation"/);
-  assert.doesNotMatch(consumers, /"Search documentation"|"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"/);
+  assert.doesNotMatch(consumers, /"Search documentation"|"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"|"Try it yourself"/);
   assert.doesNotMatch(consumers, /"opens in a new tab"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);

@@ -60,6 +60,28 @@ test("maps guides MDX to /docs/<slug>", () => {
   );
 });
 
+test("docs guide feature modules map to /docs/<slug> when there is no mdx", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/features/docs/guides/foundations/ui/foundations-color.tsx",
+      "apps/docs/features/docs/guides/foundations/i18n/foundations-copy.ts",
+      "apps/docs/features/docs/guides/foundations/ui/foundations-hero.test.mjs",
+      ".agents/atlas.md",
+    ]),
+    ["/docs/foundations"],
+  );
+  assert.deepEqual(
+    routesFromFiles([
+      "apps\\docs\\features\\docs\\guides\\maturity-and-compatibility\\ui\\maturity-compatibility-view.tsx",
+    ]),
+    ["/docs/maturity-and-compatibility"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps/docs/features/docs/guides/foundations/ui/foundations-hero.test.mjs"]),
+    [],
+  );
+});
+
 test("maps AI setup sources to /docs/ai/setup", () => {
   assert.deepEqual(
     routesFromFiles(["packages/ai/kit/cursor-onboarding.md", "apps/docs/public/ai/setup.md"]).sort(),
