@@ -60,6 +60,11 @@
         "@/components/ui/button"
       ]
     },
+    "packages/ai": {
+      // Shipped CLI script (bin.ts imports the file URL). Vitest already has
+      // tests/visual-verify.test.mjs; this keeps the script an entry without it.
+      "entry": ["scripts/visual-verify.mjs"]
+    },
     "packages/ui": {
       // gallery.tsx is compiled by preview/build.mjs (string read, not import).
       "entry": ["preview/gallery.tsx", "preview/*.mjs"]
