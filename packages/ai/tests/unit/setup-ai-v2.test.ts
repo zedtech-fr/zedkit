@@ -2,9 +2,8 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
-import { readManifest } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { kitDir } from "#kit.js";
+import { commandsForPreset, kitDir, kitUniverse, readManifest } from "#kit.js";
 import { failingIssues, tempDir } from "./helpers.js";
 
 const KIT_TEMPLATE_PATHS = [
@@ -132,15 +131,9 @@ describe("setup-ai v2 kit", () => {
     expect(skill).toMatch(/^> \*\*What you get \/ time:\*\*/m);
     const root = tempDir();
     install(root, { preset: "setup", providers: ["cursor", "claude"] });
-    const agentsCmd = readFileSync(
-      join(root, ".agents", "commands", "setup-ai.md"),
-      "utf8",
-    );
-    const cursorCmd = readFileSync(
-      join(root, ".cursor", "commands", "setup-ai.md"),
-      "utf8",
-    );
-    expect(cursorCmd).toBe(agentsCmd);
+    expect(existsSync(join(root, ".agents", "commands", "setup-ai.md"))).toBe(false);
+    expect(existsSync(join(root, ".cursor", "commands", "setup-ai.md"))).toBe(false);
+    expect(existsSync(join(root, ".agents", "commands", "zedkit-ai.md"))).toBe(true);
     expect(failingIssues(validateKit(join(root, ".agents")))).toEqual([]);
     expect(checkDrift(root, join(root, ".agents"))).toEqual([]);
   });
@@ -310,20 +303,22 @@ describe("setup-ai v2 kit", () => {
     expect(log).toContain("NOT checked by validate");
   });
 
-  it("setup-ai SKILL and templates only name setup-preset slash commands or wrap others in conditionals", () => {
+  it("setup-ai SKILL and templates only name slash commands closed by the entry plus a setup skill, or wrap others in conditionals", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const commandIds = manifest.value.commands ?? [];
-    const setupPresetCommands = new Set(
-      manifest.value.presetCommands?.setup ?? [],
+    const setupSkills = new Set(
+      Array.isArray(manifest.value.presets.setup) ? manifest.value.presets.setup : [],
     );
-    expect(setupPresetCommands.has("setup-ai")).toBe(true);
+    const universe = kitUniverse();
+    expect(commandsForPreset(manifest.value, "setup")).toEqual(["zedkit-ai"]);
     const paths = listSetupAiMarkdownRelPaths();
     for (const rel of paths) {
       const text = readFileSync(join(kitDir(), rel), "utf8");
       for (const { cmd, index } of kitSlashCommandMentions(text, commandIds)) {
+        const skillOk = !universe.skills.has(cmd) || setupSkills.has(cmd);
         const allowed =
-          setupPresetCommands.has(cmd) || insideConditionalBlock(text, index);
+          cmd === "zedkit-ai" || skillOk || insideConditionalBlock(text, index);
         expect(allowed, `${rel}: /${cmd} at ${index}`).toBe(true);
       }
     }

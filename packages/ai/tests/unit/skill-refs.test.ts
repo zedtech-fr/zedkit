@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { backtickedRefNames, skillRefNames, wordRefNames, type RefUniverse } from "#skill-refs.js";
+import {
+  backtickedRefNames,
+  danglingKitRefs,
+  skillRefNames,
+  wordRefNames,
+  type RefFile,
+  type RefUniverse,
+} from "#skill-refs.js";
 
 const UNIVERSE: RefUniverse = {
   skills: new Set(["tdd", "codebase-design"]),
@@ -68,5 +75,65 @@ describe("wordRefNames", () => {
 
   it("ignores conditional markers", () => {
     expect(wordRefNames("a<!-- if:agent=a11y-auditor -->b<!-- /if -->c", UNIVERSE)).toEqual([]);
+  });
+});
+
+const COMMAND_UNIVERSE: RefUniverse = {
+  skills: new Set(["plan", "review", "audit"]),
+  agents: new Set(),
+  commands: new Set(["plan", "review", "audit", "improve-config", "zedkit-ai"]),
+};
+
+function skillFile(text: string): RefFile {
+  return { path: "skills/review/SKILL.md", text, kitOrigin: true };
+}
+
+describe("danglingKitRefs slash commands", () => {
+  it("treats /plan as closed when zedkit-ai and the plan skill are installed", () => {
+    const installed: RefUniverse = {
+      skills: new Set(["plan", "review"]),
+      agents: new Set(),
+      commands: new Set(["zedkit-ai"]),
+    };
+    expect(danglingKitRefs([skillFile("Run `/plan` next.")], installed, COMMAND_UNIVERSE)).toEqual([]);
+  });
+
+  it("flags /plan when the plan skill is missing even if zedkit-ai is installed", () => {
+    const installed: RefUniverse = {
+      skills: new Set(["review"]),
+      agents: new Set(),
+      commands: new Set(["zedkit-ai"]),
+    };
+    expect(danglingKitRefs([skillFile("Run `/plan` next.")], installed, COMMAND_UNIVERSE)).toEqual([
+      {
+        path: "skills/review/SKILL.md",
+        message: 'references command "plan", which this preset does not install',
+      },
+    ]);
+  });
+
+  it("treats /improve-config as closed when only zedkit-ai is installed", () => {
+    const installed: RefUniverse = {
+      skills: new Set(["review"]),
+      agents: new Set(),
+      commands: new Set(["zedkit-ai"]),
+    };
+    expect(danglingKitRefs([skillFile("Run `/improve-config`.")], installed, COMMAND_UNIVERSE)).toEqual(
+      [],
+    );
+  });
+
+  it("flags /audit when the audit skill is missing", () => {
+    const installed: RefUniverse = {
+      skills: new Set(["review"]),
+      agents: new Set(),
+      commands: new Set(["zedkit-ai"]),
+    };
+    expect(danglingKitRefs([skillFile("Point audits at `/audit`.")], installed, COMMAND_UNIVERSE)).toEqual([
+      {
+        path: "skills/review/SKILL.md",
+        message: 'references command "audit", which this preset does not install',
+      },
+    ]);
   });
 });

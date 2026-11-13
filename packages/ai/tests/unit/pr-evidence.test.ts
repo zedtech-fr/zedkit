@@ -82,7 +82,8 @@ describe("pr skill Evidence contract", () => {
     if (!Array.isArray(setup)) throw new Error("setup preset must list skills");
     expect(setup).toContain("implement");
     expect(setup).toContain("pr");
-    expect(manifest.value.presetCommands?.setup ?? []).toContain("pr");
+    expect(manifest.value.presetCommands?.setup ?? []).not.toContain("pr");
+    expect(commandsForPreset(manifest.value, "setup")).toEqual(["zedkit-ai"]);
   });
 
   it("lists the pr (and implement) modification in THIRD_PARTY_NOTICES", () => {

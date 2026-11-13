@@ -68,7 +68,7 @@ function seedRealProviderDirs(dest: string, provider: "cursor" | "claude"): void
   const layer = provider === "cursor" ? ".cursor" : ".claude";
   put(dest, `${layer}/skills/mine/SKILL.md`, MINE_SKILL);
   put(dest, `${layer}/agents/explorer.md`, MINE_AGENT);
-  put(dest, `${layer}/commands/review.md`, MINE_COMMAND);
+  put(dest, `${layer}/commands/zedkit-ai.md`, MINE_COMMAND);
 }
 
 /** Real-dir layer: kit content linked/copied in, user files byte-identical, no dead zk-* entries. */
@@ -78,9 +78,9 @@ function expectRealDirLayer(dest: string, provider: "cursor" | "claude"): void {
   expect(lstatSync(join(layer, "skills", firstSkill(dest))).isSymbolicLink(), "kit skill is a link").toBe(true);
   expect(readFileSync(join(layer, "skills", "mine", "SKILL.md"), "utf8"), "user skill kept").toBe(MINE_SKILL);
   expect(readFileSync(join(layer, "agents", "explorer.md"), "utf8"), "user agent kept").toBe(MINE_AGENT);
-  expect(readFileSync(join(layer, "commands", "review.md"), "utf8"), "user command kept").toBe(MINE_COMMAND);
+  expect(readFileSync(join(layer, "commands", "zedkit-ai.md"), "utf8"), "user command kept").toBe(MINE_COMMAND);
   expect(existsSync(join(layer, "agents", "explorer.kit.md")), "agent sidecar").toBe(true);
-  expect(existsSync(join(layer, "commands", "review.kit.md")), "command sidecar").toBe(true);
+  expect(existsSync(join(layer, "commands", "zedkit-ai.kit.md")), "command sidecar").toBe(true);
   expectGenerated(join(layer, "agents", "verifier.md"), "verifier");
   expectGenerated(join(layer, "agents", "explorer.kit.md"), "explorer");
   const dead = readdirSync(layer).filter((name) => name.startsWith("zk-"));

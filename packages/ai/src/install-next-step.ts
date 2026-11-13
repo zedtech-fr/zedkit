@@ -119,13 +119,13 @@ export function installNextStepLines(
   root: string,
   providers: readonly Provider[] | undefined,
 ): string[] {
-  // Setup artifacts already exist: do not send the user back to /setup-ai.
+  // Setup artifacts already exist: do not send the user back to /zedkit-ai setup.
   const lines = existsSync(join(root, ".agents", "product.md"))
     ? ["next: validate, then phase E score"]
     : [
-        "next: run /setup-ai, then npx @zedtech/zedkit-ai validate",
+        "next: run /zedkit-ai (or the setup-ai skill), then npx @zedtech/zedkit-ai validate",
         "note: setup+validate ok ≠ product.md; phase C adds product.md, domain/*.md, personas.md, design.md, glossary — .agents/skills/setup-ai/templates/README.md",
-        "note: /setup-ai reads the code first with read-only subagents (npx @zedtech/zedkit-ai scan sizes them), asks only what the code cannot answer, and writes domain rules, nested AGENTS.md and .agents/tokenomics.md, then runs zedkit-ai sync",
+        "note: /zedkit-ai (or the setup-ai skill) reads the code first with read-only subagents (npx @zedtech/zedkit-ai scan sizes them), asks only what the code cannot answer, and writes domain rules, nested AGENTS.md and .agents/tokenomics.md, then runs zedkit-ai sync",
       ];
   if (
     existsSync(join(root, "pnpm-workspace.yaml")) &&

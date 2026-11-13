@@ -64,7 +64,8 @@ describe("installKit", () => {
     expect(existsSync(join(dest, ".agents/agents/explorer.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
     expect(existsSync(join(dest, ".agents/commands/plan.md"))).toBe(false);
-    expect(existsSync(join(dest, ".agents/commands/review.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/review.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(true);
     // Symlinks resolve through to real files.
     expect(readlinkSync(join(dest, ".claude/skills"))).toBe(
       "../.agents/skills",
@@ -83,7 +84,7 @@ describe("installKit", () => {
     ).toContain("alwaysApply: true");
   });
 
-  it("starter preset stays small: nine skills, three subagents, three commands", () => {
+  it("starter preset stays small: nine skills, three subagents, one command", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const starter = manifest.value.presets.starter;
@@ -91,7 +92,41 @@ describe("installKit", () => {
       throw new Error("starter preset must list skills");
     expect(starter).toHaveLength(9);
     expect(agentsForPreset(manifest.value, "starter")).toHaveLength(3);
-    expect(commandsForPreset(manifest.value, "starter")).toHaveLength(3);
+    expect(commandsForPreset(manifest.value, "starter")).toEqual(["zedkit-ai"]);
+  });
+
+  it("every preset installs only the zedkit-ai command file", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    for (const preset of Object.keys(manifest.value.presets)) {
+      expect(commandsForPreset(manifest.value, preset), preset).toEqual(["zedkit-ai"]);
+      const dest = tempDir();
+      install(dest, { preset, providers: [] });
+      const dir = join(dest, ".agents/commands");
+      expect(readdirSync(dir).filter((name) => name.endsWith(".md")).sort(), preset).toEqual([
+        "zedkit-ai.md",
+      ]);
+    }
+  });
+
+  it("re-init keeps a leftover command file the preset no longer installs", () => {
+    const dest = tempDir();
+    install(dest, { preset: "starter", providers: [] });
+    const leftover = readFileSync(join(kitDir(), "commands", "setup-ai.md"), "utf8");
+    put(dest, ".agents/commands/setup-ai.md", leftover);
+    const again = install(dest, { preset: "starter", providers: [] });
+    expect(readFileSync(join(dest, ".agents/commands/setup-ai.md"), "utf8")).toBe(leftover);
+    expect(again.some((a) => a.path.includes("commands/setup-ai.md") && a.kind !== "skip")).toBe(
+      false,
+    );
+    expect(
+      readdirSync(join(dest, ".agents/commands")).filter((name) => name.endsWith(".md")).sort(),
+    ).toEqual(["setup-ai.md", "zedkit-ai.md"]);
+    const issues = validateKit(join(dest, ".agents"));
+    expect(failingIssues(issues)).toEqual([]);
+    expect(
+      issues.some((issue) => issue.message.startsWith("warning:") && issue.message.includes('"setup-ai"')),
+    ).toBe(true);
   });
 
   it("starter lenses.md marks uninstalled runners planned and installed ones exists", () => {
@@ -130,7 +165,7 @@ describe("installKit", () => {
       ),
     ).toEqual([]);
     expect(existsSync(join(dest, ".agents/skills/zk-review"))).toBe(false);
-    expect(existsSync(join(dest, ".agents/commands/review.kit.md"))).toBe(
+    expect(existsSync(join(dest, ".agents/commands/zedkit-ai.kit.md"))).toBe(
       false,
     );
     expect(existsSync(join(dest, ".agents/personas.kit.md"))).toBe(false);
@@ -141,7 +176,7 @@ describe("installKit", () => {
   it("init --adopt on an installed tree sidecars only the user-edited kit file", () => {
     const dest = tempDir();
     install(dest, { preset: "starter", providers: ["cursor"], adopt: true });
-    writeFileSync(join(dest, ".agents/commands/review.md"), "edited by user\n");
+    writeFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "edited by user\n");
     const again = install(dest, {
       preset: "starter",
       providers: ["cursor"],
@@ -150,13 +185,13 @@ describe("installKit", () => {
     expect(again.filter((a) => a.kind !== "skip")).toEqual([
       expect.objectContaining({
         kind: "copy",
-        path: join(".agents", "commands", "review.kit.md"),
+        path: join(".agents", "commands", "zedkit-ai.kit.md"),
       }),
     ]);
-    expect(readFileSync(join(dest, ".agents/commands/review.md"), "utf8")).toBe(
+    expect(readFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "utf8")).toBe(
       "edited by user\n",
     );
-    expect(existsSync(join(dest, ".cursor/commands/review.kit.md"))).toBe(
+    expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.kit.md"))).toBe(
       false,
     );
     expect(existsSync(join(dest, ".agents/skills/zk-review"))).toBe(false);
@@ -335,7 +370,7 @@ describe("installKit", () => {
       personas,
       readFileSync(personas, "utf8").replaceAll("Acme Bookings", "Real Corp"),
     );
-    writeFileSync(join(dest, ".agents/commands/review.md"), "edited by user\n");
+    writeFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "edited by user\n");
     const again = install(dest, {
       preset: "setup",
       providers: ["cursor"],
@@ -345,7 +380,7 @@ describe("installKit", () => {
     expect(again.filter((a) => a.kind !== "skip")).toEqual([
       expect.objectContaining({
         kind: "copy",
-        path: join(".agents", "commands", "review.kit.md"),
+        path: join(".agents", "commands", "zedkit-ai.kit.md"),
       }),
     ]);
   });
@@ -354,7 +389,7 @@ describe("installKit", () => {
     const dest = tempDir();
     put(dest, ".cursor/skills/team-own/SKILL.md", "team\n");
     put(dest, ".cursor/agents/explorer.md", "custom explorer\n");
-    put(dest, ".cursor/commands/review.md", "custom review\n");
+    put(dest, ".cursor/commands/zedkit-ai.md", "custom review\n");
     const actions = install(dest, { providers: ["cursor"], adopt: true });
     expect(
       readFileSync(join(dest, ".cursor/skills/team-own/SKILL.md"), "utf8"),
@@ -362,11 +397,11 @@ describe("installKit", () => {
     expect(readFileSync(join(dest, ".cursor/agents/explorer.md"), "utf8")).toBe(
       "custom explorer\n",
     );
-    expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe(
+    expect(readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8")).toBe(
       "custom review\n",
     );
     expect(existsSync(join(dest, ".cursor/agents/explorer.kit.md"))).toBe(true);
-    expect(existsSync(join(dest, ".cursor/commands/review.kit.md"))).toBe(true);
+    expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.kit.md"))).toBe(true);
     expect(
       lstatSync(join(dest, ".cursor/skills/ground-truth")).isSymbolicLink(),
     ).toBe(true);
@@ -711,18 +746,19 @@ describe("installKit", () => {
     const dest = tempDir();
     install(dest, { preset: "core" });
     expect(
-      readFileSync(join(dest, ".agents/commands/review.md"), "utf8"),
-    ).toContain("`review`");
+      readFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "utf8"),
+    ).toContain("`zedkit-ai`");
     expect(readlinkSync(join(dest, ".claude/commands"))).toBe(
       "../.agents/commands",
     );
-    expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(true);
+    expect(existsSync(join(dest, ".claude/commands/zedkit-ai.md"))).toBe(true);
+    expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(false);
     expect(lstatSync(join(dest, ".cursor/commands")).isSymbolicLink()).toBe(
       false,
     );
     expect(
-      readFileSync(join(dest, ".cursor/commands/plan.md"), "utf8"),
-    ).toContain("`plan`");
+      readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8"),
+    ).toContain("`zedkit-ai`");
     expect(lstatSync(join(dest, ".cursor/agents")).isSymbolicLink()).toBe(
       false,
     );
@@ -753,10 +789,10 @@ describe("installKit", () => {
   it("never overwrites the cursor copies: edits survive a second run", () => {
     const dest = tempDir();
     install(dest, { providers: ["cursor"] });
-    writeFileSync(join(dest, ".cursor/commands/review.md"), "mine\n");
+    writeFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "mine\n");
     const again = install(dest, { providers: ["cursor"] });
     expect(again.every((a) => a.kind === "skip")).toBe(true);
-    expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe(
+    expect(readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8")).toBe(
       "mine\n",
     );
   });

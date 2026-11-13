@@ -29,18 +29,18 @@ Or skip the devDependency for a first try: `npx @zedtech/zedkit-ai setup` downlo
 | Situation | What to run |
 |---|---|
 | **One git repo** (an app, library, or service) | Commands below in that repo's root |
-| **Workspace root** (several sibling checkouts, or a meta repo listing members) | `setup` at the root only; `/setup-ai` runs in **workspace mode** and proposes per-repo setup inside each child — do not treat the root as the app |
+| **Workspace root** (several sibling checkouts, or a meta repo listing members) | `setup` at the root only; `/zedkit-ai` (or the `setup-ai` skill) runs in **workspace mode** and proposes per-repo setup inside each child — do not treat the root as the app |
 
-**Two commands to `/setup-ai`**
+**Install, then `/zedkit-ai`**
 
 ```sh
 npx @zedtech/zedkit-ai setup --provider cursor   # preset setup + adopt; wire Cursor
-# in your agent: /setup-ai   (or: "run the setup-ai skill")
+# in your agent: /zedkit-ai set up this repo from what it contains   (or: "run the setup-ai skill")
 ```
 
-Use `cursor`, `claude`, `codex`, `muse`, or comma-separated names; omit `--provider` to wire every supported runtime. **`setup` defaults to the `setup` preset** (discovery skills and agents for `/setup-ai`); override with `--preset starter|setup|core|full`. When you already added the package: `npx @zedtech/zedkit-ai setup . --provider cursor`.
+Use `cursor`, `claude`, `codex`, `muse`, or comma-separated names; omit `--provider` to wire every supported runtime. **`setup` defaults to the `setup` preset** (discovery skills and agents for `/zedkit-ai`); override with `--preset starter|setup|core|full`. When you already added the package: `npx @zedtech/zedkit-ai setup . --provider cursor`.
 
-After `/setup-ai` finishes:
+After `/zedkit-ai` setup finishes:
 
 ```sh
 npx @zedtech/zedkit-ai validate   # success: exit 0; final line starts with ok (long scope line)
@@ -56,7 +56,7 @@ Paste this single message in a new Cursor chat at the repo root:
 Set up zedkit AI on this repo following https://zedkit.app/ai/setup.md
 ```
 
-The agent should install the package, run `npx @zedtech/zedkit-ai setup --provider cursor`, execute `/setup-ai`, then run `validate` until exit 0 with a final line starting with `ok` (long scope line).
+The agent should install the package, run `npx @zedtech/zedkit-ai setup --provider cursor`, execute `/zedkit-ai` (or the `setup-ai` skill), then run `validate` until exit 0 with a final line starting with `ok` (long scope line).
 
 ## Upgrading from 0.12
 
@@ -77,7 +77,7 @@ That command is `init` with **`--preset setup`** and **`--adopt`**. It does not 
 
 Do not point commands at `zk-<name>`. That folder is only the side copy.
 
-Then run **`/setup-ai`** if you want the discovery artifacts (`product.md`, `domain/`, `design.md`, glossary). The CLI install alone does not write those.
+Then run **`/zedkit-ai`** (or the `setup-ai` skill) if you want the discovery artifacts (`product.md`, `domain/`, `design.md`, glossary). The CLI install alone does not write those.
 
 What changed since 0.12 (all already in the package; this re-run picks them up):
 
@@ -120,7 +120,7 @@ Writes `evidence/<branch>/manifest.json`, `summary.md`, and one contact-sheet PN
 **Starter (default for `init`):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
 `orchestrate` (so setup can hand off bigger work), `parallel-work`, `tdd`, and
 `adversarial-tests`, plus subagents `explorer`, `verifier`, and `orchestrator`,
-and commands `/setup-ai` and `/review`. Enough to onboard a repo, verify facts,
+and the command `/zedkit-ai`. Enough to onboard a repo, verify facts,
 run one review workflow, and check done-ness without loading the whole kit.
 
 **Setup preset (default for `setup`):** everything in starter, plus
@@ -135,8 +135,8 @@ plus subagents
 `implementer`, `reviewer`, `domain-guardian`, `event-contracts`, and
 `test-runner` (starter already ships `explorer`, `verifier`, and
 `orchestrator`). Use this for the
-first-5-minutes path and `/setup-ai` discovery depth. Before composing,
-restyling or personalising UI, run `/compose-ui`: client business → personas
+first-5-minutes path and `/zedkit-ai` discovery depth. Before composing,
+restyling or personalising UI, run the `compose-ui` skill: client business → personas
 → the client's customers → their personas → UI choices.
 
 **Already on `core`?** Nothing is removed from your tree automatically.
