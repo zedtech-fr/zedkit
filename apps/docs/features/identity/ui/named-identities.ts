@@ -93,11 +93,13 @@ function subscribeNamedIdentities(onStoreChange: () => void) {
   };
 }
 
-/** Re-apply a stored named look after hydration (uses the docs site identity keys). */
+/** Re-apply a stored named look after hydration. `storageKey` must be a trusted module constant, never user input. */
 function restoreNamedIdentity(storageKey: string) {
-  const id = window.localStorage.getItem(storageKey);
-  if (!id || !isNamedIdentityId(id)) return;
-  const saved = readNamedIdentities().find((item) => item.id === id);
+  const store = storage();
+  if (!store) return;
+  const raw = tryCatch(() => store.getItem(storageKey));
+  if (!raw.ok || !raw.value || !isNamedIdentityId(raw.value)) return;
+  const saved = readNamedIdentities().find((item) => item.id === raw.value);
   if (saved) applyCustomIdentity(saved.tokens, saved.id, storageKey);
 }
 

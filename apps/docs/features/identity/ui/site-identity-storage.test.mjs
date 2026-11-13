@@ -62,6 +62,25 @@ function memoryStorage() {
   };
 }
 
+function seedNamedLibrary(browser, tokens) {
+  browser.localStorage.setItem(
+    LIBRARY_KEY,
+    JSON.stringify({
+      version: 2,
+      items: [
+        {
+          id: "n-coral",
+          label: "Coral",
+          tokens,
+          createdAt: 1,
+          updatedAt: 1,
+          source: "editor",
+        },
+      ],
+    }),
+  );
+}
+
 function installBrowser() {
   const localStorage = memoryStorage();
   class HTMLStyleElement {}
@@ -227,7 +246,7 @@ test("purgeLegacyIdentityStorage drops the retired opt-in key", () => {
   browser.restore();
 });
 
-test("blocked storage does not throw from write, clear, or differs", () => {
+test("blocked storage does not throw from write, clear, differs, or restoreNamedIdentity", () => {
   const browser = installBrowser();
   const boom = () => {
     throw new Error("blocked");
@@ -239,6 +258,7 @@ test("blocked storage does not throw from write, clear, or differs", () => {
   assert.doesNotThrow(() => docsSiteLookDiffersFromDefaults());
   assert.doesNotThrow(() => clearDocsSiteIdentity());
   assert.doesNotThrow(() => purgeLegacyIdentityStorage());
+  assert.doesNotThrow(() => restoreNamedIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY));
   browser.restore();
 });
 
@@ -253,22 +273,7 @@ test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, 
   assert.equal(readDockSiteTokens("press").radius, identityPresets.press.radius);
 
   const named = { ...defaults, radius: "2rem" };
-  browser.localStorage.setItem(
-    LIBRARY_KEY,
-    JSON.stringify({
-      version: 2,
-      items: [
-        {
-          id: "n-coral",
-          label: "Coral",
-          tokens: named,
-          createdAt: 1,
-          updatedAt: 1,
-          source: "editor",
-        },
-      ],
-    }),
-  );
+  seedNamedLibrary(browser, named);
   assert.equal(readDockSiteTokens("n-coral").radius, "2rem");
 
   assert.deepEqual(readDockSiteTokens(DEFAULT_IDENTITY), defaults);
@@ -279,22 +284,7 @@ test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, 
 test("restoreNamedIdentity applies a named look from the passed storage key only", () => {
   const browser = installBrowser();
   const named = { ...docsSiteDefaultTokens(), radius: "2rem" };
-  browser.localStorage.setItem(
-    LIBRARY_KEY,
-    JSON.stringify({
-      version: 2,
-      items: [
-        {
-          id: "n-coral",
-          label: "Coral",
-          tokens: named,
-          createdAt: 1,
-          updatedAt: 1,
-          source: "editor",
-        },
-      ],
-    }),
-  );
+  seedNamedLibrary(browser, named);
   browser.localStorage.setItem(DOCS_SITE_IDENTITY_STORAGE_KEY, "n-coral");
   restoreNamedIdentity("zk-other-key");
   assert.equal(browser.html.getAttribute("data-identity"), null);
