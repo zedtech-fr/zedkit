@@ -24,6 +24,7 @@ import {
   parseStatesFile,
   parseVisualVerifyArgs,
   peerHint,
+  resolveManifestPath,
   resolveMockupForWidth,
   resolveStaticFile,
   routeStem,
@@ -321,6 +322,60 @@ describe("visual-verify helpers", () => {
     expect(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"])).toEqual([]);
   });
 
+  it("maps catalog demo files and kit source-family files from the docs manifest", () => {
+    const catalog = {
+      rich: {
+        "Compose a live agent console from a run": {
+          source: "layout/agent-console.tsx",
+          demo: "AgentConsoleDemo",
+        },
+        "Show your brand logo": {
+          source: "brand/brand-logo.tsx",
+          demo: "BrandLogoDemo",
+        },
+        "Compose a public marketing page": {
+          source: "marketing/glass-surface.tsx",
+          demo: "GlassSurfaceDemo",
+          examples: { "Header and footer": "MarketingChromeDemo" },
+        },
+        "Horizontal scroll gallery row": {
+          source: "layout/scroll-gallery.tsx",
+          demo: "ScrollGalleryIdentityDemo",
+        },
+      },
+    };
+    expect(
+      routesFromFiles(
+        [
+          "packages/ui/src/layout/agent-console-model.ts",
+          "apps/docs/components/demos/brand-logo-demo.tsx",
+          "apps/docs/components/demos/marketing-demo.tsx",
+          "apps/docs/components/demos/scroll-gallery-demo.tsx",
+          "deploy/Caddyfile",
+        ],
+        catalog,
+      ).sort(),
+    ).toEqual([
+      "/docs/ui/compose-a-live-agent-console-from-a-run",
+      "/docs/ui/compose-a-public-marketing-page",
+      "/docs/ui/horizontal-scroll-gallery-row",
+      "/docs/ui/show-your-brand-logo",
+    ]);
+    expect(
+      routesFromFiles(["packages/ui/tests/unit/agent-console.test.tsx"], catalog),
+    ).toEqual([]);
+    expect(routesFromFiles(["packages/ui/src/layout/agent-console-model.ts"])).toEqual([]);
+  });
+
+  it("loads apps/docs/docs-manifest.json when --manifest is omitted", () => {
+    const host = mkdtempSync(join(tmpdir(), "zk-manifest-"));
+    mkdirSync(join(host, "apps/docs"), { recursive: true });
+    writeFileSync(join(host, "apps/docs/docs-manifest.json"), "{}");
+    expect(resolveManifestPath(host, undefined)).toBe(join(host, "apps/docs/docs-manifest.json"));
+    expect(resolveManifestPath(host, "custom.json")).toBe(join(host, "custom.json"));
+    expect(resolveManifestPath(mkdtempSync(join(tmpdir(), "zk-empty-")), undefined)).toBe("");
+  });
+
   it("documents the clipped skip list without overstating docs-render equivalence", () => {
     const skill = readFileSync(
       join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
@@ -573,6 +628,7 @@ describe("visual-verify helpers", () => {
     expect(text).toContain("page/console/HTTP");
     expect(text).toContain("JSON array of {name, click?}");
     expect(text).toContain("wins over Visual reference");
+    expect(text).toContain("apps/docs/docs-manifest.json");
     const parsed = parseVisualVerifyArgs(["--help"]);
     expect(parsed.ok && parsed.value.help).toBe(true);
   });

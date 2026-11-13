@@ -5,7 +5,11 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
-import { componentPageHeaderMeta, componentPageSections } from "../features/docs/component-page-sections.mjs";
+import {
+  COMPONENT_PAGE_SECTION_IDS,
+  componentPageHeaderMeta,
+  componentPageSections,
+} from "../features/docs/component-page-sections.mjs";
 import { declarationOrigin } from "../features/docs/declared-props.mjs";
 import { partitionPropsEntries } from "../features/docs/props-priority.mjs";
 import { uiSidebarGroupFor, uiSidebarPages } from "../features/docs/ui-sidebar-nav.mjs";
@@ -97,6 +101,16 @@ test("declarationOrigin follows where a property is declared", () => {
 });
 
 test("componentPageSections lists a section only when it has content", () => {
+  assert.deepEqual(COMPONENT_PAGE_SECTION_IDS, [
+    "example",
+    "usage-and-states",
+    "install-or-copy",
+    "guidance",
+    "props",
+    "accessibility",
+    "related",
+    "troubleshooting",
+  ]);
   const always = ["example", "usage-and-states", "install-or-copy", "guidance"];
   const sections = componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" });
   assert.deepEqual(sections, always);

@@ -227,6 +227,8 @@ describe("layout job classes", () => {
   it("keeps a 24px hit area on a link badge, and the tap size on touch", () => {
     const start = css.indexOf('a[class*="px-badge-inline"]');
     const block = css.slice(start, css.indexOf("@layer components", start));
+    expect(block).toContain("min-width: 24px;");
+    expect(block).toContain("min-height: 24px;");
     expect(block).toContain("height: max(100%, 24px);");
     expect(block).toContain("min-height: var(--spacing-tap);");
   });

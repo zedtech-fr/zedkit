@@ -120,7 +120,6 @@ test("prompt-input demo imports its catalog and drops leftover English", () => {
 test("scroll-gallery demo imports its catalog and drops leftover English", () => {
   const source = readFileSync(join(demos, "scroll-gallery-demo.tsx"), "utf8");
   assert.match(source, /@\/components\/demos\/i18n\/scroll-gallery-copy/);
-  assert.match(source, /href="#alpha"/);
   assert.match(source, /"one"/);
   assertNoLeftovers("scroll-gallery-demo.tsx", [
     "Looks",

@@ -92,6 +92,50 @@ test("Caddyfile validates on Caddy 2.6 (host floor, no newer syntax)", () => {
   assert.match(result.stdout + result.stderr, /Valid configuration/);
 });
 
+test("every file_server site rewrites unknown URLs to /404.html", async () => {
+  const { readFileSync } = await import("node:fs");
+  const text = readFileSync(`${here}/Caddyfile`, "utf8");
+  const sites = [];
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const open = lines[i].match(/^(\S+(?:\s+\S+)*)\s*\{$/);
+    if (!open) continue;
+    let depth = 1;
+    const body = [lines[i]];
+    i += 1;
+    while (i < lines.length && depth > 0) {
+      body.push(lines[i]);
+      for (const char of lines[i]) {
+        if (char === "{") depth += 1;
+        if (char === "}") depth -= 1;
+      }
+      i += 1;
+    }
+    i -= 1;
+    sites.push({ name: open[1], text: body.join("\n") });
+  }
+  const names = sites.map((site) => site.name);
+  assert.ok(names.includes("zedkit.app"), names.join(","));
+  assert.ok(names.includes("dev.zedkit.app"), names.join(","));
+  assert.ok(names.includes("www.zedkit.app"), names.join(","));
+  const www = sites.find((site) => site.name === "www.zedkit.app");
+  assert.ok(www);
+  assert.doesNotMatch(www.text, /\bfile_server\b/);
+  const fileServing = sites.filter((site) => /\bfile_server\b/.test(site.text));
+  assert.ok(
+    fileServing.some((site) => site.name === "zedkit.app"),
+    "zedkit.app file_server",
+  );
+  assert.ok(
+    fileServing.some((site) => site.name === "dev.zedkit.app"),
+    "dev.zedkit.app file_server",
+  );
+  for (const site of fileServing) {
+    assert.match(site.text, /handle_errors/, `${site.name} needs handle_errors`);
+    assert.match(site.text, /rewrite \* \/404\.html/, `${site.name} needs rewrite * /404.html`);
+  }
+});
+
 test("each site proxies the suggest API to its own instance: dev never depends on production", async () => {
   const { readFileSync } = await import("node:fs");
   const text = readFileSync(`${here}/Caddyfile`, "utf8");

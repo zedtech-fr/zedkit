@@ -6,7 +6,7 @@ export function HeadingLinkDemo() {
     <Stack gap="tight" className="content-shrink">
       <Text variant="muted">{headingLinkCopy.eyebrow}</Text>
       <Heading level={2} asChild>
-        <a href="#section">{headingLinkCopy.linkText}</a>
+        <a href="#section" id="section">{headingLinkCopy.linkText}</a>
       </Heading>
       <Text variant="muted">{headingLinkCopy.hint}</Text>
     </Stack>

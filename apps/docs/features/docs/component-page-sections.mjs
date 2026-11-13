@@ -1,4 +1,21 @@
 /**
+ * Every section id a component page may render, in reading order. Demo hash
+ * hrefs and the contents list must use this union — do not hand-copy a subset.
+ */
+export const COMPONENT_PAGE_SECTION_IDS = [
+  "example",
+  "usage-and-states",
+  "install-or-copy",
+  "guidance",
+  "props",
+  "accessibility",
+  "related",
+  "troubleshooting",
+];
+
+const ALWAYS_ON = new Set(["example", "usage-and-states", "install-or-copy", "guidance"]);
+
+/**
  * Sections of a component page, in reading order. The first four always
  * exist; the rest appear only when the page has something to say. The page
  * component, the generator (frontmatter) and the contents list all read this
@@ -13,16 +30,14 @@
  * @returns {string[]} section ids
  */
 export function componentPageSections({ hasProps, a11y, related, troubleshooting }) {
-  return [
-    "example",
-    "usage-and-states",
-    "install-or-copy",
-    "guidance",
-    ...(hasProps ? ["props"] : []),
-    ...(a11y ? ["accessibility"] : []),
-    ...(related && related.length > 0 ? ["related"] : []),
-    ...(troubleshooting ? ["troubleshooting"] : []),
-  ];
+  return COMPONENT_PAGE_SECTION_IDS.filter((id) => {
+    if (ALWAYS_ON.has(id)) return true;
+    if (id === "props") return Boolean(hasProps);
+    if (id === "accessibility") return Boolean(a11y);
+    if (id === "related") return Boolean(related && related.length > 0);
+    if (id === "troubleshooting") return Boolean(troubleshooting);
+    return false;
+  });
 }
 
 /**

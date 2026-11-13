@@ -51,6 +51,7 @@ describe("primitives", () => {
     );
     const link = screen.getByRole("link", { name: "docs" });
     expect(link.className).toContain("bg-secondary");
+    expect(link.className).toContain("px-badge-inline");
     expect(link.getAttribute("href")).toBe("/docs");
   });
 

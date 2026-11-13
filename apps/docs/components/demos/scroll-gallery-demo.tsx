@@ -36,16 +36,16 @@ export function ScrollGalleryChipsDemo() {
   return (
     <ScrollGallery data-example-width="">
       <Stack direction="horizontal" gap="sm" className="w-max">
-        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#alpha">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#alpha" id="alpha">
           {scrollGalleryCopy.chips.alpha}
         </a>
-        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#beta">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#beta" id="beta">
           {scrollGalleryCopy.chips.beta}
         </a>
-        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#gamma">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#gamma" id="gamma">
           {scrollGalleryCopy.chips.gamma}
         </a>
-        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#delta">
+        <a className="shrink-0 snap-start rounded-md border px-control-inline py-control-block-lg" href="#delta" id="delta">
           {scrollGalleryCopy.chips.delta}
         </a>
       </Stack>
