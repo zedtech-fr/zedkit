@@ -4,8 +4,8 @@ import { Stack, Text, identityContrastWarnings, type IdentityTokens } from "@zed
 
 import { identityAssistantCopy as copy } from "@/components/i18n/identity-assistant-copy";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { ContrastChips } from "@/components/identity-editor-fields";
-import { IdentityLookForm } from "@/components/identity-look-form";
+import { ContrastChips } from "./identity-editor-fields";
+import { IdentityLookForm } from "./identity-look-form";
 
 type PatchPreview = (key: string, value: string, palette?: "light" | "dark") => void;
 
