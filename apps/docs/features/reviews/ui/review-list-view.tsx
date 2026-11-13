@@ -111,7 +111,7 @@ function IssueListNav({
   withIds: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-stack-sm surface-pad-md">
+    <Stack gap="sm" className="surface-pad-md">
       {issues.length === 0 ? null : (
         <ul className="flex list-none flex-col gap-stack-tight">
           {issues.map((issue) => (
@@ -143,7 +143,7 @@ function IssueListNav({
           </ul>
         </SidebarNavGroup>
       ) : null}
-    </div>
+    </Stack>
   );
 }
 

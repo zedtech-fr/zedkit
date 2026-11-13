@@ -1732,6 +1732,8 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.match(list, /copy\.type\[last\.type\]/);
   assert.match(list, /aria-label=\{copy\.list\.title\}/);
   assert.doesNotMatch(list, /<nav /);
+  assert.doesNotMatch(list, /<div[\s>/]/);
+  assert.match(list, /<Stack gap="sm" className="surface-pad-md">/);
   assert.doesNotMatch(list, /<ul[^>]*aria-label=\{copy\.list\.unlinkedTitle\}/);
   assert.match(list, /SidebarNavGroup/);
   assert.match(list, /runCountLabel/);
