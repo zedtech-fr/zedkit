@@ -11,7 +11,7 @@ export const homeHeroCopy = {
     subUi: "gives it the components and the look, so what it builds is your product.",
     promptAriaLabel: "Setup prompt",
     promptCopyLabel: "Copy prompt",
-    promptCaption: "Name the kits you want. The agent installs only those, in map.md order.",
+    promptCaption: "Edit the prompt to name the kits you want — add Nest if you want it too. The setup installs in the right order.",
   },
   heroIllustration: {
     pause: "Pause",

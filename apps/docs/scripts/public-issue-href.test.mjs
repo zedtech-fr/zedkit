@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 
 import { publicIssueHref, publicIssueHrefFrom } from "../features/reviews/compose.ts";
 
-const snapshotPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "../features/reviews/adapters/public-reviews.json",
+const composeSource = readFileSync(
+  join(dirname(fileURLToPath(import.meta.url)), "../features/reviews/compose.ts"),
+  "utf8",
 );
 
 function port({ issues = [], unlinked = [] } = {}) {
@@ -16,51 +16,6 @@ function port({ issues = [], unlinked = [] } = {}) {
     listIssues: async () => issues,
     listUnlinkedPullRequests: async () => unlinked,
   };
-}
-
-function isPositive(value) {
-  return Number.isSafeInteger(value) && value > 0;
-}
-
-function lastStartedAt(row) {
-  const entries = Array.isArray(row?.entries) ? row.entries : [];
-  let latest = "";
-  for (const entry of entries) {
-    const startedAt = typeof entry?.startedAt === "string" ? entry.startedAt : "";
-    if (startedAt > latest) latest = startedAt;
-  }
-  return latest;
-}
-
-/** Independent of ReviewPort: same order as listIssues (latest run first), else first public PR. */
-function firstPositiveHrefFromRaw(raw) {
-  const issues = Array.isArray(raw?.issues) ? raw.issues : [];
-  const issueNumber = issues
-    .filter((row) => row?.visibility !== "private" && Array.isArray(row?.entries) && row.entries.length > 0)
-    .slice()
-    .sort((a, b) => {
-      const byTime = lastStartedAt(b).localeCompare(lastStartedAt(a));
-      if (byTime !== 0) return byTime;
-      return (b?.number ?? 0) - (a?.number ?? 0);
-    })
-    .map((row) => row?.number)
-    .find(isPositive);
-  if (issueNumber !== undefined) return `/issues/${issueNumber}`;
-
-  const reviews = Array.isArray(raw?.reviews) ? raw.reviews : [];
-  const livePr = reviews
-    .filter((row) => row?.visibility === "public")
-    .map((row) => row?.run?.pr)
-    .find(isPositive);
-  if (livePr !== undefined) return `/issues/pr/${livePr}`;
-
-  const pullRequests = Array.isArray(raw?.pullRequests) ? raw.pullRequests : [];
-  const unlinked = pullRequests
-    .filter((row) => row?.issueNumber == null && row?.visibility !== "private")
-    .map((row) => row?.number)
-    .find(isPositive);
-  if (unlinked !== undefined) return `/issues/pr/${unlinked}`;
-  return "/issues";
 }
 
 test("prefers the first public issue path over an unlinked pull request", async () => {
@@ -114,11 +69,8 @@ test("falls back to the issues index when the snapshot port cannot be created", 
   );
 });
 
-test("the checked-in snapshot href matches an independent first-positive oracle", async () => {
-  const raw = JSON.parse(readFileSync(snapshotPath, "utf8"));
-  const expected = firstPositiveHrefFromRaw(raw);
-  const href = await publicIssueHref();
-  assert.equal(href, expected);
-  assert.notEqual(href, "/issues/0");
-  assert.match(href, /^\/issues(?:\/|$)/);
+test("compose defaults to the live site factory, not a snapshot JSON import", () => {
+  assert.match(composeSource, /createSiteReviewPort/);
+  assert.doesNotMatch(composeSource, /createSnapshotReviewPort/);
+  assert.doesNotMatch(composeSource, /public-reviews\.json/);
 });

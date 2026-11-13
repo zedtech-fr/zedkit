@@ -1,40 +1,83 @@
-# Public review snapshot (exporter contract)
+# Public run history data sources
 
-The docs site reads one JSON file (`adapters/public-reviews.json`).
-The out-of-repo exporter must emit **one** version-1 shape: the
-**generated run index** (`issues` + `pullRequests`). That is the
-production feed for the public run history page. Do not emit both
-`issues` and `reviews` on the same object.
+The public run history page (`/issues`) is built from two adapters
+behind `ReviewPort`, merged at docs build into a version-1
+`PublicIssueIndex` (`kind: public-github-runs`; `issues` +
+`pullRequests`):
 
-A live-shaped file of every hosted run cannot live in git (one dense
-row is already near the 200KB artefact cap). Live-shaped input remains
-valid so a denser payload can land later without a parser rewrite. Do
-not point staging ingest at a live-shaped dump of every run.
+1. **GitHub REST** for `zedtech-fr/zedkit` (public): issue number,
+   title, state, and linked PRs (runs-API `issue`/`pr` union closing
+   keywords in the PR body). Optional build-time token
+   (`ZEDKIT_GITHUB_READ_TOKEN`, else `GITHUB_TOKEN`) only raises the
+   rate limit. Unauthenticated still works. The token is never logged
+   and never imported from a client module.
+2. **Hosted runs API** `GET {NEXT_PUBLIC_ZEDOS_RUNS_API_BASE}/<live-service>/api/runs`
+   (v1 envelope). Staging and epic preview set the base to
+   `https://dev.zedkit.app`. Production leaves it unset, so the section
+   is empty (not an error).
 
-The checked-in file is a **stand-in** (`kind: public-stand-in`) used
-when ingest is unset or `scp` fails. Staging overwrites it from a
-generated file. The exporter may use any non-secret `kind` string.
+Build-time fetch fills the static export. There is no client refresh.
+If GitHub or an attempted runs fetch fails after retries, the page
+renders ErrorState with no Retry — recovery is the next site publish —
+never sample rows. The ErrorState links to All issues.
 
-Keep the generated file under **200KB** (repo artefact cap). Index rows
-are the way to stay under the cap.
+`kind: public-github-runs` is the production merge. Fixture JSON for
+the snapshot parser (`public-stand-in`, `generated-run-index`) lives
+only under tests.
+
+The live-shaped parser below stays so tests (and a denser payload later)
+do not need a rewrite. It is **not** the public-page feed.
+
+## Environment
+
+| Variable | Role |
+| --- | --- |
+| `NEXT_PUBLIC_ZEDOS_RUNS_API_BASE` | Origin for the runs list. Unset → skip that fetch. |
+| `ZEDKIT_GITHUB_READ_TOKEN` / `GITHUB_TOKEN` | Optional, server/build only. |
+
+## Failure policy
+
+GitHub is always attempted. The runs API is attempted only when the
+base is a non-empty HTTPS/HTTP URL. An invalid base is a load error
+(same as a failed fetch). Any attempted source that fails after
+`fetchJson` retries yields an empty index plus `hasLoadError`. Empty
+successful lists are the empty state (“No public runs yet”), not the
+error state. Load-error HTML is `robots` noindex; `/issues` stays on
+the sitemap so the URL still resolves.
+
+The HTML is baked at build. ErrorState has no Retry. The visitor sees
+fresh data after the next publish.
+
+`liveUrl` is kept only when it matches `HOSTED_LIVE_HREF_PREFIX` plus a
+path-safe run id.
+
+## Caps (contract)
+
+Partial lists return as success. There is no truncated flag.
+
+| Source | Cap |
+| --- | --- |
+| GitHub issues / pulls | 10 pages × 100 |
+| GitHub review fallbacks | 40 PRs |
+| Hosted runs API | 10 pages × 200 (`limit`) |
 
 ## Version
 
 Both shapes require `"version": 1`. Any other version fails closed.
 
-## Generated run index (production feed)
+## Generated run index (internal model)
 
 Required wrapper keys: `version`, `kind`, `issues`, `pullRequests`.
 Extra keys on the wrapper and on index rows are ignored
 (`requiredObject`) so a denser payload can sit in the same file.
 
 ```json
-{ "version": 1, "kind": "public-stand-in", "issues": [], "pullRequests": [] }
+{ "version": 1, "kind": "public-github-runs", "issues": [], "pullRequests": [] }
 ```
 
 An empty `issues` / `pullRequests` array is valid. Static export still
 needs a placeholder `generateStaticParams` entry; that is a site
-concern, not an exporter concern.
+concern, not a merge concern.
 
 ### Issue rows
 
@@ -87,9 +130,16 @@ Each `pullRequests[]` object:
 Unjoined review / improve / dry-run PRs stay in `pullRequests` with
 `issueNumber: null` and their runs. Never omit them.
 
-Join order for the exporter: implement metadata (`issue`, `pr_url`,
-`opened_pr_url`) first; then GitHub closing references / `Fixes #N`;
-remainder unlinked.
+Join order for the live merge: GitHub closing references (`Fixes #N`
+in the PR body) first; then runs-API `issue` / `pr`; remainder
+unlinked. GitHub review fallback (verdict + Confidence score) fills
+each null field on a **completed** `review` entry. A completed review
+with a verdict and a null score still receives the GitHub score. A
+failed or running review keeps `verdict: null` so Failed / Running
+stays visible. Fallback parse keeps the newest GitHub review that has
+both a mapped state and a `Confidence: N/10` line; a human APPROVED
+review without that line does not stamp. Each fallback fetch is one
+unpaginated request (GitHub default page size).
 
 ### Visibility (index)
 
@@ -118,12 +168,12 @@ or nested `run` / `items` / `decision` / `related` fail closed
 extra keys there are accepted (`parseVerdict`).
 
 ```json
-{ "version": 1, "kind": "public-live-runs", "reviews": [ /* hosted live rows */ ] }
+{ "version": 1, "kind": "public-live-runs", "reviews": [] }
 ```
 
-This shape stays parseable so a denser payload can land later. It is
-**not** the production feed for the public run history page. There is
-no `selected` field.
+`reviews` holds hosted live rows. This shape stays parseable so a
+denser payload can land later. It is **not** the production feed for
+the public run history page. There is no `selected` field.
 
 Optional join fields on `run` (safe integer or null / string or null;
 omit when unknown):
@@ -162,9 +212,9 @@ index; `reviews` is ignored. Do not rely on that: emit one shape.
 `run_id` / `runId` / `runIds[]` must match `^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`.
 Path segments, spaces, and `..` fail closed.
 
-## Share URL (site, not exporter)
+## Share URL (site, not merge)
 
-Issue pages pin a local `ThemeScope` from these query keys. The exporter does not emit them. An empty query inherits the site look (the identity dock is enough). Do not restore an inline preview form.
+Issue pages pin a local `ThemeScope` from these query keys. The merge does not emit them. An empty query inherits the site look (the identity dock is enough). Do not restore an inline preview form.
 
 | Key | Pins |
 | --- | --- |
@@ -177,29 +227,11 @@ Any listed key pins the whole appearance. Missing, empty, or unknown values use 
 
 Pinned URLs read `window.location.search` after mount (static export). The first paint may show the unpinned site look; that flash is accepted.
 
-## Staging ingest
+## Staging and production
 
-`deploy-dev.yml` and `deploy-epic-preview.yml` may replace
-`adapters/public-reviews.json` **before** the docs build. Both call
-`deploy/ingest-public-reviews.sh` after building `@zedtech/zedkit-core`
-(the ingest gate imports dist-only core). Set repository variable
-`PUBLIC_REVIEWS_SNAPSHOT` (Settings → Secrets and variables → Actions →
-Variables) to a runner-local path such as `/tmp/public-reviews.json`.
-Today that file is only produced by `scp` from
-`PUBLIC_REVIEWS_SNAPSHOT_REMOTE` (a path on `zed-dev`, for example
-`exports/public-reviews.json`). Without REMOTE, a fresh runner has no
-local file and always fail-opens. Do not commit a host filesystem path.
-
-- Unset `PUBLIC_REVIEWS_SNAPSHOT` or missing local file: keep the
-  checked-in stand-in and continue (fail-open).
-- `PUBLIC_REVIEWS_SNAPSHOT_REMOTE` set and `scp` fails (any exit code:
-  absent file, auth, or transport): keep the stand-in and continue
-  (fail-open). The log names the scp exit code.
-- Present but fails parse, scrub, or `assertPubliclySafe`: fail the
-  deploy (fail-closed). Secrets must not ship.
-
-`node apps/docs/scripts/copy-public-reviews-snapshot.mjs <source> <dest>`
-is the gate. The CLI requires both paths; the shared script skips the CLI
-when the local path env is unset. The epic preview ingest uses the same
-script and the same two repository variables. Production deploys do not ingest.
+`deploy-dev.yml` and `deploy-epic-preview.yml` set
+`NEXT_PUBLIC_ZEDOS_RUNS_API_BASE=https://dev.zedkit.app` on the docs
+build and may pass `GITHUB_TOKEN` to raise the GitHub rate limit.
+They do not ingest a JSON snapshot. Production `deploy-docs.yml` is
+unchanged: no runs base, no ingest.
 

@@ -287,12 +287,19 @@ describe("live docs tree", () => {
 
   it("imports catch-all docs chrome from _docs and search from the docs feature", () => {
     const page = readFileSync(join(docsRoot, "app/docs/[[...slug]]/page.tsx"), "utf8");
-    assert.match(page, /from "\.\/_docs\/docs-main-content"/);
     const layout = readFileSync(join(docsRoot, "app/docs/[[...slug]]/layout.tsx"), "utf8");
+    const main = join(docsRoot, "app/docs/[[...slug]]/_docs/docs-main-content.tsx");
+    assert.match(page, /from "\.\/_docs\/docs-main-content"/);
     assert.match(layout, /from "\.\/_docs\/docs-layout-tree\.mjs"/);
+    assert.doesNotMatch(page, /from "@\/ui\/docs-main-content"/);
+    assert.doesNotMatch(layout, /from "@\/lib\/docs-layout-tree\.mjs"/);
+    assert.ok(existsSync(main));
+    assert.match(readFileSync(main, "utf8"), /id="main-content"/);
     const provider = readFileSync(join(docsRoot, "app/provider.tsx"), "utf8");
     assert.match(provider, /import\("@\/features\/docs\/ui\/search"\)/);
     assert.doesNotMatch(provider, /components\/search/);
+    assert.equal(REQUIRED_GLOBS.includes("ui/docs-main-content.tsx"), false);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 
   it("does not leave shims at the old docs layout and search paths", () => {

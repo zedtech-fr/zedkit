@@ -44,12 +44,13 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
   `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
   today's in-flight lots still live under `ui/home/**`.
-  Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`.
+  Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
+  (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
   reviews, note-list, docs). Ports/adapters/model only where there is I/O.
 - Docs-site composed UI used by two or more domains, with no domain words:
   `components/` (chrome is `ui/site-chrome.tsx` until that lot moves). `ui/`
-  is dissolving; do not add a fifth home there.   Directory globs in
+  is dissolving; do not add a fifth home there. Directory globs in
   `REQUIRED_GLOBS` (`ui/home/**`) silently absorb new files; do not add under
   them. Drop a glob from `REQUIRED_GLOBS` when that lot moves. Order: move
   the files, regen, drop the glob, regen again.
