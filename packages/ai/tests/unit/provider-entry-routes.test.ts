@@ -115,6 +115,8 @@ describe("provider entry command and routes.md", () => {
     const readme = readFileSync(join(pkgRoot, "README.md"), "utf8");
     const setupAi = readFileSync(join(kitDir(), "skills/setup-ai/SKILL.md"), "utf8");
     const onboarding = readFileSync(join(kitDir(), "cursor-onboarding.md"), "utf8");
+    const usage = readFileSync(join(kitDir(), "usage.txt"), "utf8");
+    const musePaste = "zedkit-ai: set up this repo from what it contains";
     for (const [label, text] of [
       ["README", readme],
       ["setup-ai", setupAi],
@@ -123,6 +125,10 @@ describe("provider entry command and routes.md", () => {
       expect(text, label).toContain("does not scan `.agents/commands`");
       expect(text, label).toContain("invoke the `zedkit-ai` skill by name");
     }
+    const intro = readme.slice(0, readme.indexOf("## Upgrading from 1.1.x"));
+    expect(intro).toContain(musePaste);
+    expect(onboarding).toContain(musePaste);
+    expect(usage).toContain(musePaste);
     const readmeProviders = readme.slice(readme.indexOf("## Providers"), readme.indexOf("## Tokenomics"));
     const readmeChoices = readme.slice(readme.indexOf("## Choices worth knowing"), readme.indexOf("## API"));
     const providers = setupAi.slice(setupAi.indexOf("## Providers"), setupAi.indexOf("## Tokenomics"));
@@ -131,5 +137,12 @@ describe("provider entry command and routes.md", () => {
     expect(readmeChoices).toContain("does not scan `.agents/commands`");
     expect(providers).toMatch(/`muse`[^\n]*does not scan `\.agents\/commands`/);
     expect(write).toMatch(/`muse`[^\n]*does not scan `\.agents\/commands`/);
+  });
+
+  it("does not publish a changeset that maps guides MDX to /docs/ai/setup", () => {
+    const changeset = readFileSync(join(pkgRoot, "../..", ".changeset/ai-provider-entry-routes.md"), "utf8");
+    expect(changeset).not.toMatch(/guides MDX to `\/docs\/ai\/setup`/);
+    expect(changeset).toMatch(/guides MDX to `\/docs\/<slug>`/);
+    expect(changeset).toContain("`/docs/ai/setup`");
   });
 });

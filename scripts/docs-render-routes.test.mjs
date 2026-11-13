@@ -48,7 +48,7 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
-test("maps AI setup sources and guides MDX to the human walkthrough route", () => {
+test("maps AI setup sources to /docs/ai/setup and guides MDX to /docs/<slug>", () => {
   assert.deepEqual(
     routesFromFiles([
       "packages/ai/kit/cursor-onboarding.md",

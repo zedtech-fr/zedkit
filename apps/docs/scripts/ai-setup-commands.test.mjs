@@ -58,8 +58,11 @@ const SOURCES = [
 
 test("AI setup guide pins the Muse skill-name fallback", () => {
   const guide = read("apps/docs/prose/guides/ai/setup.mdx");
+  assert.match(guide, /zedkit-ai: set up this repo from what it contains/);
   assert.match(guide, /invoke the `zedkit-ai` skill by name/);
   assert.match(guide, /does not scan `\.agents\/commands`/);
+  assert.match(guide, /Muse shows no `\/zedkit-ai` command/);
+  assert.doesNotMatch(guide, /Muse has no `\/zedkit-ai` command/);
 });
 
 test("ai setup docs name real CLI commands and flags", () => {
@@ -111,6 +114,12 @@ test("an invalid pinned command and flag are surfaced for rejection", () => {
 
 test("a slash-command /zedkit-ai request is not a CLI subcommand", () => {
   const parsed = cliInvocations("run `/zedkit-ai set up this repo from what it contains`");
+  assert.deepEqual(parsed.commands, []);
+  assert.deepEqual(parsed.flags, []);
+});
+
+test("a Muse skill paste is not a CLI subcommand", () => {
+  const parsed = cliInvocations("paste `zedkit-ai: set up this repo from what it contains`");
   assert.deepEqual(parsed.commands, []);
   assert.deepEqual(parsed.flags, []);
 });

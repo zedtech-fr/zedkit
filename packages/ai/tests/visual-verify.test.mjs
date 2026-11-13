@@ -1,7 +1,8 @@
 // Original work by the same author.
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_LOOKS,
@@ -247,7 +248,20 @@ describe("visual-verify helpers", () => {
     expect(routesFromFiles(["apps/docs/app/docs/[[...slug]]/page.tsx"])).toEqual([]);
   });
 
-  it("maps AI setup sources and guides MDX to the human walkthrough route", () => {
+  it("documents the --changed route map and clipped skip list without overstating docs-render equivalence", () => {
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("packages/ai/kit/cursor-onboarding.md");
+    expect(skill).toContain("apps/docs/public/ai/setup.md");
+    expect(skill).toContain("skip `snippets/`");
+    expect(skill).toContain("data-allow-clip");
+    expect(skill).toContain("same idea as docs-render");
+    expect(skill).not.toMatch(/same as docs-render/);
+  });
+
+  it("maps AI setup sources to /docs/ai/setup and guides MDX to /docs/<slug>", () => {
     expect(
       routesFromFiles([
         "packages/ai/kit/cursor-onboarding.md",

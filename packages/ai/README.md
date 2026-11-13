@@ -36,6 +36,7 @@ Or skip the devDependency for a first try: `npx @zedtech/zedkit-ai setup` downlo
 ```sh
 npx @zedtech/zedkit-ai setup --provider cursor   # preset setup + adopt; wire Cursor
 # in your agent: /zedkit-ai set up this repo from what it contains   (or: "run the setup-ai skill")
+# Muse: paste "zedkit-ai: set up this repo from what it contains"
 ```
 
 Use `cursor`, `claude`, `codex`, `muse`, or comma-separated names; omit `--provider` to wire every supported runtime. **`setup` defaults to the `setup` preset** (discovery skills and agents for `/zedkit-ai`); override with `--preset starter|setup|core|full`. When you already added the package: `npx @zedtech/zedkit-ai setup . --provider cursor`.

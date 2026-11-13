@@ -22,7 +22,7 @@ This guide targets `@zedtech/zedkit-ai` **1.2.0** (the current published version
 
 1. Add `@zedtech/zedkit-ai@1.2.0` if missing or not exactly at 1.2.0 (`pnpm add -D -w --save-exact` at a pnpm workspace root when `pnpm-workspace.yaml` exists).
 2. Run `npx @zedtech/zedkit-ai@1.2.0 setup --provider cursor` (**`setup` preset by default**, adopt mode — keeps your files on collision; override with `--preset starter|setup|core|full` if needed). Use `--provider muse`, `claude`, `codex`, comma-separated names, or `all` to match your tool.
-3. Run **`/zedkit-ai`** (or the `setup-ai` skill) — phases A–E (audit, **batched discovery interview** — answer or delegate, do not skip — build `product.md`, domain rules, personas, `design.md` when relevant, repo skills, score and learn), then verify and report. On Muse, invoke the `zedkit-ai` skill by name (Muse does not scan `.agents/commands`).
+3. Run **`/zedkit-ai`** (or the `setup-ai` skill) — phases A–E (audit, **batched discovery interview** — answer or delegate, do not skip — build `product.md`, domain rules, personas, `design.md` when relevant, repo skills, score and learn), then verify and report. On Muse, paste **`zedkit-ai: set up this repo from what it contains`**; invoke the `zedkit-ai` skill by name — Muse does not scan `.agents/commands`.
 4. Run `npx @zedtech/zedkit-ai@1.2.0 validate` until stdout is `ok`.
 
 **Time:** about 15–45 minutes for a typical app repo once the agent starts (see the setup-ai skill intro).
@@ -65,7 +65,7 @@ and runs `npx @zedtech/zedkit-ai@1.2.0 sync`.
 | --- | --- |
 | `validate` not `ok` | Run from repo root; fix each `path: message` line or re-run `setup` after resolving collisions. |
 | Agent skips `/zedkit-ai` | Paste the prompt again; mechanical install alone is not done. |
-| Muse has no `/zedkit-ai` command | Invoke the `zedkit-ai` skill by name. Muse does not scan `.agents/commands`. |
+| Muse shows no `/zedkit-ai` command | Paste **`zedkit-ai: set up this repo from what it contains`**. Muse does not scan `.agents/commands`. |
 | Unknown provider | Use `cursor`, `claude`, `codex`, `muse`, `all`, or comma-separated names only. |
 
 ## Next steps

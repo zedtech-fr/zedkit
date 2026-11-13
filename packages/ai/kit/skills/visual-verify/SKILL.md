@@ -19,9 +19,10 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   `HEAD`.
 - **Routes:** `--changed` or `--routes auto` (diff via the route map: App
   Router `page` files, `apps/docs/prose/guides/**/*.mdx` → `/docs/<slug>`
-  (`index` → `/docs`), AI setup sources `cursor-onboarding.md` and
-  `public/ai/setup.md` → `/docs/ai/setup`, optional `--manifest` `source`
-  → `/docs/ui/<slug>`) union `--routes`. Unknown files add no extra route.
+  (`index` → `/docs`; skip `snippets/`), AI setup sources
+  `packages/ai/kit/cursor-onboarding.md` and `apps/docs/public/ai/setup.md`
+  → `/docs/ai/setup`, optional `--manifest` `source` → `/docs/ui/<slug>`)
+  union `--routes`. Unknown files add no extra route.
   A host fixed set is passed by the host `visual:verify` script (or
   equivalent), not invented here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
@@ -78,7 +79,7 @@ screenshot on the **default** tree, then clicks:
   `scrollHeight` past the box, or an unintended ellipsis; skip
   `overflow: auto|scroll`, Radix `[data-radix-scroll-area-viewport]`,
   `data-allow-clip`, `[data-word-roll-clip]`, PRE/CODE, and visually
-  hidden nodes: `sr-only`, clip-rect 0, 1×1 boxes — same as docs-render
+  hidden nodes: `sr-only`, clip-rect 0, 1×1 boxes — same idea as docs-render
   `clipped-text.mjs` plus the kit word-roll animation mask)
 - 0 `pageerror`, 0 console errors, 0 responses ≥ 400 (favicon 404s ignored)
 - axe `wcag2a` / `wcag2aa` / `wcag21aa` / `wcag22aa` with 0 **new**
