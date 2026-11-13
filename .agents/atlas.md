@@ -70,7 +70,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
 | UI tokens, scales, container sizing | `.agents/atlas/ui-primitives.md` | Declared scales; new `:root` colour roles must copy into the mist reset. | `packages/ui/CATALOG.md` | 2026-11-11 |
 | Registry copy theme (shadcn path) | `.agents/atlas/registry.md` | cssVars are colour HSL roles only; do not double-wrap `color-*`. | `scripts/registry/theme-tokens.mjs` | 2026-11-11 |
-| Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. | `resolve-ui-source.mjs` | 2026-11-08 |
+| Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. A new relative import from a staged brick must be staged too. | `resolve-ui-source.mjs` | 2026-11-13 |
 | UI source mixed folders | `.agents/atlas/ui-primitives.md` | Families under `src/`; registry keys unique basename. | `packages/ui/src/index.ts` | 2026-11-11 |
 | Sanitized Markdown host | `.agents/atlas/ui-primitives.md` | Closed `{children, className}`; callers must not disable sanitize. | `Render Markdown without raw HTML` | 2026-11-11 |
 | Transcript rows and burst grouping | `.agents/atlas/ui-primitives.md` | Native `<details>`; do not import `Stack` (pulls `layout.tsx`). | `Render a live assistant transcript from rows` | 2026-11-11 |
