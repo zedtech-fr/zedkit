@@ -10,7 +10,7 @@ import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { isCatalogPath, isFoundationsPath, isHomePath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
+import { isCatalogPath, isFoundationsPath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
 const HEADER_MARK = {
   home: { "data-home-header": "" },
@@ -140,17 +140,23 @@ function FoundationsDesktopHeader() {
   );
 }
 
-/** Marketing header slot: phone header below md. Home and Catalog use the mockup desktop chrome; other routes keep fumadocs Header. */
-export function MarketingSiteHeader() {
-  const pathname = usePathname();
-  const home = isHomePath(pathname);
-  const catalog = isCatalogPath(pathname);
+/** Home header slot: phone header below md; desktop is brand + Get started, no search. */
+export function HomeMarketingHeader() {
   return (
     <>
       <MobileHeader />
-      {home ? (
-        <HomeDesktopHeader />
-      ) : catalog ? (
+      <HomeDesktopHeader />
+    </>
+  );
+}
+
+/** Marketing header slot: phone header below md. Catalog uses the mockup desktop chrome; other routes keep fumadocs Header. */
+export function MarketingSiteHeader() {
+  const catalog = isCatalogPath(usePathname());
+  return (
+    <>
+      <MobileHeader />
+      {catalog ? (
         <CatalogDesktopHeader />
       ) : (
         <Header className="max-md:hidden" />

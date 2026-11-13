@@ -42,8 +42,8 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/<route>/_<name>/` (view, `sections/`, hooks, `i18n/`, page CSS
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
-  `app/(home)/_home/`. Do not create `app/(home)/` until the home move lot;
-  today's in-flight lots still live under `ui/home/**`.
+  `app/(home)/_home/`. Remaining home files still live under `ui/home/**`
+  until those move lots.
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
