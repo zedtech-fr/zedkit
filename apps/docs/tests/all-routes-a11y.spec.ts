@@ -38,10 +38,29 @@ for (const route of routes) {
       await page.setViewportSize({ width: view.width, height: view.height });
       await page.addInitScript((theme) => localStorage.setItem("theme", theme), view.theme);
       await gotoStaticRoute(page, route);
-      // The docs header label cross-fades when scroll-spy settles; let every transition end before reading colours.
-      await page.evaluate(() =>
-        Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
+      // View timelines and infinite loops never settle; cap so / cannot hang.
+      await page.evaluate(
+        () =>
+          Promise.race([
+            Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
+            new Promise((resolve) => {
+              setTimeout(resolve, 2000);
+            }),
+          ]),
       );
+      const wantDark = view.theme === "dark";
+      const themeApplied = await page
+        .waitForFunction((want) => document.documentElement.classList.contains("dark") === want, wantDark, {
+          timeout: 3000,
+        })
+        .then(
+          () => true,
+          () => false,
+        );
+      if (!themeApplied) {
+        const dark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
+        problems.push(`${route} @${view.width}/${view.theme}: html.dark=${dark}`);
+      }
       let builder = new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]);
       if (A11Y_AXE_EXCLUDES) builder = builder.exclude(A11Y_AXE_EXCLUDES);
       const { violations } = await builder.analyze();
