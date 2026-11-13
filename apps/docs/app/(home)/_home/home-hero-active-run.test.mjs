@@ -163,6 +163,38 @@ test("live URL allowlist matches the hosted console path", () => {
   assert.equal(sanitizeHeroLiveUrl("https://evil.example/live/20261113T120000Z-hero1"), null);
 });
 
+test("live URL allowlist drops query, hash, port, userinfo, http, bad id, empty, and envelope evil", () => {
+  const ok = hostedLive();
+  assert.equal(sanitizeHeroLiveUrl(`${ok}?token=secret`), null);
+  assert.equal(sanitizeHeroLiveUrl(`${ok}#frag`), null);
+  assert.equal(sanitizeHeroLiveUrl(ok.replace("dev.zedkit.app", "dev.zedkit.app:8443")), null);
+  assert.equal(sanitizeHeroLiveUrl(ok.replace("https://", "https://user:pass@")), null);
+  assert.equal(sanitizeHeroLiveUrl(ok.replace("https:", "http:")), null);
+  assert.equal(sanitizeHeroLiveUrl(`${ok}/extra`), null);
+  assert.equal(sanitizeHeroLiveUrl(hostedLive("..")), null);
+  assert.equal(sanitizeHeroLiveUrl(hostedLive("has space")), null);
+  assert.equal(sanitizeHeroLiveUrl(""), null);
+  assert.equal(sanitizeHeroLiveUrl("   "), null);
+  assert.equal(sanitizeHeroLiveUrl(null), null);
+  assert.equal(sanitizeHeroLiveUrl(`${ok}/`), ok);
+  const evil = parseActiveRunsEnvelope(
+    envelope([runRow({ issue: null, pr: null, liveUrl: "https://evil.example/live/20261113T120000Z-hero1" })]),
+  );
+  assert.equal(evil.ok, true);
+  assert.equal(evil.value[0]?.liveUrl, null);
+  assert.equal(
+    followRunHref({
+      runId: "20261113T120000Z-hero1",
+      issue: null,
+      pr: null,
+      title: "x",
+      liveUrl: "https://evil.example/live/20261113T120000Z-hero1",
+      steps: [],
+    }),
+    null,
+  );
+});
+
 test("empty runs and inactive or stale rows fall back to no live card", () => {
   assert.equal(selectActiveHeroRun(parseActiveRunsEnvelope(envelope([])).value), null);
   assert.equal(selectActiveHeroRun(parseActiveRunsEnvelope(envelope([runRow({ active: false })])).value), null);
@@ -208,6 +240,18 @@ test("malformed envelopes are errors so the card can keep the placeholder", () =
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ title: 12 })])).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ issue: 0 })])).ok, false);
   assert.equal(parseActiveRunsEnvelope(envelope([runRow({ pr: -1 })])).ok, false);
+  assert.equal(parseActiveRunsEnvelope(envelope([runRow({ steps: [...steps("build"), ...Array.from({ length: 28 }, () => step("review", "done"))] })])).ok, false);
+});
+
+test("titles clip on Unicode scalar count so an emoji at the limit is not split", () => {
+  const title = `${"a".repeat(159)}🙂`;
+  const parsed = parseActiveRunsEnvelope(envelope([runRow({ title })]));
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.value[0]?.title, title);
+  const long = `${"a".repeat(160)}🙂`;
+  const clipped = parseActiveRunsEnvelope(envelope([runRow({ title: long })]));
+  assert.equal(clipped.ok, true);
+  assert.equal(clipped.value[0]?.title, "a".repeat(160));
 });
 
 test("polling continues while not paused when a base is resolvable", () => {
@@ -227,6 +271,13 @@ test("live status copy names the active or failed step", () => {
   );
   const failed = parseActiveRunsEnvelope(envelope([runRow({ steps: failedSteps })])).value[0];
   assert.match(liveUpdateMessage(failed, copy), /Failed: Check/);
+  assert.match(liveUpdateMessage(failed, copy, true), /Failed: Check/);
+  assert.doesNotMatch(liveUpdateMessage(failed, copy, true), /Live updates paused/);
+  const idleSteps = steps("build").map((row) => ({ ...row, status: "done", summary: `${row.key} finished` }));
+  const idle = parseActiveRunsEnvelope(envelope([runRow({ steps: idleSteps })])).value[0];
+  assert.equal(liveUpdateMessage(idle, copy), `Showing an active run: ${idle.title}`);
+  assert.ok(copy.playLive.includes(copy.play));
+  assert.ok(copy.pauseLive.includes(copy.pause));
 });
 
 test("fetch maps an active run and falls back when the list is empty", async () => {
@@ -263,12 +314,16 @@ async function flushMicrotasks() {
 test("live poll ticks immediately and reschedules after empty, error, throw, and success", async () => {
   const calls = [];
   const queued = [];
+  const errors = [];
   let live = "unset";
   let settle;
   const stop = startHeroLivePoll({
     delayMs: ACTIVE_HERO_POLL_MS,
     setLive: (value) => {
       live = value;
+    },
+    onError: () => {
+      errors.push(live);
     },
     setTimeoutFn: (fn, ms) => {
       queued.push({ fn, ms });
@@ -298,6 +353,7 @@ test("live poll ticks immediately and reschedules after empty, error, throw, and
   await flushMicrotasks();
   assert.equal(live, null);
   assert.equal(queued.length, 1);
+  assert.deepEqual(errors, [null]);
 
   queued.shift().fn();
   assert.deepEqual(calls, [0, 1, 2]);
@@ -305,6 +361,7 @@ test("live poll ticks immediately and reschedules after empty, error, throw, and
   await flushMicrotasks();
   assert.equal(live, null);
   assert.equal(queued.length, 1);
+  assert.deepEqual(errors, [null, null]);
 
   queued.shift().fn();
   assert.deepEqual(calls, [0, 1, 2, 3]);
@@ -353,7 +410,34 @@ test("fetch failure leaves the caller with an error to keep the placeholder", as
   });
   assert.equal(http.ok, false);
 
+  const malformed = await fetchActiveHeroRun({
+    envValue: "https://dev.zedkit.app",
+    fetch: async () => jsonResponse(200, { hello: "nope" }),
+    retries: 0,
+  });
+  assert.equal(malformed.ok, false);
+
   const noBase = await fetchActiveHeroRun({ hostname: "localhost", retries: 0 });
   assert.equal(noBase.ok, true);
   assert.equal(noBase.value, null);
+});
+
+test("invalid timeout or retries fail closed without throwing", async () => {
+  const timeout = await fetchActiveHeroRun({
+    envValue: "https://dev.zedkit.app",
+    timeoutMs: 0,
+    fetch: async () => {
+      throw new Error("must not fetch");
+    },
+  });
+  assert.equal(timeout.ok, false);
+
+  const retries = await fetchActiveHeroRun({
+    envValue: "https://dev.zedkit.app",
+    retries: -1,
+    fetch: async () => {
+      throw new Error("must not fetch");
+    },
+  });
+  assert.equal(retries.ok, false);
 });

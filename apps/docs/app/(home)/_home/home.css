@@ -134,6 +134,11 @@
   z-index: 1;
 }
 
+/* Two-line title slot so a live swap does not grow the card. */
+#home-page [data-hero-run-title] {
+  min-height: 2lh;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) {
   /* 1. Load: the lead, one block at a time. Opacity and a short rise; `backwards`, so nothing is left applied. */

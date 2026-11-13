@@ -109,20 +109,13 @@ export function nextLivePollMs(paused: boolean, base: string | null): number | n
   return ACTIVE_HERO_POLL_MS;
 }
 
-function asTitle(value: unknown): string | null | undefined {
+function asClippedText(value: unknown, max: number): string | null | undefined {
   if (value === undefined || value === null) return null;
   if (typeof value !== "string") return undefined;
   const trimmed = value.trim();
   if (trimmed === "") return null;
-  return trimmed.length > TITLE_MAX ? trimmed.slice(0, TITLE_MAX) : trimmed;
-}
-
-function asSummary(value: unknown): string | null | undefined {
-  if (value === undefined || value === null) return null;
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  if (trimmed === "") return null;
-  return trimmed.length > SUMMARY_MAX ? trimmed.slice(0, SUMMARY_MAX) : trimmed;
+  const chars = [...trimmed];
+  return chars.length > max ? chars.slice(0, max).join("") : trimmed;
 }
 
 function asStepStatus(value: unknown): HeroStepStatus | null {
@@ -134,13 +127,13 @@ function parseStep(value: Record<string, unknown>, expected: HeroStepKey): HeroR
   if (value.key !== expected) return null;
   const status = asStepStatus(value.status);
   if (status === null) return null;
-  const summary = asSummary(value.summary);
+  const summary = asClippedText(value.summary, SUMMARY_MAX);
   if (summary === undefined) return null;
   return { key: expected, status, summary };
 }
 
 function parseSteps(value: unknown): HeroRunStep[] | null {
-  if (!Array.isArray(value)) return null;
+  if (!Array.isArray(value) || value.length > 32) return null;
   const byKey = new Map<HeroStepKey, HeroRunStep>();
   for (const item of value) {
     if (!isRecord(item)) return null;
@@ -165,7 +158,7 @@ function parseHeroRun(value: unknown): HeroActiveRun | null {
   if (typeof value.runId !== "string" || !RUN_ID_PATTERN.test(value.runId)) return null;
   const issue = asSafeInt(value.issue);
   const pr = asSafeInt(value.pr);
-  const title = asTitle(value.title);
+  const title = asClippedText(value.title, TITLE_MAX);
   if (issue === undefined || pr === undefined || title === undefined) return null;
   if (typeof value.active !== "boolean" || typeof value.stale !== "boolean") return null;
   const steps = parseSteps(value.steps);
@@ -233,8 +226,10 @@ export function heroRunTitle(
 export function followRunHref(run: HeroActiveRun): FollowRunHref | null {
   if (run.issue !== null) return { href: `/issues#issue-${run.issue}`, offPath: false };
   if (run.pr !== null) return { href: `/issues#pr-${run.pr}`, offPath: false };
-  if (run.liveUrl !== null) return { href: run.liveUrl, offPath: true };
-  return null;
+  if (run.liveUrl === null) return null;
+  const href = sanitizeHeroLiveUrl(run.liveUrl);
+  if (href === null) return null;
+  return { href, offPath: true };
 }
 
 export type HeroLiveCopy = HeroStepCopy & {
@@ -261,6 +256,7 @@ export type HeroLivePollOptions = {
   delayMs: number;
   poll: (signal: AbortSignal) => Promise<Result<HeroActiveRun | null, Error>>;
   setLive: (run: HeroActiveRun | null) => void;
+  onError?: () => void;
   setTimeoutFn?: (fn: () => void, ms: number) => HeroLivePollTimer;
   clearTimeoutFn?: (id: HeroLivePollTimer) => void;
 };
@@ -284,8 +280,12 @@ export function startHeroLivePoll(options: HeroLivePollOptions): () => void {
       .then((result) => {
         if (cancelled || controller.signal.aborted) return;
         if (result.ok) options.setLive(result.value);
+        else options.onError?.();
       })
-      .catch(() => undefined)
+      .catch(() => {
+        if (cancelled || controller.signal.aborted) return;
+        options.onError?.();
+      })
       .then(schedule, schedule);
   };
 
@@ -315,10 +315,18 @@ export async function fetchActiveHeroRun(
     ...(options.hostname === undefined ? {} : { hostname: options.hostname }),
   });
   if (base === null) return ok(null);
+  const timeoutMs = options.timeoutMs ?? ACTIVE_HERO_TIMEOUT_MS;
+  const retries = options.retries ?? 0;
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 60_000) {
+    return err(new PermanentError("hero-runs: invalid timeout"));
+  }
+  if (!Number.isFinite(retries) || retries < 0 || retries > 5) {
+    return err(new PermanentError("hero-runs: invalid retries"));
+  }
   const init: FetchJsonOptions = {
     cache: "no-store",
-    timeoutMs: options.timeoutMs ?? ACTIVE_HERO_TIMEOUT_MS,
-    retries: options.retries ?? 0,
+    timeoutMs,
+    retries,
     ...(options.fetch === undefined ? {} : { fetch: options.fetch }),
     ...(options.sleep === undefined ? {} : { sleep: options.sleep }),
     ...(options.signal === undefined ? {} : { signal: options.signal }),

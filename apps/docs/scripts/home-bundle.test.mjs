@@ -116,7 +116,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(illustration, /copy\.viewPublicRun/);
   assert.match(illustration, /copy\.viewPublicRunNamed/);
   assert.match(illustration, /copy\.followRunNamed/);
-  assert.match(illustration, /pulse=\{dot\.pulse && !paused\}/);
+  assert.match(illustration, /pulse=\{dot\.pulse && !paused && motionOk\}/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
   assert.match(copy, /Check/);
@@ -163,6 +163,14 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(illustration, /aria-pressed=\{paused\}/);
   assert.match(copy, /pauseMotion: "Pause illustration motion"/);
   assert.match(copy, /playMotion: "Play illustration motion"/);
+  assert.match(copy, /playLive: "Play live updates"/);
+  assert.match(copy, /pauseLive: "Pause live updates"/);
+  assert.match(copy, /liveCaptionStale:/);
+  assert.match(illustration, /STEP_STATUS_COPY\[step\.status\]/);
+  assert.match(illustration, /<StatusDot /);
+  assert.match(illustration, /data-hero-run-title/);
+  assert.match(illustration, /copy\.liveCaptionStale/);
+  assert.match(illustration, /copy\.liveReverted/);
   assert.doesNotMatch(illustration, /<span className="inline-flex flex-wrap items-center gap-icon">/);
   assert.match(nav, /text: "AI"/);
   assert.match(nav, /text: "UI"/);

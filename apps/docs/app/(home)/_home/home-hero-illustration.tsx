@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Badge, Button, Stack, StatusDot, Surface, Text, useMotionPreference } from "@zedtech/zedkit-ui";
 import { OffPathLink } from "@/ui/off-path-link";
 import {
@@ -68,7 +68,7 @@ function PlaceholderRows() {
   );
 }
 
-function LiveRows({ run, paused }: { run: HeroActiveRun; paused: boolean }) {
+function LiveRows({ run, paused, motionOk }: { run: HeroActiveRun; paused: boolean; motionOk: boolean }) {
   return (
     <ol className="trim-margin flex list-none flex-col">
       {run.steps.map((step) => {
@@ -84,7 +84,7 @@ function LiveRows({ run, paused }: { run: HeroActiveRun; paused: boolean }) {
               {heroStepLabel(step.key, copy)}
             </Text>
             <div className="inline-flex content-shrink flex-wrap items-center gap-icon">
-              <StatusDot tone={dot.tone} pulse={dot.pulse && !paused} />
+              <StatusDot tone={dot.tone} pulse={dot.pulse && !paused && motionOk} />
               <Text as="span" variant="muted" className="line-clamp-1">
                 {STEP_STATUS_COPY[step.status]}
                 {step.summary === null ? "" : ` · ${step.summary}`}
@@ -132,28 +132,74 @@ function LiveLinks({ run }: { run: HeroActiveRun }) {
   );
 }
 
+function useRestoreFocusOnLiveSwap(liveKey: string | null) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const pauseRef = useRef<HTMLButtonElement>(null);
+  const focusInside = useRef(false);
+
+  useLayoutEffect(() => {
+    if (!focusInside.current) return;
+    const root = cardRef.current;
+    const pause = pauseRef.current;
+    if (root === null || pause === null) return;
+    const active = document.activeElement;
+    if (active instanceof Node && root.contains(active)) return;
+    pause.focus();
+  }, [liveKey]);
+
+  return {
+    cardRef,
+    pauseRef,
+    onFocusCapture: () => {
+      focusInside.current = true;
+    },
+    onBlurCapture: (event: { currentTarget: HTMLElement; relatedTarget: EventTarget | null }) => {
+      const next = event.relatedTarget;
+      if (next instanceof Node && event.currentTarget.contains(next)) return;
+      focusInside.current = false;
+    },
+  };
+}
+
 function RunCard({
   motionOk,
   paused,
   live,
+  stale,
   onToggle,
 }: {
   motionOk: boolean;
   paused: boolean;
   live: HeroActiveRun | null;
+  stale: boolean;
   onToggle: () => void;
 }) {
+  const liveKey = live?.runId ?? null;
+  const focus = useRestoreFocusOnLiveSwap(liveKey);
   const showPause = motionOk || live !== null;
   const pauseLabel = live === null ? (paused ? copy.playMotion : copy.pauseMotion) : paused ? copy.playLive : copy.pauseLive;
   const control = paused ? copy.play : copy.pause;
   const title = live === null ? copy.emptyStateTitle : heroRunTitle(live, copy);
-  const caption = live === null ? copy.caption : paused ? copy.liveCaptionPaused : copy.liveCaption;
+  const caption =
+    live === null ? copy.caption : paused ? copy.liveCaptionPaused : stale ? copy.liveCaptionStale : copy.liveCaption;
 
   return (
-    <Surface variant="glass" elevation={3} radius="xl" padding="card" className="relative flex flex-col gap-stack-md">
+    <Surface
+      ref={focus.cardRef}
+      variant="glass"
+      elevation={3}
+      radius="xl"
+      padding="card"
+      className="relative flex flex-col gap-stack-md"
+      onFocusCapture={focus.onFocusCapture}
+      onBlurCapture={focus.onBlurCapture}
+    >
       <Stack direction="horizontal" gap="sm" className="justify-between">
-        <Text className="line-clamp-2 font-semibold wrap-anywhere">{title}</Text>
+        <Text data-hero-run-title="" className="line-clamp-2 font-semibold wrap-anywhere">
+          {title}
+        </Text>
         <Button
+          ref={focus.pauseRef}
           type="button"
           variant="ghost"
           size="sm"
@@ -167,7 +213,7 @@ function RunCard({
           {control}
         </Button>
       </Stack>
-      {live === null ? <PlaceholderRows /> : <LiveRows run={live} paused={paused} />}
+      {live === null ? <PlaceholderRows /> : <LiveRows run={live} paused={paused} motionOk={motionOk} />}
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
         {caption}
       </Text>
@@ -176,8 +222,9 @@ function RunCard({
   );
 }
 
-function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
+function useActiveHeroRun(paused: boolean): { live: HeroActiveRun | null; stale: boolean } {
   const [live, setLive] = useState<HeroActiveRun | null>(null);
+  const [stale, setStale] = useState(false);
 
   useEffect(() => {
     const envValue = process.env.NEXT_PUBLIC_ZEDOS_RUNS_API_BASE;
@@ -189,7 +236,11 @@ function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
     if (delay === null) return;
     return startHeroLivePoll({
       delayMs: delay,
-      setLive,
+      setLive: (run) => {
+        setStale(false);
+        setLive(run);
+      },
+      onError: () => setStale(true),
       poll: (signal) =>
         fetchActiveHeroRun({
           ...(envValue === undefined ? {} : { envValue }),
@@ -199,19 +250,23 @@ function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
     });
   }, [paused]);
 
-  return live;
+  return { live, stale };
 }
 
 /**
  * Site-owned high-value glass illustration. Client-fetches one active run
  * and swaps in the live card; empty or stale lists return to the placeholder.
- * A fetch or parse error keeps the last live card (does not clear).
+ * A fetch or parse error keeps the last live card (does not clear) and marks it stale.
  * Pause freezes CSS step motion and live polling (no fetch while paused).
  */
 export function HomeHeroIllustration() {
   const motionOk = useMotionPreference() === "no-preference";
   const [paused, setPaused] = useState(false);
-  const live = useActiveHeroRun(paused);
+  const { live, stale } = useActiveHeroRun(paused);
+  const hadLive = useRef(false);
+  if (live !== null) hadLive.current = true;
+  const liveStatus =
+    live === null ? (hadLive.current ? copy.liveReverted : "") : liveUpdateMessage(live, copy, paused);
 
   return (
     <div
@@ -225,7 +280,7 @@ export function HomeHeroIllustration() {
       className="relative content-shrink overflow-clip"
     >
       <p role="status" className="sr-only">
-        {live === null ? "" : liveUpdateMessage(live, copy, paused)}
+        {liveStatus}
       </p>
       <div
         {...HOME_PARALLAX_SCROLL_PROPS}
@@ -240,6 +295,7 @@ export function HomeHeroIllustration() {
         motionOk={motionOk}
         paused={paused}
         live={live}
+        stale={stale}
         onToggle={() => setPaused((value) => !value)}
       />
     </div>

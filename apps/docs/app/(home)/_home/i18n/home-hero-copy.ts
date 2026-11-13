@@ -18,6 +18,8 @@ export const homeHeroCopy = {
     viewPublicRunNamed: (title: string) => `View a public run: ${title}`,
     liveCaption: "Showing an active run.",
     liveCaptionPaused: "Live updates paused.",
+    liveCaptionStale: "Could not refresh. Showing the last active run.",
+    liveReverted: "The live run ended. Showing the illustration.",
     stageLabel: "Run illustration",
     followRun: "View this run",
     followRunNamed: (title: string) => `View this run: ${title}`,
