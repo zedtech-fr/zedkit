@@ -221,6 +221,34 @@
           "seeAlso": [
             "Route an agent call to a model and effort from a policy file"
           ]
+        },
+        {
+          "need": "Screenshot routes and fail on axe, overflow, and clipped text",
+          "import": "`@zedtech/zedkit-ai` (CLI bin, not a JavaScript module)",
+          "wraps": "`@playwright/test`, `@axe-core/playwright`",
+          "status": "alpha",
+          "shortName": "EvidenceCli",
+          "audience": "Agents finishing Visual work who need one host command for screenshots and blocking measures.",
+          "purpose": "Screenshot a route matrix, run axe, overflow and clipped-text checks, and write a run record plus summary.md.",
+          "whenToUse": "After Visual work, before pasting the PR Evidence table, on a served origin or a static export.",
+          "whenNotToUse": "For a docs-site e2e journey — use the host Playwright specs instead. Playwright and axe stay optional peers.",
+          "derivedFrom": null,
+          "example": "// package.json\n{\n  \"scripts\": {\n    \"visual:verify\": \"zedkit-ai evidence --dir ./out --routes auto --out evidence/run\"\n  }\n}",
+          "examples": [
+            {
+              "title": "Simple",
+              "code": "// package.json\n{\n  \"scripts\": {\n    \"visual:verify\": \"zedkit-ai evidence --dir ./out --routes auto --out evidence/run\"\n  }\n}"
+            }
+          ],
+          "adoption": {
+            "kind": "bin",
+            "commands": [
+              "zedkit-ai evidence"
+            ]
+          },
+          "seeAlso": [
+            "Run one gate command and keep a log that setup validation accepts"
+          ]
         }
       ]
     },

@@ -9,13 +9,17 @@ const sinks: Sinks = {
 };
 const [command, ...rest] = process.argv.slice(2);
 
-// `gate` and `visual-verify` launch child processes / a browser, so they are async.
+// `gate` and `visual-verify` / `evidence` launch child processes / a browser, so they are async.
 if (command === "gate") process.exitCode = await gateMain(rest, sinks);
-else if (command === "visual-verify") {
+else if (command === "visual-verify" || command === "evidence") {
   const mod = (await import(
     new URL("../scripts/visual-verify.mjs", import.meta.url).href
   )) as {
-    visualVerifyMain: (args: string[], next: Sinks) => Promise<number>;
+    visualVerifyMain: (
+      args: string[],
+      next: Sinks,
+      deps?: { command?: string },
+    ) => Promise<number>;
   };
-  process.exitCode = await mod.visualVerifyMain(rest, sinks);
+  process.exitCode = await mod.visualVerifyMain(rest, sinks, { command });
 } else process.exitCode = main(process.argv.slice(2), sinks);
