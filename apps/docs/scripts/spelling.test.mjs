@@ -14,11 +14,10 @@ const ROOT = join(APP, "..", "..");
 const COPY_FILE_RELATIVE = [
   "components/i18n/adoption-copy.ts",
   "components/i18n/identity-assistant-copy.ts",
-  "components/i18n/identity-editor-copy.ts",
-  "app/i18n/identity-editor-copy.ts",
+  "features/identity/editor/i18n/identity-editor-copy.ts",
   "components/demos/i18n/brand-logo-copy.ts",
   "components/demos/i18n/scroll-scenes-copy.ts",
-  "features/identity/ui/identity-editor-fields.tsx",
+  "features/identity/editor/ui/identity-editor-fields.tsx",
   "features/identity/ui/identity-editor-search.ts",
   "lib/maturity-status.ts",
 ];

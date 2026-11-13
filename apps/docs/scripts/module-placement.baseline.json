@@ -6,8 +6,6 @@
   ],
   "singleOwner": [
     "components/i18n/identity-assistant-copy.ts",
-    "components/i18n/identity-editor-copy.ts",
-    "components/identity-editor-export.tsx",
     "lib/identity-export-css.ts",
     "lib/identity-recipe.ts",
     "lib/identity-token-css-vars.ts",
