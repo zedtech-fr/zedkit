@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const { typeRoleClass } = await import("../../../packages/ui/src/typography/type-roles.ts");
-const { hslTripletToHex } = await import("../lib/identity-simple-value.ts");
+const { hslTripletToHex } = await import("../features/identity/ui/identity-simple-value.ts");
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT = join(APP, "../..");

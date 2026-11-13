@@ -6,7 +6,7 @@ import {
   SCALAR_KEYS,
   parseIdentityEditorSearch,
   serializeIdentityEditorSearch,
-} from "../lib/identity-editor-search";
+} from "../features/identity/ui/identity-editor-search";
 import { parseRecipe, serializeRecipe } from "../lib/identity-recipe";
 
 /** The export is a recipe (see the export copy). These tests pin what that recipe preserves. */
