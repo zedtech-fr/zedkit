@@ -191,7 +191,7 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(panel, /applyDocsSiteLook/);
   assert.doesNotMatch(panel, /applyWidgetSpecimenPreview/);
   assert.match(customize, /IdentityLookForm/);
-  assert.match(customize, /defaultMode="simple"/);
+  assert.doesNotMatch(customize, /defaultMode=/);
   assert.match(customize, /data-dock-customize/);
   assert.match(customize, /tabs="embedded"/);
   assert.doesNotMatch(customize, /stickyTabs/);
@@ -218,7 +218,8 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   const bar = read("features/identity/ui/identity-dock-action-bar.tsx");
   const copy = read("components/i18n/identity-dock-copy.ts");
   const editorCopy = read("components/i18n/identity-editor-copy.ts");
-  assert.match(panel, /filter\(\(warning\) => warning\.min === 4\.5\)/);
+  assert.match(panel, /const warningCount = identityContrastWarnings\(tokens\)\.length/);
+  assert.doesNotMatch(panel, /warning\.min === 4\.5/);
   assert.match(panel, /IdentityDockActionBar/);
   assert.match(bar, /data-dock-action-bar/);
   assert.match(bar, /toolbar\.reset/);

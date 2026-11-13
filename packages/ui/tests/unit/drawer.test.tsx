@@ -790,9 +790,8 @@ describe("drawer", () => {
       });
     }
 
-    function swipe(target: Document | Element | Window, fromY: number, toY: number) {
-      const start = target instanceof Window ? document.body : target;
-      fireEvent.pointerDown(start, {
+    function swipe(target: Element, fromY: number, toY: number) {
+      fireEvent.pointerDown(target, {
         pointerId: 1,
         isPrimary: true,
         button: 0,
@@ -803,14 +802,23 @@ describe("drawer", () => {
       fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: toY });
     }
 
-    function renderBottomSheet(props?: { dismissible?: boolean; scrolled?: boolean; withField?: boolean }) {
+    function renderSheet(props?: {
+      direction?: "top" | "right" | "bottom" | "left";
+      dismissible?: boolean;
+      scrolled?: boolean;
+      withField?: boolean;
+      withLink?: boolean;
+      onPointerDown?: (event: { preventDefault(): void }) => void;
+    }) {
       render(
-        <Drawer defaultOpen modal={false} direction="bottom" dismissible={props?.dismissible ?? true}>
-          <DrawerContent modal={false}>
+        <Drawer defaultOpen modal={false} direction={props?.direction ?? "bottom"} dismissible={props?.dismissible ?? true}>
+          <DrawerContent modal={false} onPointerDown={props?.onPointerDown}>
             <DrawerHandle data-testid="handle" />
             <DrawerTitle>Delivery details</DrawerTitle>
             <DrawerBody data-testid="body">
-              {props?.withField ? <input aria-label="Name" defaultValue="Ada" /> : <p>Body copy</p>}
+              {props?.withField ? <input aria-label="Name" defaultValue="Ada" /> : null}
+              {props?.withLink ? <a href="#details">Editor</a> : null}
+              {props?.withField || props?.withLink ? null : <p>Body copy</p>}
             </DrawerBody>
           </DrawerContent>
         </Drawer>,
@@ -818,9 +826,22 @@ describe("drawer", () => {
       const dialog = screen.getByRole("dialog", { name: "Delivery details" });
       stubPanelRect(dialog);
       const body = screen.getByTestId("body");
-      if (props?.scrolled) body.scrollTop = 80;
+      if (props?.scrolled) {
+        Object.defineProperty(body, "scrollTop", { configurable: true, get: () => 80 });
+        expect(body.scrollTop).toBe(80);
+      }
       return { dialog, body, handle: screen.getByTestId("handle") };
     }
+
+    function renderBottomSheet(props?: { dismissible?: boolean; scrolled?: boolean; withField?: boolean }) {
+      return renderSheet(props);
+    }
+
+    it("gives the non-modal handle a 24px hit area around the 6px bar", () => {
+      const { handle } = renderBottomSheet();
+      expect(handle.className).toContain("hit-target");
+      expect(handle.className).toContain("h-drawer-handle-height");
+    });
 
     it("closes when the handle is dragged down", () => {
       const { handle } = renderBottomSheet();
@@ -852,14 +873,41 @@ describe("drawer", () => {
       expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
     });
 
-    it("stays open on handle drag when not dismissible", () => {
-      const { handle } = renderBottomSheet({ dismissible: false });
-      swipe(handle, 10, 10 + DISMISS_DRAG);
+    it("does not dismiss from a link", () => {
+      renderSheet({ withLink: true });
+      swipe(screen.getByRole("link", { name: "Editor" }), 40, 40 + DISMISS_DRAG);
       expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
     });
 
-    it("closes from the handle under reduced motion without sliding the panel", () => {
-      document.documentElement.setAttribute("data-motion", "reduce");
+    it("closes when a top sheet handle is dragged up", () => {
+      const { handle } = renderSheet({ direction: "top" });
+      swipe(handle, 200, 200 - DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when a top sheet body is dragged up at rest", () => {
+      const { body } = renderSheet({ direction: "top" });
+      swipe(body, 200, 200 - DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when the body drag is under the 20% threshold", () => {
+      const { body } = renderBottomSheet();
+      swipe(body, 40, 40 + 40);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open when the consumer prevents the body pointerdown", () => {
+      const { body } = renderSheet({
+        onPointerDown: (event) => {
+          event.preventDefault();
+        },
+      });
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("clears the drag and stays open on pointercancel", () => {
       const { handle, dialog } = renderBottomSheet();
       fireEvent.pointerDown(handle, {
         pointerId: 1,
@@ -869,10 +917,41 @@ describe("drawer", () => {
         clientY: 10,
       });
       fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      fireEvent.pointerCancel(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
       expect(dialog.style.transform).toBe("");
-      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
-      expect(screen.queryByRole("dialog")).toBeNull();
-      document.documentElement.removeAttribute("data-motion");
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not swipe-dismiss a left drawer", () => {
+      const { handle } = renderSheet({ direction: "left" });
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open on handle drag when not dismissible", () => {
+      const { handle } = renderBottomSheet({ dismissible: false });
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("closes from the handle under reduced motion without sliding the panel", () => {
+      document.documentElement.setAttribute("data-motion", "reduce");
+      try {
+        const { handle, dialog } = renderBottomSheet();
+        fireEvent.pointerDown(handle, {
+          pointerId: 1,
+          isPrimary: true,
+          button: 0,
+          clientX: 80,
+          clientY: 10,
+        });
+        fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+        expect(dialog.style.transform).toBe("");
+        fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+        expect(screen.queryByRole("dialog")).toBeNull();
+      } finally {
+        document.documentElement.removeAttribute("data-motion");
+      }
     });
 
     it("still has no overlay when modal is false", () => {

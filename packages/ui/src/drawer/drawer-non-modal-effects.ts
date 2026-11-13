@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { isMotionReduced } from "../motion/motion-preference.js";
 import type { DrawerDirection } from "./drawer-non-modal-context.js";
 
 type NonModalDrawerFocusProps = {
@@ -9,25 +10,24 @@ type NonModalDrawerFocusProps = {
   triggerRef: React.RefObject<HTMLElement | null>;
 };
 
+type SheetEdge = Extract<DrawerDirection, "bottom" | "top">;
+
 /** Fraction of the panel height a body swipe must cover before the sheet closes. */
 const NON_MODAL_DISMISS_DRAG_FRACTION = 0.2;
 
+/** Interactive hosts that must keep pointerup/click. `a` is required: capturing the panel retargets the click and the link never activates. */
 const IGNORE_DISMISS_SELECTOR =
-  "input, textarea, select, button, [role='slider'], [contenteditable]:not([contenteditable='false'])";
+  "a, input, textarea, select, button, [role='slider'], [contenteditable]:not([contenteditable='false'])";
 
 type DismissKind = "handle" | "body";
 
-function dismissDelta(direction: DrawerDirection, startY: number, y: number): number {
-  if (direction === "bottom") return y - startY;
-  if (direction === "top") return startY - y;
-  return 0;
+function dismissDelta(direction: SheetEdge, startY: number, y: number): number {
+  return direction === "bottom" ? y - startY : startY - y;
 }
 
-function translateFor(direction: DrawerDirection, delta: number): string {
+function translateFor(direction: SheetEdge, delta: number): string {
   const offset = Math.max(0, delta);
-  if (direction === "bottom") return `translateY(${offset}px)`;
-  if (direction === "top") return `translateY(${-offset}px)`;
-  return "";
+  return direction === "bottom" ? `translateY(${offset}px)` : `translateY(${-offset}px)`;
 }
 
 function hasScrolledAncestor(start: EventTarget | null, root: HTMLElement): boolean {
@@ -75,9 +75,7 @@ function startNonModalDrawerDismiss({
   const startY = event.clientY;
   const threshold = Math.max(panel.getBoundingClientRect().height, 1) * NON_MODAL_DISMISS_DRAG_FRACTION;
   const pointerId = event.pointerId;
-  const reduceMotion =
-    document.documentElement.getAttribute("data-motion") === "reduce" ||
-    (typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const reduceMotion = isMotionReduced();
 
   event.currentTarget.setPointerCapture?.(pointerId);
 
