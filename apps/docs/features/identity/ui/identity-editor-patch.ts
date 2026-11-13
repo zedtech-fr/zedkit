@@ -5,7 +5,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { isLightKey } from "@/lib/identity-editor-search";
+import { isLightKey } from "./identity-editor-search.ts";
 
 function withKeptDark(tokens: IdentityTokens, previous: IdentityTokens, keep: readonly string[]): IdentityTokens {
   return keepIdentityDarkKeys(withIdentityDarkPair(tokens, previous), previous, keep);

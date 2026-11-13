@@ -8,7 +8,7 @@ import {
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
 
-import { LIGHT_KEYS, isLightKey } from "@/lib/identity-editor-search";
+import { LIGHT_KEYS, isLightKey } from "./identity-editor-search.ts";
 import { acceptedIdentityTokens, patchTokens, withKeptDark } from "./identity-editor-patch.ts";
 
 function withSuggestedDark(

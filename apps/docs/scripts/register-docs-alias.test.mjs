@@ -16,6 +16,7 @@ const IDENTITY_ALIAS_TESTS = [
   "features/identity/ui/docs-site-default-tokens.test.mjs",
   "features/identity/ui/identity-editor-patch.test.mjs",
   "features/identity/ui/site-identity-storage.test.mjs",
+  "features/identity/dock/ui/identity-dock-persist.test.mjs",
 ];
 
 test("registerDocsAlias resolves tsconfig @/ paths for node --test", () => {

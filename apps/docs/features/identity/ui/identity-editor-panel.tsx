@@ -17,8 +17,8 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { ContrastChips, DRAFT_SELECTOR, DraftCard } from "@/components/identity-editor-fields";
-import { IdentityLookForm } from "@/components/identity-look-form";
+import { ContrastChips, DRAFT_SELECTOR, DraftCard } from "./identity-editor-fields";
+import { IdentityLookForm } from "./identity-look-form";
 import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "./identity-editor-toolbar";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
@@ -34,7 +34,7 @@ import {
   type NamedIdentity,
 } from "./named-identities";
 import { type SaveStatus } from "./identity-save-status";
-import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "@/lib/identity-editor-search";
+import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "./identity-editor-search";
 
 type EditorBodyProps = {
   identity: string;
