@@ -28,6 +28,7 @@ export const AI_SETUP_KIT = {
     "adversarial-tests",
     "plan",
     "implement",
+    "pr",
     "challenge",
     "to-spec",
     "to-tickets",
@@ -64,6 +65,7 @@ export const AI_SETUP_KIT = {
     "plan",
     "challenge",
     "implement",
+    "pr",
     "orchestrate",
     "improve-config",
     "research",
@@ -162,6 +164,10 @@ export const AI_SETUP_KIT = {
     },
     {
       "text": "│  │  ├─ implement/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  ├─ pr/",
       "kind": "dir"
     },
     {
@@ -298,6 +304,10 @@ export const AI_SETUP_KIT = {
     },
     {
       "text": "│  │  ├─ implement.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  ├─ pr.md",
       "kind": "file"
     },
     {
