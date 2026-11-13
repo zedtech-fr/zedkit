@@ -164,7 +164,7 @@ test("parseLiveConsoleLocation reads id, item, and hash item", () => {
   assert.equal(parseLiveConsoleLocation("?id=run-1&item=" + "x".repeat(81)).itemId, null);
 });
 
-test("writeLiveConsoleSearch keeps appearance pins and drops t", () => {
+test("writeLiveConsoleSearch keeps appearance pins and id/item in the query", () => {
   const search = writeLiveConsoleSearch({
     search: "?identity=volt&t=secret&preview=dark&id=old",
     runId: "run-2",

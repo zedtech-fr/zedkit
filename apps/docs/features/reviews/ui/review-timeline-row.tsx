@@ -57,6 +57,14 @@ export function CompactLogLink({
   );
 }
 
+/** In-page console paths only. Reject protocol-relative `//` and `/\`. */
+function inSiteLogHref(href: string | null): string | null {
+  if (href === null || !href.startsWith("/")) return null;
+  const second = href[1];
+  if (second === "/" || second === "\\") return null;
+  return href;
+}
+
 function replacementCopy(entry: TimelineEntry, copy: ReviewsCopy): string | null {
   if (entry.superseded !== true) return null;
   return entry.status === "failed" ? copy.issue.failedReplaced : copy.issue.replaced;
@@ -84,7 +92,7 @@ function StepMarks({ entry, copy }: { entry: TimelineEntry; copy: ReviewsCopy })
 
 function ViewLogAffordance({ copy }: { copy: ReviewsCopy }) {
   return (
-    <Button asChild variant="secondary" size="sm" className="text-dense">
+    <Button asChild variant="secondary" size="sm">
       <Stack direction="horizontal" gap="tight">
         {copy.issue.viewLog}
         <ChevronRight aria-hidden="true" />
@@ -146,7 +154,7 @@ export function TimelineRow({
   href: string | null;
   copy: ReviewsCopy;
 }) {
-  const logHref = href !== null && href.startsWith("/") ? href : null;
+  const logHref = inSiteLogHref(href);
   if (logHref === null) {
     return <TimelineRowBody entry={entry} copy={copy} log={false} className={rowLayout} />;
   }

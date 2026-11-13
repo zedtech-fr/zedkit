@@ -268,7 +268,7 @@ Issue pages and the live console pin a local `ThemeScope` from these query keys.
 | `theme` | legacy alias of `preview` (`theme=dark` still parses) |
 | `density` | `compact` |
 
-Any listed key pins the whole appearance. Missing, empty, or unknown values use codec defaults (glass, light, default density); they do not inherit the site look. `serializeReviewAppearance` in `apps/docs/features/reviews/model/review-appearance.ts` is the canonical writer (omit glass, light, default density).
+Any listed key pins the whole appearance. Missing, empty, or unknown values use codec defaults (glass, light, default density); they do not inherit the site look. `serializeReviewAppearance` in `apps/docs/features/reviews/model/review-appearance.ts` is the canonical writer (omit glass, light, default density; currently no UI caller; kept as the canonical codec for a future writer).
 
 Pinned URLs read `window.location.search` after mount (static export). The first paint may show the unpinned site look; that flash is accepted.
 

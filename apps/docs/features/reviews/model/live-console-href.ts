@@ -76,7 +76,7 @@ function appearanceParams(search: string): URLSearchParams {
   return kept;
 }
 
-/** Keep appearance pins. Drop `t` and any other query. */
+/** Keep appearance pins plus `id`/`item` in the query. Returns `?qs` only; callers pass `hash: ""`. Drop `t` and any other query. */
 export function writeLiveConsoleSearch(input: {
   search: string;
   runId: string;
@@ -92,7 +92,8 @@ export function writeLiveConsoleSearch(input: {
   return qs === "" ? "" : `?${qs}`;
 }
 
-/** Appearance share-URL codec: keep `id` / `item` on `/issues/run`, keep `item` on baked run URLs. No UI writer; item navigation uses `writeLiveConsoleSearch`, which keeps appearance params. */
+/** Appearance share-URL codec: keep `id` / `item` on `/issues/run`, keep `item` on baked run URLs. */
+// shortcut: no UI writer, delete when a share-URL form ships or tests stop importing it.
 export function writeConsoleShareSearch(input: {
   appearanceSearch: string;
   currentSearch: string;

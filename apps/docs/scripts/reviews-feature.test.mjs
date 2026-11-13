@@ -1859,8 +1859,10 @@ test("timeline step cells are one log link with a View log button", () => {
   const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
   assert.match(row, /CompactLogLink href=\{logHref\} copy=\{copy\} className=\{logCellClass\}/);
-  assert.match(row, /href !== null && href\.startsWith\("\/"\)/);
+  assert.match(row, /function inSiteLogHref/);
+  assert.match(row, /second === "\/" \|\| second === "\\\\"/);
   assert.match(row, /log=\{false\}/);
+  assert.doesNotMatch(row, /className="text-dense"/);
   assert.match(row, /focus-ring-control/);
   assert.match(row, /hover:bg-muted/);
   assert.match(row, /active:bg-secondary/);

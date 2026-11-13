@@ -26,11 +26,6 @@ export function isReviewIdentity(id: string): id is ReviewAppearance["identity"]
   return (REVIEW_IDENTITIES as readonly string[]).includes(id);
 }
 
-/** Codec type guard. Parse inlines `density=compact`; keep for a future writer. */
-export function isReviewDensity(value: string): value is ReviewDensity {
-  return value === "default" || value === "compact";
-}
-
 export function parseReviewAppearance(search: string): ReviewAppearance {
   const params = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search);
   const rawId = params.get("identity") ?? DEFAULT_IDENTITY;
@@ -47,7 +42,7 @@ export function hasReviewAppearanceQuery(search: string): boolean {
   return params.has("identity") || params.has("preview") || params.has("theme") || params.has("density");
 }
 
-/** Canonical share-URL writer: omit glass, light, and default density. The frame reads URLs; it does not write them. */
+/** Canonical share-URL writer: omit glass, light, and default density. The frame reads URLs; it does not write them. Currently no UI caller; codec for a future writer. */
 export function serializeReviewAppearance(appearance: ReviewAppearance): string {
   const params = new URLSearchParams();
   if (appearance.identity !== DEFAULT_IDENTITY) params.set("identity", appearance.identity);
