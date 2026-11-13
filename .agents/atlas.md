@@ -80,6 +80,8 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs fenced and setup-prompt Copy | `.agents/atlas/docs-site.md` | No kit CodeBlock; fenced Copy is Fumadocs via `MdxPre`. | `apps/docs/scripts/ai-setup-copy.test.mjs` | 2026-11-13 |
 | LivePulse idle copy | `.agents/atlas/ui-primitives.md` | `label` overrides `messages.live` only; idle is `inactiveLabel`. | `packages/ui/tests/unit/detail.test.tsx` | 2026-11-11 |
 | Compact duration formatter | `.agents/atlas/ui-primitives.md` | Public two-unit `6m 17s`; not `Intl.DurationFormat`. | `format-duration.test.ts` | 2026-11-12 |
+| Stored choice factory | `.agents/atlas/ui-primitives.md` | SSR-safe listed localStorage choice; one factory per key. | `use-stored-choice.test.tsx` | 2026-11-13 |
+| Identity contrast repair | `.agents/atlas/identity.md` | Bounded three-pass AA nudge; public `repairContrast`. | `identity-contrast-repair.test.ts` | 2026-11-13 |
 | SSE frame parser | `.agents/atlas/ui-primitives.md` | Blank line is two WHATWG endings; CRLF tried first. | `consumeSseStream` | 2026-11-11 |
 | AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-10 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
