@@ -9,6 +9,7 @@ import {
   DOCS_RENDER_FALLBACK_ROUTES,
   docsRenderLooks,
   docsRenderRoutes,
+  docsRenderSweepMode,
   looksGridTriggered,
   routesFromFiles,
 } from "./docs-render-routes.mjs";
@@ -199,6 +200,74 @@ test("slugNeed, routesFromFiles, and looksGridTriggered stay in lockstep with vi
     return match[1];
   };
   assert.equal(looksConst(mapper), looksConst(verify), "DEFAULT_LOOKS drifted from visual-verify.mjs");
+});
+
+test("ordinary PR into dev stays on touched routes", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "agent/issue-310" }),
+    "touched",
+  );
+});
+
+test("epic PR into dev is a full sitemap sweep", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "epic/73-redesign" }),
+    "full",
+  );
+});
+
+test("any PR into main is a full sitemap sweep", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "main", headRef: "dev" }),
+    "full",
+  );
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "main", headRef: "fix/docs" }),
+    "full",
+  );
+});
+
+test("push is a full sitemap sweep", () => {
+  assert.equal(docsRenderSweepMode({ event: "push", baseRef: "", headRef: "" }), "full");
+});
+
+test("missing head ref on a PR into dev stays touched", () => {
+  assert.equal(docsRenderSweepMode({ event: "pull_request", baseRef: "dev" }), "touched");
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "" }),
+    "touched",
+  );
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: null }),
+    "touched",
+  );
+});
+
+test("epic- without a slash stays touched", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "epic-73-redesign" }),
+    "touched",
+  );
+});
+
+test("--mode prints full or touched from EVENT BASE_REF HEAD_REF", () => {
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const run = (env) =>
+    spawnSync(process.execPath, ["scripts/docs-render-routes.mjs", "--mode"], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, ...env },
+    });
+  const full = run({ EVENT: "push", BASE_REF: "", HEAD_REF: "" });
+  assert.equal(full.status, 0, full.stderr);
+  assert.equal(full.stdout, "full\n");
+  const touched = run({
+    EVENT: "pull_request",
+    BASE_REF: "dev",
+    HEAD_REF: "feat/x",
+  });
+  assert.equal(touched.status, 0, touched.stderr);
+  assert.equal(touched.stdout, "touched\n");
 });
 
 function exportedFn(src, name) {
