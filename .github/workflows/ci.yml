@@ -40,6 +40,7 @@ jobs:
       ui: ${{ steps.detect.outputs.ui }}
       packages: ${{ steps.detect.outputs.packages }}
       filter: ${{ steps.detect.outputs.filter }}
+      docs_looks: ${{ steps.detect.outputs.docs_looks }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -64,11 +65,14 @@ jobs:
             base=""
           fi
           if [ -n "$base" ]; then
-            git diff --name-only --no-renames "$base"...HEAD
+            files=$(git diff --name-only --no-renames "$base"...HEAD)
           else
-            git ls-tree -r --name-only HEAD
-          fi |
+            files=$(git ls-tree -r --name-only HEAD)
+          fi
+          printf '%s\n' "$files" |
             node scripts/ci-affected.mjs --event "$EVENT" --base-ref "$BASE_REF" | tee -a "$GITHUB_OUTPUT"
+          docs_looks="$(printf '%s\n' "$files" | node scripts/docs-render-routes.mjs --looks)"
+          echo "docs_looks=$docs_looks" >> "$GITHUB_OUTPUT"
 
   workflow-lint:
     runs-on: ubuntu-latest
@@ -684,11 +688,12 @@ jobs:
   # Overflow, axe (serious/critical) and clipped-text on the static export.
   # Ordinary PRs into `dev` map touched routes (looks grid when the mapper
   # trigger is on). `epic/*` → `dev`, PRs and pushes into `main`: every
-  # published route, default look, 25-minute timeout. Skip when `docs` is
-  # false. Not an E2E journey suite.
+  # published route, default look. Timeout is 25 minutes on a full sweep or
+  # looks-grid touched path, else 6. Skip when `docs` is false. Not an E2E
+  # journey suite.
   docs-render:
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ (github.event_name == 'push' || github.base_ref == 'main' || (github.base_ref == 'dev' && startsWith(github.head_ref, 'epic/'))) && 25 || 6 }}
+    timeout-minutes: ${{ (github.event_name == 'push' || github.base_ref == 'main' || (github.base_ref == 'dev' && startsWith(github.head_ref, 'epic/')) || needs.changes.outputs.docs_looks != '') && 25 || 6 }}
     needs: [changes, docs-build]
     if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
     steps:
