@@ -93,6 +93,12 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   --zk-type-h1-size: var(--zk-foundations-title-size);
   --zk-type-h1-leading: 1.12;
   --zk-type-h1-tracking: -0.03em;
+  /* Band is the light shell surface; identity dark --foreground is pale on it.
+   * Pin the variables and `color`: inherited computed color from html.dark
+   * would ignore the variable. */
+  --foreground: 240 10% 3.9%;
+  --muted-foreground: 240 5% 32%;
+  color: hsl(var(--foreground));
   background-color: hsl(var(--zk-site-band));
   border-bottom: var(--zk-border-width, 1px) solid hsl(var(--zk-site-hairline));
   padding-block: calc(var(--spacing) * 18) calc(var(--spacing) * 16);

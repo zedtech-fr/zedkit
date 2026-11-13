@@ -8,7 +8,7 @@ import { DocsAppLink } from "@/ui/docs-app-link";
 import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
 import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
-import { SiteFullSearchTrigger } from "@/ui/site-chrome";
+import { SiteFullSearchTrigger, SiteSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
 import { isCatalogPath, isFoundationsPath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
@@ -119,7 +119,7 @@ function CatalogDesktopHeader() {
 
 /**
  * Customer personas: reading `/docs/foundations` as a marketing-style guide, not a docs article.
- * UI decisions: home-style bar plus Search ⌘K; no version, theme, sidebar, or TOC.
+ * UI decisions: home-style bar plus search (icon below lg, Search ⌘K from lg so the bar fits 809); no version, theme, sidebar, or TOC.
  * Search is on this bar because the 7-section guide has no in-page nav (#73); the quiet-glass mockup has zero search hits.
  * Reuses mark="home" so the bar shares home chrome CSS (`data-home-header`); it is not the home route.
  * Desktop Get started is the home-style bar; phone follows siteHeaderChrome (`getStarted: home` only).
@@ -131,7 +131,8 @@ function FoundationsDesktopHeader() {
       className="[grid-area:header]"
       actions={
         <>
-          <SiteFullSearchTrigger />
+          <SiteSearchTrigger className="lg:hidden" />
+          <SiteFullSearchTrigger className="max-lg:hidden" />
           <HomeGitHubLink />
           <HomeGetStartedAction />
         </>

@@ -275,6 +275,8 @@ test("phone docs page tree is in-flow in the shell, not a max-md drawer", () => 
   assert.match(css, /#nd-sidebar/);
   assert.match(css, /width < 48rem/);
   assert.match(css, /--fd-sidebar-width:\s*100%/);
+  assert.match(css, /#nd-docs-layout:not\(:has\(#nd-sidebar\)\)/);
+  assert.match(css, /--fd-sidebar-col:\s*0px/);
   assert.match(css, /Fumadocs 16\.17\.10/);
   assert.doesNotMatch(css, /Cmd\/Ctrl\+B|data-sidebar-panel/);
 });
