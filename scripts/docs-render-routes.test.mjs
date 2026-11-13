@@ -151,6 +151,12 @@ test("turns the looks grid on for tokens, primitives, and identity sheets", () =
   assert.equal(looksGridTriggered(["packages\\ui\\src\\identities.css"]), true);
 });
 
+test("keeps the looks grid off for a per-id identity sheet", () => {
+  assert.equal(looksGridTriggered(["packages/ui/src/identities/glass.css"]), false);
+  assert.equal(looksGridTriggered(["packages\\ui\\src\\identities\\glass.css"]), false);
+  assert.equal(looksGridTriggered(["packages/ui/src/identities.css"]), true);
+});
+
 test("docsRenderLooks emits the six shipped looks only when the grid is on", () => {
   assert.deepEqual(docsRenderLooks(["packages/ui/src/styles.css"]), [
     "mist",
