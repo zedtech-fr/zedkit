@@ -311,36 +311,36 @@ describe("live docs tree", () => {
     assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 
-  it("imports home band sections from _home/sections and does not leave shims", () => {
+  it("imports home band sections from _home/sections and does not leave shims at the old paths", () => {
     const composer = readFileSync(
       join(docsRoot, "app/(home)/_home/home-below-hero.tsx"),
       "utf8",
     );
-    const sections = [
-      "home-same-idea-section",
-      "home-six-sentences-section",
-      "home-paste-section",
-      "home-identities-section",
-      "home-limits-section",
-      "home-manifesto-section",
-      "home-closing-section",
+    const bands = [
+      "home-same-idea-section.tsx",
+      "home-six-sentences-section.tsx",
+      "home-paste-section.tsx",
+      "home-identities-section.tsx",
+      "home-limits-section.tsx",
+      "home-manifesto-section.tsx",
+      "home-closing-section.tsx",
+      "home-link.tsx",
     ];
-    for (const name of sections) {
-      const next = join(docsRoot, `app/(home)/_home/sections/${name}.tsx`);
-      const old = join(docsRoot, `ui/home/${name}.tsx`);
-      assert.ok(existsSync(next), next);
-      assert.equal(existsSync(old), false, old);
-      assert.match(composer, new RegExp(`from ["']\\./sections/${name}["']`));
+    for (const name of bands) {
+      assert.ok(existsSync(join(docsRoot, "app/(home)/_home/sections", name)), name);
+      assert.equal(existsSync(join(docsRoot, "ui/home", name)), false, `shim ${name}`);
+    }
+    for (const name of bands.filter((file) => file.endsWith("-section.tsx"))) {
+      const stem = name.replace(/\.tsx$/, "");
+      assert.match(composer, new RegExp(`from ["']\\./sections/${stem}["']`));
     }
     assert.doesNotMatch(composer, /from ["']@\/ui\/home\/home-\w+-section["']/);
-    const link = join(docsRoot, "app/(home)/_home/home-link.tsx");
-    assert.ok(existsSync(link));
-    assert.equal(existsSync(join(docsRoot, "ui/home/home-link.tsx")), false);
     const sameIdea = readFileSync(
       join(docsRoot, "app/(home)/_home/sections/home-same-idea-section.tsx"),
       "utf8",
     );
-    assert.match(sameIdea, /from ["']\.\.\/home-link["']/);
+    assert.match(sameIdea, /from ["']\.\/home-link["']/);
+    assert.doesNotMatch(sameIdea, /from "@\/ui\/home\/home-link"/);
     assert.match(sameIdea, /from ["']@\/ui\/home\/home-rhythm["']/);
     const identities = readFileSync(
       join(docsRoot, "app/(home)/_home/sections/home-identities-section.tsx"),

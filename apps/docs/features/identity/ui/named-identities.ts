@@ -18,7 +18,7 @@ import {
   type LibraryRead,
   type SaveResult,
   type SavedIdentity,
-} from "./identity-library.ts";
+} from "@/lib/identity-library";
 import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "./site-identity-storage.ts";
 
 /**

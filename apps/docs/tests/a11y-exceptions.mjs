@@ -11,3 +11,14 @@ export const A11Y_AXE_EXCEPTIONS = [];
 
 /** Comma-separated selectors passed to axe exclude(). Empty when nothing is skipped. */
 export const A11Y_AXE_EXCLUDES = A11Y_AXE_EXCEPTIONS.map((entry) => entry.selector).join(", ");
+
+/**
+ * `data-allow-clip` skips the clipped-text gate for intended truncation that
+ * is not `truncate` / `line-clamp-*`. Same discipline as axe exceptions: add
+ * a row only for a failure you have seen, with owner and removeBy. The
+ * attribute is the runtime hatch; this list is the owner/expiry registry.
+ * @typedef {{ selector: string, file: string, reason: string, owner: string, removeBy: string }} ClipException
+ */
+
+/** @type {ClipException[]} */
+export const CLIP_EXCEPTIONS = [];

@@ -2,20 +2,30 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { register } from "node:module";
 import test from "node:test";
 
 import { CUSTOM_IDENTITY_ID, identityPresets } from "@zedtech/zedkit-ui";
 
-import { DEFAULT_IDENTITY } from "../lib/default-identity.ts";
-import { docsSiteDefaultTokens } from "../lib/docs-site-default-tokens.ts";
+// node --test does not read tsconfig `@/` paths; register lib aliases first.
+const defaultIdentityUrl = new URL("../../../lib/default-identity.ts", import.meta.url).href;
+const identityLibraryUrl = new URL("../../../lib/identity-library.ts", import.meta.url).href;
+register(
+  `data:text/javascript,${encodeURIComponent(`
+    export async function resolve(specifier, context, nextResolve) {
+      if (specifier === "@/lib/default-identity") return nextResolve(${JSON.stringify(defaultIdentityUrl)}, context);
+      if (specifier === "@/lib/identity-library") return nextResolve(${JSON.stringify(identityLibraryUrl)}, context);
+      return nextResolve(specifier, context);
+    }
+  `)}`,
+  import.meta.url,
+);
 
-import { LIBRARY_KEY } from "../lib/identity-library.ts";
-import {
-  applyDocsSiteLook,
-  readDockSiteTokens,
-  resetDocsSiteLook,
-} from "../lib/docs-site-look.ts";
-import {
+const { DEFAULT_IDENTITY } = await import("../../../lib/default-identity.ts");
+const { docsSiteDefaultTokens } = await import("./docs-site-default-tokens.ts");
+const { LIBRARY_KEY } = await import("../../../lib/identity-library.ts");
+const { applyDocsSiteLook, readDockSiteTokens, resetDocsSiteLook } = await import("./docs-site-look.ts");
+const {
   DOCS_SITE_IDENTITY_STORAGE_KEY,
   LEGACY_IDENTITY_KEYS,
   docsSiteCustomStorageKey,
@@ -25,9 +35,9 @@ import {
   readDocsSiteTokens,
   writeDocsSiteTokens,
   clearDocsSiteIdentity,
-} from "../lib/site-identity-storage.ts";
+} = await import("./site-identity-storage.ts");
 
-const app = join(dirname(fileURLToPath(import.meta.url)), "..");
+const app = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 
 function read(rel) {
   return readFileSync(join(app, rel), "utf8");
@@ -133,7 +143,7 @@ test("JSON tokens round-trip and invalid JSON reads as missing", () => {
 });
 
 test("opt-in key and helpers are gone from storage and the root layout", () => {
-  const storage = read("lib/site-identity-storage.ts");
+  const storage = read("features/identity/ui/site-identity-storage.ts");
   const layout = read("app/layout.tsx");
   assert.doesNotMatch(storage, /OPT_IN/);
   assert.doesNotMatch(storage, /isDocsSiteIdentityOptIn/);

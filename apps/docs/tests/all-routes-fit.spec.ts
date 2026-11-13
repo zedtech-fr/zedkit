@@ -1,25 +1,35 @@
 import { expect, test } from "@playwright/test";
 
+import { clippedTextHits } from "../scripts/clipped-text.mjs";
 import { gotoStaticRoute } from "./goto-static-route.js";
-import { publishedRoutes } from "./published-routes.js";
+import { publishedRoutes, routesForSweep } from "./published-routes.js";
 
 /**
- * Every published route, five widths: no sideways page scroll, no runtime
- * errors, one h1, and every image has an alt. The route list comes from the
- * sitemap, so a new page is covered the day it ships.
+ * Load-time static structure on touched (or all) published routes, DoD v2
+ * widths × light/dark: no sideways page scroll, no clipped text, no runtime
+ * errors, one h1, and every image has an alt. Keyboard, motion and
+ * interaction stay in the sampled `smoke` / `e2e` suites. The route list
+ * comes from the sitemap, then `DOCS_ROUTES`.
  *
  * One Playwright test per route so `fullyParallel` + `DOCS_E2E_SHARD` can
- * balance the sweep across runners. The previous single loop was one long
- * test, so a 3-way shard left one job with all the work and one empty.
+ * balance the sweep across runners.
  */
-const WIDTHS = [320, 375, 768, 1024, 1440] as const;
+const VIEWS = [
+  { width: 375, height: 900, theme: "light" },
+  { width: 375, height: 900, theme: "dark" },
+  { width: 809, height: 900, theme: "light" },
+  { width: 809, height: 900, theme: "dark" },
+  { width: 1440, height: 900, theme: "light" },
+  { width: 1440, height: 900, theme: "dark" },
+] as const;
 
-const routes = publishedRoutes();
+const sitemapRoutes = publishedRoutes();
+const routes = routesForSweep();
 
 test.describe.configure({ mode: "parallel" });
 
 test("published sitemap lists more than 100 routes", () => {
-  expect(routes.length).toBeGreaterThan(100);
+  expect(sitemapRoutes.length).toBeGreaterThan(100);
 });
 
 for (const route of routes) {
@@ -33,26 +43,89 @@ for (const route of routes) {
       }
     });
 
-    await page.setViewportSize({ width: WIDTHS[0], height: 900 });
-    const response = await gotoStaticRoute(page, route);
-    if (!response || response.status() !== 200) {
-      problems.push(`${route}: status ${response?.status()}`);
-    } else {
-      for (const width of WIDTHS) {
-        await page.setViewportSize({ width, height: 900 });
-        const sideways = await page.evaluate(
-          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    for (const view of VIEWS) {
+      await page.setViewportSize({ width: view.width, height: view.height });
+      await page.addInitScript((theme) => localStorage.setItem("theme", theme), view.theme);
+      const response = await gotoStaticRoute(page, route);
+      if (!response || response.status() !== 200) {
+        problems.push(`${route} ${view.theme} @${view.width}: status ${response?.status()}`);
+        continue;
+      }
+      // View timelines and infinite loops never settle; cap so / cannot hang.
+      await page.evaluate(
+        () =>
+          Promise.race([
+            Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
+            new Promise((resolve) => {
+              setTimeout(resolve, 2000);
+            }),
+          ]),
+      );
+      const wantDark = view.theme === "dark";
+      const themeApplied = await page
+        .waitForFunction((want) => document.documentElement.classList.contains("dark") === want, wantDark, {
+          timeout: 3000,
+        })
+        .then(
+          () => true,
+          () => false,
         );
-        if (sideways > 1) problems.push(`${route} @${width}: ${sideways}px sideways scroll`);
+      if (!themeApplied) {
+        const dark = await page.evaluate(() => document.documentElement.classList.contains("dark"));
+        problems.push(`${route} @${view.width}/${view.theme}: html.dark=${dark}`);
+      }
+      const sideways = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      if (sideways > 1) problems.push(`${route} @${view.width}/${view.theme}: ${sideways}px sideways scroll`);
+      // Skip 1×1 and non-overflowing nodes before getComputedStyle / text.
+      // Walking textContent on every * is quadratic and times out on /.
+      const metrics = await page.evaluate(() => {
+        const out = [];
+        for (const node of document.querySelectorAll("*")) {
+          const clientWidth = node.clientWidth;
+          const clientHeight = node.clientHeight;
+          if (clientWidth <= 1 && clientHeight <= 1) continue;
+          const scrollWidth = node.scrollWidth;
+          const scrollHeight = node.scrollHeight;
+          if (scrollWidth <= clientWidth + 1 && scrollHeight <= clientHeight + 1) continue;
+          const style = getComputedStyle(node);
+          let text = "";
+          for (const child of node.childNodes) {
+            if (child.nodeType === Node.TEXT_NODE) text += child.nodeValue ?? "";
+          }
+          out.push({
+            tag: node.tagName,
+            className: typeof node.className === "string" ? node.className : "",
+            text: text.replace(/\s+/g, " ").trim().slice(0, 40),
+            overflowX: style.overflowX,
+            overflowY: style.overflowY,
+            textOverflow: style.textOverflow,
+            lineClamp: style.getPropertyValue("-webkit-line-clamp") || style.getPropertyValue("line-clamp"),
+            clip: style.clip,
+            clipPath: style.clipPath,
+            scrollWidth,
+            clientWidth,
+            scrollHeight,
+            clientHeight,
+            allowClip: node.hasAttribute("data-allow-clip"),
+            scrollViewport: node.hasAttribute("data-radix-scroll-area-viewport"),
+          });
+        }
+        return out;
+      });
+      for (const hit of clippedTextHits(metrics)) {
+        const where = hit.locator ? ` ${hit.locator}` : "";
+        problems.push(`${route} @${view.width}/${view.theme}: clipped ${hit.kind} <${hit.tag}>${where}`);
       }
       const facts = await page.evaluate(() => ({
         h1: document.querySelectorAll("h1").length,
         noAlt: [...document.images].filter((img) => !img.hasAttribute("alt")).length,
       }));
-      if (facts.h1 !== 1) problems.push(`${route}: ${facts.h1} h1`);
-      if (facts.noAlt > 0) problems.push(`${route}: ${facts.noAlt} images without alt`);
-      if (errors.length > 0) problems.push(`${route}: ${errors.join(" | ")}`);
+      if (facts.h1 !== 1) problems.push(`${route} @${view.width}/${view.theme}: ${facts.h1} h1`);
+      if (facts.noAlt > 0) problems.push(`${route} @${view.width}/${view.theme}: ${facts.noAlt} images without alt`);
     }
+    if (errors.length > 0) problems.push(`${route}: ${errors.join(" | ")}`);
     expect(problems).toEqual([]);
   });
 }

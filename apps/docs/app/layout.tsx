@@ -6,7 +6,7 @@ import { rootLayoutCopy } from "@/app/i18n/root-layout-copy";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { docsSite, homePage } from "@/lib/site";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "@/lib/site-identity-storage";
+import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "@/features/identity/ui/site-identity-storage";
 import { IdentityScript } from "@zedtech/zedkit-ui";
 import { preload } from "react-dom";
 import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";

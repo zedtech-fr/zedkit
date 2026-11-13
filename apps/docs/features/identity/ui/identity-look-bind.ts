@@ -1,14 +1,14 @@
 import { type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { freeLabel, type IdentitySource } from "@/lib/identity-library";
-import { tokensForLook } from "./identity-look.ts";
+import { tokensForLook } from "@/lib/identity-look";
 import { saveStatus, type SaveStatus } from "@/lib/identity-save-status";
 import {
   deleteNamedIdentity,
   renameNamedIdentity,
   saveNamedIdentity,
   type NamedIdentity,
-} from "@/lib/named-identities";
+} from "./named-identities.ts";
 
 type BindLookLibraryArgs = {
   named: NamedIdentity[];

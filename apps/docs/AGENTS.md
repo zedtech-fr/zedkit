@@ -42,10 +42,10 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/<route>/_<name>/` (view, `sections/`, hooks, `i18n/`, page CSS
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
-  `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`,
-  `home-link.tsx`, `sections/`). Remaining home files (hero, identity
-  looks, i18n, rhythm, copy-command) still live under `ui/home/**`
-  until those move lots.
+  `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`, `sections/`
+  for the seven `home-*-section.tsx` files and `home-link.tsx`). Remaining
+  home files (hero, identity looks, i18n, rhythm, copy-command) still live
+  under `ui/home/**` until those move lots.
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
@@ -125,13 +125,24 @@ reject dead `/r/<name>.json` links.
   `pnpm --filter @zedtech/zedkit-docs visual:verify` (alias of
   `zedkit-ai visual-verify`; the script already passes `--changed` and the
   fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
-- **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
-  component page, getting-started). Unit tests, `catalog:check`, the SEO
-  export check and the first-load budget cover the rest. `pnpm e2e` is
-  local-only, never a merge gate. A new spec must be listed in the
-  `smoke` or `e2e` script; specs must not embed `127.0.0.1` or
-  `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
-  `test-results/`. Home smoke exact-text must quote a string from
+- **PR / CI:** merge-gate browsers are `smoke` (home, search, catalog, a
+  component page, getting-started) plus `docs-render` (load-time overflow,
+  axe serious/critical, clipped text on mapped routes). Unmapped diffs
+  (chrome, `[[...slug]]` content) and deleted pages use the five host
+  fallback routes (`visual:verify --routes`), not the whole sitemap.
+  Empty `DOCS_ROUTES` fails closed. Keyboard, motion and interaction stay
+  in the sampled `smoke` / `e2e` suites. Unit tests, `catalog:check`, the
+  SEO export check and the first-load budget cover the rest. `pnpm e2e`
+  is local-only, never a merge gate. A new spec must be listed in the
+  `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
+  or `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
+  `test-results/`. Intended truncation that is not `truncate` /
+  `line-clamp-*` uses `data-allow-clip` plus a `CLIP_EXCEPTIONS` row in
+  `tests/a11y-exceptions.mjs` (owner and `removeBy`, same as axe excludes).
+  The overflow detector already skips visually-hidden nodes (sr-only, clip /
+  clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
+  ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
+  Home smoke exact-text must quote a string from
   `ui/home/i18n/*-copy.ts` or `ui/i18n/site-chrome-copy.ts`; do not
   invent a sentence in the spec.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
@@ -143,6 +154,18 @@ reject dead `/r/<name>.json` links.
   pnpm dlx serve@14.2.6 apps/docs/out -l 3100 &
   pnpm exec playwright install chromium
   pnpm --filter @zedtech/zedkit-docs run smoke
+  ```
+- **Reproducing a failed `docs-render` job:** same `out/` as docs-smoke.
+  Pin routes with `DOCS_ROUTES` (comma-separated). Unmapped / deleted-page
+  green path is the host fallback set:
+
+  ```sh
+  pnpm exec turbo run build --filter=@zedtech/zedkit-docs
+  pnpm dlx serve@14.2.6 apps/docs/out -l 3100 &
+  pnpm exec playwright install chromium
+  DOCS_ROUTES=/catalog pnpm --filter @zedtech/zedkit-docs run e2e:routes
+  DOCS_ROUTES=/,/docs,/docs/ui/trigger-actions-with-buttons,/catalog,/docs/foundations \
+    pnpm --filter @zedtech/zedkit-docs run e2e:routes
   ```
 - Done = Local loop green + manifest/check in sync for catalog edits +
   examined screenshots for visual changes + a rendered-page critique
@@ -187,7 +210,7 @@ second fonts `pnpm add` next to that snippet.
   with its reason). The floating dock is manual customize only and does not
   render those outcomes. There is no silent keyword fallback: a failed
   generation says so and leaves the draft untouched.
-- Saved looks are local recipes (`lib/named-identities.ts`): re-validated on
+- Saved looks are local recipes (`features/identity/ui/named-identities.ts`): re-validated on
   every read, no server copy. Changing the stored shape needs a version and a
   migration.
 - Simple and Expert share `IdentityLookForm`. Simple colour fields read and
@@ -199,7 +222,7 @@ second fonts `pnpm add` next to that snippet.
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `i18n/identity-editor-copy.ts`.
 - Classic edits in the floating dock restyle the whole site immediately and
-  persist in `lib/site-identity-storage.ts`. Reset restores the site default
+  persist in `features/identity/ui/site-identity-storage.ts`. Reset restores the site default
   look (`docsSiteDefaultTokens`: kit Glass plus docs-shell remaps). The dock
   has no Apply or Preview step and no opt-in key. Dock customize copy must
   not name a preview; the page and its specimens follow. The editor page
