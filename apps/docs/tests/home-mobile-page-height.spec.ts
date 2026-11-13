@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { HOME_MOBILE_PAGE_MAX_SCROLL_PX } from "@/ui/home/home-rhythm";
+import { HOME_MOBILE_PAGE_MAX_SCROLL_PX } from "@/app/(home)/_home/home-rhythm";
 
 const MOBILE = { width: 390, height: 844 };
 

@@ -30,8 +30,8 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   const surfaces = [
     ["catalog", catalog],
     ["wrapper", read("features/docs/mdx/ui/setup-entry-prompt.tsx")],
-    ["home lead", read("ui/home/home-hero-lead.tsx")],
-    ["home illustration", read("ui/home/home-hero-illustration.tsx")],
+    ["home lead", read("app/(home)/_home/home-hero-lead.tsx")],
+    ["home illustration", read("app/(home)/_home/home-hero-illustration.tsx")],
     ["home band", read("app/(home)/_home/sections/home-paste-section.tsx")],
     ["home closing", read("app/(home)/_home/sections/home-closing-section.tsx")],
     ["getting started", read("prose/guides/getting-started.mdx")],
@@ -58,7 +58,7 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   const ids = [...catalog.matchAll(/id: "(ai|ui|combined|suggest)"/g)].map((match) => match[1]);
   assert.deepEqual(ids, ["ai", "ui", "combined", "suggest"]);
 
-  const homeLead = read("ui/home/home-hero-lead.tsx");
+  const homeLead = read("app/(home)/_home/home-hero-lead.tsx");
   const homeBand = read("app/(home)/_home/sections/home-paste-section.tsx");
   const homeClosing = read("app/(home)/_home/sections/home-closing-section.tsx");
   const homePrompt = exportedString(generated, "MAP_AI_UI_SETUP_MINI_PROMPT");

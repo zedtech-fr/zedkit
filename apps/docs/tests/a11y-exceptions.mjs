@@ -24,7 +24,7 @@ export const A11Y_AXE_EXCLUDES = A11Y_AXE_EXCEPTIONS.map((entry) => entry.select
 export const CLIP_EXCEPTIONS = [
   {
     selector: "[data-hero-run-stage]",
-    file: "apps/docs/ui/home/home-hero-illustration.tsx",
+    file: "apps/docs/app/(home)/_home/home-hero-illustration.tsx",
     reason: "Hero stage masks decorative blobs that sit past the rounded high-value panel.",
     owner: "docs",
     removeBy: "2027-02-13",

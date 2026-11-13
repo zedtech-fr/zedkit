@@ -235,7 +235,7 @@ export default tseslint.config(
   },
   {
     files: [
-      "apps/docs/ui/home/home-hero-lead.tsx",
+      "apps/docs/app/(home)/_home/home-hero-lead.tsx",
       "apps/docs/app/(site)/catalog/_catalog/catalog-view.tsx",
     ],
     rules: {

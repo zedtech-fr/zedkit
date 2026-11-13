@@ -5,7 +5,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
   HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
-} from "@/ui/home/home-rhythm";
+} from "../home-rhythm";
 import { homeLimitsCopy } from "../i18n/home-limits-copy";
 
 /**

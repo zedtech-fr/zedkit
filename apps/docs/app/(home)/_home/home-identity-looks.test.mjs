@@ -43,7 +43,8 @@ test("one compact Project settings specimen is restyled, not remounted", () => {
   assert.doesNotMatch(looks, /key=\{identity\}/);
   assert.doesNotMatch(looks, /document\.documentElement|documentElement/);
   assert.match(looks, /useLookFade/);
-  assert.match(looks, /useMotionOk/);
+  assert.match(looks, /useMotionPreference\(\) === ["']no-preference["']/);
+  assert.doesNotMatch(looks, /\buseMotionOk\b/);
   assert.match(looks, /data-identity="\$\{identity\}"/);
   assert.match(looks, /bg-primary/);
   const stageCss = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");

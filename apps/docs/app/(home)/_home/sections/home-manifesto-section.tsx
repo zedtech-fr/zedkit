@@ -5,7 +5,7 @@ import {
   HOME_PERSUASION_TEXT_CLASS,
   HOME_READING_REVEAL_PROPS,
   HOME_SECTION_CONTENT_GAP,
-} from "@/ui/home/home-rhythm";
+} from "../home-rhythm";
 import { homeManifestoCopy } from "../i18n/home-manifesto-copy";
 import { OffPathLink } from "@/ui/off-path-link";
 

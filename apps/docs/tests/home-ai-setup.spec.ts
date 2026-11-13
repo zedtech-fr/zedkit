@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
-import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
+import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
 import { homeSameIdeaCopy } from "../app/(home)/_home/i18n/home-same-idea-copy";
 import { homeSixSentencesCopy } from "../app/(home)/_home/i18n/home-six-sentences-copy";
 

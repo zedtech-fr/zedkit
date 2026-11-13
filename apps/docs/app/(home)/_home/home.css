@@ -1,0 +1,237 @@
+/*
+ * Home hero: the proposition beside a static glass illustration of one run.
+ *
+ * Below `lg` the lead comes first and the illustration follows at the full measure. From `lg` they sit in two
+ * columns. The page scrolls normally: nothing is pinned.
+ *
+ * Motion, all off under `prefers-reduced-motion` and `data-motion="reduce"`:
+ *   1. load: the lead rises block by block, then the glass stage enters;
+ *   2. illustration: Plan / Build / Check / Fix / Done step opacities loop; Pause sets animation-play-state;
+ *   3. one decorative blob on the purple stage drifts (`zk-home-float`).
+ * Reduced motion shows the final card, no Pause control, no displacement.
+ */
+#home-page [data-home-hero] {
+  min-width: 0;
+  --zk-home-hero-stack: 4rem;
+}
+
+/*
+ * Looks pills: inverted selected chip. Unlayered so ink beats kit tab
+ * utilities and inherited muted color (selected contrast walks [role=tab]).
+ */
+#home-page [data-look-tab][data-state="active"] {
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+/* Hero title line, then the sentence under it. Wide enough for the grey third clause. */
+#home-page [data-home-hero-lead] h1 {
+  max-width: 48rem;
+}
+#home-page [data-home-hero-sub] {
+  max-width: 32.5rem;
+}
+
+/*
+ * Home hero band: section tokens (88px top / 96px bottom), same at 390 and
+ * 1440. Inner padding-block on the grid used to stack with this and miss
+ * the 142px heading offset. Hash aliases #ai-setup / #get-started live
+ * inside #paste.
+ */
+#home-page [data-home-hero-band] {
+  padding-top: var(--zk-section-md);
+  padding-bottom: var(--zk-section-lg);
+}
+
+@media (width < 64rem) {
+  #home-page [data-home-hero] {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--zk-home-hero-stack);
+  }
+}
+
+#home-page [data-home-hero] [data-home-hero-lead],
+#home-page [data-home-hero] [data-home-hero-preview] {
+  min-width: 0;
+}
+
+#home-page [data-home-hero] {
+  --zk-home-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Category cue as the mockup first-screen chip. Tokens, not mockup hex. */
+#home-page [data-home-hero-category] {
+  padding-block: calc(var(--spacing) * 1);
+  padding-inline: calc(var(--spacing) * 2.5);
+  border-radius: var(--radius-md);
+  background: hsl(var(--card));
+  border: var(--zk-border-width, 1px) solid hsl(var(--border));
+}
+
+/*
+ * High-value illustration stage (violet/indigo allowed on this panel only).
+ * Tokens, not mockup hex. The glass card sits above the blobs.
+ */
+#home-page [data-hero-run-stage] {
+  z-index: 1;
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 8);
+  border-radius: var(--radius-2xl, 1rem);
+  background-color: hsl(var(--primary));
+  background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  box-shadow: var(--zk-shadow-xl);
+}
+
+#home-page [data-hero-run-blob],
+#home-page [data-hero-run-drift] {
+  position: absolute;
+  border-radius: 9999px;
+  aspect-ratio: 1;
+}
+
+#home-page [data-hero-run-blob="1"] {
+  left: -3.75rem;
+  top: 3.75rem;
+  width: 13.75rem;
+  background: hsl(var(--accent) / 0.55);
+}
+
+#home-page [data-hero-run-drift] {
+  right: -2.5rem;
+  top: -3.75rem;
+  width: 16.25rem;
+  background: hsl(var(--primary-foreground) / 0.1);
+}
+
+#home-page [data-hero-run-blob="2"] {
+  right: 3.75rem;
+  bottom: 1.875rem;
+  width: 5.625rem;
+  background: hsl(var(--accent) / 0.7);
+}
+
+#home-page [data-hero-run-step] {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  padding-block: 0.5625rem;
+}
+
+#home-page [data-hero-run-step] + [data-hero-run-step] {
+  border-top: var(--zk-border-width, 1px) solid hsl(var(--border) / 0.6);
+}
+
+#home-page [data-hero-run-stage] > [data-slot="surface"] {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="reduce"]) {
+  /* 1. Load: the lead, one block at a time. Opacity and a short rise; `backwards`, so nothing is left applied. */
+  #home-page [data-home-hero] [data-home-hero-lead] > * {
+    animation: zk-home-hero-rise 360ms var(--zk-home-ease) backwards;
+    animation-delay: calc(var(--zk-lead-beat, 0) * 70ms);
+  }
+
+  #home-page [data-home-hero] [data-home-hero-lead] > :nth-child(2) {
+    --zk-lead-beat: 1;
+  }
+
+  #home-page [data-home-hero] [data-home-hero-lead] > :nth-child(3) {
+    --zk-lead-beat: 2;
+  }
+
+  #home-page [data-hero-run-stage] {
+    animation: zk-home-window-in 640ms var(--zk-home-ease) 140ms backwards;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="plan"] {
+    animation: zk-home-run-plan 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="build"] {
+    animation: zk-home-run-build 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="check"] {
+    animation: zk-home-run-check 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="fix"] {
+    animation: zk-home-run-fix 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-step][data-hero-run-beat="done"] {
+    animation: zk-home-run-done 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-drift] {
+    animation: zk-home-float 7s ease-in-out infinite alternate;
+  }
+
+  #home-page [data-hero-run-stage][data-paused] [data-hero-run-step],
+  #home-page [data-hero-run-stage][data-paused] [data-hero-run-drift] {
+    animation-play-state: paused;
+  }
+  }
+}
+
+@keyframes zk-home-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@keyframes zk-home-window-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.985);
+  }
+}
+
+@keyframes zk-home-float {
+  50% {
+    translate: 0 -0.35rem;
+  }
+}
+
+@keyframes zk-home-run-plan {
+  0%, 3% { opacity: 0.3; }
+  7%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-build {
+  0%, 17% { opacity: 0.3; }
+  21%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-check {
+  0%, 31% { opacity: 0.3; }
+  35%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-fix {
+  0%, 47% { opacity: 0.3; }
+  51%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@keyframes zk-home-run-done {
+  0%, 61% { opacity: 0.3; }
+  65%, 90% { opacity: 1; }
+  96%, 100% { opacity: 0.3; }
+}
+
+@media (min-width: 64rem) {
+  #home-page [data-home-hero] {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--zk-home-hero-stack);
+  }
+}

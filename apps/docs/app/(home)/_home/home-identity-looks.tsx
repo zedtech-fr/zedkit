@@ -9,6 +9,7 @@ import {
   TabsContent,
   Text,
   ThemeScope,
+  useMotionPreference,
 } from "@zedtech/zedkit-ui";
 import { isIdentityId, type IdentityId } from "./home-identity-facts";
 import { homeIdentityLooksCopy } from "./i18n/home-identity-looks-copy";
@@ -20,8 +21,7 @@ import {
   HOME_METADATA_TEXT_CLASS,
   HOME_PARALLAX_SCROLL_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
-} from "@/ui/home/home-rhythm";
-import { useMotionOk } from "@/ui/home/use-motion-ok";
+} from "./home-rhythm";
 
 const noop = () => () => {};
 
@@ -44,7 +44,7 @@ const noop = () => () => {};
 export function HomeIdentityLooks() {
   const [identity, setIdentity] = useState<IdentityId>("glass");
   const stageRef = useRef<HTMLDivElement>(null);
-  const motionOk = useMotionOk();
+  const motionOk = useMotionPreference() === "no-preference";
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(noop, () => true, () => false);
   const mode = mounted && resolvedTheme === "dark" ? "dark" : "light";

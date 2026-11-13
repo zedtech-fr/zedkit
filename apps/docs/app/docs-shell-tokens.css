@@ -17,10 +17,6 @@ html.dark[data-identity] #nd-mobile-nav {
   --color-fd-secondary: hsl(var(--secondary));
 }
 
-html.dark[data-identity] #home-page [data-slot="tabs-trigger"][data-state="active"] {
-  color: hsl(var(--foreground));
-}
-
 [id^="type-table"] .line-through {
   color: hsl(var(--muted-foreground));
   text-decoration-color: hsl(var(--muted-foreground));

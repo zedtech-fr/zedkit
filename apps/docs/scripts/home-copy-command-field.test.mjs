@@ -11,8 +11,8 @@ function read(rel) {
 }
 
 test("hero and closing share one wrapping copy-command field (#298)", () => {
-  const field = read("ui/home/home-copy-command-field.tsx");
-  const copy = read("ui/home/i18n/home-copy-command-copy.ts");
+  const field = read("app/(home)/_home/home-copy-command-field.tsx");
+  const copy = read("app/(home)/_home/i18n/home-copy-command-copy.ts");
   const tokens = read("app/docs-shell-tokens.css");
 
   assert.match(field, /"use client"/);

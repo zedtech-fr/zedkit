@@ -1,5 +1,5 @@
 import { Container, signatureMotionClass } from "@zedtech/zedkit-ui";
-import { HomeHeroLead } from "@/ui/home/home-hero-lead";
+import { HomeHeroLead } from "./home-hero-lead";
 
 /** Hero band: the proposition, one map prompt, and a static glass illustration of one run. */
 export function HomeHero() {

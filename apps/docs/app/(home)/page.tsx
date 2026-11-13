@@ -7,6 +7,7 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { uiGalleryStats } from "@/content/gallery";
 import { PUBLIC_SITE_URL, homePage, pageUrl } from "@/lib/site";
+import "./_home/home.css";
 import { HomeView } from "./_home/home-view";
 
 const siteUrl = PUBLIC_SITE_URL.replace(/\/$/, "");

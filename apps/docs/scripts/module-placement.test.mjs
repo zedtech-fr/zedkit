@@ -294,7 +294,8 @@ describe("live docs tree", () => {
     assert.match(provider, /import\("@\/features\/docs\/ui\/search"\)/);
     assert.doesNotMatch(provider, /components\/search/);
     assert.equal(REQUIRED_GLOBS.includes("ui/docs-main-content.tsx"), false);
-    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+    assert.equal(REQUIRED_GLOBS.includes("ui/home/**"), false);
+    assert.deepEqual(REQUIRED_GLOBS, []);
   });
 
   it("imports the home view from _home and does not leave a shim at the old path", () => {
@@ -305,10 +306,14 @@ describe("live docs tree", () => {
     const composer = join(docsRoot, "app/(home)/_home/home-below-hero.tsx");
     assert.ok(existsSync(view));
     assert.ok(existsSync(composer));
-    assert.match(readFileSync(view, "utf8"), /from ["']\.\/home-below-hero["']/);
+    const viewSrc = readFileSync(view, "utf8");
+    assert.match(viewSrc, /from ["']\.\/home-below-hero["']/);
+    assert.match(viewSrc, /from ["']\.\/home-hero["']/);
+    assert.match(viewSrc, /from ["']\.\/home-rhythm["']/);
+    assert.doesNotMatch(viewSrc, /from ["']@\/ui\/home\//);
     assert.equal(existsSync(join(docsRoot, "ui/home/home-view.tsx")), false);
     assert.equal(existsSync(join(docsRoot, "ui/home/home-below-hero.tsx")), false);
-    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+    assert.equal(REQUIRED_GLOBS.includes("ui/home/**"), false);
   });
 
   it("imports home band sections from _home/sections and does not leave shims at the old paths", () => {
@@ -341,7 +346,7 @@ describe("live docs tree", () => {
     );
     assert.match(sameIdea, /from ["']\.\/home-link["']/);
     assert.doesNotMatch(sameIdea, /from "@\/ui\/home\/home-link"/);
-    assert.match(sameIdea, /from ["']@\/ui\/home\/home-rhythm["']/);
+    assert.match(sameIdea, /from ["']\.\.\/home-rhythm["']/);
     const identities = readFileSync(
       join(docsRoot, "app/(home)/_home/sections/home-identities-section.tsx"),
       "utf8",
@@ -352,8 +357,8 @@ describe("live docs tree", () => {
       join(docsRoot, "app/(home)/_home/sections/home-closing-section.tsx"),
       "utf8",
     );
-    assert.match(closing, /from ["']@\/ui\/home\/home-copy-command-field["']/);
-    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+    assert.match(closing, /from ["']\.\.\/home-copy-command-field["']/);
+    assert.equal(REQUIRED_GLOBS.includes("ui/home/**"), false);
   });
 
   it("imports identity-looks from _home and does not leave shims at the old paths", () => {
@@ -375,8 +380,9 @@ describe("live docs tree", () => {
       assert.equal(existsSync(join(docsRoot, "ui/home", name)), false, `shim ${name}`);
     }
     const looks = readFileSync(join(docsRoot, "app/(home)/_home/home-identity-looks.tsx"), "utf8");
-    assert.match(looks, /from ["']@\/ui\/home\/home-rhythm["']/);
-    assert.match(looks, /from ["']@\/ui\/home\/use-motion-ok["']/);
+    assert.match(looks, /from ["']\.\/home-rhythm["']/);
+    assert.match(looks, /useMotionPreference\(\) === ["']no-preference["']/);
+    assert.doesNotMatch(looks, /use-motion-ok|useMotionOk/);
     assert.match(looks, /from ["']\.\/home-identity-facts["']/);
     assert.match(looks, /from ["']\.\/i18n\/home-identity-looks-copy["']/);
     assert.match(looks, /from ["']\.\/use-look-fade["']/);
@@ -387,8 +393,8 @@ describe("live docs tree", () => {
       "utf8",
     );
     assert.match(identities, /from ["']\.\.\/home-identity-looks["']/);
-    assert.match(identities, /from ["']@\/ui\/home\/home-rhythm["']/);
-    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+    assert.match(identities, /from ["']\.\.\/home-rhythm["']/);
+    assert.equal(REQUIRED_GLOBS.includes("ui/home/**"), false);
   });
 
   it("imports band copy catalogs from _home/i18n and does not leave shims at the old paths", () => {
@@ -404,8 +410,10 @@ describe("live docs tree", () => {
       assert.ok(existsSync(join(docsRoot, "app/(home)/_home/i18n", name)), name);
       assert.equal(existsSync(join(docsRoot, "ui/home/i18n", name)), false, `shim ${name}`);
     }
-    assert.ok(existsSync(join(docsRoot, "ui/home/i18n/home-hero-copy.ts")));
-    assert.ok(existsSync(join(docsRoot, "ui/home/i18n/home-copy-command-copy.ts")));
+    assert.ok(existsSync(join(docsRoot, "app/(home)/_home/i18n/home-hero-copy.ts")));
+    assert.ok(existsSync(join(docsRoot, "app/(home)/_home/i18n/home-copy-command-copy.ts")));
+    assert.equal(existsSync(join(docsRoot, "ui/home/i18n/home-hero-copy.ts")), false);
+    assert.equal(existsSync(join(docsRoot, "ui/home/i18n/home-copy-command-copy.ts")), false);
     const sectionsDir = join(docsRoot, "app/(home)/_home/sections");
     const sectionFiles = [
       "home-same-idea-section.tsx",
@@ -421,8 +429,9 @@ describe("live docs tree", () => {
       assert.match(src, /from ["']\.\.\/i18n\//, name);
     }
     const closing = readFileSync(join(sectionsDir, "home-closing-section.tsx"), "utf8");
-    assert.match(closing, /from ["']@\/ui\/home\/home-copy-command-field["']/);
-    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+    assert.match(closing, /from ["']\.\.\/home-copy-command-field["']/);
+    assert.equal(REQUIRED_GLOBS.includes("ui/home/**"), false);
+    assert.equal(existsSync(join(docsRoot, "ui/home")), false);
   });
 
   it("does not leave shims at the old docs layout and search paths", () => {
@@ -566,7 +575,7 @@ describe("ESLint one-way imports", () => {
 
   it("fails a nested ui file importing ../../app/", async () => {
     const messages = await lintText(
-      join(repoRoot, "apps/docs/ui/home/placement-probe.tsx"),
+      join(repoRoot, "apps/docs/ui/placement-probe.tsx"),
       'import { x } from "../../app/layout";\n',
     );
     assert.ok(
@@ -629,9 +638,9 @@ describe("ESLint one-way imports", () => {
     );
   });
 
-  it("needs no L5 exception on ui/home/home-hero.tsx", async () => {
+  it("needs no L5 exception on app/(home)/_home/home-hero.tsx", async () => {
     eslint ??= new ESLint({ cwd: repoRoot });
-    const [result] = await eslint.lintFiles(["apps/docs/ui/home/home-hero.tsx"]);
+    const [result] = await eslint.lintFiles(["apps/docs/app/(home)/_home/home-hero.tsx"]);
     assert.equal(
       (result?.messages ?? []).filter((m) => m.ruleId === "no-restricted-imports").length,
       0,
