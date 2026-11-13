@@ -332,7 +332,10 @@ describe("visual-verify helpers", () => {
   });
 
   it("does not claim hit skips the clipped-only allow-clip attributes", () => {
-    const atlas = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../.agents/atlas.md"), "utf8");
+    const atlas = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../../../.agents/atlas/visual-verify.md"),
+      "utf8",
+    );
     const row = atlas.split("\n").find((line) => line.includes("zedkit-ai visual-verify"));
     expect(row).toBeDefined();
     expect(row).not.toMatch(/Clipped and hit measures skip/);

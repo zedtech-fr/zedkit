@@ -8,7 +8,7 @@ import type {
   TimelineEntryStatus,
   TimelineEntryType,
 } from "../ports/review-port";
-import { sanitizeLiveUrl } from "./public-review.ts";
+import { toLiveConsoleHref } from "./live-console-href.ts";
 
 export const PUBLIC_INDEX_KIND = "public-github-runs";
 
@@ -100,7 +100,7 @@ function toEntry(run: RunsApiRun, split: boolean): TimelineEntry {
     durationMs: run.durationMs,
     models: [...run.models],
     verdict: run.verdict,
-    liveUrl: sanitizeLiveUrl(run.liveUrl),
+    liveUrl: toLiveConsoleHref(run.runId),
     score: run.score,
     superseded: run.superseded,
   };
