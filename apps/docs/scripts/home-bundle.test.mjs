@@ -322,6 +322,13 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     typographyCss,
     /#home-page \[data-home-hero-lead\] \[data-home-hero-sub\] \{[^}]*--zk-type-lead-/,
   );
+  const atlas = readFileSync(join(root, ".agents/atlas.md"), "utf8");
+  assert.match(
+    atlas,
+    /Overlay body tokens on `#home-page \[data-home-hero-lead\] \[data-home-hero-sub\]` in `docs-typography\.css` \(never lead\)/,
+  );
+  assert.match(atlas, /`cn` keeps `text-zk-type-body` with `text-muted-foreground`/);
+  assert.doesNotMatch(atlas, /loses `text-zk-type-body` to tailwind-merge/);
   const tokens = readFileSync(join(app, "app/docs-shell-tokens.css"), "utf8");
   assert.doesNotMatch(tokens, /\[data-home-hero-band\]/);
   assert.match(tokens, /\[data-home-six-sentences/);
