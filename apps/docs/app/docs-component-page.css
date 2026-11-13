@@ -28,6 +28,8 @@
   --zk-preview-stage-inset-block: 1.5rem;
   --zk-preview-stage-inset-inline: 1rem;
   --zk-code-well: 240 10% 3.9%;
+  /* Header/filename uses .text-fd-muted-foreground → --muted-foreground, not --color-fd-*. */
+  --zk-code-well-muted: 240 5% 65%;
   --zk-preview-stage-fill: linear-gradient(
     135deg,
     hsl(var(--zk-preview-stage-from)) 0%,
@@ -91,7 +93,8 @@
 [data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki:not([data-adoption-frame]) {
   --color-fd-card: hsl(var(--zk-code-well));
   --color-fd-foreground: hsl(0 0% 98%);
-  --color-fd-muted-foreground: hsl(240 5% 65%);
+  --muted-foreground: var(--zk-code-well-muted);
+  --color-fd-muted-foreground: hsl(var(--zk-code-well-muted));
   --color-fd-border: hsl(240 4% 16%);
   background-color: hsl(var(--zk-code-well));
   color: hsl(0 0% 98%);

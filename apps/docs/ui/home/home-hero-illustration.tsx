@@ -87,6 +87,7 @@ export function HomeHeroIllustration() {
       aria-label={copy.caption}
       data-home-hero-preview=""
       data-hero-run-stage=""
+      data-allow-clip=""
       data-paused={motionOk && paused ? "" : undefined}
       className="relative content-shrink overflow-clip"
     >
