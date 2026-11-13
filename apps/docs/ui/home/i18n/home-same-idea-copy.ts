@@ -6,7 +6,7 @@ export const homeSameIdeaCopy = {
   },
   /** Kit inventory; home-bundle.test.mjs fails when skill/agent/identity dirs drift. */
   kitCounts: {
-    skills: 47,
+    skills: 48,
     agents: 23,
     looks: 6,
   },
