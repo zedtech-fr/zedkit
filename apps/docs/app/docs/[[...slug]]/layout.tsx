@@ -2,11 +2,11 @@ import type { ReactNode } from "react";
 import type { Root } from "fumadocs-core/page-tree";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { source } from "#source";
-import { SiteBrand } from "@/ui/site-brand";
+import { SiteBrand } from "@/components/site-chrome/site-brand";
 import { docsLayoutTree } from "./_docs/docs-layout-tree.mjs";
 import { isFoundationsPath } from "@/lib/site-nav-data";
-import { docsChromeSlots } from "@/ui/site-chrome-slots";
-import { DocsDesktopHeader, DocsSiteHeader } from "@/ui/site-headers";
+import { docsChromeSlots } from "@/components/site-chrome/site-chrome-slots";
+import { DocsDesktopHeader, DocsSiteHeader } from "@/components/site-chrome/site-headers";
 
 export default async function Layout({
   children,

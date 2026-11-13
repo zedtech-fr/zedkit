@@ -626,7 +626,7 @@ function tsxFiles(dir) {
   return out;
 }
 
-for (const dir of ["app", "ui", "features"]) {
+for (const dir of ["app", "components/site-chrome", "features"]) {
   if (!existsSync(join(APP, dir))) continue;
   for (const file of tsxFiles(join(APP, dir))) {
     const rel = file.slice(APP.length + 1);
@@ -645,6 +645,8 @@ for (const dir of ["components", "features"]) {
   if (!existsSync(join(APP, dir))) continue;
   for (const file of tsxFiles(join(APP, dir))) {
     const rel = file.slice(APP.length + 1);
+    // Chrome already used layout <div> under ui/; this lot is a path move.
+    if (rel.startsWith("components/site-chrome/")) continue;
     errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
   }
 }
@@ -674,12 +676,12 @@ for (const { href, external } of siteFooterLinkSpecs()) {
     errors.push(`site-footer: ${href} must be an https URL.`);
   }
 }
-const siteLayout = readFileSync(join(APP, "ui", "site-layout.tsx"), "utf8");
+const siteLayout = readFileSync(join(APP, "components/site-chrome", "site-layout.tsx"), "utf8");
 if (!siteLayout.includes("siteHeaderLinks")) {
   errors.push("site-layout: expected shared siteHeaderLinks in the marketing shell.");
 }
-if (!existsSync(join(APP, "ui", "site-footer.tsx"))) {
-  errors.push("site-footer: missing ui/site-footer.tsx.");
+if (!existsSync(join(APP, "components/site-chrome", "site-footer.tsx"))) {
+  errors.push("site-footer: missing components/site-chrome/site-footer.tsx.");
 }
 
 if (errors.length > 0) {

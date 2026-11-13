@@ -14,11 +14,11 @@ import {
   DrawerTrigger,
   IconButton,
 } from "@zedtech/zedkit-ui";
-import { DocsAppLink } from "@/ui/docs-app-link";
-import { HomeGetStartedAction, HomeGitHubLink } from "@/ui/home-header-actions";
-import { SiteBrand } from "@/ui/site-brand";
-import { SiteSearchTrigger } from "@/ui/site-chrome";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { DocsAppLink } from "@/components/site-chrome/docs-app-link";
+import { HomeGetStartedAction, HomeGitHubLink } from "@/components/site-chrome/header-actions";
+import { SiteBrand } from "@/components/site-chrome/site-brand";
+import { SiteSearchTrigger } from "@/components/site-chrome/site-chrome";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 import { isSiteNavLinkActive, siteHeaderChrome, type SiteNavLink } from "@/lib/site-nav-data";
 
 /**
