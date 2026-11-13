@@ -1500,6 +1500,7 @@
             "opacity": "1",
             "translate": "none",
             "scale": "none",
+            "visibility": "visible",
             "animation": "none",
             "transition": "none"
           },
@@ -1917,6 +1918,7 @@
           "opacity": "1",
           "translate": "none",
           "scale": "none",
+          "visibility": "visible",
           "animation": "none",
           "transition": "none"
         },
