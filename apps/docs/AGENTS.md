@@ -71,8 +71,11 @@ reject dead `/r/<name>.json` links.
   axe serious/critical, clipped text on mapped routes). Unmapped diffs
   (chrome, `[[...slug]]` content) and deleted pages use the five host
   fallback routes (`visual:verify --routes`), not the whole sitemap.
-  Empty `DOCS_ROUTES` fails closed. Keyboard, motion and interaction stay
-  in the sampled `smoke` / `e2e` suites. Unit tests, `catalog:check`, the
+  Empty `DOCS_ROUTES` fails closed. A shared token, primitive, or identity
+  sheet sets `DOCS_LOOKS` and rotates mist, press, tide, volt, maison, and
+  glass at 375/809/1440 × light/dark; other docs diffs keep the default
+  site look. Keyboard, motion and interaction stay in the sampled `smoke`
+  / `e2e` suites. Unit tests, `catalog:check`, the
   SEO export check and the first-load budget cover the rest. `pnpm e2e`
   is local-only, never a merge gate. A new spec must be listed in the
   `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
@@ -102,6 +105,7 @@ reject dead `/r/<name>.json` links.
   pnpm dlx serve@14.2.6 apps/docs/out -l 3100 &
   pnpm exec playwright install chromium
   DOCS_ROUTES=/catalog pnpm --filter @zedtech/zedkit-docs run e2e:routes
+  DOCS_ROUTES=/catalog DOCS_LOOKS=glass,tide pnpm --filter @zedtech/zedkit-docs run e2e:routes
   DOCS_ROUTES=/,/docs,/docs/ui/trigger-actions-with-buttons,/catalog,/docs/foundations \
     pnpm --filter @zedtech/zedkit-docs run e2e:routes
   ```

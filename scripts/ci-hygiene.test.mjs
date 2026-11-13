@@ -64,6 +64,8 @@ describe("docs-render job", () => {
     assert.match(job, /needs: \[changes, docs-build\]/);
     assert.match(job, /e2e:routes/);
     assert.match(job, /DOCS_ROUTES/);
+    assert.match(job, /DOCS_LOOKS/);
+    assert.match(job, /--looks/);
     assert.match(job, /docs-render-routes\.mjs/);
     assert.match(job, /playwright install chromium/);
     assert.match(job, /serve@14\.2\.6/);
