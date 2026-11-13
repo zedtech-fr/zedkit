@@ -677,6 +677,9 @@ test("docs phone chrome keeps search; home chrome does not", () => {
   assert.doesNotMatch(header, /DocsIdentityPicker/);
   assert.doesNotMatch(header, /SITE_GUIDE_LINKS|siteChromeCopy\.nav\.guides/);
   assert.doesNotMatch(siteHeaders, /isHomePath/);
+  assert.doesNotMatch(siteHeaders, /isCatalogPath/);
+  assert.match(siteHeaders, /\[--fd-layout-width:var\(--zk-header-max-width\)\] max-md:hidden/);
+  assert.match(compact, /--zk-header-max-width:\s*1400px/);
   assert.match(siteHeaders, /min-h-phone-bar/);
   assert.match(siteHeaders, /flex-nowrap/);
   assert.doesNotMatch(siteHeaders, /flex-wrap items-center/);

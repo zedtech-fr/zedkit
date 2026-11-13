@@ -19,7 +19,6 @@ function functionSource(src, name) {
 
 test("catalog desktop header is marketing chrome: search and GitHub, no version or theme", () => {
   const headers = read("ui/site-headers.tsx");
-  assert.match(headers, /isCatalogPath/);
   assert.match(headers, /SiteFullSearchTrigger/);
   assert.doesNotMatch(headers, /KitVersionLabel/);
   assert.doesNotMatch(headers, /ThemeSwitch|SiteThemeSwitch|data-theme-toggle/);
@@ -42,12 +41,20 @@ test("home desktop header still has Get started and no docs search", () => {
   assert.doesNotMatch(home, /SiteFullSearchTrigger/);
 });
 
-test("issues and other marketing routes keep the fumadocs Header", () => {
+test("issues and other marketing routes use the shared marketing desktop bar, not fumadocs Header", () => {
   const headers = read("ui/site-headers.tsx");
   const marketing = functionSource(headers, "MarketingSiteHeader");
   assert.doesNotMatch(marketing, /isHomePath/);
-  assert.match(marketing, /isCatalogPath/);
-  assert.match(marketing, /<Header className="max-md:hidden" \/>/);
+  assert.doesNotMatch(marketing, /isCatalogPath/);
+  assert.doesNotMatch(headers, /fumadocs-ui\/layouts\/home\/slots\/header/);
+  assert.match(marketing, /CatalogDesktopHeader/);
+  const nav = functionSource(headers, "MarketingDesktopNav");
+  assert.match(nav, /\[--fd-layout-width:var\(--zk-header-max-width\)\] max-md:hidden/);
+  assert.match(nav, /max-w-\(--fd-layout-width\)/);
+  assert.match(nav, /px-page-gutter/);
+  const compact = read("app/site-compact.css");
+  assert.match(compact, /--zk-header-max-width:\s*1400px/);
+  assert.match(compact, /#nd-nav \{[^}]*--fd-layout-width:\s*var\(--zk-header-max-width\)/);
 });
 
 test("home desktop header is the home layout slot, not an isHomePath branch", () => {
