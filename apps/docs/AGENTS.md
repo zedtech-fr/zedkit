@@ -42,8 +42,9 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   `app/<route>/_<name>/` (view, `sections/`, hooks, `i18n/`, page CSS
   imported by the page, unit tests, fixtures). Home is a route group:
   `app/(home)/` with its own `layout.tsx` and `page.tsx`, private code in
-  `app/(home)/_home/`. Remaining home files still live under `ui/home/**`
-  until those move lots.
+  `app/(home)/_home/` (`home-view.tsx`, `home-below-hero.tsx`). Remaining
+  home files (hero, bands, identity looks, i18n, rhythm) still live under
+  `ui/home/**` until those move lots.
   Docs catch-all screen code lives in `app/docs/[[...slug]]/_docs/`
   (must sit inside the catch-all, not beside it).
 - Used by two or more routes of one domain: `features/<domain>/` (current:
@@ -119,7 +120,10 @@ reject dead `/r/<name>.json` links.
   (`[[...slug]]`) is a child route; that segment must stay last.
   Checked-in JSON read at build: import the file (`with { type: "json" }`).
   Next 16 turbopack's `fileURLToPath` rejects a URL from
-  `new URL(..., import.meta.url)`.
+  `new URL(..., import.meta.url)`. After a rendered-surface change, also
+  `pnpm --filter @zedtech/zedkit-docs visual:verify` (alias of
+  `zedkit-ai visual-verify`; the script already passes `--changed` and the
+  fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
 - **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
   component page, getting-started). Unit tests, `catalog:check`, the SEO
   export check and the first-load budget cover the rest. `pnpm e2e` is

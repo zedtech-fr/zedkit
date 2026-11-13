@@ -205,6 +205,25 @@ describe("checkAtlas", () => {
     expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
   });
 
+  it("accepts Next.js route-group and private-folder entry paths", () => {
+    const root = project(
+      atlas(
+        "| Home | `app/(home)/_home/home-view.tsx#HomeView` | why | 2026-01-01 |",
+        "| Layout | `app/(home)/layout.tsx` | why | 2026-01-01 |",
+      ),
+    );
+    put(root, "app/(home)/_home/home-view.tsx", "export function HomeView() {}\n");
+    put(root, "app/(home)/layout.tsx", "export default function Layout() {}\n");
+    expect(checkAtlas(root, join(root, ".agents"))).toEqual([]);
+  });
+
+  it("reports a missing Next.js route-group file instead of skipping the token", () => {
+    const root = project(atlas("| Home | `app/(home)/page.tsx#HomePage` | why | 2026-01-01 |"));
+    const issues = checkAtlas(root, join(root, ".agents"));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]?.message).toContain("does not exist");
+  });
+
   it("only checks the Where table: other sections may name anything", () => {
     const root = project(`${atlas("| A | `a.md` | why | 2026-01-01 |")}\n## Why\n\n| Decision | Reason | Source |\n| --- | --- | --- |\n| d | r | \`gone/path.md\` |\n`);
     put(root, "a.md", "x");

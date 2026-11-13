@@ -16,6 +16,8 @@ Original work by the same author, plus vendored MIT skills (see
 pnpm add -D @zedtech/zedkit-ai
 ```
 
+`visual-verify` needs optional peers `@playwright/test` and `@axe-core/playwright`, then `playwright install chromium`.
+
 At a **pnpm workspace root** (`pnpm-workspace.yaml` present), use **`pnpm add -D -w @zedtech/zedkit-ai`** so install does not fail with `ERR_PNPM_ADDING_TO_ROOT`.
 
 Or skip the devDependency for a first try: `npx @zedtech/zedkit-ai setup` downloads the CLI once.
@@ -108,7 +110,11 @@ npx @zedtech/zedkit-ai scan [dir]                         # repo size and one sl
 npx @zedtech/zedkit-ai route verifier --kind check --stakes sensitive   # model and effort for one call (--allow-fast only if the user asked)
 npx @zedtech/zedkit-ai stakes PLAN.md --base origin/main  # stakes, kind, needs and gates of a plan, ticket or PR body
 npx @zedtech/zedkit-ai sync --provider cursor,claude --kit /path/to/kit  # local kit; omit = bundled; --check in CI
+npx @zedtech/zedkit-ai visual-verify --url http://127.0.0.1:3100 --changed
+npx @zedtech/zedkit-ai visual-verify --dir ./out --routes /,/docs --identities mist,press --baseline evidence/run/manifest.json --out evidence/run --md table.md --ticket ISSUE.md --base origin/dev --cwd . --manifest docs-manifest.json
 ```
+
+Writes `evidence/<branch>/manifest.json` and one contact-sheet PNG per route. Exit 0 pass, 1 fail (collection, overflow, page/console/HTTP, new serious axe, contrast, Copy, h1), 2 missing peers or bad flags.
 
 **Starter (default for `init`):** `setup-ai`, `ground-truth`, `review`, `definition-of-done`,
 `orchestrate` (so setup can hand off bigger work), `parallel-work`, `tdd`, and
@@ -117,7 +123,7 @@ and commands `/setup-ai` and `/review`. Enough to onboard a repo, verify facts,
 run one review workflow, and check done-ness without loading the whole kit.
 
 **Setup preset (default for `setup`):** everything in starter, plus
-`domain-modeling`, `persona-review`, `compose-ui`, `code-review`,
+`domain-modeling`, `persona-review`, `compose-ui`, `visual-verify`, `code-review`,
 `ponytail-review`, `retro`, `rules-upkeep`, and `writing-for-agents`, the command skills
 `plan`, `implement`, `challenge`, `to-spec`, `to-tickets`, `wayfinder`, `codebase-design`,
 `research`, `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
@@ -259,7 +265,7 @@ per-folder rules. When to call which subagent: the
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
 `handoff`, `audit`, `orchestrate`, `research`, `improve-config`, `from-audit`,
-`to-audit`, `fix`, `improve-from-review`, `quick-wins`, `triage`) are 3-6 line files: each runs its skill on the command arguments
+`to-audit`, `fix`, `improve-from-review`, `quick-wins`, `triage`, `zedkit-ai`) are 3-6 line files: each runs its skill on the command arguments
 (or the current context). Both tools also list skills as `/` commands
 nowadays; the files stay as the explicit one-keystroke path and as fallback
 when the skills link is not followed.
@@ -280,7 +286,7 @@ when the skills link is not followed.
 
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
-`use-signature`, `compose-ui` (persona chain brief before composing UI), `review`, `plan`, `challenge`, `audit`, `orchestrate`,
+`use-signature`, `compose-ui` (persona chain brief before composing UI), `visual-verify`, `review`, `plan`, `challenge`, `audit`, `orchestrate`, `zedkit-ai`,
 `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
 `evidence-grounded-analysis` (answers about customer or user material only
 from that material, every claim tagged verbatim, inference or absent;
@@ -314,8 +320,8 @@ the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,
 director briefs — the full table (role + when to call) lives in
 `docs/agents-catalog.md`, the installed set in `kit.json`.
 
-**Presets:** `starter` (default: onboard, review, done — eight skills, three
-subagents, two commands), `setup` (starter plus domain modeling, the review
+**Presets:** `starter` (default: onboard, review, done — nine skills, three
+subagents, three commands), `setup` (starter plus domain modeling, the review
 lenses, retro, rules-upkeep, and the subagents named under **Setup preset**), `core` (planning, implement, and the rest;
 `zedkit-ai list` shows the skill list), and `full` (every skill). Keep the
 skill count low: every skill's name and description is loaded into context

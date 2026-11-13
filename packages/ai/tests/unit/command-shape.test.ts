@@ -42,6 +42,13 @@ describe("command shape", () => {
         expect(bodyOf(file), file).toContain("$ARGUMENTS");
         continue;
       }
+      if (name === "zedkit-ai") {
+        expect(bodyOf(file), file).toContain("before any tool call");
+        expect(bodyOf(file), file).toContain(
+          "run the `zedkit-ai` skill on `$ARGUMENTS`",
+        );
+        continue;
+      }
       expect(bodyOf(file), file).toBe(defaultBody(name));
     }
   });

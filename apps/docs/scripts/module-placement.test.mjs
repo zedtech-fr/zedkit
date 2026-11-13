@@ -297,6 +297,20 @@ describe("live docs tree", () => {
     assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 
+  it("imports the home view from _home and does not leave a shim at the old path", () => {
+    const page = readFileSync(join(docsRoot, "app/(home)/page.tsx"), "utf8");
+    assert.match(page, /from "\.\/_home\/home-view"/);
+    assert.doesNotMatch(page, /from "@\/ui\/home\/home-view"/);
+    const view = join(docsRoot, "app/(home)/_home/home-view.tsx");
+    const composer = join(docsRoot, "app/(home)/_home/home-below-hero.tsx");
+    assert.ok(existsSync(view));
+    assert.ok(existsSync(composer));
+    assert.match(readFileSync(view, "utf8"), /from ["']\.\/home-below-hero["']/);
+    assert.equal(existsSync(join(docsRoot, "ui/home/home-view.tsx")), false);
+    assert.equal(existsSync(join(docsRoot, "ui/home/home-below-hero.tsx")), false);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+  });
+
   it("does not leave shims at the old docs layout and search paths", () => {
     assert.equal(existsSync(join(docsRoot, "ui/docs-main-content.tsx")), false);
     assert.equal(existsSync(join(docsRoot, "lib/docs-layout-tree.mjs")), false);

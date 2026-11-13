@@ -8,7 +8,8 @@ import type { Issue } from "./validate.js";
 export const ATLAS_MAX_LINES = 150;
 const MIN_WHERE_ROWS = 3;
 
-const NOT_A_PATH = /[\s<>*{}$()]/u;
+/** Spaces, globs, and placeholder markup. Next.js `(group)` / `_private` segments are real paths. */
+const NOT_A_PATH = /[\s<>*{}$]/u;
 
 /**
  * An entry token is a path with two optional refinements:
@@ -254,7 +255,7 @@ function whereRows(text: string): string[][] {
     .filter((c) => c[0] !== "Topic" && !/^:?-{3,}:?$/u.test(c[0] ?? ""));
 }
 
-/** A token is path-like when it names a file or folder: no spaces, globs or placeholders, not a url or a package. */
+/** A token is path-like when it names a file or folder: no spaces, globs or placeholder markup, not a url or a package. */
 function isPathLike(token: string): boolean {
   return token !== "" && !NOT_A_PATH.test(token) && !/^(@|-|https?:)/u.test(token) && /[./]/u.test(token);
 }

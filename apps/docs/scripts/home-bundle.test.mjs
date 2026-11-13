@@ -163,7 +163,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
 });
 
 test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing (#210)", () => {
-  const src = readFileSync(join(app, "ui/home/home-below-hero.tsx"), "utf8");
+  const src = readFileSync(join(app, "app/(home)/_home/home-below-hero.tsx"), "utf8");
   const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
   const sixSentences = readFileSync(join(app, "ui/home/home-six-sentences-section.tsx"), "utf8");
   const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
@@ -725,7 +725,7 @@ function walkTsx(dir, relBase = "") {
 }
 
 test("docs home uses native document scroll; SectionScroll is not mounted (#262)", () => {
-  const view = readFileSync(join(app, "ui/home/home-view.tsx"), "utf8");
+  const view = readFileSync(join(app, "app/(home)/_home/home-view.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
   assert.doesNotMatch(view, /\bSectionScroll\b/);
   assert.doesNotMatch(view, /data-slot=["']section-scroll["']/);
@@ -735,9 +735,11 @@ test("docs home uses native document scroll; SectionScroll is not mounted (#262)
   );
 
   const importers = [];
-  for (const file of walkTsx(join(app, "ui/home"))) {
-    const src = readFileSync(file.abs, "utf8");
-    if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
+  for (const dir of [join(app, "ui/home"), join(app, "app/(home)/_home")]) {
+    for (const file of walkTsx(dir)) {
+      const src = readFileSync(file.abs, "utf8");
+      if (/\bSectionScroll\b/.test(src)) importers.push(file.rel);
+    }
   }
   assert.deepEqual(importers, []);
 
