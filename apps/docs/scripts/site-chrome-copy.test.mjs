@@ -45,7 +45,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal("guides" in siteChromeCopy.nav, false);
   assert.equal(siteChromeCopy.nav.github, "GitHub");
   assert.equal(siteChromeCopy.nav.opensInNewTab, "opens in a new tab");
-  assert.equal(siteChromeCopy.getStarted, "Get started");
+  assert.equal(siteChromeCopy.getStarted, "Try it yourself");
   assert.equal(siteChromeCopy.footer.credit, "by Zed Tech · MIT");
   assert.equal("maintainer" in siteChromeCopy.footer, false);
   assert.equal(siteChromeCopy.footer.links.docs, "Docs");
@@ -164,7 +164,7 @@ test("listed chrome files read catalog keys instead of English literals", () => 
     .join("\n");
   assert.doesNotMatch(consumers, /"Toggle theme"|"Open navigation"|"Open menu"|"Skip to content"/);
   assert.doesNotMatch(consumers, /"Docs pages"|"Documentation"/);
-  assert.doesNotMatch(consumers, /"Search documentation"|"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"/);
+  assert.doesNotMatch(consumers, /"Search documentation"|"Search the documentation"|"zedkit home"|"by Zed Tech · MIT"|"Get started"|"Try it yourself"/);
   assert.doesNotMatch(consumers, /"opens in a new tab"/);
   assert.doesNotMatch(consumers, /"Latest"|`v\$\{version\} \(releases\)`/);
   assert.doesNotMatch(header, /<button[\s>]/);

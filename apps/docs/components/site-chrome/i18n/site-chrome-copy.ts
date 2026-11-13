@@ -1,7 +1,7 @@
 /** English copy for site chrome. Keys only; no markup. */
 export const siteChromeCopy = {
   skipToContent: "Skip to content",
-  getStarted: "Get started",
+  getStarted: "Try it yourself",
   brand: { name: "zedkit", homeAriaLabel: "zedkit home" },
   search: { triggerAriaLabel: "Search documentation" },
   nav: {
