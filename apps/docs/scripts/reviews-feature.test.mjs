@@ -1729,6 +1729,7 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
   assert.match(list, /copy\.type\[last\.type\]/);
   assert.match(list, /aria-label=\{copy\.list\.title\}/);
+  assert.doesNotMatch(list, /<nav aria-label=/);
   assert.match(list, /SidebarNavGroup/);
   assert.match(list, /runCountLabel/);
   assert.match(timeline, /TimelineRow/);
@@ -1786,6 +1787,9 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.match(list, /copy\.list\.missing/);
   assert.match(list, /copy\.list\.missingNext/);
   assert.doesNotMatch(list, /copy\.issue\.missing/);
+  assert.match(list, /aria-labelledby=\{detailHeadingId\}/);
+  assert.match(list, /id=\{detailHeadingId\}/);
+  assert.match(list, /level=\{2\}/);
   assert.match(list, /aria-live="polite"/);
   assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
   assert.doesNotMatch(list, /\?\? items\[0\]/);

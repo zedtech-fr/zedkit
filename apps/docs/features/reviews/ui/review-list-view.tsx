@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
   EmptyState,
+  Heading,
   PageHeader,
   SidebarNavGroup,
   SidebarNavItem,
@@ -126,7 +127,7 @@ function IssueListNav({
   withIds: boolean;
 }) {
   return (
-    <nav aria-label={copy.list.title} className="flex flex-col gap-stack-sm surface-pad-md">
+    <nav className="flex flex-col gap-stack-sm surface-pad-md">
       {issues.length === 0 ? null : (
         <ul className="flex list-none flex-col gap-stack-tight">
           {issues.map((issue) => (
@@ -265,14 +266,19 @@ function IssuesWorkspace({
           tabIndex={0}
           className="content-shrink p-app-shell-padding md:pane-shrink md:flex-1 md:overflow-y-auto md:p-app-shell-padding-md md:focus-ring"
           aria-live="polite"
-          aria-labelledby={selected ? detailHeadingId : undefined}
+          aria-labelledby={detailHeadingId}
         >
           {selected?.kind === "issue" ? (
             <IssueDetail issue={selected.issue} copy={copy} headingId={detailHeadingId} />
           ) : selected?.kind === "pr" ? (
             <UnlinkedDetail entry={selected.pull} copy={copy} headingId={detailHeadingId} />
           ) : (
-            <EmptyState title={copy.list.missing} description={copy.list.missingNext} />
+            <>
+              <Heading level={2} typeRole="cardTitle" id={detailHeadingId}>
+                {copy.list.missing}
+              </Heading>
+              <EmptyState description={copy.list.missingNext} />
+            </>
           )}
         </article>
       }
