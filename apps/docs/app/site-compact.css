@@ -8,6 +8,8 @@
   /* 56px; mockup 60px declined so home / catalog / docs share one bar. */
   --zk-site-header-height: 3.5rem;
   --zk-header-height: var(--zk-site-header-height);
+  /* Desktop bar measure: pin on #nd-nav so docs-cluster --fd-layout-width cannot inherit. */
+  --zk-header-max-width: 1400px;
 }
 :root[data-identity="glass"] {
   --spacing: 0.26rem;
@@ -31,6 +33,10 @@
 #nd-nav nav {
   height: var(--zk-site-header-height);
   min-height: 0;
+}
+/* Local --fd-layout-width so the bar stays 1400px outside and inside #nd-docs-layout. */
+#nd-nav {
+  --fd-layout-width: var(--zk-header-max-width);
 }
 #nd-mobile-nav {
   height: var(--zk-site-header-height);

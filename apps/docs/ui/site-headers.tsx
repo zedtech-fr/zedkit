@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Header } from "fumadocs-ui/layouts/home/slots/header";
 import { usePathname } from "next/navigation";
 import { cn } from "@zedtech/zedkit-ui";
 import { DocsAppLink } from "@/ui/docs-app-link";
@@ -10,7 +9,7 @@ import { MobileHeader } from "@/ui/mobile-header";
 import { SiteBrand } from "@/ui/site-brand";
 import { SiteFullSearchTrigger, SiteSearchTrigger } from "@/ui/site-chrome";
 import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { isCatalogPath, isFoundationsPath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
+import { isFoundationsPath, isSiteNavLinkActive, sitePrimaryNavLinks } from "@/lib/site-nav-data";
 
 const HEADER_MARK = {
   home: { "data-home-header": "" },
@@ -32,7 +31,7 @@ function MarketingDesktopNav({
     <header
       id="nd-nav"
       {...HEADER_MARK[mark]}
-      className={cn("sticky pin-top z-header max-md:hidden", className)}
+      className={cn("sticky pin-top z-header [--fd-layout-width:var(--zk-header-max-width)] max-md:hidden", className)}
     >
       <div>
         <nav
@@ -151,17 +150,12 @@ export function HomeMarketingHeader() {
   );
 }
 
-/** Marketing header slot: phone header below md. Catalog uses the mockup desktop chrome; other routes keep fumadocs Header. */
+/** Marketing header slot: phone header below md. Every (site) route uses the shared desktop bar (search + GitHub). */
 export function MarketingSiteHeader() {
-  const catalog = isCatalogPath(usePathname());
   return (
     <>
       <MobileHeader />
-      {catalog ? (
-        <CatalogDesktopHeader />
-      ) : (
-        <Header className="max-md:hidden" />
-      )}
+      <CatalogDesktopHeader />
     </>
   );
 }
