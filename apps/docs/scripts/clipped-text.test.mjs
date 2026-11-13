@@ -6,6 +6,7 @@ import { clippedTextHits } from "./clipped-text.mjs";
 const box = (over = {}) => ({
   tag: "P",
   className: "",
+  text: "",
   overflowX: "visible",
   overflowY: "visible",
   textOverflow: "clip",
@@ -89,12 +90,29 @@ test("truncate and line-clamp ellipsis pass; a heading ellipsis fails", () => {
     clippedTextHits([
       box({
         tag: "H1",
+        className: "hero-title",
+        text: "Welcome to the docs",
         textOverflow: "ellipsis",
         scrollWidth: 400,
         clientWidth: 100,
       }),
-    ]).map((hit) => hit.kind),
-    ["ellipsis"],
+    ]),
+    [{ kind: "ellipsis", tag: "H1", locator: "hero-title Welcome to the docs" }],
+  );
+});
+
+test("bare ellipsis CSS with no overflow is not a clipped-text hit", () => {
+  assert.deepEqual(
+    clippedTextHits([
+      box({
+        tag: "SPAN",
+        className: "min-w-0",
+        textOverflow: "ellipsis",
+        scrollWidth: 100,
+        clientWidth: 100,
+      }),
+    ]),
+    [],
   );
 });
 

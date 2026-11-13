@@ -6,9 +6,11 @@ import { gotoStaticRoute } from "./goto-static-route.js";
 import { routesForSweep } from "./published-routes.js";
 
 /**
- * Axe on touched (or all) published routes, DoD v2 widths × light/dark. The
- * route list comes from the sitemap, then `DOCS_ROUTES`. Serious and critical
- * violations fail; the documented exclude list is the only escape hatch.
+ * Load-time axe on touched (or all) published routes, DoD v2 widths ×
+ * light/dark. Serious and critical violations fail; the documented exclude
+ * list is the only escape hatch. Keyboard, motion and interaction stay in
+ * the sampled `smoke` / `e2e` suites. The route list comes from the
+ * sitemap, then `DOCS_ROUTES`.
  *
  * One Playwright test per route so `fullyParallel` + `DOCS_E2E_SHARD` can
  * balance the sweep across runners.

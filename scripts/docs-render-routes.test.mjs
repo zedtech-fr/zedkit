@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
+import { parseSitemapRoutes } from "../apps/docs/scripts/docs-route-parse.mjs";
 import {
   DOCS_RENDER_FALLBACK_ROUTES,
   docsRenderRoutes,
-  formatDocsRoutes,
   routesFromFiles,
 } from "./docs-render-routes.mjs";
 
@@ -14,6 +14,14 @@ const buttonManifest = {
     "Trigger actions with buttons": { source: "button/button.tsx" },
   },
 };
+
+const liveSitemap = [
+  "/",
+  "/docs",
+  "/docs/ui/trigger-actions-with-buttons",
+  "/catalog",
+  "/docs/foundations",
+];
 
 test("maps App Router pages and manifest sources the same way as routesFromFiles", () => {
   const files = [
@@ -75,15 +83,79 @@ test("sitemap intersect drops unknown paths and does not add the fallback", () =
   );
 });
 
+test("deleted page that maps but is gone from the sitemap uses the fallback", () => {
+  assert.deepEqual(
+    docsRenderRoutes({
+      files: ["apps/docs/app/(site)/retired/page.tsx"],
+      manifest: buttonManifest,
+      sitemapRoutes: liveSitemap,
+    }),
+    DOCS_RENDER_FALLBACK_ROUTES,
+  );
+});
+
+test("mapped-but-gone still fails closed when the fallback is also unpublished", () => {
+  assert.deepEqual(
+    docsRenderRoutes({
+      files: ["apps/docs/app/(site)/retired/page.tsx"],
+      manifest: buttonManifest,
+      sitemapRoutes: ["/secret"],
+    }),
+    [],
+  );
+});
+
+test("EXTRA sitemap route not in xml stays in the mapped set", () => {
+  assert.deepEqual(
+    docsRenderRoutes({
+      files: ["apps/docs/app/(site)/features/identity-editor/page.tsx"],
+      manifest: buttonManifest,
+      sitemapRoutes: ["/", "/catalog"],
+    }),
+    ["/features/identity-editor"],
+  );
+});
+
 test("empty file list still uses the fallback, never all-routes", () => {
   assert.deepEqual(docsRenderRoutes({ files: [], manifest: buttonManifest }), DOCS_RENDER_FALLBACK_ROUTES);
 });
 
-test("formatDocsRoutes prints a comma-separated list", () => {
-  assert.equal(formatDocsRoutes(["/", "/docs"]), "/,/docs");
+test("parseSitemapRoutes reads loc paths and strips a trailing slash", () => {
+  assert.deepEqual(
+    parseSitemapRoutes(
+      "<url><loc>https://zedkit.app/catalog</loc></url><url><loc>https://zedkit.app/docs/</loc></url><url><loc>https://zedkit.app/</loc></url>",
+    ),
+    ["/catalog", "/docs", "/"],
+  );
 });
 
-test("mapper has no package imports", () => {
-  const src = readFileSync(new URL("./docs-render-routes.mjs", import.meta.url), "utf8");
-  assert.doesNotMatch(src, /from ["'](?!node:)/u);
+test("mapper and route-parse have no package imports", () => {
+  const mapper = readFileSync(new URL("./docs-render-routes.mjs", import.meta.url), "utf8");
+  const parse = readFileSync(new URL("../apps/docs/scripts/docs-route-parse.mjs", import.meta.url), "utf8");
+  assert.doesNotMatch(mapper, /from ["'](?!node:|\.)/u);
+  assert.doesNotMatch(parse, /from ["']/u);
 });
+
+test("slugNeed and routesFromFiles stay in lockstep with visual-verify.mjs", () => {
+  const mapper = readFileSync(new URL("./docs-render-routes.mjs", import.meta.url), "utf8");
+  const verify = readFileSync(new URL("../packages/ai/scripts/visual-verify.mjs", import.meta.url), "utf8");
+  for (const name of ["slugNeed", "routesFromFiles"]) {
+    assert.equal(exportedFn(mapper, name), exportedFn(verify, name), `${name} drifted from visual-verify.mjs`);
+  }
+});
+
+function exportedFn(src, name) {
+  const start = src.indexOf(`export function ${name}(`);
+  assert.notEqual(start, -1, `missing export function ${name}`);
+  const open = src.indexOf("{", start);
+  let depth = 0;
+  for (let i = open; i < src.length; i++) {
+    const ch = src[i];
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) return src.slice(start, i + 1);
+    }
+  }
+  throw new Error(`unclosed ${name}`);
+}

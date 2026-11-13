@@ -1,7 +1,4 @@
-function normalizeRoute(route) {
-  const n = route.replaceAll("\\", "/");
-  return n.startsWith("/") ? n : `/${n}`;
-}
+import { normalizeRoute } from "./docs-route-parse.mjs";
 
 /**
  * Restrict a published-route list to `DOCS_ROUTES`. Unset = every route.

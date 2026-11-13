@@ -6,6 +6,14 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import {
+  EXTRA_SITEMAP_ROUTES,
+  normalizeRoute,
+  parseSitemapRoutes,
+} from "../apps/docs/scripts/docs-route-parse.mjs";
+
+export { EXTRA_SITEMAP_ROUTES, normalizeRoute, parseSitemapRoutes };
+
 /** Host `visual:verify --routes` set. Used when the mapper maps nothing. */
 export const DOCS_RENDER_FALLBACK_ROUTES = [
   "/",
@@ -47,27 +55,16 @@ export function routesFromFiles(files, manifest) {
   return [...routes];
 }
 
-function normalizeRoute(route) {
-  const n = route.replaceAll("\\", "/");
-  return n.startsWith("/") ? n : `/${n}`;
-}
-
 export function docsRenderRoutes({ files, manifest, sitemapRoutes }) {
   const mapped = [...new Set(routesFromFiles(files, manifest).map(normalizeRoute))];
   const chosen = mapped.length > 0 ? mapped : [...DOCS_RENDER_FALLBACK_ROUTES];
   if (!sitemapRoutes) return chosen;
-  const allowed = new Set(sitemapRoutes.map(normalizeRoute));
-  return chosen.filter((route) => allowed.has(route));
-}
-
-export function formatDocsRoutes(routes) {
-  return routes.join(",");
-}
-
-export function parseSitemapRoutes(xml) {
-  return [...xml.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map(
-    (m) => m[1].replace(/\/$/u, "") || "/",
-  );
+  const allowed = new Set([...sitemapRoutes, ...EXTRA_SITEMAP_ROUTES].map(normalizeRoute));
+  const live = chosen.filter((route) => allowed.has(route));
+  if (live.length > 0) return live;
+  // Mapped routes are gone from the sitemap (deleted page) and are not EXTRA.
+  // Intersect the fallback so the required gate still has a published green path.
+  return DOCS_RENDER_FALLBACK_ROUTES.filter((route) => allowed.has(route));
 }
 
 function loadManifest(root) {
@@ -92,5 +89,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     manifest: loadManifest(root),
     sitemapRoutes: loadSitemapRoutes(root),
   });
-  process.stdout.write(`${formatDocsRoutes(routes)}\n`);
+  process.stdout.write(`${routes.join(",")}\n`);
 }

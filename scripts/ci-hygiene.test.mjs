@@ -67,6 +67,15 @@ describe("docs-render job", () => {
     assert.match(job, /docs-render-routes\.mjs/);
     assert.match(job, /playwright install chromium/);
     assert.match(job, /serve@14\.2\.6/);
+    assert.ok(job.includes("EVENT: ${{ github.event_name }}"));
+    assert.ok(job.includes("BASE_REF: ${{ github.base_ref }}"));
+    assert.ok(job.includes("BEFORE: ${{ github.event.before }}"));
+    assert.ok(!job.includes('git fetch origin "${{ github.base_ref }}"'));
+    assert.match(job, /serve never became ready/);
+    assert.match(job, /docs-start\.log/);
+    assert.match(job, /docs-render-results/);
+    assert.match(job, /if: failure\(\)/);
+    assert.match(job, /apps\/docs\/test-results\//);
   });
 });
 
