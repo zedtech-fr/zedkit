@@ -92,7 +92,7 @@ export function writeLiveConsoleSearch(input: {
   return qs === "" ? "" : `?${qs}`;
 }
 
-/** Appearance share write: keep `id` / `item` on `/issues/run`, keep `item` on baked run URLs. */
+/** Appearance share-URL codec: keep `id` / `item` on `/issues/run`, keep `item` on baked run URLs. No UI writer; item navigation uses `writeLiveConsoleSearch`, which keeps appearance params. */
 export function writeConsoleShareSearch(input: {
   appearanceSearch: string;
   currentSearch: string;

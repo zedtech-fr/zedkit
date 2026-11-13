@@ -9,7 +9,7 @@
  * - Full-viewport kit AgentConsole — because: hurried visitor reads the same shell as the hosted live view without another origin.
  * - One compact run-title h1 above the console — because: the house bar requires a single visible heading, and the kit decision card is an h2.
  * - Finding, code, and transcript slots are hairline, unsheened, unshadowed page-fill surfaces — because: a hurried visitor on a phone reads the verdict on a foundations card, not a frosted Glass slab.
- * - No look-control strip on this page — because: watching a run is not customizing the site; ThemeScope still pins from a share URL and otherwise inherits `html` identity and `.dark`.
+ * - No look-control strip on this page — because: watching a run is not customizing the site; ThemeScope still pins from a share URL and otherwise inherits `html` `data-identity` and `.dark`.
  * - Back links in the run chrome — because: dropping the marketing header must not strand the visitor.
  */
 

@@ -17,18 +17,21 @@ const compactLinkClass =
 const rowClass = "border-b border-border py-row";
 
 const logCellClass =
-  "block cursor-pointer rounded-md border-b border-border py-row text-foreground no-underline hover:bg-muted hover:no-underline focus-ring-control active:bg-secondary";
+  "block border-b border-border py-row text-foreground no-underline hover:bg-muted hover:no-underline focus-ring-control active:bg-secondary active:text-secondary-foreground";
 
 export function CompactLogLink({
   href,
   copy,
   children,
+  className,
 }: {
   href: string;
   copy: ReviewsCopy;
   children: ReactNode;
+  className?: string | undefined;
 }) {
   const opens = copy.list.opensInNewTab;
+  const classes = className ?? compactLinkClass;
   const external = href.startsWith("https:");
   const mark = external ? (
     <>
@@ -40,14 +43,14 @@ export function CompactLogLink({
   ) : null;
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={compactLinkClass}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
         {children}
         {mark}
       </a>
     );
   }
   return (
-    <Link href={href} className={compactLinkClass}>
+    <Link href={href} className={classes}>
       {children}
     </Link>
   );
@@ -58,40 +61,13 @@ function replacementCopy(entry: TimelineEntry, copy: ReviewsCopy): string | null
   return entry.status === "failed" ? copy.issue.failedReplaced : copy.issue.replaced;
 }
 
-function TimelineRowLink({
-  href,
-  copy,
-  children,
-}: {
-  href: string;
-  copy: ReviewsCopy;
-  children: ReactNode;
-}) {
-  const opens = copy.list.opensInNewTab;
-  if (href.startsWith("https:")) {
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={logCellClass}>
-        {children}
-        <Text as="span" className="sr-only">
-          {` (${opens})`}
-        </Text>
-      </a>
-    );
-  }
-  return (
-    <Link href={href} className={logCellClass}>
-      {children}
-    </Link>
-  );
-}
-
 function ViewLogAffordance({ copy }: { copy: ReviewsCopy }) {
   return (
     <Button asChild variant="secondary" size="sm" className="text-dense">
-      <Text as="span">
+      <Stack direction="horizontal" gap="tight">
         {copy.issue.viewLog}
         <ChevronRight aria-hidden="true" />
-      </Text>
+      </Stack>
     </Button>
   );
 }
@@ -163,12 +139,13 @@ export function TimelineRow({
   href: string | null;
   copy: ReviewsCopy;
 }) {
-  if (href === null) {
+  const logHref = href !== null && href.startsWith("/") ? href : null;
+  if (logHref === null) {
     return <TimelineRowBody entry={entry} copy={copy} log={false} className={rowClass} />;
   }
   return (
-    <TimelineRowLink href={href} copy={copy}>
+    <CompactLogLink href={logHref} copy={copy} className={logCellClass}>
       <TimelineRowBody entry={entry} copy={copy} log />
-    </TimelineRowLink>
+    </CompactLogLink>
   );
 }

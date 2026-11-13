@@ -26,6 +26,7 @@ export function isReviewIdentity(id: string): id is ReviewAppearance["identity"]
   return (REVIEW_IDENTITIES as readonly string[]).includes(id);
 }
 
+/** Codec type guard. Parse inlines `density=compact`; keep for a future writer. */
 export function isReviewDensity(value: string): value is ReviewDensity {
   return value === "default" || value === "compact";
 }
