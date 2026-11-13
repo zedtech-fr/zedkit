@@ -6,8 +6,8 @@ import {
   HOME_PASTE_TIMELINE_REVEAL_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
-import { homePasteCopy } from "@/ui/home/i18n/home-paste-copy";
-import { homeSameIdeaCopy } from "@/ui/home/i18n/home-same-idea-copy";
+import { homePasteCopy } from "../i18n/home-paste-copy";
+import { homeSameIdeaCopy } from "../i18n/home-same-idea-copy";
 
 const LANDS_IDS = Object.keys(homePasteCopy.lands) as Array<keyof typeof homePasteCopy.lands>;
 
