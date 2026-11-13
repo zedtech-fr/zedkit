@@ -5,24 +5,23 @@ import { foundationsCopy as copy } from "../i18n/foundations-copy";
 import { FoundationsBand } from "./foundations-band";
 
 function SwatchMark({ swatch }: { swatch: FoundationsSwatch }) {
-  const mark = (
+  const chip = (
+    <Text
+      as="span"
+      aria-hidden="true"
+      data-foundations-swatch={swatch.id}
+      className="block w-full rounded-lg"
+    />
+  );
+  return (
     <Stack gap="tight">
-      <Text
-        as="span"
-        aria-hidden="true"
-        data-foundations-swatch={swatch.id}
-        className="block w-full rounded-lg"
-      />
+      {swatch.scope === "panel" ? <ThemeScope identity="glass">{chip}</ThemeScope> : chip}
       <Text typeRole="label">{copy.swatches[swatch.id]}</Text>
       <Text typeRole="small" variant="muted" className="font-mono">
         {swatch.hex}
       </Text>
     </Stack>
   );
-  if (swatch.scope === "panel") {
-    return <ThemeScope identity="glass">{mark}</ThemeScope>;
-  }
-  return mark;
 }
 
 export function FoundationsColor() {

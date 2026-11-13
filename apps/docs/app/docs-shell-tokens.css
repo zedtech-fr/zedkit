@@ -585,6 +585,22 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
   width: var(--fd-sidebar-width);
 }
 
+/*
+ * Foundations (and any docs page with sidebar.enabled: false) unmounts
+ * #nd-sidebar but left --fd-sidebar-col at 16.75rem. At 809 that empty
+ * column plus overflow-x-clip clips the home-style header.
+ */
+@media (min-width: 48rem) {
+  #nd-docs-layout:not(:has(#nd-sidebar)) {
+    --fd-sidebar-width: 0px;
+    --fd-sidebar-col: 0px;
+    grid-template:
+      "header"
+      "main"
+      / minmax(0, 1fr);
+  }
+}
+
 @media (width < 48rem) {
   #nd-docs-layout {
     --fd-sidebar-width: 100%;

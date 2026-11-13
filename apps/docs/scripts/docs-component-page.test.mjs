@@ -147,6 +147,23 @@ test("component-page usage and preview code wells are dark and scoped", () => {
   assert.equal(sawWell, true, "expected a code-well background on the component page");
 });
 
+test("usage well figure header muted meets WCAG AA against the well", () => {
+  const css = stripComments(read("app/docs-component-page.css"));
+  const well = parseHsl(`hsl(${tokenValue(css, "--zk-code-well")})`);
+  const muted = parseHsl(`hsl(${tokenValue(css, "--zk-code-well-muted")})`);
+  const ratio = contrastRatio(muted, well);
+  assert.ok(ratio >= 4.5, `well muted on well is ${ratio.toFixed(2)}:1`);
+  let sawHeaderPin = false;
+  for (const { selector, body } of eachBlock(css)) {
+    if (!body.includes("--muted-foreground:") || !body.includes("--zk-code-well-muted")) continue;
+    sawHeaderPin = true;
+    assert.match(selector, /#usage-and-states/);
+    assert.match(selector, /\[data-preview-code-panel\]/);
+    assert.match(body, /--muted-foreground:\s*var\(--zk-code-well-muted\)/);
+  }
+  assert.equal(sawHeaderPin, true, "well figures must pin --muted-foreground for .text-fd-muted-foreground");
+});
+
 test("component-page stage CSS does not restyle specimens with !important", () => {
   const css = stripComments(read("app/docs-component-page.css"));
   for (const { selector, body } of eachBlock(css)) {
@@ -258,6 +275,8 @@ test("phone docs page tree is in-flow in the shell, not a max-md drawer", () => 
   assert.match(css, /#nd-sidebar/);
   assert.match(css, /width < 48rem/);
   assert.match(css, /--fd-sidebar-width:\s*100%/);
+  assert.match(css, /#nd-docs-layout:not\(:has\(#nd-sidebar\)\)/);
+  assert.match(css, /--fd-sidebar-col:\s*0px/);
   assert.match(css, /Fumadocs 16\.17\.10/);
   assert.doesNotMatch(css, /Cmd\/Ctrl\+B|data-sidebar-panel/);
 });

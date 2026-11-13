@@ -83,6 +83,7 @@ function SixSentencesCardItem({
         radius="xl"
         padding="card"
         data-home-six-sentences-card={featured ? "featured" : "plain"}
+        {...(featured ? { "data-allow-clip": "" } : {})}
         className={featured ? "h-full" : "h-full hover-lift"}
       >
         <Stack gap="lg" className="h-full justify-between">

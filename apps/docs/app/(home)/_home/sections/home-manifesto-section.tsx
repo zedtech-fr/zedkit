@@ -32,6 +32,7 @@ export function HomeManifestoSection() {
       containerWidth="wide"
       id="manifesto"
       aria-labelledby="manifesto-heading"
+      data-allow-clip=""
       snap="none"
       {...HOME_MARKETING_ROOT_PROPS}
     >
