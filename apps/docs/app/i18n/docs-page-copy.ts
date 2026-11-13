@@ -2,7 +2,6 @@
 export const docsPageCopy = {
   breadcrumbHome: "Home",
   breadcrumbDocs: "Documentation",
-  tableOfContents: "Table of contents",
 } as const;
 
 export type DocsPageCopy = typeof docsPageCopy;

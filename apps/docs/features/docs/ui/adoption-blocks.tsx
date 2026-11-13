@@ -7,7 +7,7 @@ import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, 
 
 import { adoptionCopy } from "@/components/i18n/adoption-copy";
 import { packageManagers, type PackageManager } from "@/lib/package-manager-commands";
-import { isPackageManager } from "../use-package-manager";
+import { isPackageManager } from "./use-package-manager";
 
 type CopyState = "idle" | "copied" | "failed";
 

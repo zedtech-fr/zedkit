@@ -120,6 +120,8 @@ kit packages.
   `useMotionPreference`. Parallax layers live on `@zedtech/zedkit-ui/motion`
   (`ParallaxSection`, `ParallaxLayer`; CSS scroll-driven, 0 JS). Original
   work by the same author.
+- Stored choice and identity repair: `createStoredChoice`, `repairContrast`.
+  Original work by the same author.
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards, or pick-one with `multiple={false}`).
 - Detail: `DetailPanel` (key-value rows, or `variant="grid"` stats), `LivePulse` (live indicator).
 - Transcript: `ToolCallRow`, `ThinkingRow`, `AssistantMessage`, `TranscriptBurst`, `groupToolCallBursts`.

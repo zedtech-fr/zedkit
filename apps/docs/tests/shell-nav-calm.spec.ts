@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { featuredPackageVersion } from "../content/gallery";
 import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
@@ -51,7 +53,7 @@ test.describe("shell nav calm guards", () => {
     await expect(shell.locator("select")).toHaveCount(0);
     await expect(shell.getByText(VERSION_LABEL)).toHaveCount(0);
     await expect(shell.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
-    await expect(shell.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+    await expect(shell.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
   });
 
   test("phone header has no identity control, native select, or site-nav disclosure", async ({ page }) => {
@@ -62,7 +64,7 @@ test.describe("shell nav calm guards", () => {
     await expect(mobile.locator("select")).toHaveCount(0);
     await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(0);
     await expect(mobile.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
-    await expect(mobile.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+    await expect(mobile.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
     await expect(mobile.getByRole("button", { name: "Open menu" })).toHaveCount(0);
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await mobile.getByRole("button", { name: "Menu", exact: true }).click();

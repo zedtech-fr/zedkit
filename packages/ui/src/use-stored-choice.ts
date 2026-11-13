@@ -16,7 +16,7 @@ export function createStoredChoice<const Values extends readonly string[]>(stora
   const isValue = (value: string): value is Value => values.some((item) => item === value);
 
   function read(): Value {
-    if (chosen) return chosen;
+    if (chosen !== undefined) return chosen;
     const stored = tryCatch(() => localStorage.getItem(storageKey));
     return values.find((item) => stored.ok && item === stored.value) ?? fallback;
   }
@@ -37,6 +37,7 @@ export function createStoredChoice<const Values extends readonly string[]>(stora
   }
 
   function set(value: Value): void {
+    if (!isValue(value)) return;
     chosen = value;
     tryCatch(() => localStorage.setItem(storageKey, value));
     for (const listener of listeners) listener();

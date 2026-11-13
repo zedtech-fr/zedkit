@@ -1,5 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 /** Phone tap target is 44px. Subpixel layout can measure 43.5. */
 const TAP = 44;
 const TAP_MEASURED = TAP - 0.5;
@@ -141,17 +143,17 @@ for (const path of PAGES) {
       await expect(header.getByRole("link", { name: "AI", exact: true })).toHaveCount(0);
       if (path === "/") {
         await expect(header.getByRole("button", { name: SEARCH_NAME, exact: true })).toHaveCount(0);
-        await expect(header.getByRole("link", { name: "Get started", exact: true })).toBeVisible();
+        await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
         await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
       } else {
         await expect(header.getByRole("button", { name: "Open navigation" })).toHaveCount(0);
-        await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveCount(0);
+        await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toHaveCount(0);
         await expect(header.getByRole("button", { name: SEARCH_NAME, exact: true })).toBeVisible();
       }
       const brandBox = await home.boundingBox();
       const action =
         path === "/"
-          ? header.getByRole("link", { name: "Get started", exact: true })
+          ? header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })
           : header.getByRole("button", { name: SEARCH_NAME, exact: true });
       const actionBox = await action.boundingBox();
       const menuBox = await menu.boundingBox();

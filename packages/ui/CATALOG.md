@@ -746,6 +746,31 @@ formatDuration(3_720_000); // "1h 02m"
 formatDuration({ start: 0, end: 377_000 }, "fr"); // "6m 17s"
 ```
 
+## Remember a listed choice across visits
+
+- Import: `@zedtech/zedkit-ui` — `createStoredChoice`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: createStoredChoice
+- Audience: Developers persisting a tab or similar listed choice in the browser.
+- Purpose: Keep a listed localStorage choice that hydrates with the default so server HTML and the first paint always agree.
+- When to use: For a fixed list of strings shared by every control that reads the same key (package manager, install path).
+- When not to use: For identity look persistence — use `IdentityScript`. For motion — use `useMotionPreference`.
+- See also: `Flag offline state with a live note`
+- A11y: Returns a tuple. The caller owns the control; persist only listed values so a tab cannot store an unnamed option.
+- Troubleshooting: First paint is the default even when storage holds another allowed value — that is hydration, not a bug. Blocked storage still follows `set` for the session. Create one factory per key at module scope; two factories on the same key split in-memory state.
+
+```ts
+import { createStoredChoice } from "@zedtech/zedkit-ui";
+
+const colorScheme = createStoredChoice("color-scheme", ["light", "dark"] as const);
+
+export function SchemeToggle() {
+  const [scheme, setScheme] = colorScheme.useChoice();
+  return <button type="button" onClick={() => setScheme("dark")}>{scheme}</button>;
+}
+```
+
 ## Flag offline state with a live note
 
 - Import: `@zedtech/zedkit-ui` — `OfflineNote`, `OfflineNoteProps`, `useOnlineStatus`
@@ -2293,7 +2318,7 @@ const plans = [
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: beta
 - Short name: Identities
@@ -2373,16 +2398,16 @@ void css;
 
 ## Design your identity
 
-- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
 - Status: beta
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
-- Purpose: Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site.
+- Purpose: Design a look on a live card, then apply it. `repairContrast` nudges failing pairs toward AA; `adjusted` is colours moved, `remaining` still miss.
 - When to use: To try a look on one card, with contrast warnings and an automatic AA dark pair, then apply that draft to the whole page identity.
 - When not to use: To switch a published built-in look — use `IdentitySwitcher` or `data-identity` on the root instead.
 - See also: `Switch the visual identity with one attribute`
-- Examples: Write a draft sheet
+- Examples: Write a draft sheet, Repair contrast
 - A11y: Every field has a visible label. Reset, Dark, Suggest, Apply, Discard and Apply to the whole site are named buttons (`aria-pressed` on Dark). The draft card is a live preview of the tokens. Colour fields accept HSL channels (`H S% L%`). Each exportable text pair (body, primary, muted) must reach 4.5:1 against its surface; accent and border need 3:1 against the background — warnings show inline with a Fix that nudges lightness. Copy CSS/JSON stays behind an explicit confirm while any pair fails. Suggest never writes tokens until Apply. While a custom identity is active, a status bar offers Reset to default.
 - Troubleshooting: The whole docs page changed — Apply to the whole site wrote `:root`; Reset to default clears `IDENTITY_CUSTOM_STORAGE_KEY`; picking a built-in identity only parks the sheet. A field snaps back — the value failed the token schema (HSL, leading, or tracking). A refresh loses the draft — the address bar holds only fields that differ from the chosen look, plus `theme=dark` when the dark preview is on. Suggest shows a keyword match — the HTTP service is off, rate-limited, or the response failed the token schema.
 
@@ -2395,7 +2420,11 @@ applyIdentityTokenSheet(
 );
 ```
 
-
+```ts
+import { repairContrast, identityPresets } from "@zedtech/zedkit-ui";
+const { tokens, adjusted, remaining } = repairContrast(identityPresets.mist);
+void { tokens, adjusted, remaining };
+```
 
 ## Compose a public marketing page
 

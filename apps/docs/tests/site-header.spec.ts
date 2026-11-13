@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 test.describe("site header navigation (#1034)", () => {
   test("desktop header links AI, UI, Docs, Catalog, and Issues", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -77,7 +79,7 @@ test.describe("site header navigation (#1034)", () => {
       "href",
       "https://github.com/zedtech-fr/zedkit",
     );
-    await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveAttribute(
+    await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toHaveAttribute(
       "href",
       "#get-started",
     );
@@ -94,7 +96,7 @@ test.describe("site header navigation (#1034)", () => {
 
     const header = page.locator("#nd-mobile-nav");
     await expect(header.getByRole("button", { name: "Open menu" })).toHaveCount(0);
-    await expect(header.getByRole("link", { name: "Get started", exact: true })).toHaveAttribute(
+    await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toHaveAttribute(
       "href",
       "#get-started",
     );

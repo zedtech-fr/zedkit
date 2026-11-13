@@ -1,7 +1,6 @@
 {
   "dead": [
     "lib/adoption-shown-commands.mjs",
-    "lib/identity-contrast-repair.ts",
     "lib/registry-smoke-urls.ts"
   ],
   "singleOwner": [
