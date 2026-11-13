@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
-import { SiteBrand } from "@/ui/site-brand";
+import { SiteBrand } from "@/components/site-chrome/site-brand";
 import { siteHeaderLinks } from "@/lib/site-header-links";
-import { SitePageShell } from "@/ui/site-page-shell";
-import { siteChromeSlots } from "@/ui/site-chrome-slots";
-import { MarketingSiteHeader } from "@/ui/site-headers";
+import { SitePageShell } from "@/components/site-chrome/site-page-shell";
+import { siteChromeSlots } from "@/components/site-chrome/site-chrome-slots";
+import { MarketingSiteHeader } from "@/components/site-chrome/site-headers";
 
 /** Shared marketing shell: nav, search, GitHub link. Theme and version live off this header. */
 export function SiteLayout({

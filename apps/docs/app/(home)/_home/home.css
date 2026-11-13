@@ -24,6 +24,8 @@
  * the trigger (`text-background!`) because selected contrast walks [role=tab]
  * and inherited muted from TabsList beats a layered color. Unlayered pin
  * stays as a second belt.
+ * Color snap is `transition-none` on the trigger class: evidence emulates
+ * reduced motion, so a CSS snap inside the no-preference gate never applies.
  */
 #home-page [data-look-tab][data-state="active"] {
   background-color: hsl(var(--foreground));
