@@ -63,6 +63,7 @@ const DEPLOY_ONLY_GLOBS = quotedGlobsFromScript(
 const REGISTRY_GLOBS = [...NODEPLOY_GLOBS, ...DEPLOY_ONLY_GLOBS];
 const VITEST_NODE_TEST_ELSEWHERE = new Set([
   "packages/devtools/tests/enabled.test.mjs",
+  "packages/ai/tests/visual-verify.test.mjs",
   ...globSync("packages/quality/tests/unit/*.test.mjs", { cwd: root }),
 ]);
 
