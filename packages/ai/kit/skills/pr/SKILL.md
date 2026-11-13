@@ -18,8 +18,7 @@ Use this template for writing the PR body:
 
 ## Evidence
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
+Follow ### Evidence (omit when that section says to).
 
 ## Merge Danger
 
@@ -157,11 +156,14 @@ You may use one of these, you may use several, it is unlikely you will use all o
 
 ### Evidence
 
-Concrete evidence that the change works. Show a before and after.
+Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Non-test: not under `tests/` or `__tests__/`, not `*.test.*` / `*.spec.*` / `*.stories.*`. Docs (`.mdx` / `.html` / `.md`), canvas/WebGL `.ts`, `*.scss`, and `*.vue` are not this trigger.
 
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
+Paste the visual-verify stdout table into the PR (skill `visual-verify`). Attach contact-sheet PNGs with a GitHub upload (or the host's equivalent) so reviewers can open them. The local run record (`evidence/<branch>/manifest.json`) is gitignored and is not itself the review surface. Links, not inlined binaries (no PNG bytes, no data URIs). An uploaded image embedded with Markdown image syntax is a link the host may render.
 
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
+- **Before:** ![short alt of the previous UI](https://<attached PNG URL>)
+  **After:** ![short alt of the changed UI](https://<attached PNG URL>)
+
+Give alt text on embedded Before/After PNGs and on any embedded contact sheet.
 
 ### Merge Danger
 

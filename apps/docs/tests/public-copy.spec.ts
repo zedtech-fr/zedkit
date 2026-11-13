@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { parseSitemapRoutes } from "../scripts/docs-route-parse.mjs";
+
 /**
  * Public pages speak to visitors, not to the team that builds them: no QA, harness or
  * "internal" wording on a route a visitor can reach from the sitemap or the home page.
@@ -10,7 +12,7 @@ const INTERNAL = /\bharness\b|\bQA\b|\binternal (preview|demo|tool|page)s?\b|for
 test("no public route speaks in internal QA or harness terms", async ({ page, request }) => {
   test.setTimeout(5 * 60_000);
   const xml = await (await request.get("/sitemap.xml")).text();
-  const sitemap = [...xml.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((m) => m[1]!.replace(/\/$/, "") || "/");
+  const sitemap = parseSitemapRoutes(xml);
   const routes = [...new Set([...sitemap, ...EXTRA_ROUTES])];
   expect(routes.length).toBeGreaterThan(50);
   const offenders: string[] = [];

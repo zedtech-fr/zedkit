@@ -19,6 +19,7 @@ export function requiredJobsPass({ results, selected }) {
     adoption_smoke: Boolean(selected.registry) && !selected.workflow_only,
     docs_build: Boolean(selected.docs) && !selected.workflow_only,
     docs_smoke: Boolean(selected.docs) && !selected.workflow_only,
+    docs_render: Boolean(selected.docs) && !selected.workflow_only,
   };
 
   for (const [job, isSelected] of Object.entries(want)) {
@@ -51,6 +52,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       adoption_smoke: process.env.ADOPTION_SMOKE ?? "",
       docs_build: process.env.DOCS_BUILD ?? "",
       docs_smoke: process.env.DOCS_SMOKE ?? "",
+      docs_render: process.env.DOCS_RENDER ?? "",
     },
     selected: {
       workflows: flag("WORKFLOWS"),
