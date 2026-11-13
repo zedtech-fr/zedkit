@@ -16,7 +16,6 @@
     "lib/identity-export-css.ts",
     "lib/identity-look-bind.ts",
     "lib/identity-look.ts",
-    "lib/identity-recipe.ts",
     "lib/identity-save-status.ts",
     "ui/route-scroll-reset.tsx",
     "ui/site-chrome-a11y.tsx",

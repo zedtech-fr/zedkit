@@ -1,7 +1,25 @@
 import { tryCatch } from "@zedtech/zedkit-core";
-import { parseIdentityTokens, type IdentityTokens } from "@zedtech/zedkit-ui";
+import { parseIdentityTokens, withIdentityDarkPair, type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { inferKeptDark } from "@/lib/identity-editor-search";
+/**
+ * Colour-pair keys for recipe JSON, the share link, and kept-dark inference.
+ * Must match `PAIR_KEYS` in `packages/ui/src/identity/identity-contrast.ts` (not exported).
+ */
+export const LIGHT_KEYS = [
+  "background",
+  "foreground",
+  "primary",
+  "primaryForeground",
+  "accent",
+  "border",
+  "mutedForeground",
+] as const;
+
+/** Dark colors that differ from the pair generated from light: the ones an edit of light must not rewrite. */
+export function inferKeptDark(tokens: IdentityTokens): string[] {
+  const generated = withIdentityDarkPair(tokens).dark;
+  return LIGHT_KEYS.filter((key) => tokens.dark[key] !== generated[key]);
+}
 
 /** The editor's export: `IdentityTokens` as JSON. A recipe, not a complete look (see the export copy). */
 export function serializeRecipe(tokens: IdentityTokens): string {

@@ -3,10 +3,11 @@ import {
   isNamedIdentityId,
   isPresetId,
   parseIdentityTokens,
-  withIdentityDarkPair,
   type IdentityId,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
+
+import { LIGHT_KEYS, inferKeptDark } from "./identity-recipe.ts";
 
 const SCALAR_KEYS = [
   "spacing",
@@ -25,16 +26,6 @@ const FONT_KEYS = ["fontSans", "fontDisplay"] as const;
 
 /** Every single-value token the link carries, in link order. */
 const VALUE_KEYS = [...SCALAR_KEYS, ...FONT_KEYS] as const;
-
-const LIGHT_KEYS = [
-  "background",
-  "foreground",
-  "primary",
-  "primaryForeground",
-  "accent",
-  "border",
-  "mutedForeground",
-] as const;
 
 function clonePreset(id: IdentityId): IdentityTokens {
   const preset = identityPresets[id];
@@ -64,19 +55,9 @@ function parseDarkKept(raw: string | null): string[] {
   return keys;
 }
 
-/** Dark colors that differ from the pair generated from light: the ones an edit of light must not rewrite. */
-function inferKeptDark(tokens: IdentityTokens): string[] {
-  const generated = withIdentityDarkPair(tokens).dark;
-  return LIGHT_KEYS.filter((key) => tokens.dark[key] !== generated[key]);
-}
-
 /** Keys in `dark-*` that are not the pair generated from light. Empty when `darkKept` is in the query. */
 function inferDarkKept(params: URLSearchParams, tokens: IdentityTokens): string[] {
-  const generated = withIdentityDarkPair(tokens).dark;
-  return LIGHT_KEYS.filter((key) => {
-    const raw = params.get(`dark-${key}`);
-    return Boolean(raw) && tokens.dark[key] !== generated[key];
-  });
+  return inferKeptDark(tokens).filter((key) => Boolean(params.get(`dark-${key}`)));
 }
 
 function parseIdentityEditorSearch(search: string): IdentityEditorSearch {
@@ -138,7 +119,6 @@ export {
   LIGHT_KEYS,
   SCALAR_KEYS,
   VALUE_KEYS,
-  inferKeptDark,
   isLightKey,
   parseIdentityEditorSearch,
   serializeIdentityEditorSearch,
