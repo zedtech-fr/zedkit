@@ -38,7 +38,6 @@
     "lib/identity-export-css.ts",
     "lib/identity-look-bind.ts",
     "lib/identity-look.ts",
-    "lib/identity-recipe.ts",
     "lib/identity-request-id.ts",
     "lib/identity-save-status.ts",
     "lib/identity-tokens-parse.ts",
