@@ -48,7 +48,7 @@ Sizes are the implemented tokens (`packages/ui/src/shared-type-scale.css`, appli
 | Dense looks | Density is rhythm (row height, gaps, rules), not smaller type. Volt's activity rows are 13px: the event is what a person reads to act. Only the timestamp column may be metadata. Decision, 2 Nov 2026: the 13px floor wins over a 12px mono row. |
 | Widths | Marketing 1200 max (`--zk-container-default` / `--zk-container-wide`: 75rem on the docs shell). Docs cluster at 1440 unchanged; nav 240, article 720-800, TOC 180 only if it fits. |
 | Spacing | 4px base, steps 4/8/12/16/24/32/48/64. Between groups 32-48, between marketing sections 64-96. No blank band without a job. Class names are roles; the numbers stay in the token values (`packages/ai/kit/skills/setup-ai/design-policy.md`). |
-| Gutters | 24 on the docs shell (`--zk-page-gutter: 1.5rem`). Home at 390 overlays 16 (`#home-page { --zk-page-gutter: 1rem }`) so the hero question fits three lines. |
+| Gutters | 24 on the docs shell (`--zk-page-gutter: 1.5rem`). Home at ≤430 overlays 16 (`#home-page { --zk-page-gutter: 1rem }` in `_home/home.css`) so the hero question stays at most 3 lines. |
 
 ## Surfaces, borders, elevation
 

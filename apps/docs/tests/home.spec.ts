@@ -191,23 +191,29 @@ test("home hero at 390 is headline-first; the glass card follows (#118)", async 
   expect(order).toBeTruthy();
 });
 
-test("home hero h1 fits in at most 3 lines at 390 after fonts (#411)", async ({ page }) => {
+test("home hero h1 fits in at most 3 lines at 390, 393, and 412 after fonts (#411)", async ({ page }) => {
+  const heading = page.getByRole("heading", { name: homeHeroHeading, level: 1 });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
-  const heading = page.getByRole("heading", { name: homeHeroHeading, level: 1 });
   await expect(heading).toBeVisible();
-  const metrics = await heading.evaluate((el) => {
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const lines = [...range.getClientRects()].filter((box) => box.width > 1).length;
-    return {
-      lines,
-      overflow: el.scrollWidth > el.clientWidth + 1,
-    };
-  });
-  expect(metrics.lines).toBeLessThanOrEqual(3);
-  expect(metrics.overflow).toBe(false);
+  const family = await heading.evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(family).toContain("Inter Variable");
+  for (const width of [390, 393, 412] as const) {
+    await page.setViewportSize({ width, height: 844 });
+    const metrics = await heading.evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      // Drop zero-width / collapsed rects from the line box list.
+      const lines = [...range.getClientRects()].filter((box) => box.width > 1).length;
+      return {
+        lines,
+        overflow: el.scrollWidth > el.clientWidth + 1,
+      };
+    });
+    expect(metrics.lines, `h1 lines at ${width}`).toBeLessThanOrEqual(3);
+    expect(metrics.overflow, `h1 overflow at ${width}`).toBe(false);
+  }
 });
 
 test("home extra bands stay gone at 390 and 1440; the dock remains (#210)", async ({ page }) => {

@@ -2,7 +2,7 @@ export const homeHeroCopy = {
   hero: {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
     titleCategory: "Open source · MIT · by Zed Tech",
-    /** First approved #411 fallback: 3 lines at 390 with the home 1rem gutter overlay. Owner grey-hairs line still wraps to 4. */
+    /** First #411 fallback: at most 3 lines at ≤430 with the home 1rem gutter overlay. Owner grey-hairs line measured 4 during #411. */
     title: "Want your next build twice as fast? Build something with zedkit.",
     sub: "The second time is faster, easier and better than the first.",
     promptAriaLabel: "Setup prompt",

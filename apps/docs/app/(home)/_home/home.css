@@ -41,10 +41,12 @@
 }
 
 /*
- * #411 wrap: 16px page gutter at 390 (signature mobile gutter). The shell
- * token stays 1.5rem. Do not shrink --zk-type-h1-size here.
+ * #411 wrap: 16px page gutter at ≤430 (signature mobile gutter). Covers the
+ * 390→391 cliff (358px box at 390 / 1rem vs 343px at 391 / 1.5rem) and
+ * 393/412 phones. The shell token stays 1.5rem. Wide home (≥90rem) zeros
+ * this token in docs-shell-tokens.css. Do not shrink --zk-type-h1-size here.
  */
-@media (max-width: 390px) {
+@media (width <= 430px) {
   #home-page {
     --zk-page-gutter: 1rem;
   }
