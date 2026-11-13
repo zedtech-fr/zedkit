@@ -138,6 +138,8 @@ html[data-docs-shell][data-identity] {
 /*
  * Same-idea lands bar: inverted zinc like #paste (not Glass indigo).
  * Full-bleed background via ::before; content stays on the section measure.
+ * Negative bottom margin flushes the strip to the next band. Matching top
+ * margin restores the section's bottom rhythm between the cards and the bar.
  */
 #home-page #same-idea[data-slot="section"] {
   overflow-x: clip;
@@ -154,6 +156,7 @@ html[data-docs-shell][data-identity] {
   --card: var(--zk-site-action);
   position: relative;
   z-index: 0;
+  margin-top: var(--zk-section-pad);
   margin-bottom: calc(-1 * var(--zk-section-pad));
   padding-block: calc(var(--spacing) * 5.5);
   background-color: hsl(var(--zk-site-action));

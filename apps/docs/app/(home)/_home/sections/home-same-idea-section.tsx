@@ -162,8 +162,10 @@ function SameIdeaLands({ componentCount }: { componentCount: number }) {
  * map as one band. Stack until lg, then three columns, because compose by
  * priority through the tablet step. Violet only in the 120px product
  * windows, because high-value panel accents, not page fill. Count bar
- * inverted zinc, because it is a contrast strip, not a Glass indigo slab.
- * No identity form, because customization lives in the site dock.
+ * inverted zinc with a full `--zk-section-pad` above it, because the strip
+ * is a contrast band and must keep the same breathing room as the other
+ * home sections, not sit flush under the cards. No identity form, because
+ * customization lives in the site dock.
  */
 export function HomeSameIdeaSection({ componentCount }: { componentCount: number }) {
   return (
