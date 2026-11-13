@@ -1,8 +1,8 @@
 import { type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { freeLabel, type IdentitySource } from "@/lib/identity-library";
+import { freeLabel, type IdentitySource } from "./identity-library.ts";
 import { tokensForLook } from "./identity-look.ts";
-import { saveStatus, type SaveStatus } from "@/lib/identity-save-status";
+import { saveStatus, type SaveStatus } from "./identity-save-status.ts";
 import {
   deleteNamedIdentity,
   renameNamedIdentity,

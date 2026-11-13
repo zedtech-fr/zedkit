@@ -15,7 +15,7 @@ import {
   readLibrary,
   renameIdentity,
   saveIdentity,
-} from "../lib/identity-library.ts";
+} from "./identity-library.ts";
 
 const TOKENS = identityPresets.press;
 const OTHER = identityPresets.tide;
