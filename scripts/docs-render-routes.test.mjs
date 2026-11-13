@@ -48,6 +48,23 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
+test("docs identity feature modules map to the editor route", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/features/identity/ui/identity-look.ts",
+      "apps/docs/features/identity/ui/identity-editor-panel.tsx",
+      "apps/docs/features/identity/ui/identity-look.test.mjs",
+      ".agents/atlas.md",
+    ]),
+    ["/features/identity-editor"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps\\docs\\features\\identity\\ui\\identity-editor-draft.ts"]),
+    ["/features/identity-editor"],
+  );
+  assert.deepEqual(routesFromFiles(["apps/docs/features/identity/ui/identity-look.test.mjs"]), []);
+});
+
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({
