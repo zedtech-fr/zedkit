@@ -1,7 +1,7 @@
 import { tryCatch } from "@zedtech/zedkit-core";
 import type { IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { coercePersistedSpecimenDomain, type SpecimenDomain } from "./brief-specimen-domain.ts";
+import { specimenDomainFromPersist, type SpecimenDomain } from "./brief-specimen-domain.ts";
 import { initialSession, type SessionState } from "./identity-creator-session.ts";
 
 /** Current persisted dock state (localStorage). */
@@ -55,7 +55,7 @@ function parsePersistBlob(raw: string | null): IdentityDockPersistRead {
   if (parsed.value.previewTokens !== undefined && parsed.value.previewTokens !== null) {
     out.previewTokensRaw = parsed.value.previewTokens;
   }
-  const previewDomain = coercePersistedSpecimenDomain(parsed.value.previewDomain);
+  const previewDomain = specimenDomainFromPersist(parsed.value.previewDomain);
   if (previewDomain) out.previewDomain = previewDomain;
   return out;
 }

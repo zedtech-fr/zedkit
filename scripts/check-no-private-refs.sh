@@ -34,7 +34,7 @@ fi
 
 untracked=$(git ls-files --others --exclude-standard || true)
 if [ -n "$untracked" ]; then
-  untracked_hits=$(printf '%s\n' "$untracked" | xargs grep -HinE -e "$patterns" -- 2>/dev/null || true)
+  untracked_hits=$(printf '%s\n' "$untracked" | xargs grep -HinE -e "$patterns" -- 2>/dev/null | denylist_filter_hits || true)
   if [ -n "$untracked_hits" ]; then
     echo "private project references in untracked file contents:"
     echo "$untracked_hits"

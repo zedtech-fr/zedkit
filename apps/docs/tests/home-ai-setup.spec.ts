@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { MAP_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
+import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
 import { homeSameIdeaCopy } from "../ui/home/i18n/home-same-idea-copy";
 import { homeSixSentencesCopy } from "../ui/home/i18n/home-six-sentences-copy";
@@ -52,7 +52,7 @@ test.describe("home paste band", () => {
     await expect(page.locator("[data-home-hero-prompt]").getByRole("button", { name: /Copy/ })).toHaveCount(1);
 
     await page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt", exact: true }).click();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_SETUP_MINI_PROMPT);
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_AI_UI_SETUP_MINI_PROMPT);
 
     await expect(paste.locator("[data-home-full-steps]")).toHaveCount(0);
     await expect(paste.locator("[data-home-paste-lands]")).toBeVisible();

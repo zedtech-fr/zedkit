@@ -80,7 +80,7 @@ test("previewDomain survives when encode drops oldest thread turns", () => {
   assert.equal(parsed.previewDomain, "editorial");
 });
 
-test("v2 dock blob with previewDomain booking reads as service-booking", () => {
+test("legacy previewDomain booking loads as service-booking", () => {
   const store = new Map();
   const localStorage = {
     getItem: (k) => store.get(k) ?? null,
@@ -95,13 +95,19 @@ test("v2 dock blob with previewDomain booking reads as service-booking", () => {
   store.set(
     IDENTITY_DOCK_STORAGE_KEY,
     JSON.stringify({
-      session: { ...initialSession, pending: null },
-      brief: "clinic",
+      session: initialSession,
+      brief: "Clinic booking",
       previewDomain: "booking",
     }),
   );
-  const out = readIdentityDockPersist();
-  assert.equal(out.previewDomain, "service-booking");
+  const read = readIdentityDockPersist();
+  assert.equal(read.previewDomain, "service-booking");
+  const encoded = encodeIdentityDockPersist({
+    session: initialSession,
+    brief: read.brief ?? "",
+    previewDomain: read.previewDomain,
+  });
+  assert.equal(JSON.parse(encoded).previewDomain, "service-booking");
   delete globalThis.window;
 });
 

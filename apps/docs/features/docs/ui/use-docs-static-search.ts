@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useStaticSearch, type SearchResult, type StaticOptions } from "fumadocs-core/search/client";
 import { docsSearchCanonicalByHref } from "@/content/docs-search-canonical";
-import { rankAndGroupSearchItems } from "@/lib/docs-search-ranking.mjs";
+import { rankAndGroupSearchItems } from "@/features/docs/docs-search-ranking.mjs";
 
 type SearchItem = NonNullable<SearchResult["items"]>[number];
 

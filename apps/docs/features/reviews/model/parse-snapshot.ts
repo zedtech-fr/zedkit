@@ -901,7 +901,7 @@ export function isLiveSnapshot(value: ParsedPublicReviewSnapshot): value is Publ
   return Array.isArray(value);
 }
 
-/** Parse a version-1 live-run snapshot or issue-centric index. See SNAPSHOT.md. */
+/** Parse a version-1 live-run snapshot or issue-centric index. See DATA-SOURCES.md. */
 export function parsePublicReviewSnapshot(value: unknown): Result<ParsedPublicReviewSnapshot, Error> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return fail("snapshot must be an object");
