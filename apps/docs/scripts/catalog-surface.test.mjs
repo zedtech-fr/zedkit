@@ -164,7 +164,7 @@ test("catalog ships no identity host module", () => {
 });
 
 test("the identity form lives in the editor panel, not the catalog", () => {
-  const panel = read("features/identity/ui/identity-editor-panel.tsx");
+  const panel = read("features/identity/editor/ui/identity-editor-panel.tsx");
   const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
   assert.match(panel, /IdentityLookForm/);
   assert.match(panel, /defaultMode="expert"/);
@@ -207,7 +207,7 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   const panel = read("features/identity/dock/ui/identity-dock-assistant-panel.tsx");
   const bar = read("features/identity/dock/ui/identity-dock-action-bar.tsx");
   const copy = read("features/identity/dock/i18n/identity-dock-copy.ts");
-  const editorCopy = read("components/i18n/identity-editor-copy.ts");
+  const editorCopy = read("features/identity/editor/i18n/identity-editor-copy.ts");
   assert.match(panel, /IdentityDockActionBar/);
   assert.match(bar, /data-dock-action-bar/);
   assert.match(bar, /toolbar\.reset/);

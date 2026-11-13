@@ -13,7 +13,7 @@ import {
   identityContrastWarnings,
   type IdentityTokens,
 } from "@zedtech/zedkit-ui";
-import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import {
   IDENTITY_KIT_STYLES_CSS,
   identityExportCss,
