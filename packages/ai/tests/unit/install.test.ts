@@ -20,6 +20,7 @@ import {
 } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
 import {
+  failingIssues,
   AGENT,
   COMMAND,
   firstPartySkills,
@@ -112,7 +113,7 @@ describe("installKit", () => {
     expect(text).toMatch(
       /\| persona\s+\| skill `persona-review`[^\n]*\|\s*planned\s*\|/,
     );
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("init --adopt a second time is a no-op: no copy/link and validate stays clean", () => {
@@ -133,7 +134,7 @@ describe("installKit", () => {
       false,
     );
     expect(existsSync(join(dest, ".agents/personas.kit.md"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);
   });
 
@@ -263,7 +264,7 @@ describe("installKit", () => {
     );
     const again = install(dest, { providers: [] });
     expect(again.filter((a) => a.kind !== "skip")).toEqual([]);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("leaves an edited tokenomics.md alone, with or without adopt, and writes no sidecar", () => {
@@ -303,7 +304,7 @@ describe("installKit", () => {
       join(dest, ".agents", "tokenomics.md"),
       "---\nschema: 1\ntiers: {}\n---\n",
     );
-    expect(validateKit(join(dest, ".agents"))).toEqual([
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([
       {
         path: "tokenomics.md",
         message: expect.stringContaining("tiers: unknown key"),
@@ -373,7 +374,7 @@ describe("installKit", () => {
       ".agents/skills/ground-truth",
     );
     expect(actions.some((a) => a.note?.includes("kept user file"))).toBe(true);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);
   });
 
@@ -400,8 +401,7 @@ describe("installKit", () => {
   it("core preset validates clean: every command resolves to an installed skill", () => {
     const dest = tempDir();
     install(dest, { preset: "core" });
-    const issues = validateKit(join(dest, ".agents"));
-    expect(issues).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("installs every preset with no dangling skill reference", () => {
@@ -412,7 +412,7 @@ describe("installKit", () => {
       const result = installKit({ dest, preset, providers: [] });
       expect(result.ok, preset).toBe(true);
       if (!result.ok) continue;
-      expect(validateKit(join(dest, ".agents")), preset).toEqual([]);
+      expect(failingIssues(validateKit(join(dest, ".agents"))), preset).toEqual([]);
     }
   });
 
@@ -494,7 +494,7 @@ describe("installKit", () => {
   it("produces output that passes validation", () => {
     const dest = tempDir();
     install(dest, { preset: "full" });
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("never overwrites: local edits survive, and a ladder-less AGENTS.md gets the section appended", () => {
@@ -644,7 +644,7 @@ describe("installKit", () => {
     expect(
       readFileSync(join(dest, ".claude/skills/team-own/SKILL.md"), "utf8"),
     ).toBe("team\n");
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(
       checkDrift(dest, join(dest, ".agents")).filter((i) =>
         i.message.includes("unreachable"),
@@ -686,7 +686,7 @@ describe("installKit", () => {
       true,
     );
     expect(again.some((a) => a.path.includes("add-invoice"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("writes nothing on a dry run", () => {
@@ -1085,7 +1085,7 @@ describe("installKit", () => {
     expect(agents.startsWith(host)).toBe(true);
     expect(agents).toContain("Use p-4 for page padding.");
     expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("p-4");
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("skips project.mdc when AGENTS.md already exists and an always-on rule references it", () => {

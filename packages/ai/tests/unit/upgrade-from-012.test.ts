@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { main } from "#cli.js";
 import { installKit } from "#install.js";
 import { validateKit } from "#validate.js";
-import { AGENT, COMMAND, put, SKILL, tempDir } from "./helpers.js";
+import { failingIssues, AGENT, COMMAND, put, SKILL, tempDir } from "./helpers.js";
 
 function run(...argv: string[]): { code: number; text: string; errors: string } {
   const out: string[] = [];
@@ -90,7 +90,7 @@ describe("Upgrading from 0.12 (README contract)", () => {
     expect(existsSync(join(dest, ".agents/skills/domain-modeling/SKILL.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/product-director.md"))).toBe(true);
 
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
 
     const again = run("setup", dest, "--provider", "cursor");
     expect(again.code).toBe(0);

@@ -26,7 +26,7 @@ import {
   MUSE_NAME_ALIAS,
 } from "./generate.js";
 import { ALL_PROVIDERS, type Action } from "./install.js";
-import { adoptRel, kitDir } from "./kit.js";
+import { adoptRel, deprecatedCommandNames, kitDir, readManifest } from "./kit.js";
 import { isKitCopy } from "./legacy.js";
 import { isGenerated, PROVIDER_KEYS } from "./provider-keys.js";
 import { loadAgent, loadPolicy, resolveRoute } from "./route.js";
@@ -304,6 +304,56 @@ function syncFile(ctx: Ctx, rel: string, name: string, source: string | undefine
 
 // Marked files whose source agent is gone. Only files that carry the marker
 // are ever removed.
+function lf(text: string): string {
+  return text.replace(/\r\n/g, "\n");
+}
+
+function prunePath(ctx: Ctx, rel: string, note: string): void {
+  const full = join(ctx.dest, rel);
+  const stat = lstatOf(full);
+  if (stat === undefined || stat.isDirectory()) return;
+  if (ctx.write) rmSync(full);
+  ctx.actions.push({ kind: "prune", path: rel, note });
+}
+
+const KIT_COMMAND_LINK = (stem: string): string => `../../.agents/commands/${stem}.md`;
+
+/** Provider copy: kit command link or current kit bytes. Anything else is the user's. */
+function pruneDeprecatedCopy(ctx: Ctx, rel: string, stem: string, kitText: string, note: string): void {
+  const full = join(ctx.dest, rel);
+  const stat = lstatOf(full);
+  if (stat === undefined || stat.isDirectory()) return;
+  if (stat.isSymbolicLink()) {
+    const target = tryCatch(() => readlinkSync(full));
+    if (!target.ok || target.value !== KIT_COMMAND_LINK(stem)) return;
+  } else {
+    const text = readText(full);
+    if (text === undefined || lf(text) !== lf(kitText)) return;
+  }
+  prunePath(ctx, rel, note);
+}
+
+/** `--prune` only: drop a deprecated command whose bytes still equal the current kit file. */
+function pruneDeprecatedCommandStubs(ctx: Ctx): void {
+  const manifest = readManifest(ctx.kit);
+  if (!manifest.ok) return;
+  const sourceDir = join(".agents", "commands");
+  if (throughLink(ctx, sourceDir) !== undefined) return;
+  const note = "deprecated command matches current kit file";
+  for (const stem of deprecatedCommandNames(manifest.value)) {
+    const sourceRel = join(sourceDir, `${stem}.md`);
+    const sourceText = readText(join(ctx.dest, sourceRel));
+    const kitText = readText(join(ctx.kit, "commands", `${stem}.md`));
+    if (sourceText === undefined || kitText === undefined || lf(sourceText) !== lf(kitText)) continue;
+    for (const dirRel of [join(".cursor", "commands"), join(".claude", "commands")]) {
+      if (throughLink(ctx, dirRel) !== undefined) continue;
+      pruneDeprecatedCopy(ctx, join(dirRel, `${stem}.md`), stem, kitText, note);
+      pruneDeprecatedCopy(ctx, join(dirRel, `${stem}.kit.md`), stem, kitText, note);
+    }
+    prunePath(ctx, sourceRel, note);
+  }
+}
+
 function pruneOrphans(ctx: Ctx, dirRel: string, names: ReadonlySet<string>, allMarked: boolean): void {
   if (throughLink(ctx, dirRel) !== undefined) return;
   if (!lstatOf(join(ctx.dest, dirRel))?.isDirectory()) return;
@@ -392,7 +442,7 @@ function syncCommands(ctx: Ctx, names: readonly string[], source: (name: string)
   const known = new Set(names);
   for (const name of names) {
     const rel = join(dirRel, `${name}.md`);
-    const target = `../../.agents/commands/${name}.md`;
+    const target = KIT_COMMAND_LINK(name);
     const full = join(ctx.dest, rel);
     const stat = lstatOf(full);
     if (stat === undefined) {
@@ -632,11 +682,12 @@ export function syncKit(options: SyncOptions): Result<Action[]> {
   const actions: Action[] = [];
   const avail = availabilityOf(agentsDir, names);
   const kitAgents = join(kit, "agents");
-  const run = tryCatch(() =>
+  const write = options.check !== true && options.dryRun !== true;
+  const run = tryCatch(() => {
     syncAgents(
       {
         dest: options.dest,
-        write: options.check !== true && options.dryRun !== true,
+        write,
         providers,
         policy: policy.value,
         agentsDir,
@@ -654,8 +705,11 @@ export function syncKit(options: SyncOptions): Result<Action[]> {
         ...(options.allowFast === true && { allowFast: true }),
       },
       actions,
-    ),
-  );
+    );
+    if (options.prune === true) {
+      pruneDeprecatedCommandStubs({ dest: options.dest, write, actions, avail, kit });
+    }
+  });
   return run.ok ? ok(actions) : err(run.error);
 }
 

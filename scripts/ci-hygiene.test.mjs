@@ -56,14 +56,33 @@ describe("ci-required aggregate", () => {
   });
 });
 
+describe("changes job docs_looks", () => {
+  const changes = workflow.split(/^ {2}changes:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+
+  it("exports docs_looks from --looks on the same file list as ci-affected", () => {
+    assert.notEqual(changes, "", "changes job block not found");
+    assert.ok(
+      changes.includes("docs_looks: ${{ steps.detect.outputs.docs_looks }}"),
+      "changes job must map docs_looks from the detect step",
+    );
+    assert.match(changes, /files=\$\(git diff --name-only --no-renames "\$base"\.\.\.HEAD\)/);
+    assert.match(changes, /files=\$\(git ls-tree -r --name-only HEAD\)/);
+    assert.match(changes, /printf '%s\\n' "\$files" \|\s*\n\s*node scripts\/ci-affected\.mjs/);
+    assert.match(changes, /docs_looks="\$\(printf '%s\\n' "\$files" \| node scripts\/docs-render-routes\.mjs --looks\)"/);
+    assert.match(changes, /echo "docs_looks=\$docs_looks" >> "\$GITHUB_OUTPUT"/);
+  });
+});
+
 describe("docs-render job", () => {
+  const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+
   it("reuses docs-out, sets DOCS_ROUTES, and runs e2e:routes", () => {
-    const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.notEqual(job, "", "docs-render job block not found");
-    assert.match(job, /timeout-minutes: 10/);
     assert.match(job, /needs: \[changes, docs-build\]/);
     assert.match(job, /e2e:routes/);
     assert.match(job, /DOCS_ROUTES/);
+    assert.match(job, /DOCS_LOOKS/);
+    assert.match(job, /--looks/);
     assert.match(job, /docs-render-routes\.mjs/);
     assert.match(job, /playwright install chromium/);
     assert.match(job, /serve@14\.2\.6/);
@@ -76,6 +95,53 @@ describe("docs-render job", () => {
     assert.match(job, /docs-render-results/);
     assert.match(job, /if: failure\(\)/);
     assert.match(job, /apps\/docs\/test-results\//);
+  });
+
+  it("chooses full vs touched via --mode and HEAD_REF", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    assert.match(job, /--mode/);
+    assert.ok(job.includes("HEAD_REF: ${{ github.head_ref }}"));
+    assert.match(job, /\[ "\$MODE" = "full" \]/);
+    assert.match(job, /unset DOCS_ROUTES/);
+    assert.match(job, /unset DOCS_LOOKS/);
+  });
+
+  it("times out at 25 minutes on full sweep or looks grid, else 6", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    assert.ok(
+      job.includes(
+        "timeout-minutes: ${{ (github.event_name == 'push' || github.base_ref == 'main' || (github.base_ref == 'dev' && startsWith(github.head_ref, 'epic/')) || needs.changes.outputs.docs_looks != '') && 25 || 6 }}",
+      ),
+      "docs-render timeout must be 25 when sweep is full or docs_looks is set, else 6",
+    );
+  });
+
+  it("skips unless the docs detector is true and the diff is not workflow-only", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    // Exact-line pin, same form as the other job `if:`s; a semantic YAML reflow still fails.
+    assert.match(
+      job,
+      /^ {4}if: needs\.changes\.outputs\.docs == 'true' && needs\.changes\.outputs\.workflow_only != 'true'\s*$/m,
+    );
+  });
+});
+
+describe("nightly Chromium sitemap", () => {
+  const nightly = readFileSync(join(root, ".github/workflows/nightly-docs-cross-browser.yml"), "utf8");
+
+  it("runs e2e:routes without DOCS_ROUTES on a 25-minute Chromium job", () => {
+    const job =
+      nightly.split(/^ {2}docs-render-chromium:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(job, "", "docs-render-chromium job block not found");
+    assert.match(job, /timeout-minutes: 25/);
+    assert.match(job, /e2e:routes/);
+    assert.match(job, /DOCS_E2E_PROJECT: chromium/);
+    assert.doesNotMatch(job, /DOCS_ROUTES/);
+    assert.doesNotMatch(job, /DOCS_LOOKS/);
+    const smoke = nightly.split(/^ {2}docs-smoke-cross-browser:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.match(smoke, /firefox/);
+    assert.match(smoke, /webkit/);
+    assert.doesNotMatch(smoke, /e2e:routes/);
   });
 });
 

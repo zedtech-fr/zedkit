@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { kitDir } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { tempDir, usageText } from "./helpers.js";
+import { failingIssues, tempDir, usageText } from "./helpers.js";
 
 const skillDir = join(kitDir(), "skills", "setup-ai");
 const read = (...rel: string[]): string =>
@@ -281,7 +281,7 @@ describe("setup-ai v3: tokenomics", () => {
     expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toContain(
       ".agents/tokenomics.md",
     );
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 });
 

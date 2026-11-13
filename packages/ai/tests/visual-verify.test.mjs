@@ -49,6 +49,24 @@ html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px}
 </style></head><body><h1>Contrast</h1><p>Body</p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" width="16" height="16"></body></html>`;
 
+const LOW_CONTRAST = `<!doctype html><html lang="en"><head><title>Low contrast</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.low{color:#eee;background:#fff}
+</style></head><body><h1>Low contrast</h1><p class="low">pale on white</p></body></html>`;
+
+const CLIPPED = `<!doctype html><html lang="en"><head><title>Clipped</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.clip{width:40px;overflow:hidden;white-space:nowrap}
+</style></head><body><h1>Clipped</h1><p class="clip">this text is much too long to fit</p></body></html>`;
+
+const SCROLLER = `<!doctype html><html lang="en"><head><title>Scroller</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.scroll{width:80px;overflow:auto;white-space:nowrap}
+</style></head><body><h1>Scroller</h1><p class="scroll" tabindex="0">this text is much too long to fit</p></body></html>`;
+
 const BARE = `<!doctype html><html lang="en"><head><title>Bare</title></head><body><h1>Bare</h1><p>No stylesheet.</p></body></html>`;
 
 const TABS = `<!doctype html><html lang="en"><head><title>Tabs</title><style>
@@ -82,6 +100,9 @@ function fixtureDir() {
   writeFileSync(join(dir, "index.html"), CLEAN);
   writeFileSync(join(dir, "overflow.html"), OVERFLOW);
   writeFileSync(join(dir, "contrast.html"), CONTRAST);
+  writeFileSync(join(dir, "low-contrast.html"), LOW_CONTRAST);
+  writeFileSync(join(dir, "clipped.html"), CLIPPED);
+  writeFileSync(join(dir, "scroller.html"), SCROLLER);
   writeFileSync(join(dir, "bare.html"), BARE);
   writeFileSync(join(dir, "tabs.html"), TABS);
   return dir;
@@ -209,6 +230,29 @@ describe("visual-verify helpers", () => {
     const parsed = parseVisualVerifyArgs(["--help"]);
     expect(parsed.ok && parsed.value.help).toBe(true);
   });
+
+  it("aliases --base-url to --url and --routes auto to --changed", () => {
+    const aliased = parseVisualVerifyArgs(["--base-url", "http://127.0.0.1:9", "--routes", "auto"]);
+    expect(aliased.ok).toBe(true);
+    if (!aliased.ok) return;
+    expect(aliased.value.url).toBe("http://127.0.0.1:9");
+    expect(aliased.value.changed).toBe(true);
+    expect(aliased.value.routes).toEqual([]);
+    const mixed = parseVisualVerifyArgs(["--routes", "auto,/docs"]);
+    expect(mixed.ok && mixed.value.changed).toBe(true);
+    expect(mixed.ok && mixed.value.routes).toEqual(["/docs"]);
+    const both = parseVisualVerifyArgs(["--url", "http://127.0.0.1:9", "--base-url", "http://127.0.0.1:8"]);
+    expect(both.ok).toBe(false);
+  });
+
+  it("defaults widths and modes to the Visual work matrix", () => {
+    const parsed = parseVisualVerifyArgs([]);
+    expect(parsed.ok && parsed.value.widths).toEqual([375, 809, 1440]);
+    expect(parsed.ok && parsed.value.modes).toEqual(["light", "dark"]);
+    const shrunk = parseVisualVerifyArgs(["--widths", "375", "--modes", "light"]);
+    expect(shrunk.ok && shrunk.value.widths).toEqual([375]);
+    expect(shrunk.ok && shrunk.value.modes).toEqual(["light"]);
+  });
 });
 
 describe("visual-verify CLI", () => {
@@ -219,6 +263,38 @@ describe("visual-verify CLI", () => {
     expect(code).toBe(0);
     expect(out.join("\n")).toContain("--url");
     expect(errors).toEqual([]);
+  });
+
+  it("names --base-url, --routes, and --out on evidence --help", async () => {
+    const out = [];
+    const code = await visualVerifyMain(["--help"], {
+      out: (l) => out.push(l),
+      err: () => undefined,
+    }, { command: "evidence" });
+    expect(code).toBe(0);
+    const text = out.join("\n");
+    expect(text).toContain("zedkit-ai evidence");
+    expect(text).toContain("--base-url");
+    expect(text).toContain("--routes");
+    expect(text).toContain("--out");
+  });
+
+  it("rejects --url and --base-url together before launch", async () => {
+    let launched = false;
+    const errors = [];
+    const code = await visualVerifyMain(
+      ["--url", "http://127.0.0.1:9", "--base-url", "http://127.0.0.1:8", "--routes", "/"],
+      { out: () => undefined, err: (l) => errors.push(l) },
+      {
+        loadPlaywright: async () => {
+          launched = true;
+          return { ok: true, value: { chromium: {} } };
+        },
+      },
+    );
+    expect(code).toBe(2);
+    expect(launched).toBe(false);
+    expect(errors.join("\n")).toMatch(/--url|--base-url/);
   });
 
   it("exits 2 when Playwright is missing, without crashing", async () => {
@@ -243,7 +319,7 @@ describe("visual-verify CLI", () => {
 });
 
 describe("visual-verify fixture", { timeout: 120_000 }, () => {
-  async function runRoutes(routes) {
+  async function runRoutes(routes, extra = {}) {
     const dir = fixtureDir();
     const out = mkdtempSync(join(tmpdir(), "vv-out-"));
     mkdirSync(out, { recursive: true });
@@ -252,6 +328,7 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
       routes,
       out,
       cwd: dir,
+      ...extra,
     });
     return { result, out };
   }
@@ -262,7 +339,12 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.value.ok).toBe(true);
     expect(result.value.collection).toBe("ok");
     expect(readFileSync(join(out, "manifest.json"), "utf8")).toContain('"route": "/"');
+    const summary = readFileSync(join(out, "summary.md"), "utf8");
+    expect(summary).toContain("| / |");
+    expect(summary).toMatch(/\npass\n/u);
+    expect(summary).toContain("manifest.json");
     expect(result.value.contactSheets.some((s) => s.route === "/")).toBe(true);
+    expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
   });
 
   it("fails on planted overflow", async () => {
@@ -278,6 +360,28 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
     expect(result.value.ok).toBe(false);
     expect(result.value.cells.some((c) => (c.axeNew ?? []).length > 0)).toBe(true);
+  });
+
+  it("fails on planted low-contrast text", async () => {
+    const { result } = await runRoutes(["/low-contrast"], { widths: [375], modes: ["light"] });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(false);
+    expect(result.value.cells.some((c) => (c.axeNew ?? []).includes("color-contrast"))).toBe(true);
+  });
+
+  it("fails on planted clipped text", async () => {
+    const { result } = await runRoutes(["/clipped"], { widths: [375], modes: ["light"] });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(false);
+    expect(result.value.cells.some((c) => c.clipped === true && c.clippedCount > 0)).toBe(true);
+    expect(result.value.cells.filter((c) => c.collection === "ok").every((c) => c.clipped === true)).toBe(true);
+  });
+
+  it("does not treat an intended scroller as clipped", async () => {
+    const { result } = await runRoutes(["/scroller"], { widths: [375], modes: ["light"] });
+    expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
+    expect(result.value.ok).toBe(true);
+    expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
   });
 
   it("fails collection with no CSS and writes no pass verdict", async () => {

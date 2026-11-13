@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { parseSitemapRoutes } from "../apps/docs/scripts/docs-route-parse.mjs";
 import {
   DOCS_RENDER_FALLBACK_ROUTES,
+  docsRenderLooks,
   docsRenderRoutes,
+  docsRenderSweepMode,
+  looksGridTriggered,
   routesFromFiles,
 } from "./docs-render-routes.mjs";
 
@@ -136,12 +141,133 @@ test("mapper and route-parse have no package imports", () => {
   assert.doesNotMatch(parse, /from ["']/u);
 });
 
-test("slugNeed and routesFromFiles stay in lockstep with visual-verify.mjs", () => {
+test("turns the looks grid on for tokens, primitives, and identity sheets", () => {
+  assert.equal(looksGridTriggered(["packages/ui/src/identities.css"]), true);
+  assert.equal(looksGridTriggered(["packages/ui/src/styles.css"]), true);
+  assert.equal(looksGridTriggered(["packages/ui/src/button/button.tsx"]), true);
+  assert.equal(looksGridTriggered(["packages/ui/src/button/button.test.tsx"]), false);
+  assert.equal(looksGridTriggered(["README.md"]), false);
+  assert.equal(looksGridTriggered(["apps/docs/app/(site)/catalog/page.tsx"]), false);
+  assert.equal(looksGridTriggered(["packages\\ui\\src\\identities.css"]), true);
+});
+
+test("docsRenderLooks emits the six shipped looks only when the grid is on", () => {
+  assert.deepEqual(docsRenderLooks(["packages/ui/src/styles.css"]), [
+    "mist",
+    "press",
+    "tide",
+    "volt",
+    "maison",
+    "glass",
+  ]);
+  assert.deepEqual(docsRenderLooks(["packages/ui/src/button/button.tsx"]), [
+    "mist",
+    "press",
+    "tide",
+    "volt",
+    "maison",
+    "glass",
+  ]);
+  assert.deepEqual(docsRenderLooks(["apps/docs/app/(site)/catalog/page.tsx"]), []);
+  assert.deepEqual(docsRenderLooks(["README.md"]), []);
+});
+
+test("--looks writes the six ids or a blank line", () => {
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const run = (input) =>
+    spawnSync(process.execPath, ["scripts/docs-render-routes.mjs", "--looks"], {
+      cwd: root,
+      encoding: "utf8",
+      input,
+    });
+  const on = run("packages/ui/src/styles.css\n");
+  assert.equal(on.status, 0, on.stderr);
+  assert.equal(on.stdout, "mist,press,tide,volt,maison,glass\n");
+  const off = run("apps/docs/app/(site)/catalog/page.tsx\n");
+  assert.equal(off.status, 0, off.stderr);
+  assert.equal(off.stdout, "\n");
+});
+
+test("slugNeed, routesFromFiles, and looksGridTriggered stay in lockstep with visual-verify.mjs", () => {
   const mapper = readFileSync(new URL("./docs-render-routes.mjs", import.meta.url), "utf8");
   const verify = readFileSync(new URL("../packages/ai/scripts/visual-verify.mjs", import.meta.url), "utf8");
-  for (const name of ["slugNeed", "routesFromFiles"]) {
+  for (const name of ["slugNeed", "routesFromFiles", "looksGridTriggered"]) {
     assert.equal(exportedFn(mapper, name), exportedFn(verify, name), `${name} drifted from visual-verify.mjs`);
   }
+  const looksConst = (src) => {
+    const match = /export const DEFAULT_LOOKS = (\[[^\]]+\])/u.exec(src);
+    assert.ok(match, "missing DEFAULT_LOOKS");
+    return match[1];
+  };
+  assert.equal(looksConst(mapper), looksConst(verify), "DEFAULT_LOOKS drifted from visual-verify.mjs");
+});
+
+test("ordinary PR into dev stays on touched routes", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "agent/issue-310" }),
+    "touched",
+  );
+});
+
+test("epic PR into dev is a full sitemap sweep", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "epic/73-redesign" }),
+    "full",
+  );
+});
+
+test("any PR into main is a full sitemap sweep", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "main", headRef: "dev" }),
+    "full",
+  );
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "main", headRef: "fix/docs" }),
+    "full",
+  );
+});
+
+test("push is a full sitemap sweep", () => {
+  assert.equal(docsRenderSweepMode({ event: "push", baseRef: "", headRef: "" }), "full");
+});
+
+test("missing head ref on a PR into dev stays touched", () => {
+  assert.equal(docsRenderSweepMode({ event: "pull_request", baseRef: "dev" }), "touched");
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "" }),
+    "touched",
+  );
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: null }),
+    "touched",
+  );
+});
+
+test("epic- without a slash stays touched", () => {
+  assert.equal(
+    docsRenderSweepMode({ event: "pull_request", baseRef: "dev", headRef: "epic-73-redesign" }),
+    "touched",
+  );
+});
+
+test("--mode prints full or touched from EVENT BASE_REF HEAD_REF", () => {
+  const root = fileURLToPath(new URL("..", import.meta.url));
+  const run = (env) =>
+    spawnSync(process.execPath, ["scripts/docs-render-routes.mjs", "--mode"], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, ...env },
+    });
+  const full = run({ EVENT: "push", BASE_REF: "", HEAD_REF: "" });
+  assert.equal(full.status, 0, full.stderr);
+  assert.equal(full.stdout, "full\n");
+  const touched = run({
+    EVENT: "pull_request",
+    BASE_REF: "dev",
+    HEAD_REF: "feat/x",
+  });
+  assert.equal(touched.status, 0, touched.stderr);
+  assert.equal(touched.stdout, "touched\n");
 });
 
 function exportedFn(src, name) {

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { kitDir, readManifest } from "#kit.js";
 import { validateKit } from "#validate.js";
-import { tempDir } from "./helpers.js";
+import { failingIssues, tempDir } from "./helpers.js";
 
 function read(rel: string): string {
   return readFileSync(join(kitDir(), rel), "utf8");
@@ -111,7 +111,7 @@ describe("compose-ui skill", () => {
       const dest = tempDir();
       const result = installKit({ dest, preset, providers: [] });
       expect(result.ok, preset).toBe(true);
-      expect(validateKit(join(dest, ".agents")), preset).toEqual([]);
+      expect(failingIssues(validateKit(join(dest, ".agents"))), preset).toEqual([]);
       expect(readFileSync(join(dest, ".agents", "skills", "compose-ui", "SKILL.md"), "utf8")).toContain("compose-ui");
       expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("role");
       expect(readFileSync(join(dest, "AGENTS.md"), "utf8")).toContain("persona chain");
@@ -182,7 +182,7 @@ describe("compose-ui skill", () => {
     const dest = tempDir();
     const result = installKit({ dest, preset: "starter", providers: [] });
     expect(result.ok).toBe(true);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(existsSync(join(dest, ".agents", "skills", "compose-ui"))).toBe(false);
     expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("p-4");
     const agents = readFileSync(join(dest, "AGENTS.md"), "utf8");

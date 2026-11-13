@@ -694,7 +694,11 @@
       "8c29724d176c9a6d",
       "f7fd4c59787acde1"
     ],
-    "visual-verify/SKILL.md": ["3b07acca0143018b", "b03405c19aba6a88"],
+    "visual-verify/SKILL.md": [
+      "2f8325863a686e22",
+      "3b07acca0143018b",
+      "b03405c19aba6a88"
+    ],
     "zedkit-ai/SKILL.md": ["2744d7819af35a89"],
     "zedkit-ai/routes.md": ["afe7165be9d98456"]
   }
