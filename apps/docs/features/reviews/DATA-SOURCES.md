@@ -61,23 +61,6 @@ Partial lists return as success. There is no truncated flag.
 | GitHub review fallbacks | 40 PRs |
 | Hosted runs API | 10 pages × 200 (`limit`) |
 
-## Home hero active run (client)
-
-The home illustration polls the same hosted list from the browser:
-`GET {NEXT_PUBLIC_ZEDOS_RUNS_API_BASE}/<live-service>/api/runs?active=1&limit=1`
-(`fetchActiveHeroRun`). This is not the `/issues` feed (`/issues` stays
-build-time only).
-
-The consumer keeps a row only when `version === 1`, `runs` is an array,
-and the first run has `active === true` and `stale !== true`. Envelope
-`kind` is ignored. The run must include `runId`, boolean `active` /
-`stale`, optional `title` / `issue` / `pr` / `liveUrl`, and `steps`
-with the five keys `plan`, `build`, `check`, `fix`, `done` (status
-`pending` | `active` | `done` | `failed` | `skipped`, optional
-`summary`). Extra step objects and extra run keys are ignored. Parse
-or fetch errors keep the last live card and mark it stale; empty or
-inactive/stale lists return the placeholder.
-
 ## Version
 
 Both shapes require `"version": 1`. Any other version fails closed.
@@ -126,7 +109,7 @@ Each `entries[]` object (issue or unlinked PR):
 | `models` | String array. Skip empty strings. Plan, implement, and dry-run: engine model. Review: lens and second-pass models. Improve: improve model. |
 | `verdict` | `approve` \| `request-changes` \| `comment`, or `null`. |
 | `score` | Optional integer 0–10, or `null`. Shown next to a review verdict. |
-| `superseded` | Optional boolean. The list shows replacement copy when true (`Replaced by newer run`, or `Didn't finish — replaced by a newer run` when the step also failed). |
+| `superseded` | Optional boolean. The list shows replacement copy when true (`Replaced by newer run`, or `Didn't finish — replaced by a later review` when the step also failed). |
 | `liveUrl` | Allowlisted hosted-console href (`HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id) or `null`. Never a GitHub `review_url`. Never a reserved host, other host, other path, query, hash, userinfo, `http:`, non-empty port, or a home path. The public gate drops those. |
 
 Plan and implement phases of one implement ticket run are **two**

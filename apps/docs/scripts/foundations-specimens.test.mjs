@@ -255,8 +255,8 @@ test("hero is a grey band with 40px title overlay, intro, and glass callout", ()
 test("foundations chrome skips docs article chrome and keeps search", () => {
   const page = readApp("app/docs/[[...slug]]/page.tsx");
   const layout = readApp("app/docs/[[...slug]]/layout.tsx");
-  const headers = readApp("ui/site-headers.tsx");
-  const mobile = readApp("ui/mobile-header.tsx");
+  const headers = readApp("components/site-chrome/site-headers.tsx");
+  const mobile = readApp("components/site-chrome/mobile-header.tsx");
   const nav = readApp("lib/site-nav-data.ts");
   const mdxComponents = readApp("mdx-components.tsx");
   const typography = readApp("app/docs-typography.css");

@@ -23,8 +23,7 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - **No empty packages.** A package exists only when real code backs it now.
 - **Never commit build artifacts.** Before every commit and PR: run
   `git status` and `git diff --stat`, never `git add -A` blindly, and
-  confirm no binaries, caches, build output, files over 200KB, or
-  generated evidence PNGs (`apps/docs/tests/evidence/**/*.png`) are
+  confirm no binaries, caches, build output, or files over 200KB are
   staged. CI enforces this via `scripts/check-no-artifacts.sh`; if you
   extend `.gitignore`, extend the script to match.
 - **Publishing is live.** Changesets version the packages; merging a
