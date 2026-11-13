@@ -77,6 +77,7 @@ describe("preset closure", () => {
       "quick-wins",
       "handoff",
       "triage",
+      "zedkit-ai",
     ]);
     expect(agentsForPreset(manifest.value, "setup")).toEqual([
       "explorer",
@@ -108,6 +109,7 @@ describe("preset closure", () => {
       "improve-from-review",
       "quick-wins",
       "triage",
+      "zedkit-ai",
     ]);
   });
 

@@ -265,7 +265,7 @@ per-folder rules. When to call which subagent: the
 
 Commands (`review`, `plan`, `challenge`, `implement`, `setup-ai`, `pr`,
 `handoff`, `audit`, `orchestrate`, `research`, `improve-config`, `from-audit`,
-`to-audit`, `fix`, `improve-from-review`, `quick-wins`, `triage`) are 3-6 line files: each runs its skill on the command arguments
+`to-audit`, `fix`, `improve-from-review`, `quick-wins`, `triage`, `zedkit-ai`) are 3-6 line files: each runs its skill on the command arguments
 (or the current context). Both tools also list skills as `/` commands
 nowadays; the files stay as the explicit one-keystroke path and as fallback
 when the skills link is not followed.
@@ -286,7 +286,7 @@ when the skills link is not followed.
 
 **Skills first-party:** `ground-truth`, `parallel-work`, `definition-of-done`,
 `adversarial-tests`, `rules-upkeep`, `persona-review`, `setup-ai`, `use-zedkit`,
-`use-signature`, `compose-ui` (persona chain brief before composing UI), `visual-verify`, `review`, `plan`, `challenge`, `audit`, `orchestrate`,
+`use-signature`, `compose-ui` (persona chain brief before composing UI), `visual-verify`, `review`, `plan`, `challenge`, `audit`, `orchestrate`, `zedkit-ai`,
 `from-audit`, `to-audit`, `fix`, `improve-from-review`, `quick-wins`,
 `evidence-grounded-analysis` (answers about customer or user material only
 from that material, every claim tagged verbatim, inference or absent;
@@ -320,8 +320,8 @@ the Matt Pocock engineering skills (`tdd`, `code-review`, `diagnosing-bugs`,
 director briefs — the full table (role + when to call) lives in
 `docs/agents-catalog.md`, the installed set in `kit.json`.
 
-**Presets:** `starter` (default: onboard, review, done — eight skills, three
-subagents, two commands), `setup` (starter plus domain modeling, the review
+**Presets:** `starter` (default: onboard, review, done — nine skills, three
+subagents, three commands), `setup` (starter plus domain modeling, the review
 lenses, retro, rules-upkeep, and the subagents named under **Setup preset**), `core` (planning, implement, and the rest;
 `zedkit-ai list` shows the skill list), and `full` (every skill). Keep the
 skill count low: every skill's name and description is loaded into context
