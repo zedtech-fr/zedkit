@@ -24,7 +24,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
-import { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS, isLightKey } from "@/lib/identity-editor-search";
+import { FONT_KEYS, LIGHT_KEYS, SCALAR_KEYS, isLightKey } from "./identity-editor-search";
 import { identityTokenCssVars } from "@/lib/identity-token-css-vars";
 
 const DRAFT_ID = "draft";

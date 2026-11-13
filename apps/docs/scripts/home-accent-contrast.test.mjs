@@ -432,7 +432,7 @@ test("docs tablists still declare the token pairs this file checks", () => {
   assert.match(preview, /data-\[state=active\]:text-foreground/);
   assert.match(preview, /aria-pressed:bg-muted/);
   assert.match(preview, /aria-pressed:text-foreground/);
-  const editor = read(join(app, "components/identity-look-form.tsx"));
+  const editor = read(join(app, "features/identity/ui/identity-look-form.tsx"));
   assert.match(editor, /<TabsTrigger value="simple">/);
   assert.match(editor, /<TabsTrigger value="expert">/);
   assert.doesNotMatch(editor, /<TabsTrigger[^>]*className=/);

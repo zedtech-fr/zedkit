@@ -10,6 +10,8 @@ import type {
   TimelineEntryStatus,
   TimelineEntryType,
 } from "../ports/review-port";
+import { LIVE_CONSOLE_RUN_ID_PATTERN, toLiveConsoleHref } from "./live-console-href.ts";
+
 const SECRET_KEY_PATTERN =
   /(api[_-]?key|secret|token|password|passwd|signature|authorization|cookie|set-cookie|private[_-]?key|credentials)/i;
 const INDEX_SECRET_KEY_PATTERN =
@@ -19,7 +21,7 @@ const HOME_PATH_PATTERN = /(?:\/(?:home|Users)\/\S+|(?:[A-Za-z]:)?\\Users\\\S+)/
 const UNSAFE_PATH_PATTERN = /\/home\/|\/Users\/|\\Users\\/;
 
 /** Path-safe run ids only: no `..`, slashes, or spaces. */
-export const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+export const RUN_ID_PATTERN = LIVE_CONSOLE_RUN_ID_PATTERN;
 
 /** Staging hosted-console href prefix. Folder token is assembled (hygiene bans). */
 export const HOSTED_LIVE_HREF_PREFIX = `https://dev.zedkit.app/${[["ze", "dos"].join(""), "bot"].join("-")}/live/`;
@@ -71,7 +73,7 @@ export function sanitizeLiveUrl(value: string | null): string | null {
 }
 
 function sanitizeEntry(entry: TimelineEntry): TimelineEntry {
-  return { ...entry, liveUrl: sanitizeLiveUrl(entry.liveUrl) };
+  return { ...entry, liveUrl: toLiveConsoleHref(entry.runId) };
 }
 
 export type GatedIssue = PublicIssueIndex["issues"][number] & {
@@ -204,7 +206,7 @@ function entryFromLive(live: PublicLiveRun): TimelineEntry {
     durationMs,
     models,
     verdict: mapLiveVerdict(live.decision?.verdict ?? live.run.verdict),
-    liveUrl: sanitizeLiveUrl(live.run.live_url ?? null),
+    liveUrl: toLiveConsoleHref(live.run.run_id),
   };
 }
 
@@ -222,7 +224,7 @@ function entryFromRelated(related: LiveRelatedRun): TimelineEntry {
     durationMs,
     models: engine === "" ? [] : [engine],
     verdict: mapLiveVerdict(related.verdict),
-    liveUrl: null,
+    liveUrl: toLiveConsoleHref(related.run_id),
   };
 }
 

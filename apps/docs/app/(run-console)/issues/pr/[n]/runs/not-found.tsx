@@ -1,15 +1,11 @@
 import { ReviewMissingFeature, reviewsCopy } from "@/features/reviews";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
-export const metadata = docsPageMetadata(
-  "/issues",
-  reviewsCopy.metadata.runMissing,
-  {
-    index: false,
-  },
-);
+export const metadata = docsPageMetadata("/issues", reviewsCopy.metadata.runMissing, {
+  index: false,
+});
 
-export default async function IssuesSegmentNotFound() {
+export default async function UnlinkedRunNotFound() {
   return (
     <ReviewMissingFeature
       title={reviewsCopy.metadata.runMissing.title}

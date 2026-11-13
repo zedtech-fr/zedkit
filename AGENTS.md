@@ -51,8 +51,9 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 
 ## How to work
 
-- After an edit, run that area's **Local loop** (its AGENTS.md), or
-  `pnpm --filter <pkg> typecheck && pnpm --filter <pkg> lint && pnpm --filter <pkg> test`.
+- After an edit, run that area's **Local loop** (its AGENTS.md) with
+  `pnpm agent typecheck|lint|test|node-test` (or the `pnpm --filter <pkg> …`
+  forms). Full logs land in `.agent-logs/`; keep the transcript as the summary.
   CI owns full-repo test, static-export smoke (`docs-smoke`), and on UI/docs/token diffs a static-export render check (`docs-render`: overflow, axe, clipped text on mapped routes, or the whole sitemap on `epic/*` → `dev`, into `main`, and nightly; looks grid when a shared token, primitive, or identity sheet changes on the touched-route path; unmapped diffs use five fallback routes). The Playwright `e2e` script stays local.
 - Small PRs from fresh `main`, never stacked. One package per PR. Never
   commit on `dev` or `main`: open a work branch, then `gh pr create --base
@@ -77,7 +78,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
 - Look up before you search: read the row for your topic in
   [.agents/atlas.md](.agents/atlas.md) (where things live, words, commands,
-  why), open its Entry, widen only if it does not hold. A search that cost 3+
+  why), open its Entry — including `.agents/atlas/<topic>.md` when the row
+  names one — and widen only if it does not hold. A search that cost 3+
   reads, a correction, or a moved file or changed command fixes that row in the
   same turn. `zedkit-ai validate` fails on a path that is gone.
 - Each package PR updates the root README package table, adds a
@@ -115,6 +117,15 @@ pnpm build                  # turbo: build everywhere (docs: static export in ap
 pnpm test                   # turbo: vitest in every package; not the line below
 pnpm test:registry          # node:test: test:registry:nodeploy globs + deploy/* (incl. packages/ai/scripts)
 pnpm test:registry:nodeploy # node:test without deploy/* (self-hosted CI path)
+# Compact agent gates (summary on stdout; full logs in .agent-logs/)
+pnpm agent test [pkg...]    # turbo test --output-logs=errors-only; peels node --test targets
+pnpm agent node-test [glob] # node --test (default: test:registry:nodeploy globs)
+pnpm agent e2e [spec...]    # Playwright line+json
+pnpm agent lint [pkg...]    # eslint --format json, grouped (not docs extra checks)
+pnpm agent typecheck [pkg...]
+pnpm agent diff [base]      # git diff -U1, lockfile/catalog/registry omitted
+pnpm agent status
+pnpm agent pr [n]
 pnpm changeset:status       # versioning dry-run (no publish)
 pnpm catalog:build          # regenerate docs/catalog/catalog.json
 pnpm catalog:check          # catalog + docs check (demo registry, previews, /r/ urls)

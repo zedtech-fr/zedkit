@@ -1,5 +1,7 @@
 import type { ReviewPort } from "../ports/review-port";
 
+export { LIVE_CONSOLE_PATH, toLiveConsoleHref } from "./live-console-href.ts";
+
 export function issuePath(n: number): string {
   return `/issues/${n}`;
 }
@@ -102,42 +104,6 @@ export function linkedPrFallbackPath(issueNumber: number | null): string | null 
 
 export function linkedPrRunFallbackPath(issueNumber: number | null, runId: string): string | null {
   return issueNumber === null ? null : issueRunPath(issueNumber, runId);
-}
-
-export function runRedirectTarget(liveUrl: string | null, fallbackPath: string): string {
-  return liveUrl ?? fallbackPath;
-}
-
-function liveUrlForRun(
-  entries: readonly { runId: string; liveUrl: string | null }[],
-  runId: string,
-): string | null {
-  for (const entry of entries) {
-    if (entry.runId === runId && entry.liveUrl !== null) return entry.liveUrl;
-  }
-  return null;
-}
-
-/** Static-export HTML stubs for `/issues/:n/runs/:id` and unlinked run URLs. */
-export async function listIssueRunRedirectsFrom(port: ReviewPort): Promise<ReviewRedirect[]> {
-  const redirects: ReviewRedirect[] = [];
-  for (const issue of await port.listIssues()) {
-    for (const id of uniqueRunIds(issue.entries.map((entry) => entry.runId))) {
-      redirects.push({
-        from: issueRunPath(issue.number, id),
-        to: runRedirectTarget(liveUrlForRun(issue.entries, id), issuePath(issue.number)),
-      });
-    }
-  }
-  for (const row of await port.listUnlinkedPullRequests()) {
-    for (const id of uniqueRunIds(row.entries.map((entry) => entry.runId))) {
-      redirects.push({
-        from: unlinkedRunPath(row.number, id),
-        to: runRedirectTarget(liveUrlForRun(row.entries, id), unlinkedPrPath(row.number)),
-      });
-    }
-  }
-  return redirects;
 }
 
 export async function listIssueSitemapPathsFrom(port: ReviewPort) {

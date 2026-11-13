@@ -16,10 +16,21 @@ behind `ReviewPort`, merged at docs build into a version-1
    `https://dev.zedkit.app`. Production leaves it unset, so the section
    is empty (not an error).
 
-Build-time fetch fills the static export. There is no client refresh.
-If GitHub or an attempted runs fetch fails after retries, the page
-renders ErrorState with no Retry — recovery is the next site publish —
-never sample rows. The ErrorState links to All issues.
+Build-time fetch fills the static export list. There is no list refresh
+in the browser. If GitHub or an attempted runs fetch fails after retries,
+the page renders ErrorState with no Retry — recovery is the next site
+publish — never sample rows. The ErrorState links to All issues.
+
+The live console (`/issues/run?id=` and baked `/issues/N/runs/<id>`) is
+the exception: the browser GETs `{base}/<live-service>/live/<runId>/api/run`
+with `credentials: omit`, no `t=` token, and optional `item` / `v`
+query params. Baked pages still read `?item=` / `#item=` from the URL
+(the path already has the run id). `204` plus `X-Live-Version` means
+unchanged. Private runs are `401`. The client polls about every 2s while
+the run is `starting` or `running` (case-insensitive; 6s when the tab is
+hidden) and stops on a terminal status, `401`, `404`, invalid JSON, or a
+non-retryable error. A malformed payload uses the error notice with Retry,
+not the not-found copy.
 
 `kind: public-github-runs` is the production merge. Fixture JSON for
 the snapshot parser (`public-stand-in`, `generated-run-index`) lives
@@ -32,7 +43,7 @@ do not need a rewrite. It is **not** the public-page feed.
 
 | Variable | Role |
 | --- | --- |
-| `NEXT_PUBLIC_ZEDOS_RUNS_API_BASE` | Origin for the runs list. Unset → skip that fetch. |
+| `NEXT_PUBLIC_ZEDOS_RUNS_API_BASE` | Origin for the runs list and the public live console. Unset at build → skip the list fetch. The console defaults to `https://dev.zedkit.app` when that env is unset (`epic-73.dev.zedkit.app` and `zedkit.app` do not proxy `/<live-service>/*`, so the client must target that origin). |
 | `ZEDKIT_GITHUB_READ_TOKEN` / `GITHUB_TOKEN` | Optional, server/build only. |
 
 ## Failure policy
@@ -45,11 +56,14 @@ successful lists are the empty state (“No public runs yet”), not the
 error state. Load-error HTML is `robots` noindex; `/issues` stays on
 the sitemap so the URL still resolves.
 
-The HTML is baked at build. ErrorState has no Retry. The visitor sees
-fresh data after the next publish.
+The list HTML is baked at build. List ErrorState has no Retry. The visitor
+sees a fresh list after the next publish. The live console retries in the
+browser.
 
-`liveUrl` is kept only when it matches `HOSTED_LIVE_HREF_PREFIX` plus a
-path-safe run id.
+Timeline `liveUrl` is the in-site console (`/issues/run?id=<runId>`).
+Hosted console hrefs from the runs API still have to match
+`HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id before ingest; the
+public index then rewrites them to the in-site path.
 
 ## Caps (contract)
 
@@ -127,7 +141,7 @@ Each `entries[]` object (issue or unlinked PR):
 | `verdict` | `approve` \| `request-changes` \| `comment`, or `null`. |
 | `score` | Optional integer 0–10, or `null`. Shown next to a review verdict. |
 | `superseded` | Optional boolean. The list shows replacement copy when true (`Replaced by newer run`, or `Didn't finish — replaced by a newer run` when the step also failed). |
-| `liveUrl` | Allowlisted hosted-console href (`HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id) or `null`. Never a GitHub `review_url`. Never a reserved host, other host, other path, query, hash, userinfo, `http:`, non-empty port, or a home path. The public gate drops those. |
+| `liveUrl` | In-site console href (`/issues/run?id=<runId>`). Never a GitHub `review_url`. Allowlisted hosted-console href (`HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id) is the ingest rule; reserved hosts, other paths, query, hash, userinfo, `http:`, non-empty ports, and home paths stay out of that allowlist. |
 
 Plan and implement phases of one implement ticket run are **two**
 timeline entries (distinct `id`, shared `runId`). The generated run
@@ -195,20 +209,30 @@ extra keys there are accepted (`parseVerdict`).
 denser payload can land later. It is **not** the production feed for
 the public run history page. There is no `selected` field.
 
+The browser live console reads a different envelope from
+`GET {base}/<live-service>/live/<runId>/api/run`: `{ run, items, selected,
+verdict_json, decision, related }`. `items` and `selected` share one item
+parser; `items` are summaries, and `selected` adds `entries` and
+`final_text` for the open item. Malformed item rows are dropped. Public
+responses have no `prompt`. The host maps that envelope with
+`toAgentConsole` (never copies `prompt` or `final_text`). Never send `t=`
+from the public site.
+
 Optional join fields on `run` (safe integer or null / string or null;
 omit when unknown):
 
 - `issue` — GitHub issue number. When it is a safe integer, the mapper
   builds an issue row. When it is missing or null, the PR stays
   unlinked (`/issues/pr/:n`).
-- `live_url` — hosted live console URL. The public gate keeps it only
-  when it matches `HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id;
-  otherwise the index stores `null`. Index-only `/issues/N/runs/<id>`
-  (and unlinked run URLs) redirect to that href, or to the issue /
-  unlinked page when it is missing. A live-backed `/issues/N/runs/<id>`
-  still mounts the shared kit console when a live row exists.
-  `review_url` is a GitHub review link and is **not** a hosted
-  console URL; the mapper never copies it to `liveUrl`.
+- `live_url` — hosted live console URL. Ingest allowlists
+  `HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id. The public index
+  stores the in-site console href (`/issues/run?id=<runId>`) so timeline
+  rows stay on zedkit. `/issues/N/runs/<id>` and `/issues/pr/:n/runs/<id>`
+  mount the shared kit console, fetch `/api/run` once, then poll while
+  the run is active. New runs after a static export use `/issues/run?id=<runId>`
+  (`dynamicParams = false` cannot bake unknown ids). `review_url` is a
+  GitHub review link and is **not** a console URL; the mapper never
+  copies it to `liveUrl`.
 - `issue_title`, `opened_pr_url` — already accepted. Title falls back
   to `Issue #N` when `issue_title` is empty. Issue `state` is `open`
   unless the generated run index sends `state`.

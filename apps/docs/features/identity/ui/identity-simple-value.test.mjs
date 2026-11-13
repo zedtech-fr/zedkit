@@ -14,7 +14,7 @@ import {
   hexToHslTriplet,
   hslTripletToHex,
   parseCssLengthRem,
-} from "../lib/identity-simple-value.ts";
+} from "./identity-simple-value.ts";
 
 test("black hex becomes a schema-valid HSL triplet", () => {
   const hsl = hexToHslTriplet("#000000");

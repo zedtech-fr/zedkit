@@ -20,7 +20,7 @@ const pr = readFileSync(join(kit, "skills", "pr", "SKILL.md"), "utf8");
 const implement = readFileSync(join(kit, "skills", "implement", "SKILL.md"), "utf8");
 const notices = readFileSync(join(kit, "THIRD_PARTY_NOTICES.md"), "utf8");
 const atlas = readFileSync(
-  join(fileURLToPath(new URL("../../../..", import.meta.url)), ".agents", "atlas.md"),
+  join(fileURLToPath(new URL("../../../..", import.meta.url)), ".agents", "atlas", "visual-verify.md"),
   "utf8",
 );
 const template = pr.slice(pr.indexOf("## Evidence"), pr.indexOf("## Merge Danger"));
