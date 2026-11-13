@@ -31,6 +31,23 @@ test("docs shell pins white page fill, 1200px measure, and 24px gutter", () => {
   assert.doesNotMatch(css, /--zk-container-default:\s*72\.5rem/);
 });
 
+test("docs shell dark reading tokens alias identity; action zinc is not remapped", () => {
+  const css = read("app/docs-shell-tokens.css");
+  const dark = css.match(
+    /html\[data-docs-shell\]\.dark\[data-identity\] \{([^}]+)\}/,
+  );
+  assert.ok(dark, "html.dark docs-shell identity reading aliases");
+  const body = dark[1];
+  assert.match(body, /--zk-site-page:\s*var\(--background\)/);
+  assert.match(body, /--zk-site-band:\s*var\(--muted\)/);
+  assert.match(body, /--zk-site-ink:\s*var\(--foreground\)/);
+  assert.match(body, /--zk-site-body:\s*var\(--muted-foreground\)/);
+  assert.match(body, /--zk-site-hairline:\s*var\(--border\)/);
+  assert.doesNotMatch(body, /--zk-site-action:/);
+  assert.doesNotMatch(body, /--zk-site-action-foreground:/);
+  assert.doesNotMatch(body, /--zk-site-action-hover:/);
+});
+
 test("docs shell display and section type match the mockup", () => {
   const css = read("app/docs-typography.css");
   assert.match(css, /--zk-type-h1-size:\s*3rem/);

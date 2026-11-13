@@ -46,7 +46,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Catalog entries of a package | `.agents/atlas/publishing.md` | Every `src/index.ts` export needs a CATALOG row; Purpose ≤160. | `pnpm catalog:check` | 2026-11-11 |
 | JSON-LD React script tag | `.agents/atlas/seo.md` | Import from `@zedtech/zedkit-seo/react`; escape `<` after stringify. | `@zedtech/zedkit-seo` | 2026-11-13 |
 | Live sources and JSON fetch | `.agents/atlas/live.md` | One-shot `Result` GET in live; injectable `fetch`/`sleep`. | `pnpm --filter @zedtech/zedkit-live test` | 2026-11-12 |
-| Docs site looks | `.agents/atlas/design-system.md` | Owner table by layer: link, never copy. Quiet-glass mockup is git-only. Foundations heading copy needs 24px under dense looks. | `apps/docs/scripts/check.mjs` | 2026-11-13 |
+| Docs site looks | `.agents/atlas/design-system.md` | Owner table by layer: link, never copy. Quiet-glass mockup is git-only. Foundations heading copy needs 24px under dense looks. Site reading tokens `--zk-site-page/band/ink/body/hairline` alias identity on `html.dark`; Color chips inherit mode. | `apps/docs/scripts/check.mjs` | 2026-11-13 |
 | Docs maturity-and-compatibility guide | `.agents/atlas/docs-site.md` | L7 folder shape; prose imports the view (knip entry). | `pnpm catalog:check` | 2026-11-12 |
 | Docs raw-layout and spelling guards | `.agents/atlas/docs-site.md` | Whole-file regex on components/features; do not import `check.mjs`. | `apps/docs/scripts/check.mjs` | 2026-11-11 |
 | Docs site primary nav | `.agents/atlas/docs-site.md` | Shared primary list; docs desktop header above the shell. | `apps/docs/ui/docs-container.tsx` | 2026-11-13 |
