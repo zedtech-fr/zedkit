@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -191,12 +191,15 @@ test("guide wires Color and Type only and does not import dropped bands", () => 
   }
   const color = readApp(`${FOUNDATIONS_UI}/foundations-color.tsx`);
   assert.doesNotMatch(color, /data-site-action/);
-  assert.match(color, /ThemeScope identity="glass" mode="light"/);
-  assert.match(color, /<ThemeScope identity="glass" mode="light">\{chip\}<\/ThemeScope>/);
-  assert.doesNotMatch(color, /<ThemeScope identity="glass" mode="light">\{mark\}/);
+  assert.match(color, /ThemeScope identity="glass"/);
+  assert.doesNotMatch(color, /mode="light"/);
+  assert.match(color, /<ThemeScope identity="glass">\{chip\}<\/ThemeScope>/);
+  assert.doesNotMatch(color, /<ThemeScope identity="glass">\{mark\}/);
   assert.doesNotMatch(color, /<ThemeScope[\s\S]*typeRole="label"[\s\S]*<\/ThemeScope>/);
   assert.doesNotMatch(color, /variant="glass"/);
   assert.doesNotMatch(color, /#[0-9A-Fa-f]{3,8}/);
+  assert.match(color, /swatch\.token/);
+  assert.doesNotMatch(color, /swatch\.hex/);
   assert.match(color, /data-foundations-swatch/);
   assert.doesNotMatch(color, /md:grid-quad/);
 });
@@ -237,6 +240,7 @@ test("hero is a grey band with 40px title overlay, intro, and glass callout", ()
   assert.match(hero, /copy\.hero\.intro/);
   assert.match(hero, /copy\.swatches\.panelTitle/);
   assert.match(hero, /ThemeScope identity="glass"/);
+  assert.doesNotMatch(hero, /mode="/);
   assert.match(hero, /variant="glass"/);
   assert.match(hero, /data-foundations-hero/);
   assert.doesNotMatch(hero, /<(div|span)[\s>/]/);
@@ -272,8 +276,8 @@ test("hero is a grey band with 40px title overlay, intro, and glass callout", ()
 test("foundations chrome skips docs article chrome and keeps search", () => {
   const page = readApp("app/docs/[[...slug]]/page.tsx");
   const layout = readApp("app/docs/[[...slug]]/layout.tsx");
-  const headers = readApp("ui/site-headers.tsx");
-  const mobile = readApp("ui/mobile-header.tsx");
+  const headers = readApp("components/site-chrome/site-headers.tsx");
+  const mobile = readApp("components/site-chrome/mobile-header.tsx");
   const nav = readApp("lib/site-nav-data.ts");
   const mdxComponents = readApp("mdx-components.tsx");
   const typography = readApp("app/docs-typography.css");
@@ -451,12 +455,49 @@ function pageTokens(id, mode) {
   return identityPalette(id, mode);
 }
 
+function darkReadingAliases() {
+  const css = readApp("app/docs-shell-tokens.css");
+  const dark = ruleBody(
+    css,
+    /^html\[data-docs-shell\]\.dark\[data-identity\]$/,
+    "html docs-shell dark identity",
+  );
+  return {
+    body: dark,
+    page: tokenValue(dark, "zk-site-page", "dark page"),
+    band: tokenValue(dark, "zk-site-band", "dark band"),
+    ink: tokenValue(dark, "zk-site-ink", "dark ink"),
+    bodyToken: tokenValue(dark, "zk-site-body", "dark body"),
+    hairline: tokenValue(dark, "zk-site-hairline", "dark hairline"),
+  };
+}
+
+test("dark site reading tokens alias identity roles; action zinc stays inverted", () => {
+  const aliases = darkReadingAliases();
+  assert.equal(aliases.page, "var(--background)");
+  assert.equal(aliases.band, "var(--muted)");
+  assert.equal(aliases.ink, "var(--foreground)");
+  assert.equal(aliases.bodyToken, "var(--muted-foreground)");
+  assert.equal(aliases.hairline, "var(--border)");
+  assert.doesNotMatch(aliases.body, /--zk-site-action:/);
+  assert.doesNotMatch(aliases.body, /--zk-site-action-foreground:/);
+  assert.doesNotMatch(aliases.body, /--zk-site-action-hover:/);
+  const site = ruleBody(
+    readApp("app/docs-shell-tokens.css"),
+    /^html\[data-docs-shell\]\[data-identity\]$/,
+    "html docs-shell identity",
+  );
+  assert.equal(tokenValue(site, "zk-site-action", "action"), "240 5.9% 10%");
+  assert.equal(tokenValue(site, "zk-site-action-foreground", "action-fg"), "0 0% 98%");
+  assert.equal(tokenValue(site, "zk-site-action-hover", "action-hover"), "240 5% 26%");
+});
+
 test("foundations hero heading and intro contrast against the band in every look", () => {
   const site = siteShellTokens();
-  const h1 = contrast(site.ink, site.band);
-  const intro = contrast(site.body, site.band);
-  assert.ok(h1 >= AA, `hero h1 vs band ${h1.toFixed(2)}`);
-  assert.ok(intro >= AA, `hero intro vs band ${intro.toFixed(2)}`);
+  const lightH1 = contrast(site.ink, site.band);
+  const lightIntro = contrast(site.body, site.band);
+  assert.ok(lightH1 >= AA, `light hero h1 vs band ${lightH1.toFixed(2)}`);
+  assert.ok(lightIntro >= AA, `light hero intro vs band ${lightIntro.toFixed(2)}`);
   const typography = readApp("app/docs-typography.css");
   const hero = ruleBody(
     stripComments(typography),
@@ -466,12 +507,14 @@ test("foundations hero heading and intro contrast against the band in every look
   assert.equal(tokenValue(hero, "foreground", "hero foreground"), "var(--zk-site-ink)");
   assert.equal(tokenValue(hero, "muted-foreground", "hero muted"), "var(--zk-site-body)");
   assert.match(hero, /color:\s*hsl\(var\(--foreground\)\)/);
+  assert.match(hero, /background-color:\s*hsl\(var\(--zk-site-band\)\)/);
+  assert.doesNotMatch(typography, /light shell/);
   for (const id of IDENTITIES) {
-    for (const mode of MODES) {
-      identityPalette(id, mode);
-      assert.ok(h1 >= AA, `${id} ${mode} h1 still uses site ink`);
-      assert.ok(intro >= AA, `${id} ${mode} intro still uses site body`);
-    }
+    const dark = identityPalette(id, "dark");
+    const h1 = contrast(dark.foreground, dark.muted);
+    const intro = contrast(dark.mutedForeground, dark.muted);
+    assert.ok(h1 >= AA, `${id} dark h1 vs muted ${h1.toFixed(2)}`);
+    assert.ok(intro >= AA, `${id} dark intro vs muted ${intro.toFixed(2)}`);
   }
 });
 
@@ -479,14 +522,14 @@ test("foundations Color labels contrast against the page in dark in every look",
   for (const id of IDENTITIES) {
     const page = pageTokens(id, "dark");
     const nameRatio = contrast(page.foreground, page.background);
-    const hexRatio = contrast(page.mutedForeground, page.background);
+    const captionRatio = contrast(page.mutedForeground, page.background);
     assert.ok(
       nameRatio >= AA,
       `${id} dark Color name ${nameRatio.toFixed(2)}:1 vs page background`,
     );
     assert.ok(
-      hexRatio >= AA,
-      `${id} dark Color hex ${hexRatio.toFixed(2)}:1 vs page background`,
+      captionRatio >= AA,
+      `${id} dark Color caption ${captionRatio.toFixed(2)}:1 vs page background`,
     );
   }
 });
@@ -523,8 +566,38 @@ test("hero copy stays the outcome sentence and Color Type stay proof", () => {
   const hero = readApp(`${FOUNDATIONS_UI}/foundations-hero.tsx`);
   assert.doesNotMatch(hero, /want Color and Type on the first screens/);
   assert.match(hero, /Color \/ Type stay below as proof/);
+  assert.doesNotMatch(foundationsCopy.hero.intro, /[Ww]hite pages/);
+  assert.doesNotMatch(foundationsCopy.swatches.panelBody, /white page/i);
   assert.equal(
     foundationsCopy.hero.intro,
-    "White pages, zinc text, black actions. Color lives in panels, and glass sits on top of them.",
+    "Light pages, zinc text, black actions; dark pages keep the same roles on the look's dark pair. Color lives in panels, and glass sits on top of them.",
+  );
+  assert.equal(
+    foundationsCopy.swatches.panelBody,
+    "Never on the page. It needs color behind it to show.",
+  );
+});
+
+function walkTsx(dir, out = []) {
+  if (!existsSync(dir)) return out;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) walkTsx(path, out);
+    else if (entry.name.endsWith(".tsx")) out.push(path);
+  }
+  return out;
+}
+
+test("docs guide and catalog production TSX do not pin ThemeScope to light", () => {
+  const files = [
+    ...walkTsx(join(APP, "features/docs/guides")),
+    ...walkTsx(join(APP, "app/(site)/catalog")),
+    ...walkTsx(join(APP, "prose/guides")),
+  ];
+  assert.ok(files.length > 0, "expected production TSX under guides/catalog");
+  const hits = files.filter((path) => /mode="light"/.test(readFileSync(path, "utf8")));
+  assert.deepEqual(
+    hits.map((path) => path.slice(APP.length + 1)),
+    [],
   );
 });

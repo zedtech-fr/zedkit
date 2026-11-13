@@ -26,24 +26,36 @@ import {
   createPageTreeRenderer,
   type SidebarPageTreeComponents,
 } from "fumadocs-ui/components/sidebar/page-tree";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 
 const itemClassName =
   "flex min-h-target w-full items-center gap-stack-sm rounded-md px-control-inline text-left text-dense text-muted-foreground hover:ghost-hover hover:text-foreground data-[active=true]:muted-wash data-[active=true]:font-medium data-[active=true]:text-foreground [&_[data-icon]]:ms-auto [&_[data-icon]]:shrink-0";
 
 function DocsSidebarItem({ className, ...props }: ComponentProps<typeof SidebarItem>) {
-  return <SidebarItem className={cn(itemClassName, className)} {...props} />;
+  return <SidebarItem className={cn(itemClassName, className)} {...props} data-docs-tree-item="" />;
 }
 
 function DocsSidebarFolderTrigger({
   className,
   ...props
 }: ComponentProps<typeof SidebarFolderTrigger>) {
-  return <SidebarFolderTrigger className={cn(itemClassName, "font-medium", className)} {...props} />;
+  return (
+    <SidebarFolderTrigger
+      className={cn(itemClassName, "font-medium", className)}
+      {...props}
+      data-docs-tree-item=""
+    />
+  );
 }
 
 function DocsSidebarFolderLink({ className, ...props }: ComponentProps<typeof SidebarFolderLink>) {
-  return <SidebarFolderLink className={cn(itemClassName, "font-medium", className)} {...props} />;
+  return (
+    <SidebarFolderLink
+      className={cn(itemClassName, "font-medium", className)}
+      {...props}
+      data-docs-tree-item=""
+    />
+  );
 }
 
 function DocsSidebarFolderContent({

@@ -76,7 +76,7 @@ Constants: `signatureMotionClass` in `@zedtech/zedkit-ui`.
 
 ## Category cue (home)
 
-The home hero separates product class from promise: a **label** line (`Open source · MIT · by Zed Tech`, `data-home-hero-category`) then the **display** `h1` (two short beats, no muted third clause). The category is not styled as part of the display scale.
+The home hero separates product class from promise: a **label** line (`Open source · MIT · by Zed Tech`, `data-home-hero-category`) then the **display** `h1` (a question that names the benefit, then an invitation; no muted third clause). The category is not styled as part of the display scale.
 
 ## Adoption
 

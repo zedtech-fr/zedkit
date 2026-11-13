@@ -2,9 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import { Button, cn } from "@zedtech/zedkit-ui";
-import { DocsAppLink } from "@/ui/docs-app-link";
-import { OffPathLink } from "@/ui/off-path-link";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { DocsAppLink } from "@/components/site-chrome/docs-app-link";
+import { OffPathLink } from "@/components/site-chrome/off-path-link";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 import { SITE_GITHUB_URL } from "@/lib/site-links.mjs";
 import { isHomePath } from "@/lib/site-nav-data";
 

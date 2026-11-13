@@ -166,6 +166,7 @@ export { EmptyState, type EmptyStateProps } from "./feedback/empty-state.js";
 export { ErrorState, type ErrorStateProps } from "./feedback/error-state.js";
 export { Spinner, type SpinnerProps } from "./feedback/spinner.js";
 export { useOnlineStatus } from "./use-online-status.js";
+export { createStoredChoice } from "./use-stored-choice.js";
 export {
   OptionCard,
   OptionCards,
@@ -337,5 +338,6 @@ export {
   withIdentityDarkPair,
   type IdentityContrastWarning,
 } from "./identity/identity-contrast.js";
+export { repairContrast } from "./identity/identity-contrast-repair.js";
 export { BrandLogo, type BrandLogoProps } from "./brand/brand-logo.js";
 export { Logo, type LogoProps } from "./brand/logo.js";
