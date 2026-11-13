@@ -3,8 +3,7 @@ export const homeHeroCopy = {
     /** Product class before the promise (visual `label` role; see docs/design/signature.md). */
     titleCategory: "Open source · MIT · by Zed Tech",
     title: "Code that’s checked. Screens that match.",
-    titleClause: "From the agent you already use.",
-    sub: "AI brings the workflow rules and checks; UI brings the components and the look, from one map in the repo.",
+    sub: "AI brings the workflow rules and checks; UI brings the components and the look, from the agent you already use.",
     promptAriaLabel: "Setup prompt",
     promptCopyLabel: "Copy prompt",
   },
