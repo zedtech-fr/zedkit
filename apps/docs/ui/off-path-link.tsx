@@ -24,7 +24,7 @@ export function OffPathLink({
       prefetch={false}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn("inline-flex items-center gap-icon", className)}
+      className={cn("inline-flex min-h-target items-center gap-icon", className)}
       aria-label={labelled}
       title={title ?? labelled}
     >

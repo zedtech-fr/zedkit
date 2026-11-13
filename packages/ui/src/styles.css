@@ -1680,8 +1680,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-aside {
   min-height: calc(var(--spacing) * 80);
 }
+/* Compact desktop segment. Floor at 24px so dense looks stay above the CSS target. */
 @utility min-h-segment {
-  min-height: calc(var(--spacing) * 7);
+  min-height: max(24px, calc(var(--spacing) * 7));
 }
 /* Pulls a back link up into the page inset. */
 @utility pull-back {

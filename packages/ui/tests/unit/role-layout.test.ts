@@ -15,6 +15,7 @@ describe("layout job classes", () => {
     expect(utility("content-shrink")).toBe("min-width: 0;");
     expect(utility("min-h-target")).toBe("min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));");
     expect(utility("min-h-floor")).toBe("min-height: max(24px, var(--zk-tap-min, 0px));");
+    expect(utility("min-h-segment")).toBe("min-height: max(24px, calc(var(--spacing) * 7));");
     expect(utility("min-w-target")).toBe("min-width: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));");
     expect(utility("pane-shrink")).toBe("min-height: 0;");
     expect(utility("pin-fill")).toBe("inset: 0;");
