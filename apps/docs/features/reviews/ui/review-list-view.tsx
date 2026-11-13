@@ -4,11 +4,11 @@ import { useEffect, useId, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import {
   Badge,
-  Button,
   EmptyState,
   Heading,
   PageHeader,
   Stack,
+  Surface,
   Text,
   UpdatedAgo,
   formatDuration,
@@ -19,19 +19,16 @@ import { githubIssueHref, githubPullHref } from "../model/github-hrefs";
 import { issueOpenTarget } from "../model/issue-open-target";
 import {
   entriesNewestFirst,
+  headlineOutcome,
   latestEntry,
-  latestStatus,
+  latestFinishedEntry,
   summedDurationMs,
 } from "../model/latest-status";
 import { uniqueRunIds } from "../model/review-routes";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { LatestStatusMark } from "./issue-status";
-import { TimelineRow } from "./review-timeline-row";
-
-function linkedPrLabel(count: number, copy: ReviewsCopy): string {
-  return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
-}
+import { OutcomeMark } from "./issue-status";
+import { CompactLogLink, TimelineRow } from "./review-timeline-row";
 
 function runCountLabel(count: number, copy: ReviewsCopy): string {
   return `${count} ${count === 1 ? copy.list.run : copy.list.runs}`;
@@ -45,7 +42,7 @@ function RowSummary({
   meta: ReactNode;
 }) {
   return (
-    <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-stack-sm py-row focus-ring-control [&::-webkit-details-marker]:hidden">
+    <summary className="flex min-h-target cursor-pointer list-none items-start justify-between gap-stack-sm py-row focus-ring-control [&::-webkit-details-marker]:hidden">
       <Stack
         direction="horizontal"
         gap="sm"
@@ -60,19 +57,59 @@ function RowSummary({
       </Stack>
       <ChevronDown
         aria-hidden="true"
-        className="size-icon shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
+        className="size-icon shrink-0 pt-step text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
       />
     </summary>
   );
 }
 
-function GithubRefLink({ href, children }: { href: string; children: ReactNode }) {
+function GithubRefLink({ href, copy, children }: { href: string; copy: ReviewsCopy; children: ReactNode }) {
   return (
-    <Button asChild variant="link" className="min-h-target w-fit">
-      <a href={href} target="_blank" rel="noreferrer">
-        {children}
-      </a>
-    </Button>
+    <CompactLogLink href={href} copy={copy}>
+      {children}
+    </CompactLogLink>
+  );
+}
+
+function PanelOutcome({
+  entries,
+  links,
+  copy,
+}: {
+  entries: readonly TimelineEntry[];
+  links: ReactNode;
+  copy: ReviewsCopy;
+}) {
+  const outcome = headlineOutcome(entries);
+  const durationMs = summedDurationMs(entries);
+  const finished = latestFinishedEntry(entries);
+  return (
+    <Stack gap="sm">
+      {outcome ? (
+        <span className="w-fit self-start">
+          <OutcomeMark outcome={outcome} copy={copy} />
+        </span>
+      ) : null}
+      <Stack
+        direction="horizontal"
+        gap="sm"
+        className="flex-wrap items-center max-md:flex-col max-md:items-start"
+      >
+        {durationMs !== null ? (
+          <Text variant="muted" typeRole="caption" className="whitespace-nowrap">
+            {`${copy.list.took} ${formatDuration(durationMs)}`}
+          </Text>
+        ) : null}
+        {finished ? (
+          <UpdatedAgo
+            date={new Date(finished.endedAt ?? finished.startedAt)}
+            prefix={copy.list.finished}
+            className="whitespace-nowrap"
+          />
+        ) : null}
+      </Stack>
+      {links}
+    </Stack>
   );
 }
 
@@ -88,28 +125,30 @@ function StepsPanel({
   copy: ReviewsCopy;
 }) {
   return (
-    <Stack gap="sm" className="pl-control-inline">
-      {links}
-      {entries.length === 0 ? (
-        <EmptyState description={empty} />
-      ) : (
-        <ul aria-label={copy.issue.timeline}>
-          {entriesNewestFirst(entries).map((entry) => (
-            <li key={entry.id}>
-              <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </Stack>
+    <Surface variant="solid" elevation={1} radius="md" padding="sm" className="mb-stack">
+      <Stack gap="sm">
+        <PanelOutcome entries={entries} links={links} copy={copy} />
+        {entries.length === 0 ? (
+          <EmptyState description={empty} />
+        ) : (
+          <ul aria-label={copy.issue.timeline} className="border-s border-border pl-control-inline">
+            {entriesNewestFirst(entries).map((entry) => (
+              <li key={entry.id} className="last:[&>*]:border-b-0">
+                <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Stack>
+    </Surface>
   );
 }
 
 function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
-  const status = latestStatus(issue.entries);
-  const durationMs = summedDurationMs(issue.entries);
+  const outcome = headlineOutcome(issue.entries);
+  const finished = latestFinishedEntry(issue.entries);
   return (
-    <details data-issues-row="" id={`issue-${issue.number}`} className="group border-b border-border">
+    <details data-issues-row="" id={`issue-${issue.number}`} className="group border-b border-border open:border-b-0">
       <RowSummary
         title={
           <Text className="font-medium">
@@ -119,20 +158,14 @@ function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
         meta={
           <>
             <Badge variant="outline">{copy.state[issue.state]}</Badge>
-            {status ? <LatestStatusMark status={status} copy={copy} /> : null}
-            {issue.pullRequests.length > 0 ? (
-              <Text variant="muted" typeRole="caption">
-                {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
-                  .map((n) => `#${n}`)
-                  .join(", ")}`}
-              </Text>
+            {outcome ? <OutcomeMark outcome={outcome} copy={copy} /> : null}
+            {finished ? (
+              <UpdatedAgo
+                date={new Date(finished.endedAt ?? finished.startedAt)}
+                prefix={copy.list.finished}
+                className="whitespace-nowrap"
+              />
             ) : null}
-            {durationMs !== null ? (
-              <Text variant="muted" typeRole="caption">
-                {formatDuration(durationMs)}
-              </Text>
-            ) : null}
-            <UpdatedAgo date={new Date(issue.lastRunAt)} />
           </>
         }
       />
@@ -140,11 +173,11 @@ function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
         entries={issue.entries}
         links={
           <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
-            <GithubRefLink href={githubIssueHref(issue.number)}>
+            <GithubRefLink href={githubIssueHref(issue.number)} copy={copy}>
               {`${copy.list.githubIssue} #${issue.number}`}
             </GithubRefLink>
             {issue.pullRequests.map((n) => (
-              <GithubRefLink key={n} href={githubPullHref(n)}>
+              <GithubRefLink key={n} href={githubPullHref(n)} copy={copy}>
                 {`${copy.list.githubPull} #${n}`}
               </GithubRefLink>
             ))}
@@ -164,12 +197,12 @@ function UnlinkedRow({
   entry: UnlinkedPullRequest;
   copy: ReviewsCopy;
 }) {
-  const status = latestStatus(entry.entries);
+  const outcome = headlineOutcome(entry.entries);
   const last = latestEntry(entry.entries);
+  const finished = latestFinishedEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
-  const durationMs = summedDurationMs(entry.entries);
   return (
-    <details data-issues-row="" id={`pr-${entry.number}`} className="group border-b border-border">
+    <details data-issues-row="" id={`pr-${entry.number}`} className="group border-b border-border open:border-b-0">
       <RowSummary
         title={<Text className="font-medium">#{entry.number}</Text>}
         meta={
@@ -179,23 +212,24 @@ function UnlinkedRow({
                 {copy.type[last.type]}
               </Text>
             ) : null}
-            {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+            {outcome ? <OutcomeMark outcome={outcome} copy={copy} /> : null}
             <Text variant="muted" typeRole="caption">
               {runCountLabel(runCount, copy)}
             </Text>
-            {durationMs !== null ? (
-              <Text variant="muted" typeRole="caption">
-                {formatDuration(durationMs)}
-              </Text>
+            {finished ? (
+              <UpdatedAgo
+                date={new Date(finished.endedAt ?? finished.startedAt)}
+                prefix={copy.list.finished}
+                className="whitespace-nowrap"
+              />
             ) : null}
-            <UpdatedAgo date={new Date(entry.lastRunAt)} />
           </>
         }
       />
       <StepsPanel
         entries={entry.entries}
         links={
-          <GithubRefLink href={githubPullHref(entry.number)}>
+          <GithubRefLink href={githubPullHref(entry.number)} copy={copy}>
             {`${copy.list.githubPull} #${entry.number}`}
           </GithubRefLink>
         }
