@@ -56,6 +56,23 @@ describe("ci-required aggregate", () => {
   });
 });
 
+describe("changes job docs_looks", () => {
+  const changes = workflow.split(/^ {2}changes:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+
+  it("exports docs_looks from --looks on the same file list as ci-affected", () => {
+    assert.notEqual(changes, "", "changes job block not found");
+    assert.ok(
+      changes.includes("docs_looks: ${{ steps.detect.outputs.docs_looks }}"),
+      "changes job must map docs_looks from the detect step",
+    );
+    assert.match(changes, /files=\$\(git diff --name-only --no-renames "\$base"\.\.\.HEAD\)/);
+    assert.match(changes, /files=\$\(git ls-tree -r --name-only HEAD\)/);
+    assert.match(changes, /printf '%s\\n' "\$files" \|\s*\n\s*node scripts\/ci-affected\.mjs/);
+    assert.match(changes, /docs_looks="\$\(printf '%s\\n' "\$files" \| node scripts\/docs-render-routes\.mjs --looks\)"/);
+    assert.match(changes, /echo "docs_looks=\$docs_looks" >> "\$GITHUB_OUTPUT"/);
+  });
+});
+
 describe("docs-render job", () => {
   const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
 
@@ -80,14 +97,23 @@ describe("docs-render job", () => {
     assert.match(job, /apps\/docs\/test-results\//);
   });
 
-  it("chooses full vs touched via --mode, HEAD_REF, and a 6/25 timeout", () => {
+  it("chooses full vs touched via --mode and HEAD_REF", () => {
     assert.notEqual(job, "", "docs-render job block not found");
     assert.match(job, /--mode/);
     assert.ok(job.includes("HEAD_REF: ${{ github.head_ref }}"));
-    assert.match(job, /timeout-minutes: \$\{\{[^}]*\b25\b[^}]*\b6\b[^}]*\}\}/);
     assert.match(job, /\[ "\$MODE" = "full" \]/);
     assert.match(job, /unset DOCS_ROUTES/);
     assert.match(job, /unset DOCS_LOOKS/);
+  });
+
+  it("times out at 25 minutes on full sweep or looks grid, else 6", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    assert.ok(
+      job.includes(
+        "timeout-minutes: ${{ (github.event_name == 'push' || github.base_ref == 'main' || (github.base_ref == 'dev' && startsWith(github.head_ref, 'epic/')) || needs.changes.outputs.docs_looks != '') && 25 || 6 }}",
+      ),
+      "docs-render timeout must be 25 when sweep is full or docs_looks is set, else 6",
+    );
   });
 
   it("skips unless the docs detector is true and the diff is not workflow-only", () => {
