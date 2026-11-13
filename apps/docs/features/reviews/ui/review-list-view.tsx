@@ -86,9 +86,9 @@ function PanelOutcome({
   return (
     <Stack gap="sm">
       {outcome ? (
-        <span className="w-fit self-start">
+        <Text as="span" className="w-fit self-start">
           <OutcomeMark outcome={outcome} copy={copy} />
-        </span>
+        </Text>
       ) : null}
       <Stack
         direction="horizontal"
