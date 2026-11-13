@@ -311,6 +311,51 @@ describe("live docs tree", () => {
     assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
   });
 
+  it("imports home band sections from _home/sections and does not leave shims", () => {
+    const composer = readFileSync(
+      join(docsRoot, "app/(home)/_home/home-below-hero.tsx"),
+      "utf8",
+    );
+    const sections = [
+      "home-same-idea-section",
+      "home-six-sentences-section",
+      "home-paste-section",
+      "home-identities-section",
+      "home-limits-section",
+      "home-manifesto-section",
+      "home-closing-section",
+    ];
+    for (const name of sections) {
+      const next = join(docsRoot, `app/(home)/_home/sections/${name}.tsx`);
+      const old = join(docsRoot, `ui/home/${name}.tsx`);
+      assert.ok(existsSync(next), next);
+      assert.equal(existsSync(old), false, old);
+      assert.match(composer, new RegExp(`from ["']\\./sections/${name}["']`));
+    }
+    assert.doesNotMatch(composer, /from ["']@\/ui\/home\/home-\w+-section["']/);
+    const link = join(docsRoot, "app/(home)/_home/home-link.tsx");
+    assert.ok(existsSync(link));
+    assert.equal(existsSync(join(docsRoot, "ui/home/home-link.tsx")), false);
+    const sameIdea = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-same-idea-section.tsx"),
+      "utf8",
+    );
+    assert.match(sameIdea, /from ["']\.\.\/home-link["']/);
+    assert.match(sameIdea, /from ["']@\/ui\/home\/home-rhythm["']/);
+    const identities = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-identities-section.tsx"),
+      "utf8",
+    );
+    assert.match(identities, /from ["']@\/ui\/home\/home-identity-looks["']/);
+    const closing = readFileSync(
+      join(docsRoot, "app/(home)/_home/sections/home-closing-section.tsx"),
+      "utf8",
+    );
+    assert.match(closing, /from ["']@\/ui\/home\/home-copy-command-field["']/);
+    assert.match(closing, /from ["']@\/ui\/home\/i18n\//);
+    assert.ok(REQUIRED_GLOBS.includes("ui/home/**"));
+  });
+
   it("does not leave shims at the old docs layout and search paths", () => {
     assert.equal(existsSync(join(docsRoot, "ui/docs-main-content.tsx")), false);
     assert.equal(existsSync(join(docsRoot, "lib/docs-layout-tree.mjs")), false);

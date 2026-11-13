@@ -164,12 +164,12 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
 
 test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing (#210)", () => {
   const src = readFileSync(join(app, "app/(home)/_home/home-below-hero.tsx"), "utf8");
-  const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
-  const sixSentences = readFileSync(join(app, "ui/home/home-six-sentences-section.tsx"), "utf8");
-  const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
-  const limits = readFileSync(join(app, "ui/home/home-limits-section.tsx"), "utf8");
-  const manifesto = readFileSync(join(app, "ui/home/home-manifesto-section.tsx"), "utf8");
-  const closing = readFileSync(join(app, "ui/home/home-closing-section.tsx"), "utf8");
+  const sameIdea = readFileSync(join(app, "app/(home)/_home/sections/home-same-idea-section.tsx"), "utf8");
+  const sixSentences = readFileSync(join(app, "app/(home)/_home/sections/home-six-sentences-section.tsx"), "utf8");
+  const paste = readFileSync(join(app, "app/(home)/_home/sections/home-paste-section.tsx"), "utf8");
+  const limits = readFileSync(join(app, "app/(home)/_home/sections/home-limits-section.tsx"), "utf8");
+  const manifesto = readFileSync(join(app, "app/(home)/_home/sections/home-manifesto-section.tsx"), "utf8");
+  const closing = readFileSync(join(app, "app/(home)/_home/sections/home-closing-section.tsx"), "utf8");
   const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
   const sixSentencesCopy = readFileSync(join(app, "ui/home/i18n/home-six-sentences-copy.ts"), "utf8");
   const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
@@ -554,8 +554,8 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
   const componentsMatch = gallery.match(/uiGalleryStats[^=]*=\s*\{[^}]*"components":\s*(\d+)/);
   const components = Number(componentsMatch?.[1]);
   const sameIdeaCopy = readFileSync(join(app, "ui/home/i18n/home-same-idea-copy.ts"), "utf8");
-  const sameIdea = readFileSync(join(app, "ui/home/home-same-idea-section.tsx"), "utf8");
-  const paste = readFileSync(join(app, "ui/home/home-paste-section.tsx"), "utf8");
+  const sameIdea = readFileSync(join(app, "app/(home)/_home/sections/home-same-idea-section.tsx"), "utf8");
+  const paste = readFileSync(join(app, "app/(home)/_home/sections/home-paste-section.tsx"), "utf8");
   const pasteCopy = readFileSync(join(app, "ui/home/i18n/home-paste-copy.ts"), "utf8");
   assert.equal(looks, 6);
   assert.match(sameIdeaCopy, new RegExp(`skills:\\s*${skills}`));
@@ -572,7 +572,7 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
 });
 
 test("home looks band is specimen | look-name pills, not a Section header or palette-dot tabs (#119)", () => {
-  const section = readFileSync(join(app, "ui/home/home-identities-section.tsx"), "utf8");
+  const section = readFileSync(join(app, "app/(home)/_home/sections/home-identities-section.tsx"), "utf8");
   const looks = readFileSync(join(app, "ui/home/home-identity-looks.tsx"), "utf8");
   const tabs = readFileSync(join(app, "ui/home/home-identity-looks-tabs.tsx"), "utf8");
   const copy = readFileSync(join(app, "ui/home/home-identity-looks-copy.ts"), "utf8");
