@@ -321,20 +321,22 @@ function resolvePeer(spec) {
   return err(peerMissingError(spec));
 }
 
-function importPeer(spec) {
+async function importPeer(spec, load) {
   const resolved = resolvePeer(spec);
-  if (!resolved.ok) return Promise.resolve(err(resolved.error));
+  if (!resolved.ok) return err(resolved.error);
+  const loaded = await tryCatchAsync(load);
+  if (loaded.ok) return loaded;
   return tryCatchAsync(() => import(pathToFileURL(resolved.value).href));
 }
 
 export async function loadPlaywright() {
-  const loaded = await importPeer("@playwright/test");
+  const loaded = await importPeer("@playwright/test", () => import("@playwright/test"));
   if (!loaded.ok) return err(loaded.error);
   return ok(unwrapPeerModule(loaded.value, "chromium"));
 }
 
 export async function loadAxe() {
-  const loaded = await importPeer("@axe-core/playwright");
+  const loaded = await importPeer("@axe-core/playwright", () => import("@axe-core/playwright"));
   if (!loaded.ok) return err(loaded.error);
   return ok(unwrapPeerModule(loaded.value));
 }

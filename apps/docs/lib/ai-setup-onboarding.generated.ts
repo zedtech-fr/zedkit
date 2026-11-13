@@ -18,6 +18,7 @@ export const AI_SETUP_KIT = {
     "domain-modeling",
     "persona-review",
     "compose-ui",
+    "visual-verify",
     "code-review",
     "ponytail-review",
     "retro",
@@ -116,6 +117,10 @@ export const AI_SETUP_KIT = {
     },
     {
       "text": "│  │  ├─ compose-ui/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  ├─ visual-verify/",
       "kind": "dir"
     },
     {

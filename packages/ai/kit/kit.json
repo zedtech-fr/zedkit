@@ -8,7 +8,8 @@
       "orchestrate",
       "parallel-work",
       "tdd",
-      "adversarial-tests"
+      "adversarial-tests",
+      "zedkit-ai"
     ],
     "setup": [
       "setup-ai",
@@ -42,7 +43,8 @@
       "improve-from-review",
       "quick-wins",
       "handoff",
-      "triage"
+      "triage",
+      "zedkit-ai"
     ],
     "core": [
       "ponytail",
@@ -78,7 +80,8 @@
       "fix",
       "improve-from-review",
       "quick-wins",
-      "triage"
+      "triage",
+      "zedkit-ai"
     ],
     "full": "*"
   },
@@ -124,7 +127,8 @@
     "fix",
     "improve-from-review",
     "quick-wins",
-    "triage"
+    "triage",
+    "zedkit-ai"
   ],
   "presetAgents": {
     "starter": ["explorer", "verifier", "orchestrator"],
@@ -145,7 +149,7 @@
     ]
   },
   "presetCommands": {
-    "starter": ["setup-ai", "review"],
+    "starter": ["setup-ai", "review", "zedkit-ai"],
     "setup": [
       "setup-ai",
       "review",
@@ -160,7 +164,8 @@
       "fix",
       "improve-from-review",
       "quick-wins",
-      "triage"
+      "triage",
+      "zedkit-ai"
     ]
   }
 }
