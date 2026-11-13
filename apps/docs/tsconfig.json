@@ -14,7 +14,7 @@
     "incremental": true,
     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
     "plugins": [{ "name": "next" }],
-    "paths": { "#*": ["./app/*"], "@/*": ["./*"] }
+    "paths": { "#scripts/*": ["./scripts/*"], "#*": ["./app/*"], "@/*": ["./*"] }
   },
   "include": [
     "app",
