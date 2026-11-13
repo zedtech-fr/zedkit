@@ -232,7 +232,7 @@ describe("visual-verify helpers", () => {
   });
 
   it("treats identities/<id>.css as the touched look, not the six-look grid", () => {
-    expect(looksGridTriggered(["packages/ui/src/identities/glass.css"])).toBe(true);
+    expect(looksGridTriggered(["packages/ui/src/identities/glass.css"])).toBe(false);
     expect(identitiesFromChangedFiles(["packages/ui/src/identities/glass.css"])).toEqual(["glass"]);
     expect(identitiesFromChangedFiles(["packages\\ui\\src\\identities\\press.css"])).toEqual(["press"]);
     expect(

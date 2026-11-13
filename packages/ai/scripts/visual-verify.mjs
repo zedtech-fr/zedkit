@@ -137,8 +137,15 @@ export function identitiesFromChangedFiles(files) {
   return touched;
 }
 
+/** CI six-look trigger. Lockstep with scripts/docs-render-routes.mjs; evidence looks use identitiesFromChangedFiles. */
 export function looksGridTriggered(files) {
-  return identitiesFromChangedFiles(files).length > 0;
+  return files.some((file) => {
+    const n = file.replaceAll("\\", "/");
+    if (/identities[^/]*\.css$/iu.test(n)) return true;
+    if (/(?:^|\/)(?:tokens?|styles)\.(?:css|ts)$/iu.test(n)) return true;
+    if (!/packages\/ui\/src\/.+\.tsx$/u.test(n)) return false;
+    return !/\.(?:test|spec)\./u.test(n);
+  });
 }
 
 export function slugNeed(heading) {
@@ -885,7 +892,7 @@ export async function runVisualVerify(options, deps = {}) {
   if (routes.length === 0) return err(new Error("no routes: pass --routes or --changed"));
 
   const fileLooks = identitiesFromChangedFiles(files);
-  const looksOn = options.identities !== undefined || looksGridTriggered(files);
+  const looksOn = options.identities !== undefined || fileLooks.length > 0;
   const identities = looksOn ? (options.identities ?? (fileLooks.length > 0 ? fileLooks : DEFAULT_LOOKS)) : [undefined];
   if (looksOn && identities.length === 0) return err(new Error("no identities: pass --identities <id,id>"));
 
