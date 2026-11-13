@@ -25,7 +25,8 @@ export function AppShellTriggerDemo() {
               {NAV.map((item, index) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href={`#trigger-${item.toLowerCase()}`}
+                  id={`trigger-${item.toLowerCase()}`}
                   aria-current={index === 0 ? "page" : undefined}
                   className={linkClassName}
                 >

@@ -15,7 +15,8 @@ export function AppShellNoTopbarDemo() {
               {NAV.map((item, index) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href={`#shell-${item.toLowerCase()}`}
+                  id={`shell-${item.toLowerCase()}`}
                   aria-current={index === 0 ? "page" : undefined}
                   className="rounded-md px-select-item-inline py-select-item-block text-dense hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium"
                 >

@@ -34,7 +34,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | CI registry-deps for test:registry | `.agents/atlas/ci-gates.md` | Unconditional dist build for registry-imported packages. | `scripts/ci-hygiene.test.mjs` | 2026-11-13 |
 | docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-13 |
 | actionlint CI installer | `.agents/atlas/ci-gates.md` | workflow-lint pins v1.7.10; SHA-256 fail-closed. | `install-actionlint.test.mjs` | 2026-11-08 |
-| Dev static publish (staging + epic-73 preview) | `.agents/atlas/publishing.md` | Allowlisted dest keys; rsync only, never production `deploy.sh`. | `deploy-dev-workflow.test.mjs` | 2026-11-12 |
+| Dev static publish (staging + epic-73 preview) | `.agents/atlas/publishing.md` | Allowlisted dest keys; rsync only, never production `deploy.sh`. File-serving Caddy sites rewrite 404 to `/404.html`. | `deploy-dev-workflow.test.mjs` | 2026-11-13 |
 | Versioning and changesets | `.agents/atlas/publishing.md` | One changeset file per PR; do not pin a named file in tests. | release workflow, npm | 2026-11-13 |
 | Doc version pins | `.agents/atlas/publishing.md` | Version step rewrites `@zedtech/zedkit-<pkg>@X.Y.Z`; do not hand-pin. | `changeset:version` | 2026-11-10 |
 | Agent-setup markdown (map, suggest, per-package setup.md) | `.agents/atlas/setup-ai.md` | Docs-owned map/suggest; AI stays kit-owned. | `apps/docs/lib/ai-setup-onboarding.mjs` | 2026-11-13 |
@@ -84,7 +84,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-10 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
-| Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. | `agent-console.test.tsx` | 2026-11-12 |
+| Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP. | `agent-console.test.tsx` | 2026-11-13 |
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |

@@ -148,9 +148,14 @@ export function shortSha(sha: string): string {
 
 export function formatStarted(startedAt: number | null, locale: string): string {
   if (startedAt == null) return MISSING;
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(
-    new Date(startedAt),
-  );
+  // Chromium may insert NBSP in medium dates; pin UTC so SSR hydrate does not #418.
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  })
+    .format(new Date(startedAt))
+    .replace(/[\u00A0\u202F]/g, " ");
 }
 
 export function dispositionLabel(

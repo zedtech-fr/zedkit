@@ -28,7 +28,8 @@ export function AppShellMobileDrawerDemo() {
               {NAV.map((item, index) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href={`#drawer-${item.toLowerCase()}`}
+                  id={`drawer-${item.toLowerCase()}`}
                   aria-current={index === 0 ? "page" : undefined}
                   className={linkClassName}
                 >

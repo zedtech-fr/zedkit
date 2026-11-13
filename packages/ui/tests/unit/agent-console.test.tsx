@@ -1,5 +1,8 @@
+import { tryCatch, tryCatchAsync } from "@zedtech/zedkit-core";
 import { act, render, screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -11,6 +14,7 @@ import {
   type AgentConsoleProps,
   type AgentConsoleRun,
 } from "#index.js";
+import { formatStarted } from "#layout/agent-console-model.js";
 
 import { stubDrawerJsdom } from "./drawer-fixture.js";
 
@@ -247,6 +251,7 @@ describe("AgentConsole", () => {
   it("shows stats and a tool burst on the selected item", () => {
     const { container } = renderConsole();
     expect(screen.getByText("Started")).not.toBeNull();
+    expect(screen.getByText("Jan 15, 2026, 10:00 AM")).not.toBeNull();
     expect(screen.getAllByText("6m 17s").length).toBeGreaterThan(0);
     expect(screen.getByText("Tool calls")).not.toBeNull();
     expect(screen.getByText("12 in / 4 out")).not.toBeNull();
@@ -387,5 +392,104 @@ describe("AgentConsole", () => {
     expect(screen.getByText("Décision finale")).not.toBeNull();
     expect(screen.getAllByText("Coordinator").length).toBeGreaterThan(0);
     expect(screen.queryByText("Final decision")).toBeNull();
+  });
+});
+
+describe("formatStarted", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("renders an em dash when the start instant is missing", () => {
+    expect(formatStarted(null, "en")).toBe("–");
+  });
+
+  it("prints the UTC medium/short stamp with ordinary spaces", () => {
+    expect(formatStarted(STARTED_AT, "en")).toBe("Jan 15, 2026, 10:00 AM");
+  });
+
+  it("asks Intl for UTC so a Paris browser matches the UTC server", () => {
+    const spy = vi.spyOn(Intl, "DateTimeFormat");
+    formatStarted(STARTED_AT, "en");
+    expect(spy).toHaveBeenCalledWith(
+      "en",
+      expect.objectContaining({
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "UTC",
+      }),
+    );
+  });
+
+  it("asks Intl for UTC under the French locale", () => {
+    const spy = vi.spyOn(Intl, "DateTimeFormat");
+    const stamp = formatStarted(STARTED_AT, "fr");
+    expect(spy).toHaveBeenCalledWith("fr", expect.objectContaining({ timeZone: "UTC" }));
+    expect(stamp).toBe("15 janv. 2026, 10:00");
+    expect(stamp).not.toMatch(/[\u00A0\u202F]/);
+  });
+
+  it("replaces formatter NBSP so Chromium hydrate matches Node", () => {
+    class FakeDateTimeFormat {
+      format() {
+        return "Jan 15, 2026,\u00A010:00\u202FAM";
+      }
+    }
+    vi.spyOn(Intl, "DateTimeFormat").mockImplementation(
+      FakeDateTimeFormat as unknown as typeof Intl.DateTimeFormat,
+    );
+    expect(formatStarted(STARTED_AT, "en")).toBe("Jan 15, 2026, 10:00 AM");
+  });
+});
+
+function hydrationMessages(logs: unknown[][]): string[] {
+  return logs
+    .map((args) => args.map(String).join(" "))
+    .filter((msg) => /hydrat|did not match|#418|#423|#425/i.test(msg));
+}
+
+describe("AgentConsole hydration", () => {
+  it("hydrates the fixture Started stamp without a markup mismatch", async () => {
+    stubDrawerJsdom();
+    const tree = <AgentConsole run={RUN} items={ITEMS} decision={DECISION} />;
+    const windowDesc = Object.getOwnPropertyDescriptor(globalThis, "window");
+    const origError = console.error;
+    const ssr = tryCatch(() => {
+      Object.defineProperty(globalThis, "window", { configurable: true, value: undefined });
+      return renderToString(tree);
+    });
+    if (windowDesc) Object.defineProperty(globalThis, "window", windowDesc);
+    if (!ssr.ok) throw ssr.error;
+
+    const container = document.createElement("div");
+    container.innerHTML = ssr.value;
+    document.body.appendChild(container);
+
+    const recoverable: unknown[] = [];
+    const logs: unknown[][] = [];
+    console.error = (...args: unknown[]) => {
+      logs.push(args);
+      origError.apply(console, args);
+    };
+
+    let root: ReturnType<typeof hydrateRoot> | undefined;
+    const hydrated = tryCatchAsync(async () => {
+      await act(async () => {
+        root = hydrateRoot(container, tree, {
+          onRecoverableError: (error) => recoverable.push(error),
+        });
+      });
+    });
+    const done = await hydrated;
+    console.error = origError;
+    const text = container.textContent ?? "";
+    root?.unmount();
+    container.remove();
+    if (!done.ok) throw done.error;
+
+    expect(ssr.value).toContain("Jan 15, 2026, 10:00 AM");
+    expect(text).toContain("Jan 15, 2026, 10:00 AM");
+    expect(hydrationMessages(logs)).toEqual([]);
+    expect(recoverable).toEqual([]);
   });
 });
