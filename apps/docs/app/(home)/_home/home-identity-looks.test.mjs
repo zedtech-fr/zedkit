@@ -32,6 +32,12 @@ test("look tabs map IDENTITY_IDS rather than hardcoded look names", () => {
   assert.doesNotMatch(tabs, /["']glass["']|["']mist["']|["']press["']|["']maison["']/);
 });
 
+test("selected look tab forces inverted ink on the tab itself (selected contrast walks role=tab)", () => {
+  const tabs = readHome("home-identity-looks-tabs.tsx");
+  assert.match(tabs, /data-\[state=active\]:bg-foreground!/);
+  assert.match(tabs, /data-\[state=active\]:text-background!/);
+});
+
 test("one compact Project settings specimen is restyled, not remounted", () => {
   const looks = readHome("home-identity-looks.tsx");
   const specimen = readHome("home-identity-example-mist.tsx");
