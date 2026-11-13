@@ -41,6 +41,8 @@ export const reviewsCopy = {
     empty: "No public runs yet",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
+    githubIssue: "GitHub issue",
+    githubPull: "GitHub pull request",
     unlinkedTitle: "Unlinked pull requests",
     unlinkedDescription:
       "These runs are not joined to a GitHub issue yet. They stay reachable here and from old review URLs.",
@@ -50,6 +52,7 @@ export const reviewsCopy = {
   issue: {
     back: "All issues",
     timeline: "Timeline",
+    superseded: "Superseded",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
     missing: "This issue is not on the public list.",

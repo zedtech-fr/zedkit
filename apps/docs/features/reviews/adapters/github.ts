@@ -1,6 +1,7 @@
 import { err, ok, PermanentError, type Result } from "@zedtech/zedkit-core";
 import { fetchJson, type FetchJsonOptions } from "@zedtech/zedkit-live";
 
+import { GITHUB_REPO } from "../model/github-hrefs.ts";
 import type {
   GithubCatalog,
   GithubIssue,
@@ -24,7 +25,6 @@ export type {
   GithubReviewFallback,
 } from "../model/merge-public-index.ts";
 
-const REPO = "zedtech-fr/zedkit";
 const PER_PAGE = 100;
 const PAGE_CAP = 10;
 const REVIEW_CAP = 40;
@@ -53,11 +53,11 @@ function githubRequest(options: GithubFetchOptions): FetchJsonOptions {
 }
 
 function listUrl(resource: "issues" | "pulls", page: number): string {
-  return `https://api.github.com/repos/${REPO}/${resource}?state=all&per_page=${PER_PAGE}&page=${page}`;
+  return `https://api.github.com/repos/${GITHUB_REPO}/${resource}?state=all&per_page=${PER_PAGE}&page=${page}`;
 }
 
 function reviewsUrl(prNumber: number): string {
-  return `https://api.github.com/repos/${REPO}/pulls/${prNumber}/reviews`;
+  return `https://api.github.com/repos/${GITHUB_REPO}/pulls/${prNumber}/reviews`;
 }
 
 export function parseClosingIssueNumbers(body: string | null): number[] {

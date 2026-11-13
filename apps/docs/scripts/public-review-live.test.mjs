@@ -233,9 +233,25 @@ test("runs envelope accepts the v1 fixture and drops a disallowed live URL", () 
   const parsed = parseRunsEnvelope(runsEnvelope([runRow({ liveUrl: "https://github.com/zedtech-fr/zedkit/pull/250" })]));
   assert.equal(parsed.ok, true);
   assert.equal(parsed.value.runs[0].liveUrl, null);
+  assert.equal(parsed.value.runs[0].endedAt, "2026-11-12T15:05:12Z");
   assert.equal(parseRunsEnvelope(runsEnvelope([runRow()], { version: 2 })).ok, false);
   assert.equal(parseRunsEnvelope({ version: 1 }).ok, false);
   assert.equal(parseRunsEnvelope(runsEnvelope([runRow({ status: "done" })])).ok, false);
+});
+
+test("runs envelope keeps endedAt, allows a missing stamp, and rejects a malformed one", () => {
+  const kept = parseRunsEnvelope(runsEnvelope([runRow()]));
+  assert.equal(kept.ok, true);
+  assert.equal(kept.value.runs[0].endedAt, "2026-11-12T15:05:12Z");
+  const omitted = { ...runRow() };
+  delete omitted.endedAt;
+  const missing = parseRunsEnvelope(runsEnvelope([omitted]));
+  assert.equal(missing.ok, true);
+  assert.equal(missing.value.runs[0].endedAt, null);
+  const empty = parseRunsEnvelope(runsEnvelope([runRow({ endedAt: null })]));
+  assert.equal(empty.ok, true);
+  assert.equal(empty.value.runs[0].endedAt, null);
+  assert.equal(parseRunsEnvelope(runsEnvelope([runRow({ endedAt: "not-a-date" })])).ok, false);
 });
 
 test("runs adapter paginates on nextCursor and fails closed on the error matrix", async () => {
@@ -320,6 +336,7 @@ test("merge uses GitHub verdict and score only on review entries with a null ver
   assert.equal(review.verdict, "approve");
   assert.equal(review.score, 8);
   assert.equal(review.superseded, false);
+  assert.equal(review.endedAt, "2026-11-12T15:05:12Z");
   const fromRun = mergePublicIndex({
     github: { issues: [githubIssue()], pullRequests: [githubPull()] },
     runs: [runRow({ kind: "review", phase: "review", verdict: "comment", score: 3 })],

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge, Button, Stack, Surface, Text, useMotionPreference } from "@zedtech/zedkit-ui";
 import { HOME_METADATA_TEXT_CLASS, HOME_PARALLAX_SCROLL_PROPS } from "./home-rhythm";
 import { homeHeroCopy } from "./i18n/home-hero-copy";
+import { HomeLink } from "./sections/home-link";
 
 const copy = homeHeroCopy.heroIllustration;
 
@@ -68,6 +69,12 @@ function RunCard({
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
         {copy.caption}
       </Text>
+      <HomeLink
+        href="/issues?open=first"
+        className={`inline-flex min-h-target w-fit items-center text-muted-foreground link-offset focus-ring hover:underline ${HOME_METADATA_TEXT_CLASS}`}
+      >
+        {copy.viewPublicRun}
+      </HomeLink>
     </Surface>
   );
 }

@@ -72,6 +72,11 @@ test("home hero matches the mockup first screen: clause, prompt, glass card (#11
   await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
   await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();
   await expect(page.getByText("An illustration of one run, not a recording.")).toBeVisible();
+  await expect(
+    page.locator("[data-home-hero-preview]").getByRole("link", {
+      name: homeHeroCopy.heroIllustration.viewPublicRun,
+    }),
+  ).toHaveAttribute("href", "/issues?open=first");
   await expect(page.locator("[data-hero-run-stage]")).toBeVisible();
   await expect(page.locator("#demo")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);

@@ -14,6 +14,7 @@ export const homeHeroCopy = {
     pauseMotion: "Pause illustration motion",
     playMotion: "Play illustration motion",
     caption: "An illustration of one run, not a recording.",
+    viewPublicRun: "View a public run",
     issueBadge: "1 issue",
     emptyStateTitle: "Add an empty state to the tasks list",
     stepPlan: "Plan",
