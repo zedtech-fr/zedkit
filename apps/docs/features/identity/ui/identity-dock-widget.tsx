@@ -18,8 +18,8 @@ import { IdentityDockAssistantPanel } from "@/features/identity/ui/identity-dock
 import { useCreatorHandoff } from "@/features/identity/ui/use-creator-handoff";
 import { useIdentityDockKeyboard } from "@/features/identity/ui/use-identity-dock-keyboard";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { docsSiteDefaultTokens } from "@/features/identity/ui/docs-site-default-tokens";
-import { readDockSiteTokens } from "@/features/identity/ui/docs-site-look";
+import { docsSiteDefaultTokens } from "./docs-site-default-tokens";
+import { readDockSiteTokens } from "./docs-site-look";
 import { consumeCreateArrival } from "@/features/identity/ui/identity-create-arrival";
 import { IDENTITY_DOCK_OPEN } from "@/features/identity/ui/identity-dock-open";
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";

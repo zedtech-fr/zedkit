@@ -115,13 +115,13 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
 });
 
 const HOME_SECTIONS = [
-  "ui/home/home-same-idea-section.tsx",
-  "ui/home/home-six-sentences-section.tsx",
-  "ui/home/home-paste-section.tsx",
-  "ui/home/home-identities-section.tsx",
-  "ui/home/home-limits-section.tsx",
-  "ui/home/home-manifesto-section.tsx",
-  "ui/home/home-closing-section.tsx",
+  "app/(home)/_home/sections/home-same-idea-section.tsx",
+  "app/(home)/_home/sections/home-six-sentences-section.tsx",
+  "app/(home)/_home/sections/home-paste-section.tsx",
+  "app/(home)/_home/sections/home-identities-section.tsx",
+  "app/(home)/_home/sections/home-limits-section.tsx",
+  "app/(home)/_home/sections/home-manifesto-section.tsx",
+  "app/(home)/_home/sections/home-closing-section.tsx",
 ];
 
 test("home-rhythm names distinct appears instead of one section fade", () => {
@@ -139,14 +139,14 @@ test("home-rhythm names distinct appears instead of one section fade", () => {
 });
 
 test("each home band has one appear or scroll, never on Section", () => {
-  const sameIdea = readApp("ui/home/home-same-idea-section.tsx");
-  const six = readApp("ui/home/home-six-sentences-section.tsx");
-  const paste = readApp("ui/home/home-paste-section.tsx");
-  const identities = readApp("ui/home/home-identities-section.tsx");
+  const sameIdea = readApp("app/(home)/_home/sections/home-same-idea-section.tsx");
+  const six = readApp("app/(home)/_home/sections/home-six-sentences-section.tsx");
+  const paste = readApp("app/(home)/_home/sections/home-paste-section.tsx");
+  const identities = readApp("app/(home)/_home/sections/home-identities-section.tsx");
   const looks = readApp("ui/home/home-identity-looks.tsx");
-  const limits = readApp("ui/home/home-limits-section.tsx");
-  const manifesto = readApp("ui/home/home-manifesto-section.tsx");
-  const closing = readApp("ui/home/home-closing-section.tsx");
+  const limits = readApp("app/(home)/_home/sections/home-limits-section.tsx");
+  const manifesto = readApp("app/(home)/_home/sections/home-manifesto-section.tsx");
+  const closing = readApp("app/(home)/_home/sections/home-closing-section.tsx");
   const illustration = readApp("ui/home/home-hero-illustration.tsx");
   const mist = readApp("ui/home/home-identity-example-mist.tsx");
   for (const rel of HOME_SECTIONS) {

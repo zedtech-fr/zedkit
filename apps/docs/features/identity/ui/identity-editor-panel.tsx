@@ -24,7 +24,7 @@ import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "@/components/id
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 import { IDENTITY_EDITOR_DRAFT_APPLY } from "@/lib/identity-editor-draft-apply";
 import { useDraftTokens, useIdentityTokenSheet } from "@/lib/identity-editor-draft";
-import { bindLookLibrary } from "@/lib/identity-look-bind";
+import { bindLookLibrary } from "./identity-look-bind";
 import { tokensForLook } from "@/lib/identity-look";
 import {
   namedIdentityOptions,
@@ -32,7 +32,7 @@ import {
   readNamedIdentities,
   subscribeNamedIdentities,
   type NamedIdentity,
-} from "@/lib/named-identities";
+} from "./named-identities";
 import { type SaveStatus } from "@/lib/identity-save-status";
 import { parseIdentityEditorSearch, serializeIdentityEditorSearch } from "@/lib/identity-editor-search";
 

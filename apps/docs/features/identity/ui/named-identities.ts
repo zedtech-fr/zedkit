@@ -18,7 +18,7 @@ import {
   type LibraryRead,
   type SaveResult,
   type SavedIdentity,
-} from "./identity-library.ts";
+} from "@/lib/identity-library";
 
 /**
  * The saved identities as the editor and the header read them: a live view over the versioned library

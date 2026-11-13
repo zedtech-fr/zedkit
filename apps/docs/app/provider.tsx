@@ -26,7 +26,7 @@ export function Provider({ children }: { children: ReactNode }) {
   }, []);
   useLayoutEffect(() => {
     purgeLegacyIdentityStorage();
-    void import("@/lib/named-identities").then((mod) =>
+    void import("@/features/identity/ui/named-identities").then((mod) =>
       mod.restoreNamedIdentity(DOCS_SITE_IDENTITY_STORAGE_KEY),
     );
   }, []);

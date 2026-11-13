@@ -23,7 +23,7 @@ register(
 
 const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
 const { LIBRARY_KEY } = await import("@/lib/identity-library");
-const { restoreNamedIdentity } = await import("@/lib/named-identities");
+const { restoreNamedIdentity } = await import("./named-identities.ts");
 const { docsSiteDefaultTokens } = await import("./docs-site-default-tokens.ts");
 const {
   applyDocsSiteLook,

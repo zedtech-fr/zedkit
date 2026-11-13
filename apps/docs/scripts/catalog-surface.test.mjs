@@ -152,7 +152,7 @@ test("catalog ships no identity host module", () => {
 });
 
 test("the identity form lives in the editor panel, not the catalog", () => {
-  const panel = read("components/identity-editor-panel.tsx");
+  const panel = read("features/identity/ui/identity-editor-panel.tsx");
   const view = read("app/(site)/catalog/_catalog/catalog-view.tsx");
   assert.match(panel, /IdentityLookForm/);
   assert.match(panel, /defaultMode="expert"/);

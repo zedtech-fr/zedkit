@@ -32,8 +32,8 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
     ["wrapper", read("features/docs/mdx/ui/setup-entry-prompt.tsx")],
     ["home lead", read("ui/home/home-hero-lead.tsx")],
     ["home illustration", read("ui/home/home-hero-illustration.tsx")],
-    ["home band", read("ui/home/home-paste-section.tsx")],
-    ["home closing", read("ui/home/home-closing-section.tsx")],
+    ["home band", read("app/(home)/_home/sections/home-paste-section.tsx")],
+    ["home closing", read("app/(home)/_home/sections/home-closing-section.tsx")],
     ["getting started", read("prose/guides/getting-started.mdx")],
     ["home smoke", read("tests/home-ai-setup.spec.ts")],
     ["getting started smoke", read("tests/getting-started.spec.ts")],
@@ -59,8 +59,8 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   assert.deepEqual(ids, ["ai", "ui", "combined", "suggest"]);
 
   const homeLead = read("ui/home/home-hero-lead.tsx");
-  const homeBand = read("ui/home/home-paste-section.tsx");
-  const homeClosing = read("ui/home/home-closing-section.tsx");
+  const homeBand = read("app/(home)/_home/sections/home-paste-section.tsx");
+  const homeClosing = read("app/(home)/_home/sections/home-closing-section.tsx");
   const homePrompt = exportedString(generated, "MAP_AI_UI_SETUP_MINI_PROMPT");
   assert.equal(homePrompt.includes("\n"), false);
   assert.match(homeLead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);

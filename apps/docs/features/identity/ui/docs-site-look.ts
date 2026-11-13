@@ -12,9 +12,8 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { readNamedIdentities } from "@/lib/named-identities";
-
 import { docsSiteDefaultTokens, docsSiteTokensEqual } from "./docs-site-default-tokens.ts";
+import { readNamedIdentities } from "./named-identities.ts";
 import {
   clearDocsSiteIdentity,
   DOCS_SITE_IDENTITY_STORAGE_KEY,

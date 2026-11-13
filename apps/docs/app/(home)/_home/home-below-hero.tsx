@@ -1,10 +1,10 @@
-import { HomeClosingSection } from "@/ui/home/home-closing-section";
-import { HomeIdentitiesSection } from "@/ui/home/home-identities-section";
-import { HomeLimitsSection } from "@/ui/home/home-limits-section";
-import { HomeManifestoSection } from "@/ui/home/home-manifesto-section";
-import { HomePasteSection } from "@/ui/home/home-paste-section";
-import { HomeSameIdeaSection } from "@/ui/home/home-same-idea-section";
-import { HomeSixSentencesSection } from "@/ui/home/home-six-sentences-section";
+import { HomeClosingSection } from "./sections/home-closing-section";
+import { HomeIdentitiesSection } from "./sections/home-identities-section";
+import { HomeLimitsSection } from "./sections/home-limits-section";
+import { HomeManifestoSection } from "./sections/home-manifesto-section";
+import { HomePasteSection } from "./sections/home-paste-section";
+import { HomeSameIdeaSection } from "./sections/home-same-idea-section";
+import { HomeSixSentencesSection } from "./sections/home-six-sentences-section";
 
 /**
  * Marketing sections below the hero, in the order a visitor decides: the
