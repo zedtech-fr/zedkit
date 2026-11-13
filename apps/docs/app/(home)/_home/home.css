@@ -30,7 +30,7 @@
   color: hsl(var(--background));
 }
 
-/* Hero title line, then the sentence under it. Two short beats, no third clause. */
+/* Hero title line, then the sentence under it. Question plus invitation, no third clause. */
 #home-page [data-home-hero-lead] h1 {
   max-width: 48rem;
 }
@@ -143,8 +143,8 @@
 
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) {
-  /* 1. Load: the lead, one block at a time. Transform-only rise; backwards fill so nothing is left applied. */
-  #home-page [data-home-hero] [data-home-hero-lead] > * {
+  /* 1. Load: lead sentence and prompt. Skip the first child (h1 stack) so LCP is not delayed. */
+  #home-page [data-home-hero] [data-home-hero-lead] > :nth-child(n + 2) {
     animation: zk-home-hero-rise 360ms var(--zk-home-ease) backwards;
     animation-delay: calc(var(--zk-lead-beat, 0) * 70ms);
   }

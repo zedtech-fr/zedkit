@@ -93,9 +93,9 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   --zk-type-h1-size: var(--zk-foundations-title-size);
   --zk-type-h1-leading: 1.12;
   --zk-type-h1-tracking: -0.03em;
-  /* Band is the light shell surface; identity dark --foreground is pale on it.
-   * Pin the variables and `color`: inherited computed color from html.dark
-   * would ignore the variable. */
+  /* Band follows --zk-site-band (light zinc / dark identity muted). Pin text
+   * to --zk-site-ink / --zk-site-body so they stay paired with the band.
+   * Inherited computed color from html.dark would ignore the variable. */
   --foreground: var(--zk-site-ink);
   --muted-foreground: var(--zk-site-body);
   color: hsl(var(--foreground));

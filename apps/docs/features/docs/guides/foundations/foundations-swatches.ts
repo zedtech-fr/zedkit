@@ -2,6 +2,7 @@ export const foundationsBandIds = ["color", "type"] as const;
 
 export type FoundationsBandId = (typeof foundationsBandIds)[number];
 
+/** Light owner-sheet hexes for tests. Captions render `token`, not these. */
 export const foundationsSwatches = [
   { id: "page", token: "--zk-site-page", hex: "#FFFFFF", scope: "page" },
   { id: "band", token: "--zk-site-band", hex: "#FAFAFA", scope: "page" },
