@@ -48,6 +48,35 @@ test("catch-all pages and unknown files do not emit a wildcard", () => {
   assert.deepEqual(routesFromFiles([]), []);
 });
 
+test("maps guides MDX to /docs/<slug>", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/prose/guides/foundations.mdx",
+      "apps\\docs\\prose\\guides\\index.mdx",
+      "apps/docs/prose/guides/snippets/ui-add.sh",
+      "README.md",
+    ]).sort(),
+    ["/docs", "/docs/foundations"],
+  );
+});
+
+test("maps AI setup sources to /docs/ai/setup", () => {
+  assert.deepEqual(
+    routesFromFiles(["packages/ai/kit/cursor-onboarding.md", "apps/docs/public/ai/setup.md"]).sort(),
+    ["/docs/ai/setup"],
+  );
+});
+
+test("AI setup sources map to the walkthrough, not the host fallback", () => {
+  assert.deepEqual(
+    docsRenderRoutes({
+      files: ["packages/ai/kit/cursor-onboarding.md"],
+      manifest: buttonManifest,
+    }),
+    ["/docs/ai/setup"],
+  );
+});
+
 test("public review files map to /issues", () => {
   assert.deepEqual(routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"]), [
     "/issues",

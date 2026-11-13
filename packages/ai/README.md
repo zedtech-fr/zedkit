@@ -36,6 +36,7 @@ Or skip the devDependency for a first try: `npx @zedtech/zedkit-ai setup` downlo
 ```sh
 npx @zedtech/zedkit-ai setup --provider cursor   # preset setup + adopt; wire Cursor
 # in your agent: /zedkit-ai set up this repo from what it contains   (or: "run the setup-ai skill")
+# Muse: paste "zedkit-ai: set up this repo from what it contains" (does not scan .agents/commands; invoke the skill by name)
 ```
 
 Use `cursor`, `claude`, `codex`, `muse`, or comma-separated names; omit `--provider` to wire every supported runtime. **`setup` defaults to the `setup` preset** (discovery skills and agents for `/zedkit-ai`); override with `--preset starter|setup|core|full`. When you already added the package: `npx @zedtech/zedkit-ai setup . --provider cursor`.
@@ -206,7 +207,7 @@ One shared source (`.agents/`), then a thin layer per provider:
 | `cursor` | `.cursor/rules/project.mdc`, `.cursor/skills` link (or per-skill links if that path is already a real directory), generated agent files, one link per command | its `.cursor/` layer |
 | `claude` | `CLAUDE.md` link, `.claude/{skills,commands}` links (per-skill links and file copies when those paths are already real directories), generated agent files in a real `.claude/agents` | its `.claude/` layer |
 | `codex` | none | `AGENTS.md` and `.agents/skills` directly |
-| `muse` | native marked files in `.agents/agents` | `.agents/` source; Muse catalog reads the marked files |
+| `muse` | native marked files in `.agents/agents` | `.agents/` source (`AGENTS.md`, skills, agents); Muse does not scan `.agents/commands`; invoke the `zedkit-ai` skill by name |
 
 Every preset × provider cell is install-tested: install green, validate
 clean, re-run a no-op, drift clean.
@@ -360,7 +361,9 @@ installs only `/zedkit-ai`.
 - Muse reads `AGENTS.md`, `.agents/skills` and `.agents/agents` directly
   (verified empirically 2026-10-24 with `muse skills list` and a headless
   `muse exec` run: every core skill and all installed subagents load), so it needs
-  no adapter either. It ignores the `.claude/` and `.cursor/` links. This is
+  no adapter either. It ignores the `.claude/` and `.cursor/` links. Muse
+  does not scan `.agents/commands` (skill loading verified 2026-10-24; command
+  invocation not probed in-repo); invoke the `zedkit-ai` skill by name. This is
   how the `readonly:` ban above was found: files setting it never appear in
   its agent list.
 - Agent headers (`role`, `default_needs`, `kinds`, `default_kind`) live in

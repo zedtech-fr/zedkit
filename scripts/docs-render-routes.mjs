@@ -90,6 +90,13 @@ export function routesFromFiles(files, manifest) {
         routes.add(`/${segs.join("/")}`);
       }
     }
+    const guide = /(?:^|\/)apps\/docs\/prose\/guides\/(.+)\.mdx$/u.exec(n);
+    if (guide && !guide[1].includes("snippets/")) {
+      routes.add(guide[1] === "index" ? "/docs" : `/docs/${guide[1]}`);
+    }
+    if (n.endsWith("packages/ai/kit/cursor-onboarding.md") || n.endsWith("apps/docs/public/ai/setup.md")) {
+      routes.add("/docs/ai/setup");
+    }
     if (isPublicReviewPath(n)) routes.add("/issues");
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);

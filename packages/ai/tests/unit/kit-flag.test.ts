@@ -1,24 +1,16 @@
 import { cpSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
-import { main } from "#cli.js";
 import { MARKER_PREFIX } from "#generate.js";
 import { installKit } from "#install.js";
 import { kitDir } from "#kit.js";
 import { syncKit } from "#sync.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { failingIssues, put, SKILL, tempDir } from "./helpers.js";
+import { failingIssues, put, run, SKILL, tempDir } from "./helpers.js";
 
 const SENTINEL_SKILL = "kit-flag-sentinel";
 const SENTINEL_BODY = "SENTINEL_KIT_FLAG_BODY_297_UNIQUE";
 const SENTINEL_AGENT = "SENTINEL_AGENT_BODY_297_UNIQUE";
-
-function run(...argv: string[]): { code: number; text: string; errors: string } {
-  const out: string[] = [];
-  const errors: string[] = [];
-  const code = main(argv, { out: (line) => out.push(line), err: (line) => errors.push(line) });
-  return { code, text: out.join("\n"), errors: errors.join("\n") };
-}
 
 function patchedKit(): string {
   const kit = tempDir();
