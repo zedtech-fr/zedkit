@@ -1509,7 +1509,7 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.verdict["request-changes"], "Changes requested");
   assert.equal(reviewsCopy.status.failed, "Didn't finish");
   assert.equal(reviewsCopy.issue.replaced, "Replaced by newer run");
-  assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a later review");
+  assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a newer run");
   assert.equal(reviewsCopy.issue.viewLog, "View log");
   assert.equal(reviewsCopy.list.took, "Took");
   assert.equal(reviewsCopy.list.finished, "Finished");

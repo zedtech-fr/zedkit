@@ -56,7 +56,7 @@ export const reviewsCopy = {
     back: "All issues",
     timeline: "Timeline",
     replaced: "Replaced by newer run",
-    failedReplaced: "Didn't finish — replaced by a later review",
+    failedReplaced: "Didn't finish — replaced by a newer run",
     viewLog: "View log",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
