@@ -686,7 +686,7 @@ jobs:
   # docs-smoke). Not an E2E journey suite.
   docs-render:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 6
     needs: [changes, docs-build]
     if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
     steps:
