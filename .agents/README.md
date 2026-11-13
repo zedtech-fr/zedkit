@@ -18,7 +18,7 @@ skills and subagents in `packages/ai/kit/` are the single source of truth.
   `tokenomics.md` (kind × stakes cells), `design.md`.
 - `atlas.md`: the lookup read before any search (where things live, words,
   commands, why). One row per lesson, fixed in place, capped; long traps live
-  in `atlas/<topic>.md`. `validate` checks index and topic-file paths. Skill
+  in `.agents/atlas/<topic>.md`. `validate` checks index and topic-file paths. Skill
   `rules-upkeep` says when to write it.
 
 Edit skills and unmarked agent sources in `packages/ai/kit/`, then run

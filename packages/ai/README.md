@@ -268,7 +268,8 @@ they search and fix one row when a search or a correction taught them something
 belong in `.agents/atlas/<topic>.md` with the index row as a pointer. `validate`
 fails when it passes 150 lines or a row in its **Where** table names a path
 that no longer exists (including paths inside a linked topic file). It warns
-(exit 0) above 24 KB or 280 characters on a Where row. `validate --setup` also
+(exit 0) when the index file exceeds 24 KB, or a Where row exceeds 280
+characters. `validate --setup` also
 needs the file and three **Where** rows. `init` and `setup` install an empty
 stub and never overwrite it.
 

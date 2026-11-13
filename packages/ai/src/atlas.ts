@@ -255,14 +255,19 @@ function splitRow(line: string): string[] {
   return cells;
 }
 
+/** Data rows of the Where table, as source lines (header and separator dropped). */
+function whereDataLines(text: string): string[] {
+  const section = text.split(/^## /mu).find((s) => s.startsWith("Where")) ?? "";
+  return section.split("\n").filter((line) => {
+    if (!line.startsWith("|")) return false;
+    const topic = splitRow(line).slice(1, -1)[0]?.trim() ?? "";
+    return topic !== "Topic" && !/^:?-{3,}:?$/u.test(topic);
+  });
+}
+
 /** Rows of the table under `## Where`, as cells; header and separator dropped. */
 function whereRows(text: string): string[][] {
-  const section = text.split(/^## /mu).find((s) => s.startsWith("Where")) ?? "";
-  return section
-    .split("\n")
-    .filter((l) => l.startsWith("|"))
-    .map((l) => splitRow(l).slice(1, -1).map((c) => c.trim()))
-    .filter((c) => c[0] !== "Topic" && !/^:?-{3,}:?$/u.test(c[0] ?? ""));
+  return whereDataLines(text).map((line) => splitRow(line).slice(1, -1).map((c) => c.trim()));
 }
 
 /** A token is path-like when it names a file or folder: no spaces, globs or placeholder markup, not a url or a package. */
@@ -293,16 +298,6 @@ function entryRefs(cell: string): { token: string; ref: EntryRef | undefined; ma
     if (ref !== undefined) refs.push({ token, ref, malformed: false });
   }
   return refs;
-}
-
-/** Data rows of the Where table, as source lines (header and separator dropped). */
-function whereDataLines(text: string): string[] {
-  const section = text.split(/^## /mu).find((s) => s.startsWith("Where")) ?? "";
-  return section.split("\n").filter((line) => {
-    if (!line.startsWith("|")) return false;
-    const topic = splitRow(line).slice(1, -1)[0]?.trim() ?? "";
-    return topic !== "Topic" && !/^:?-{3,}:?$/u.test(topic);
-  });
 }
 
 /** A linked `.agents/atlas/<topic>.md` file, not the index itself. */
@@ -342,6 +337,11 @@ function checkWhereTable(
         const nested = tryCatch(() => readFileSync(topicFile, "utf8"));
         if (nested.ok) {
           checkWhereTable(projectRoot, agentsDir, topicFile, nested.value, issues, seen);
+        } else {
+          issues.push({
+            path: reportPath,
+            message: `stale row "${topic}": ${token} cannot be read from ${ref.path}; reference left unresolved`,
+          });
         }
       }
       if (ref.kind === "path") continue;
@@ -413,15 +413,16 @@ export function checkAtlas(projectRoot: string, agentsDir: string, options: { re
   if (bytes > ATLAS_MAX_BYTES) {
     issues.push({
       path,
-      message: `warning: atlas is ${bytes} bytes (soft cap ${ATLAS_MAX_BYTES}): move traps into .agents/atlas/<topic>.md`,
+      message: `warning: atlas is ${bytes} bytes (soft cap ${ATLAS_MAX_BYTES}): shrink the index file, or move Where traps into .agents/atlas/<topic>.md`,
     });
   }
   for (const line of whereDataLines(raw.value)) {
-    if (line.length <= ATLAS_MAX_ROW_CHARS) continue;
+    const chars = [...line].length;
+    if (chars <= ATLAS_MAX_ROW_CHARS) continue;
     const topic = splitRow(line).slice(1, -1)[0]?.trim() ?? "";
     issues.push({
       path,
-      message: `warning: row "${topic}" is ${line.length} characters (soft cap ${ATLAS_MAX_ROW_CHARS}): move detail to .agents/atlas/<topic>.md`,
+      message: `warning: row "${topic}" is ${chars} characters (soft cap ${ATLAS_MAX_ROW_CHARS}): move detail to .agents/atlas/<topic>.md and point Entry at that file`,
     });
   }
   const seen = new Set<string>([path]);
