@@ -107,6 +107,16 @@ h1{font-size:24px}
 button.tiny{display:inline-block;box-sizing:border-box;width:16px;height:16px;padding:0;margin:0;border:0;font-size:10px;line-height:16px}
 </style></head><body><h1>Hidden aria</h1><button class="tiny" type="button" aria-hidden="true">x</button></body></html>`;
 
+const HIDDEN_NATIVE_SELECT = `<!doctype html><html lang="en"><head><title>Hidden select</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+button{min-width:32px;min-height:32px}
+</style></head><body>
+<h1>Hidden select</h1>
+<button type="button">Open</button>
+<select aria-hidden="true" tabindex="-1" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)"></select>
+</body></html>`;
+
 const POINTER_NONE_TARGET = `<!doctype html><html lang="en"><head><title>Pointer none</title><style>
 html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px}
@@ -195,6 +205,7 @@ function fixtureDir() {
   writeFileSync(join(dir, "padded.html"), PADDED_TARGET);
   writeFileSync(join(dir, "distant.html"), DISTANT_PSEUDO);
   writeFileSync(join(dir, "aria-hidden.html"), ARIA_HIDDEN_TARGET);
+  writeFileSync(join(dir, "hidden-select.html"), HIDDEN_NATIVE_SELECT);
   writeFileSync(join(dir, "pointer-none.html"), POINTER_NONE_TARGET);
   writeFileSync(join(dir, "disabled.html"), DISABLED_TARGET);
   writeFileSync(join(dir, "states.html"), STATES);
@@ -221,6 +232,18 @@ describe("visual-verify helpers", () => {
       "/docs/ui/trigger-actions-with-buttons",
     ]);
     expect(routesFromFiles(["apps/docs/app/docs/[[...slug]]/page.tsx"])).toEqual([]);
+    expect(routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"])).toEqual([
+      "/issues",
+    ]);
+    expect(routesFromFiles(["apps/docs/app/(run-console)/issues/[n]/runs/[id]/page.tsx"])).toEqual([
+      "/issues",
+    ]);
+    expect(routesFromFiles(["apps/docs/tests/evidence/issues/issues-list-1440.png"])).toEqual([
+      "/issues",
+    ]);
+    expect(routesFromFiles(["apps/docs/scripts/issues-evidence-artifacts.test.mjs"])).toEqual([
+      "/issues",
+    ]);
   });
 
   it("turns the looks grid on for tokens, primitives, and identity sheets", () => {
@@ -438,9 +461,13 @@ describe("visual-verify helpers", () => {
     const parsed = parseVisualVerifyArgs([]);
     expect(parsed.ok && parsed.value.widths).toEqual([375, 809, 1440]);
     expect(parsed.ok && parsed.value.modes).toEqual(["light", "dark"]);
+    expect(parsed.ok && parsed.value.changed).toBe(true);
     const shrunk = parseVisualVerifyArgs(["--widths", "375", "--modes", "light"]);
     expect(shrunk.ok && shrunk.value.widths).toEqual([375]);
     expect(shrunk.ok && shrunk.value.modes).toEqual(["light"]);
+    const explicit = parseVisualVerifyArgs(["--routes", "/docs"]);
+    expect(explicit.ok && explicit.value.changed).toBe(false);
+    expect(explicit.ok && explicit.value.routes).toEqual(["/docs"]);
   });
 });
 
@@ -715,6 +742,10 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(ariaHidden.result.ok, ariaHidden.result.ok ? "" : ariaHidden.result.error.message).toBe(true);
     expect(ariaHidden.result.value.ok).toBe(false);
     expect(ariaHidden.result.value.cells.some((c) => c.hitTargets?.fail === true)).toBe(true);
+    const hiddenSelect = await runRoutes(["/hidden-select"], { widths: [375], modes: ["light"] });
+    expect(hiddenSelect.result.ok, hiddenSelect.result.ok ? "" : hiddenSelect.result.error.message).toBe(true);
+    expect(hiddenSelect.result.value.ok).toBe(true);
+    expect(hiddenSelect.result.value.cells.every((c) => c.hitTargets?.fail === false)).toBe(true);
     const pointerNone = await runRoutes(["/pointer-none"], { widths: [375], modes: ["light"] });
     expect(pointerNone.result.ok, pointerNone.result.ok ? "" : pointerNone.result.error.message).toBe(true);
     expect(pointerNone.result.value.ok).toBe(true);
