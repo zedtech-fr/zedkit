@@ -118,7 +118,7 @@ pnpm test                   # turbo: vitest in every package; not the line below
 pnpm test:registry          # node:test: test:registry:nodeploy globs + deploy/* (incl. packages/ai/scripts)
 pnpm test:registry:nodeploy # node:test without deploy/* (self-hosted CI path)
 # Compact agent gates (summary on stdout; full logs in .agent-logs/)
-pnpm agent test [pkg...]    # turbo test --output-logs=errors-only -- --reporter=minimal
+pnpm agent test [pkg...]    # turbo test --output-logs=errors-only; peels node --test targets
 pnpm agent node-test [glob] # node --test (default: test:registry:nodeploy globs)
 pnpm agent e2e [spec...]    # Playwright line+json
 pnpm agent lint [pkg...]    # eslint --format json, grouped (not docs extra checks)

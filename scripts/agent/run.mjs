@@ -26,7 +26,7 @@ export const DIFF_EXCLUDES = [":!pnpm-lock.yaml", ":!**/registry.json", ":!docs/
 export const USAGE = `usage: pnpm agent <task> [args...]
        node scripts/agent/run.mjs <task> [args...]
 tasks:
-  test [pkg-or-filter...]   turbo test, vitest --reporter=minimal
+  test [pkg-or-filter...]   turbo test --output-logs=errors-only
   node-test [globs...]      node --test (default: test:registry:nodeploy globs)
   e2e [spec-or-args...]     Playwright line+json (apps/docs)
   lint [pkg...]             eslint --format json (not docs extra checks)
@@ -37,8 +37,8 @@ tasks:
 logs: .agent-logs/<timestamp>-<pid>-<task>.log  (gitignored)
   test also routes node --test targets (.mjs/.cjs or scripts|apps/docs|deploy|packages/ai/scripts)
   * globs peel only in those dirs or with a .mjs/.cjs suffix
-  flags-only test args stay turbo; peel needs a non-flag node-test target
-  or a leading --test / node --test
+  Peel when every non-flag target is a node-test target (no --filter/@),
+  or with leading --test / node --test; vitest --reporter flags are dropped on peel
 `;
 
 const MAX_BUFFER = 64 * 1024 * 1024;
@@ -130,14 +130,30 @@ export function splitTestArgs(args) {
   return { filters, extra, files };
 }
 
-function hasReporter(flags) {
-  return flags.some((flag) => flag === "--reporter" || flag.startsWith("--reporter="));
+export function stripVitestReporterArgs(args) {
+  const out = [];
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--reporter") {
+      const next = args[i + 1];
+      if (next !== undefined && !String(next).startsWith("-")) i += 1;
+      continue;
+    }
+    if (String(arg).startsWith("--reporter=")) continue;
+    out.push(arg);
+  }
+  return out;
 }
 
 export function buildTestArgv(args) {
   const { filters, extra, files } = splitTestArgs(args);
-  const reporter = hasReporter(extra) ? [] : ["--reporter=minimal"];
-  return ["turbo", "run", "test", "--output-logs=errors-only", ...filters, "--", ...reporter, ...extra, ...files];
+  const passthrough = [...extra, ...files];
+  // Do not inject --reporter after --: pnpm appends it to chained scripts
+  // (devtools: vitest run && node --test), and node exits 9 on unknown flags.
+  if (passthrough.length === 0) {
+    return ["turbo", "run", "test", "--output-logs=errors-only", ...filters];
+  }
+  return ["turbo", "run", "test", "--output-logs=errors-only", ...filters, "--", ...passthrough];
 }
 
 export function buildTypecheckArgv(args) {
@@ -202,15 +218,20 @@ export function isNodeTestTarget(arg) {
 }
 
 export function peelNodeTestArgs(args) {
-  if (args[0] === "node" && args[1] === "--test") return { nodeTest: true, rest: args.slice(2) };
-  if (args[0] === "--test") return { nodeTest: true, rest: args.slice(1) };
-  const targets = args.filter((arg) => !arg.startsWith("-"));
+  if (args[0] === "node" && args[1] === "--test") {
+    return { nodeTest: true, rest: stripVitestReporterArgs(args.slice(2)) };
+  }
+  if (args[0] === "--test") {
+    return { nodeTest: true, rest: stripVitestReporterArgs(args.slice(1)) };
+  }
+  const stripped = stripVitestReporterArgs(args);
+  const targets = stripped.filter((arg) => !arg.startsWith("-"));
   if (
     targets.length > 0 &&
     targets.every(isNodeTestTarget) &&
-    !args.some((arg) => arg.startsWith("--filter") || arg.startsWith("@"))
+    !stripped.some((arg) => arg.startsWith("--filter") || arg.startsWith("@"))
   ) {
-    return { nodeTest: true, rest: args };
+    return { nodeTest: true, rest: stripped };
   }
   return { nodeTest: false, rest: args };
 }

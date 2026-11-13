@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import {
   DIFF_EXCLUDES,
   LIMITS,
+  USAGE,
   buildE2eArgv,
   buildLintArgv,
   buildNodeTestArgv,
@@ -210,15 +211,27 @@ describe("node-test formatting", () => {
 
   it("peels node --test argv off `test` and treats .mjs globs as node-test", () => {
     assert.deepEqual(peelNodeTestArgs(["node", "--test", "scripts/foo.test.mjs"]).rest, ["scripts/foo.test.mjs"]);
+    assert.deepEqual(peelNodeTestArgs(["node", "--test", "--reporter=json", "scripts/foo.test.mjs"]).rest, [
+      "scripts/foo.test.mjs",
+    ]);
     assert.equal(peelNodeTestArgs(["scripts/*.test.mjs"]).nodeTest, true);
     assert.equal(peelNodeTestArgs(["@zedtech/zedkit-core"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["packages/core/src/foo.test.ts"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["--reporter=json"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["--test-name-pattern", "foo"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["--reporter=json", "scripts/foo.test.mjs"]).nodeTest, true);
+    assert.deepEqual(peelNodeTestArgs(["--reporter=json", "scripts/foo.test.mjs"]).rest, ["scripts/foo.test.mjs"]);
+    assert.equal(peelNodeTestArgs(["--reporter", "json", "scripts/foo.test.mjs"]).nodeTest, true);
+    assert.deepEqual(peelNodeTestArgs(["--reporter", "json", "scripts/foo.test.mjs"]).rest, ["scripts/foo.test.mjs"]);
+    assert.equal(peelNodeTestArgs(["scripts/foo.test.mjs", "@zedtech/zedkit-core"]).nodeTest, false);
+    assert.equal(peelNodeTestArgs(["--filter=@zedtech/zedkit-core", "scripts/foo.test.mjs"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["packages/core/src/*.test.ts"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["packages/core/**/*.test.ts"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["packages/ai/scripts/*.test.mjs"]).nodeTest, true);
+    assert.match(
+      USAGE,
+      /Peel when every non-flag target is a node-test target \(no --filter\/@\),/,
+    );
   });
 
   it("defaults node-test globs to test:registry:nodeploy", () => {
@@ -316,9 +329,8 @@ describe("run() wiring", () => {
       spawn: (_cmd, args) => {
         assert.ok(args.includes("--output-logs=errors-only"));
         assert.ok(args.includes("--filter=@zedtech/zedkit-core"));
-        const dash = args.indexOf("--");
-        assert.ok(dash >= 0);
-        assert.equal(args[dash + 1], "--reporter=minimal");
+        assert.equal(args.includes("--reporter=minimal"), false);
+        assert.equal(args.includes("--"), false);
         return { status: 17, stdout: VITEST_FAIL, stderr: "" };
       },
     });
@@ -328,6 +340,21 @@ describe("run() wiring", () => {
     const log = join(dir, ".agent-logs", `${STAMP}-test.log`);
     assert.match(readFileSync(log, "utf8"), /FAIL {2}packages\/core/);
     assert.match(out, new RegExp(`LOG {2}.*${STAMP}-test\\.log`));
+  });
+
+  it("strips vitest --reporter flags when peeling test to node --test", (t) => {
+    const dir = scratch(t, "agent-run-peel-reporter-");
+    const calls = [];
+    const { code } = capture(["test", "--reporter=json", "scripts/foo.test.mjs"], {
+      cwd: dir,
+      execPath: "/usr/bin/node",
+      spawn: (cmd, args) => {
+        calls.push([cmd, args]);
+        return { status: 0, stdout: "", stderr: "" };
+      },
+    });
+    assert.equal(code, 0);
+    assert.deepEqual(calls[0], ["/usr/bin/node", ["--test", "scripts/foo.test.mjs"]]);
   });
 
   it("routes `test --test` to node --test, not turbo", (t) => {
@@ -355,12 +382,14 @@ describe("run() wiring", () => {
     assert.equal(spawned, false);
   });
 
-  it("buildTestArgv puts --reporter=minimal after -- even with filters", () => {
+  it("buildTestArgv does not pass --reporter after -- (chained node --test scripts)", () => {
     const argv = buildTestArgv(["@zedtech/zedkit-ai"]);
-    const dash = argv.indexOf("--");
-    assert.ok(dash >= 0);
-    assert.equal(argv[dash + 1], "--reporter=minimal");
-    assert.ok(argv.slice(0, dash).includes("--filter=@zedtech/zedkit-ai"));
+    assert.equal(argv.includes("--reporter=minimal"), false);
+    assert.equal(argv.includes("--"), false);
+    assert.ok(argv.includes("--filter=@zedtech/zedkit-ai"));
+    const withFile = buildTestArgv(["packages/core/src/foo.test.ts"]);
+    assert.ok(withFile.includes("--"));
+    assert.equal(withFile.includes("--reporter=minimal"), false);
   });
 
   it("keeps a vitest glob with * on turbo, not node --test", (t) => {
