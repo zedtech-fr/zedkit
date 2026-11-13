@@ -10,60 +10,19 @@ import {
   PageHeader,
   Stack,
   Text,
-  UpdatedAgo,
-  formatDuration,
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { issueRunPath, unlinkedRunPath } from "../model/review-routes";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
-import { LatestStatusMark } from "./issue-status";
-
-function TimelineRow({
-  entry,
-  href,
-  copy,
-}: {
-  entry: TimelineEntry;
-  href: string;
-  copy: ReviewsCopy;
-}) {
-  return (
-    <Stack direction="horizontal" gap="sm" className="flex-wrap items-center border-b border-border py-row">
-      <Button asChild variant="link" className="min-h-target w-fit">
-        <Link href={href}>
-          {copy.type[entry.type]}
-        </Link>
-      </Button>
-      {entry.verdict !== null ? (
-        <LatestStatusMark status={entry.verdict} copy={copy} />
-      ) : (
-        <LatestStatusMark status={entry.status} copy={copy} />
-      )}
-      {entry.models.length > 0 ? (
-        <Text variant="muted" typeRole="caption">
-          {entry.models.join(", ")}
-        </Text>
-      ) : null}
-      {entry.durationMs !== null ? (
-        <Text variant="muted" typeRole="caption">
-          {formatDuration(entry.durationMs)}
-        </Text>
-      ) : null}
-      <UpdatedAgo date={new Date(entry.startedAt)} />
-    </Stack>
-  );
-}
+import { TimelineRow } from "./review-timeline-row";
 
 function Timeline({
   entries,
-  hrefFor,
   copy,
   empty,
 }: {
   entries: readonly TimelineEntry[];
-  hrefFor: (entry: TimelineEntry) => string;
   copy: ReviewsCopy;
   empty: string;
 }) {
@@ -79,7 +38,7 @@ function Timeline({
         <ul aria-labelledby={headingId}>
           {entries.map((entry) => (
             <li key={entry.id}>
-              <TimelineRow entry={entry} href={hrefFor(entry)} copy={copy} />
+              <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
             </li>
           ))}
         </ul>
@@ -115,12 +74,7 @@ export function ReviewPrView({
           </Text>
         ) : null}
       </Stack>
-      <Timeline
-        entries={issue.entries}
-        hrefFor={(entry) => issueRunPath(issue.number, entry.runId)}
-        copy={copy}
-        empty={copy.issue.timelineEmpty}
-      />
+      <Timeline entries={issue.entries} copy={copy} empty={copy.issue.timelineEmpty} />
     </ReviewAppearanceFrame>
   );
 }
@@ -144,7 +98,6 @@ export function UnlinkedPrView({
       />
       <Timeline
         entries={pullRequest.entries}
-        hrefFor={(entry) => unlinkedRunPath(pullRequest.number, entry.runId)}
         copy={copy}
         empty={copy.unlinked.timelineEmpty}
       />

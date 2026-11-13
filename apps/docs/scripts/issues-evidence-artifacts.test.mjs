@@ -25,13 +25,6 @@ const EVIDENCE_FILES = [
   "issues-108-glass-dark-1440.png",
   "issues-108-volt-light-1440.png",
   "issues-108-volt-dark-1440.png",
-  "issues-108-run-impl-1440.png",
-  "issues-108-run-impl-390.png",
-  "issues-108-run-20261111T065452Z-bc07a1a9-1440.png",
-  "issues-108-run-20261111T065452Z-bc07a1a9-390.png",
-  "issues-108-run-20261111T065452Z-bc07a1a9-console-1440.png",
-  "issues-93-run-impl-1440.png",
-  "issues-93-run-impl-390.png",
   "issues-load-error-375-light.png",
   "issues-load-error-375-dark.png",
   "issues-load-error-809-light.png",
@@ -40,7 +33,7 @@ const EVIDENCE_FILES = [
   "issues-load-error-1440-dark.png",
 ];
 
-test("issue list, issue 108, and run-page evidence PNGs exist under the artefact cap", () => {
+test("issue list and issue 108 evidence PNGs exist under the artefact cap", () => {
   for (const name of EVIDENCE_FILES) {
     const path = join(evidenceDir, name);
     const stat = statSync(path);

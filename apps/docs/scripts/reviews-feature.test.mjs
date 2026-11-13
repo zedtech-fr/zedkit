@@ -35,6 +35,7 @@ import {
   listIssueRunParamsFrom,
   listIssueSitemapPathsFrom,
   listReviewPrParamsFrom,
+  listIssueRunRedirectsFrom,
   listReviewRedirectsFrom,
   listReviewRunParamsFrom,
   listReviewSitemapPathsFrom,
@@ -42,6 +43,7 @@ import {
   listUnlinkedRunParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
+  runRedirectTarget,
   RETIRED_REVIEW_PR_NUMBERS,
   unlinkedPrPath,
   unlinkedRunPath,
@@ -837,9 +839,9 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
   const sitemap = await listIssueSitemapPaths(path);
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
-  assert.ok(sitemap.includes("/issues/108/runs/run-108-impl"));
+  assert.equal(sitemap.includes("/issues/108/runs/run-108-impl"), false);
   assert.ok(sitemap.includes("/issues/pr/54"));
-  assert.ok(sitemap.includes("/issues/pr/54/runs/run-54-review"));
+  assert.equal(sitemap.includes("/issues/pr/54/runs/run-54-review"), false);
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
@@ -1220,10 +1222,10 @@ test("inventory-scale static params and sitemap stay on /issues paths", async ()
   const sitemap = await listIssueSitemapPathsFrom(port);
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
-  assert.ok(sitemap.includes("/issues/108/runs/run-108-impl"));
+  assert.equal(sitemap.includes("/issues/108/runs/run-108-impl"), false);
   assert.ok(sitemap.includes("/issues/93"));
   assert.ok(sitemap.includes("/issues/pr/64"));
-  assert.ok(sitemap.includes("/issues/pr/64/runs/run-64-review"));
+  assert.equal(sitemap.includes("/issues/pr/64/runs/run-64-review"), false);
   assert.equal(sitemap.includes("/issues/99"), false);
   assert.equal(
     sitemap.some((item) => item.startsWith("/reviews")),
@@ -1301,12 +1303,11 @@ test("issues views drop the inline preview form and keep the shared frame", () =
   const frame = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
   const list = readFileSync(join(reviewsRoot, "ui", "review-list-view.tsx"), "utf8");
   const issue = readFileSync(join(reviewsRoot, "ui", "review-pr-view.tsx"), "utf8");
-  const run = readFileSync(join(reviewsRoot, "ui", "review-run-view.tsx"), "utf8");
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
   const fixture = readFileSync(join(reviewsRoot, "adapters", "fixture.ts"), "utf8");
   assert.doesNotMatch(fixture, /Appearance panel/);
   assert.doesNotMatch(fixture, /preview look/);
-  for (const source of [frame, list, issue, run]) {
+  for (const source of [frame, list, issue]) {
     assert.doesNotMatch(source, /ReviewAppearancePanel/);
     assert.doesNotMatch(source, /Preview look/);
     assert.doesNotMatch(source, /copy\.appearance/);
@@ -1399,7 +1400,7 @@ test("list view shows a static load error and does not ship a sample notice", ()
   assert.doesNotMatch(list, /window\.location\.reload/);
   assert.doesNotMatch(list, /ReviewSampleNotice/);
   assert.doesNotMatch(list, /showSampleNotice/);
-  for (const file of ["review-pr-view.tsx", "review-run-view.tsx"]) {
+  for (const file of ["review-pr-view.tsx", "review-timeline-row.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.doesNotMatch(source, /ReviewSampleNotice/);
     assert.doesNotMatch(source, /showSampleNotice/);
@@ -1450,21 +1451,27 @@ test("list and timeline views read from issue records, not a PR console", () => 
   assert.match(list, /aria-label=\{copy\.list\.title\}/);
   assert.match(list, /aria-labelledby=\{unlinkedHeadingId\}/);
   assert.match(list, /runCountLabel/);
-  assert.match(timeline, /copy\.type/);
-  assert.match(timeline, /entry\.runId/);
+  assert.match(timeline, /TimelineRow/);
+  assert.match(timeline, /entry\.liveUrl/);
   assert.match(timeline, /aria-labelledby/);
   assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
   assert.doesNotMatch(list, /ReviewConsole/);
   assert.doesNotMatch(timeline, /ReviewConsole/);
 });
 
-test("list title href is the latest run; Timeline is the labelled secondary", () => {
+test("list rows are closed native details; steps and Timeline stay in the panel", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
-  assert.match(list, /latestEntry\(issue\.entries\)/);
-  assert.match(list, /last\s*\?\s*issueRunPath\(issue\.number, last\.runId\)\s*:\s*issuePath\(issue\.number\)/);
-  assert.match(list, /last\s*\?\s*unlinkedRunPath\(entry\.number, last\.runId\)\s*:\s*unlinkedPrPath\(entry\.number\)/);
+  assert.match(list, /<details data-issues-row=""/);
+  assert.match(list, /<summary className="flex min-h-target cursor-pointer list-none/);
+  assert.match(list, /\[&::-webkit-details-marker\]:hidden/);
+  assert.doesNotMatch(list, /\sopen[=\s>{]/);
+  assert.doesNotMatch(list, /Accordion/);
+  assert.doesNotMatch(list, /issueRunPath/);
+  assert.doesNotMatch(list, /unlinkedRunPath/);
   assert.match(list, /unlinkedPrPath/);
   assert.match(list, /copy\.issue\.timeline/);
+  assert.match(list, /<StepsPanel[\s\S]*timelineHref=\{issuePath\(issue\.number\)\}/);
+  assert.match(list, /<StepsPanel[\s\S]*timelineHref=\{unlinkedPrPath\(entry\.number\)\}/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /\/runs\/`/);
   assert.doesNotMatch(list, /\/runs\/\$\{/);
@@ -1473,24 +1480,30 @@ test("list title href is the latest run; Timeline is the labelled secondary", ()
 test("unlinked and timeline links take their accessible name from visible title text", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  assert.match(list, /<Link\s+href=\{\s*last\s*\?\s*unlinkedRunPath\(entry\.number, last\.runId\)\s*:\s*unlinkedPrPath\(entry\.number\)\s*\}\s*>\s*#\{entry\.number\}/);
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  assert.match(list, /#\{entry\.number\}/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
-  assert.match(timeline, /<Link href=\{href\}>\s*\{copy\.type\[entry\.type\]\}/);
+  assert.doesNotMatch(list, /<summary[^>]*aria-label/);
+  assert.match(timeline, /href=\{entry\.liveUrl\}/);
+  assert.match(row, /copy\.type\[entry\.type\]/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
+  assert.doesNotMatch(row, /aria-label/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
 });
 
 test("list and timeline rows use row padding, not section padding", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
-  assert.match(list, /flex-wrap items-center border-b border-border py-row max-md:flex-col/);
-  assert.match(timeline, /flex-wrap items-center border-b border-border py-row/);
+  assert.match(list, /content-shrink flex-1 flex-wrap items-center max-md:flex-col max-md:items-stretch/);
+  assert.match(list, /py-row focus-ring-control/);
+  assert.match(row, /flex-wrap items-center border-b border-border py-row/);
   assert.doesNotMatch(timeline, /max-md:flex-col/);
   assert.doesNotMatch(list, /py-section-sm/);
-  assert.doesNotMatch(timeline, /py-section-sm/);
+  assert.doesNotMatch(row, /py-section-sm/);
   assert.match(frame, /<Stack gap="lg">\{children\}<\/Stack>/);
   assert.doesNotMatch(frame, /children\(panel\)/);
 });
@@ -1506,10 +1519,9 @@ test("list stays in the shared wide frame and stacks title then meta below md", 
   assert.doesNotMatch(list, /width="full"/);
   assert.doesNotMatch(list, /MarketingSiteHeader|MobileHeader|pathname/);
   assert.doesNotMatch(frame, /pathname/);
-  assert.equal([...list.matchAll(/<ListScanRow/g)].length, 2);
-  assert.match(list, /<ListScanRow[\s\S]*title=\{[\s\S]*copy\.issue\.timeline/);
-  assert.match(list, /<ListScanRow[\s\S]*meta=\{[\s\S]*UpdatedAgo/);
-  assert.match(list, /last \? \(/);
+  assert.equal([...list.matchAll(/<details /g)].length, 2);
+  assert.match(list, /<RowSummary[\s\S]*meta=\{[\s\S]*UpdatedAgo/);
+  assert.match(list, /<StepsPanel[\s\S]*copy\.issue\.timeline/);
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
 });
@@ -1524,12 +1536,15 @@ test("verdict and status tones live in one shared module", () => {
   assert.match(status, /from "\.\/review-badges"/);
   assert.match(status, /STATUS_BADGE/);
   assert.doesNotMatch(status, /StatusLabel/);
-  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
+  for (const file of ["review-list-view.tsx", "review-timeline-row.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.match(source, /from "\.\/issue-status"/);
     assert.doesNotMatch(source, /const VERDICT_BADGE/);
     assert.doesNotMatch(source, /const STATUS_TONE/);
   }
+  const prView = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.doesNotMatch(prView, /const VERDICT_BADGE/);
+  assert.doesNotMatch(prView, /const STATUS_TONE/);
 });
 
 function liveItem(overrides = {}) {
@@ -2151,26 +2166,25 @@ test("appearance share write keeps the selection hash", () => {
   );
 });
 
-test("live-backed issue runs mount AgentConsole; index-only runs still link out", () => {
+test("live-backed issue runs mount AgentConsole; index-only runs redirect", () => {
   const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
-  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
   const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
   assert.match(consoleView, /AgentConsole/);
   assert.match(feature, /toAgentConsole/);
   assert.match(feature, /ReviewConsoleView/);
   assert.match(feature, /runId=\{id\}/);
+  assert.match(feature, /runRedirectTarget\(run\.liveUrl/);
   assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);
-  assert.match(run, /copy\.run\.openLive/);
-  assert.match(run, /copy\.run\.noLive/);
-  assert.match(run, /target="_blank"/);
-  assert.match(run, /rel="noreferrer"/);
-  assert.doesNotMatch(run, /ReviewConsole/);
-  assert.doesNotMatch(run, /AgentConsole/);
-  assert.doesNotMatch(run, /reviewMainFlow/);
-  assert.doesNotMatch(run, /ReviewAgentList/);
-  assert.doesNotMatch(run, /<iframe/);
+  assert.doesNotMatch(feature, /ReviewRunView/);
+  assert.doesNotMatch(feature, /UnlinkedRunView/);
+  assert.equal(existsSync(join(reviewsRoot, "ui/review-run-view.tsx")), false);
+  assert.match(row, /target="_blank"/);
+  assert.match(row, /rel="noreferrer"/);
+  assert.doesNotMatch(row, /ReviewConsole/);
+  assert.doesNotMatch(row, /AgentConsole/);
   assert.doesNotMatch(layout, /SiteLayout/);
   assert.match(layout, /<main id="main-content"/);
   assert.match(siteLayout, /SiteLayout/);
@@ -2179,7 +2193,6 @@ test("live-backed issue runs mount AgentConsole; index-only runs still link out"
 test("live console host calms finding surfaces without restyling the kit specimen", () => {
   const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
   const appearance = readFileSync(join(reviewsRoot, "ui/review-console-appearance.tsx"), "utf8");
-  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
   const panes = readFileSync(join(here, "../../../packages/ui/src/layout/agent-console-panes.tsx"), "utf8");
   const demo = readFileSync(join(here, "../components/demos/agent-console-demo.tsx"), "utf8");
   const cssPath = join(reviewsRoot, "ui/review-console-surfaces.css");
@@ -2216,38 +2229,44 @@ test("live console host calms finding surfaces without restyling the kit specime
   }
   assert.doesNotMatch(demo, /review-console-surfaces/);
   assert.doesNotMatch(demo, /agent-console-decision/);
-  const runBody = run.slice(run.indexOf("function RunBody"), run.indexOf("export function ReviewRunView"));
-  assert.match(runBody, /copy\.run\.noLive/);
-  assert.doesNotMatch(runBody, /AgentConsole/);
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  assert.doesNotMatch(row, /AgentConsole/);
 });
 
-test("index-only and unlinked run summaries sit on a calm surface with a site action", () => {
-  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
-  const runBodyStart = run.indexOf("function RunBody");
-  const reviewRunStart = run.indexOf("export function ReviewRunView");
-  const unlinkedStart = run.indexOf("export function UnlinkedRunView");
-  assert.notEqual(runBodyStart, -1);
-  assert.notEqual(reviewRunStart, -1);
-  assert.notEqual(unlinkedStart, -1);
-  const runBody = run.slice(runBodyStart, reviewRunStart);
-  assert.match(runBody, /<Surface[\s\S]*elevation=\{0\}[\s\S]*radius="xl"[\s\S]*bg-background/);
-  assert.match(runBody, /data-site-action=""/);
-  assert.match(runBody, /min-h-target/);
-  assert.match(runBody, /copy\.run\.openLive/);
-  assert.match(runBody, /copy\.run\.noLive/);
-  assert.match(runBody, /target="_blank"/);
-  assert.match(runBody, /rel="noreferrer"/);
-  assert.doesNotMatch(runBody, /variant="glass"/);
-  assert.doesNotMatch(runBody, /hover-lift/);
-  assert.doesNotMatch(runBody, /surface-tint/);
-  assert.doesNotMatch(runBody, /\bCard\b/);
-  assert.doesNotMatch(runBody, /AgentConsole/);
-  assert.doesNotMatch(runBody, /ReviewConsole/);
-  assert.doesNotMatch(run, /ReviewAppearancePanel/);
-  assert.doesNotMatch(run, /writeShareUrl/);
-  assert.equal([...run.matchAll(/<RunBody /g)].length, 2);
-  assert.match(run.slice(reviewRunStart, unlinkedStart), /<RunBody run=\{run\} copy=\{copy\} \/>/);
-  assert.match(run.slice(unlinkedStart), /<RunBody run=\{run\} copy=\{copy\} \/>/);
+test("index-only run URLs redirect to the hosted console or the issue page", async () => {
+  assert.equal(runRedirectTarget(hostedLiveHref("run-108-impl"), "/issues/108"), hostedLiveHref("run-108-impl"));
+  assert.equal(runRedirectTarget(null, "/issues/108"), "/issues/108");
+  const port = createSnapshotReviewPort(
+    writeSnapshot(
+      [issue()],
+      [
+        pr(),
+        {
+          number: 54,
+          issueNumber: null,
+          runIds: ["run-54-review"],
+          entries: [
+            entry({
+              id: "54-review",
+              runId: "run-54-review",
+              type: "review",
+              verdict: "comment",
+              liveUrl: null,
+            }),
+          ],
+        },
+      ],
+    ),
+  );
+  const redirects = await listIssueRunRedirectsFrom(port);
+  assert.ok(
+    redirects.some(
+      (row) => row.from === "/issues/108/runs/run-108-impl" && row.to === hostedLiveHref("run-108-impl"),
+    ),
+  );
+  assert.ok(
+    redirects.some((row) => row.from === "/issues/pr/54/runs/run-54-review" && row.to === "/issues/pr/54"),
+  );
 });
 
 test("toAgentConsole keeps confidence on /10 and converts durations to milliseconds", () => {

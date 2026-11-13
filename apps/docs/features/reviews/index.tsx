@@ -4,21 +4,20 @@
  * Customers: app teams who install @zedtech/zedkit-* or copy UI via the registry.
  * Customer personas: hurried visitor on a phone scanning real issue work; maintainer reproducing a look via share link.
  * UI decisions:
- * - Issue list at /issues with title, state, linked PRs, and latest status first; the title opens the latest run and Timeline is a labelled secondary — because: hurried visitor scans work and reaches a run in one click.
+ * - Issue list at /issues with title, state, linked PRs, and latest status first; each row is a native details accordion of that issue’s steps — because: hurried visitor reads every step inline without opening an empty run page.
  * - Separate unlinked-PR block — because: those runs must stay reachable without colliding with GitHub issue numbers.
  * - Public run history list stays in the shared appearance-frame Container (width wide) — because: a hurried visitor at 1440 expects the same centered column as an issue detail page.
- * - Issue and unlinked rows are two bands below md (title plus Timeline, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per run without chasing wrapped fragments.
+ * - Issue and unlinked summary rows are two bands below md (title, then badges and date), one scan row from md — because: a hurried visitor on a phone scans one band per issue without chasing wrapped fragments. Accordion panels stay closed until opened.
  * - Timeline is chronological stacked rows with type, models, duration, verdict/status — because: hurried visitor follows plan → implement → review → improve.
  * - Plan and implement are distinct rows even when they share a runId — because: they are separate phases of the work.
  * - Live-backed `/issues/N/runs/<id>` mounts the shared kit console — because: hurried visitor reads the recorded run in the shared shell.
- * - Index-only runs keep the hosted-console link (or a placeholder) — because: failed or in-progress rows without a console body still resolve, and this is not a second console.
- * - Index-only and unlinked run summaries sit on a hairline Surface (elevation 0, page fill) with a site-action hosted-console control — because: a hurried visitor reads on a white page; indigo is kit Glass primary and must not compete with the content.
+ * - Index-only `/issues/N/runs/<id>` (and unlinked run URLs) redirect to the allowlisted hosted-console href, or to the issue / unlinked page when that href is missing — because: bot comments still resolve, and the public runs API has no transcript to render here. Static export overwrites those HTML files with the same stub writer as `/reviews`.
  * - Appearance / ThemeScope frame stays as the page shell and an optional share-URL pin — because: a saved appearance query still reproduces a look; an empty query inherits the site so the dock is enough. Do not restore an inline form as a testing ground. The console uses `ReviewConsoleAppearanceFrame` (dense strip) only.
  * - Empty state says no public runs yet — because: the visitor always has a next thought.
  * - Load error uses the route PageHeader plus kit ErrorState with an All issues link and no Retry — because: a nested URL must not keep the list heading (WCAG 2.4.6), the HTML is baked at build time so a reload would serve the same page, and the visitor still needs a way off the dead-end.
  * - Not-found links back to /issues — because: a missing issue must not strand the visitor.
  * - List has no search or state/verdict filter — because: the public list is short enough to scan.
- * - Unlinked and timeline links use the visible title as the accessible name — because: speech-control users say the title they see (WCAG 2.5.3).
+ * - List summaries use the visible title as the accessible name; no extra aria-label and no nested links in the summary — because: speech-control users say the title they see (WCAG 2.5.3).
  * - List and timeline rows use py-row — because: hurried visitors at 390px need scan rhythm, not section padding between rows.
  * - Views stay client components — because: the frame is a client component that reads the share URL on mount.
  * - Retired /reviews/pr/64|79|80 stubs are export-only; run-level retired URLs 404 — because: run ids are unknowable once retired.
@@ -31,6 +30,7 @@ import { reviewsCopy } from "./i18n/reviews-copy";
 import { parsePrNumber } from "./model/pr-number";
 import {
   issueIndexRobotsFrom,
+  issuePath,
   linkedPrFallbackPath,
   linkedPrRunFallbackPath,
   listIssueParamsFrom,
@@ -41,6 +41,8 @@ import {
   listUnlinkedRunParamsFrom,
   redirectPathForPr,
   redirectPathForPrRun,
+  runRedirectTarget,
+  unlinkedPrPath,
 } from "./model/review-routes";
 import { toAgentConsole } from "./model/to-agent-console";
 import { isRunRecord } from "./ports/review-port";
@@ -49,7 +51,6 @@ import { ReviewLoadErrorView } from "./ui/review-load-error-view";
 import { ReviewNotFoundView } from "./ui/review-not-found-view";
 import { ReviewListView } from "./ui/review-list-view";
 import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
-import { ReviewRunView, UnlinkedRunView } from "./ui/review-run-view";
 
 const port = createSiteReviewPort();
 
@@ -144,7 +145,7 @@ export async function ReviewIssueRunFeature({
     notFound();
   }
   if (isRunRecord(run)) {
-    return <ReviewRunView issue={issue} run={run} copy={reviewsCopy} />;
+    redirect(runRedirectTarget(run.liveUrl, issuePath(issue.number)));
   }
   const mapped = toAgentConsole(run);
   return (
@@ -171,9 +172,7 @@ export async function ReviewUnlinkedRunFeature({
     number === null ? null : await port.getUnlinkedPullRequest(number);
   const run = number === null ? null : await port.getUnlinkedRun(number, id);
   if (pullRequest !== null && run !== null) {
-    return (
-      <UnlinkedRunView pullRequest={pullRequest} run={run} copy={reviewsCopy} />
-    );
+    redirect(runRedirectTarget(run.liveUrl, unlinkedPrPath(pullRequest.number)));
   }
   const resolved = number === null ? null : await port.resolvePr(number);
   if (resolved !== null && resolved.runIds.includes(id)) {

@@ -92,14 +92,14 @@ test("public review files map to /issues", () => {
   ]);
 });
 
-test("reviews diffs also add published index-only run pages when they are in the sitemap", () => {
+test("reviews diffs map to /issues even when run URLs are still in the sitemap", () => {
   assert.deepEqual(
     docsRenderRoutes({
       files: ["apps/docs/features/reviews/ui/review-console-surfaces.css"],
       manifest: buttonManifest,
       sitemapRoutes: ["/", "/issues", "/issues/108/runs/run-108-impl", "/issues/93/runs/run-93-impl"],
-    }).sort(),
-    ["/issues", "/issues/108/runs/run-108-impl", "/issues/93/runs/run-93-impl"].sort(),
+    }),
+    ["/issues"],
   );
 });
 
