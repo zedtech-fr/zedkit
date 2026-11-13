@@ -18,8 +18,10 @@ Use this template for writing the PR body:
 
 ## Evidence
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
+Required on a UI surface; omit on non-UI. Link `summary.md` or the visual-verify run record and published PNGs.
+
+- **Before:** <PNG or run-record link>
+  **After:** <PNG or run-record link>
 
 ## Merge Danger
 
@@ -157,11 +159,7 @@ You may use one of these, you may use several, it is unlikely you will use all o
 
 ### Evidence
 
-Concrete evidence that the change works. Show a before and after.
-
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
-
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
+Required on a UI surface (`*.tsx` / `*.jsx` / `*.css`; omit on non-UI). Link `summary.md` when `zedkit-ai evidence` exists, otherwise the visual-verify run record and published PNGs. Links, not inlined binaries.
 
 ### Merge Danger
 

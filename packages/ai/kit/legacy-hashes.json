@@ -308,11 +308,13 @@
       "7111538c1cb7fc4c",
       "76409b1a7447fb25",
       "7a8aab2931baa3b9",
+      "958f80ce9d0bd21b",
       "9a581fc525c32601",
       "a252e1f213859a63",
       "a8d40781e9560018",
       "aa4e9422820f83a6",
       "b3e4b0a8a7c4e27a",
+      "b9013b0867a51ae5",
       "c276db5b2d326f6a",
       "ca6b53df52c6aeec",
       "ce8125c0a6eda1f6",
@@ -373,7 +375,7 @@
     "ponytail-help/SKILL.md": ["86ab0ce0af70cbee"],
     "ponytail-review/SKILL.md": ["46020d063d116c62"],
     "pr/CREDITS.md": ["a7a087127665d729"],
-    "pr/SKILL.md": ["ab63f1cf78647389"],
+    "pr/SKILL.md": ["488353edfb1224e0", "ab63f1cf78647389"],
     "pr/agents/openai.yaml": ["2295b586624db4ef"],
     "quick-wins/SKILL.md": ["4f79c03380a7b8ab"],
     "research/SKILL.md": [
@@ -680,6 +682,6 @@
       "8c29724d176c9a6d",
       "f7fd4c59787acde1"
     ],
-    "visual-verify/SKILL.md": ["b03405c19aba6a88"]
+    "visual-verify/SKILL.md": ["3b07acca0143018b", "b03405c19aba6a88"]
   }
 }
