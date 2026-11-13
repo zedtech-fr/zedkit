@@ -24,7 +24,7 @@ const badgeVariants = cva(
         "soft-success":
           "border-transparent badge-soft-success px-badge-inline py-badge-block font-semibold text-success",
         "soft-warning":
-          "border-transparent badge-soft-warning px-badge-inline py-badge-block font-semibold text-warning-foreground",
+          "border-transparent badge-soft-warning px-badge-inline py-badge-block font-semibold text-warning",
         "soft-danger":
           "border-transparent badge-soft-destructive px-badge-inline py-badge-block font-semibold text-destructive",
         "soft-info":
