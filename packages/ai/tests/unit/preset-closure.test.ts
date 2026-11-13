@@ -53,6 +53,7 @@ describe("preset closure", () => {
       "domain-modeling",
       "persona-review",
       "compose-ui",
+      "visual-verify",
       "code-review",
       "ponytail-review",
       "retro",

@@ -49,20 +49,31 @@
   },
   "files": [
     "dist",
-    "kit"
+    "kit",
+    "scripts/visual-verify.mjs"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.tests.json",
-    "lint": "eslint src tests",
+    "lint": "eslint src tests scripts",
     "kit:md": "prettier --check kit"
   },
   "dependencies": {
     "@zedtech/zedkit-core": "workspace:*",
     "yaml": "catalog:"
   },
+  "peerDependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@playwright/test": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@axe-core/playwright": { "optional": true },
+    "@playwright/test": { "optional": true }
+  },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zedtech/zedkit-quality": "workspace:*",
     "prettier": "3.9.10",

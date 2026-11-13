@@ -1306,7 +1306,8 @@ describe("installKit", () => {
     // 29 for `from-audit` / `to-audit` (orchestrate-first audit entrypoints).
     // 32 for `fix`, `improve-from-review` and `quick-wins` (short path, review punchlist, two-mode topic).
     // 33 for `triage` (issue inbox on setup and core, not only full).
-    expect(core.length).toBeLessThanOrEqual(33);
+    // 34 for `visual-verify` (host command for Visual work).
+    expect(core.length).toBeLessThanOrEqual(34);
   });
 
   it("core-installed skills only name skills and agents that core installs", () => {
