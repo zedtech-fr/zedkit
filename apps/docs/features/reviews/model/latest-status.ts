@@ -49,7 +49,7 @@ export function entryUpdatedAt(entry: TimelineEntry): string {
 }
 
 /**
- * Copy sorted for the `/issues` accordion: running first, then newest
+ * Copy sorted for the `/issues` list: running first, then newest
  * `endedAt ?? startedAt`, then `id` descending. Does not mutate input.
  * Port `sortEntries` stays oldest-first.
  */

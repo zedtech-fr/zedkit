@@ -37,8 +37,11 @@ export const reviewsCopy = {
   },
   list: {
     title: "Issues",
-    description: "Public work log: open a row to see how each issue was planned, built, and reviewed.",
+    description: "Public work log of how each issue was planned, built, and reviewed.",
     empty: "No public runs yet",
+    openList: "Issue list",
+    missing: "This issue or pull request is not on the public list.",
+    missingNext: "Choose another from the list.",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
     githubIssue: "Issue",
@@ -49,7 +52,9 @@ export const reviewsCopy = {
     run: "run",
     runs: "runs",
     took: "Took",
+    duration: "Duration",
     finished: "Finished",
+    started: "Started",
     opensInNewTab: "opens in a new tab",
   },
   issue: {
