@@ -1,6 +1,6 @@
 import type { IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { LIMITS } from "./identity-assistant-limits.ts";
+import { LIMITS } from "../model/identity-assistant-limits.ts";
 
 /**
  * The page's side of the identity suggest service (`deploy/suggest`). One function sends a brief and gets back one
@@ -63,7 +63,7 @@ export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 
 const UNAVAILABLE = new Set<string>(["disabled", "not-configured", "unavailable", "killed"]);
 
-export { newRequestId } from "./identity-request-id.ts";
+export { newRequestId } from "../model/identity-request-id.ts";
 
 /** The limits the service enforces, checked here too so a visitor is told before anything is sent. */
 export function checkInput(input: Pick<AssistantInput, "prompt" | "references">): "ok" | "empty" | "too-long" | "too-many-references" {

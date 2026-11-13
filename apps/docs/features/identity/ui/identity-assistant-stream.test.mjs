@@ -3,8 +3,8 @@ import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import { requestIdentityStream } from "../lib/identity-assistant-stream.ts";
-import { ASSISTANT_URL } from "../lib/identity-assistant.ts";
+import { requestIdentityStream } from "./identity-assistant-stream.ts";
+import { ASSISTANT_URL } from "./identity-assistant.ts";
 
 const CURRENT = identityPresets.mist;
 const input = (over = {}) => ({ requestId: "request-0001", prompt: "A quiet studio for ceramics", history: [], references: [], current: CURRENT, ...over });

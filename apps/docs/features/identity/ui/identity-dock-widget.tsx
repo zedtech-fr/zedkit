@@ -12,17 +12,17 @@ import {
   useIdentity,
 } from "@zedtech/zedkit-ui";
 
-import { IdentityDock, IdentityDockSwatch, IdentityDockTrigger } from "@/components/identity-dock-chrome";
+import { IdentityDock, IdentityDockSwatch, IdentityDockTrigger } from "@/features/identity/ui/identity-dock-chrome";
 import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
-import { IdentityDockAssistantPanel } from "@/components/identity-dock-assistant-panel";
-import { useCreatorHandoff } from "@/components/use-creator-handoff";
-import { useIdentityDockKeyboard } from "@/components/use-identity-dock-keyboard";
+import { IdentityDockAssistantPanel } from "@/features/identity/ui/identity-dock-assistant-panel";
+import { useCreatorHandoff } from "@/features/identity/ui/use-creator-handoff";
+import { useIdentityDockKeyboard } from "@/features/identity/ui/use-identity-dock-keyboard";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 import { docsSiteDefaultTokens } from "@/lib/docs-site-default-tokens";
 import { readDockSiteTokens } from "@/lib/docs-site-look";
-import { consumeCreateArrival } from "@/lib/identity-create-arrival";
-import { IDENTITY_DOCK_OPEN } from "@/lib/identity-dock-open";
-import { useIdentityAssistantStore } from "@/lib/identity-assistant-store";
+import { consumeCreateArrival } from "@/features/identity/ui/identity-create-arrival";
+import { IDENTITY_DOCK_OPEN } from "@/features/identity/ui/identity-dock-open";
+import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 
 function useEditorDockAutoOpen(

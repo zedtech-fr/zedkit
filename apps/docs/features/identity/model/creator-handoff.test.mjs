@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { HANDOFF_KEY, readCreatorHandoff, writeCreatorHandoff } from "../lib/creator-handoff.ts";
+import { HANDOFF_KEY, readCreatorHandoff, writeCreatorHandoff } from "./creator-handoff.ts";
 
 function store(initial = {}) {
   const data = new Map(Object.entries(initial));

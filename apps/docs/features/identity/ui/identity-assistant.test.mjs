@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import { ASSISTANT_URL, checkInput, fetchAssistantStatus, newRequestId, requestIdentity, trimHistory } from "../lib/identity-assistant.ts";
+import { ASSISTANT_URL, checkInput, fetchAssistantStatus, newRequestId, requestIdentity, trimHistory } from "./identity-assistant.ts";
 
 const CURRENT = identityPresets.mist;
 const input = (over = {}) => ({ requestId: "request-0001", prompt: "A quiet studio for ceramics", history: [], references: [], current: CURRENT, ...over });
@@ -107,7 +107,7 @@ test("a report is read as far as it is believed: at most the links that were sen
 });
 
 test("a reason is worded from a closed list: nothing the service sends can name a property of Object", async () => {
-  const { referenceReason } = await import("../components/i18n/identity-assistant-copy.ts");
+  const { referenceReason } = await import(new URL("../../../components/i18n/identity-assistant-copy.ts", import.meta.url).href);
   for (const reason of ["constructor", "__proto__", "toString", "status-99999", "status-abc", undefined]) {
     assert.equal(referenceReason(reason), "it could not be read", String(reason));
   }

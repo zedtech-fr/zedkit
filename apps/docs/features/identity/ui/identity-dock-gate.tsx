@@ -3,11 +3,11 @@
 import dynamic from "next/dynamic";
 import { useEffect, useLayoutEffect } from "react";
 
-import { captureCreateArrival } from "@/lib/identity-create-arrival";
-import { useIdentityAssistantStore } from "@/lib/identity-assistant-store";
+import { captureCreateArrival } from "@/features/identity/ui/identity-create-arrival";
+import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
 
 const IdentityDockLazyShell = dynamic(
-  () => import("@/components/identity-dock-lazy-shell").then((mod) => ({ default: mod.IdentityDockLazyShell })),
+  () => import("@/features/identity/ui/identity-dock-lazy-shell").then((mod) => ({ default: mod.IdentityDockLazyShell })),
   { ssr: false },
 );
 
@@ -18,7 +18,7 @@ export function IdentityDockGate() {
     captureCreateArrival();
   }, []);
   useEffect(() => {
-    void import("@/components/identity-dock-lazy-shell");
+    void import("@/features/identity/ui/identity-dock-lazy-shell");
   }, []);
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

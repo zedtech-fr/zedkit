@@ -35,7 +35,7 @@ kit: `pnpm exec turbo run build --filter=@zedtech/zedkit-ui`.
    request. Maintainers control all of it from [README.md](README.md).
 5. **Logs name no brief, URL or address.**
 
-The suggest client lives in `apps/docs/lib/identity-assistant.ts`; its
+The suggest client lives in `apps/docs/features/identity/ui/identity-assistant.ts`; its
 rules are in [apps/docs/AGENTS.md](../apps/docs/AGENTS.md).
 
 ## Domain and identity

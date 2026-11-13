@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import { readCreatorHandoff } from "@/lib/creator-handoff";
-import { readCreatorSessionBrief } from "@/lib/creator-session-brief";
+import { readCreatorHandoff } from "@/features/identity/model/creator-handoff";
+import { readCreatorSessionBrief } from "@/features/identity/model/creator-session-brief";
 
 /**
  * Says once, on arrival, that the visitor came here to create: with a brief carried over from the home page, with

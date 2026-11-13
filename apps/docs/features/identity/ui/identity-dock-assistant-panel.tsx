@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 import { identityContrastWarnings, Stack, type IdentityTokens } from "@zedtech/zedkit-ui";
 
-import { IdentityDockActionBar } from "@/components/identity-dock-action-bar";
-import { IdentityDockCustomize } from "@/components/identity-dock-customize";
-import { IdentityDockPanelToolbar } from "@/components/identity-dock-panel-toolbar";
+import { IdentityDockActionBar } from "@/features/identity/ui/identity-dock-action-bar";
+import { IdentityDockCustomize } from "@/features/identity/ui/identity-dock-customize";
+import { IdentityDockPanelToolbar } from "@/features/identity/ui/identity-dock-panel-toolbar";
 import { identityDockCopy } from "@/components/i18n/identity-dock-copy";
 import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { docsSiteDefaultTokens } from "@/lib/docs-site-default-tokens";
 import { applyDocsSiteLook, resetDocsSiteLook } from "@/lib/docs-site-look";
 import { dispatchIdentityEditorDraftApply } from "@/lib/identity-editor-draft-apply";
 import { patchTokens } from "@/lib/identity-editor-patch";
-import { useIdentityAssistantStore } from "@/lib/identity-assistant-store";
+import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
 import { IDENTITY_EDITOR_HREF } from "@/lib/site-links.mjs";
 
 /** One field from the dock customize form: validate through the token schema, then repaint the site. */

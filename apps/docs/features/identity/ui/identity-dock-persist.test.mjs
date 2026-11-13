@@ -11,8 +11,8 @@ import {
   IDENTITY_DOCK_STORAGE_KEY,
   readIdentityDockPersist,
   trimSessionForPersist,
-} from "../lib/identity-dock-persist.ts";
-import { initialSession } from "../lib/identity-creator-session.ts";
+} from "./identity-dock-persist.ts";
+import { initialSession } from "./identity-creator-session.ts";
 
 test("trimSessionForPersist keeps the last 20 thread turns and clears pending", () => {
   const thread = Array.from({ length: 25 }, (_, i) => ({ role: "user", text: `turn-${i}` }));
