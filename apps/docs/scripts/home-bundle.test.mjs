@@ -89,9 +89,10 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   const hero = readFileSync(join(homePrivate, "home-hero.tsx"), "utf8");
   const lead = readFileSync(join(homePrivate, "home-hero-lead.tsx"), "utf8");
   const illustration = readFileSync(join(homePrivate, "home-hero-illustration.tsx"), "utf8");
+  const focus = readFileSync(join(homePrivate, "home-hero-focus.ts"), "utf8");
   const copy = readFileSync(join(homeI18n, "home-hero-copy.ts"), "utf8");
   const nav = readFileSync(join(app, "lib/site-nav-data.ts"), "utf8");
-  const firstScreen = hero + lead + illustration;
+  const firstScreen = hero + lead + illustration + focus;
   // #258: one map prompt, no kit tablist. Two-beat h1; agent detail lives in hero.sub.
   assert.equal(existsSync(join(app, "ui/home/home-hero-lead-actions.tsx")), false);
   assert.doesNotMatch(firstScreen, /HomeHeroPreview|HomeHeroApp|HomeHeroSatellites|AgentConsole|IdentityLookForm/);
@@ -114,6 +115,9 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /viewPublicRun: "View a public run"/);
   assert.match(illustration, /\/issues\?open=first/);
   assert.match(illustration, /copy\.viewPublicRun/);
+  assert.match(illustration, /copy\.viewPublicRunNamed/);
+  assert.match(illustration, /copy\.followRunNamed/);
+  assert.match(illustration, /pulse=\{dot\.pulse && !paused && motionOk\}/);
   assert.match(copy, /Plan/);
   assert.match(copy, /Build/);
   assert.match(copy, /Check/);
@@ -160,6 +164,30 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(illustration, /aria-pressed=\{paused\}/);
   assert.match(copy, /pauseMotion: "Pause illustration motion"/);
   assert.match(copy, /playMotion: "Play illustration motion"/);
+  assert.match(copy, /playLive: "Resume live updates"/);
+  assert.match(copy, /pauseLive: "Pause live updates"/);
+  assert.match(copy, /liveCaptionStale:/);
+  assert.match(copy, /Retrying automatically/);
+  assert.match(copy, /liveBadge: "Live"/);
+  assert.match(copy, /staleBadge: "Stale"/);
+  assert.match(copy, /issueBadge: \(\{ count \}/);
+  assert.match(copy, /stepStatusWithSummary:/);
+  assert.match(illustration, /STEP_STATUS_COPY\[step\.status\]/);
+  assert.match(illustration, /<StatusDot /);
+  assert.match(illustration, /data-hero-run-title/);
+  assert.match(illustration, /data-hero-run-step-status/);
+  assert.match(illustration, /copy\.liveCaptionStale/);
+  assert.match(illustration, /copy\.liveReverted/);
+  assert.match(illustration, /liveUpdateMessage\(live, copy, paused, stale\)/);
+  assert.match(illustration, /isHidden: \(\) => document\.hidden/);
+  assert.match(illustration, /live === null \? \(paused \? copy\.play : copy\.pause\) : pauseLabel/);
+  assert.match(focus, /lastFocus\.current === "pause" && showPause/);
+  const homeCss = readFileSync(join(homePrivate, "home.css"), "utf8");
+  assert.match(homeCss, /\[data-hero-run-step-status\]/);
+  assert.doesNotMatch(
+    homeCss,
+    /\[data-hero-run-status="failed"\] \{\s*color: hsl\(var\(--destructive\)\);/,
+  );
   assert.doesNotMatch(illustration, /<span className="inline-flex flex-wrap items-center gap-icon">/);
   assert.match(nav, /text: "AI"/);
   assert.match(nav, /text: "UI"/);

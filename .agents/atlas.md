@@ -50,8 +50,8 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs raw-layout and spelling guards | `.agents/atlas/docs-site.md` | Whole-file regex on components/features; do not import `check.mjs`. | `apps/docs/scripts/check.mjs` | 2026-11-11 |
 | Docs site primary nav | `.agents/atlas/docs-site.md` | Shared primary list; docs desktop header above the shell. | `apps/docs/ui/docs-container.tsx` | 2026-11-13 |
 | Docs site chrome copy | `.agents/atlas/docs-site.md` | Keys-only shell chrome; search trigger is `search.triggerAriaLabel`. | `apps/docs/ui/mobile-header.tsx` | 2026-11-13 |
-| Home hero lead | `.agents/atlas/home.md` | Copy in the hero module; overlay body tokens on the sub, never lead. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
-| Home hero motion | `.agents/atlas/home.md` | Finite `zk-home-*` entrances; Pause stays mounted when motion is off. | `home-motion-gate.test.mjs` | 2026-11-13 |
+| Home hero lead | `.agents/atlas/home.md` | Copy in the hero module; right column is a live active-run card after mount. | `home-hero-active-run.test.mjs` | 2026-11-13 |
+| Home hero motion | `.agents/atlas/home.md` | Finite `zk-home-*` entrances; live steps skip the opacity loop. | `home-motion-gate.test.mjs` | 2026-11-13 |
 | Home/catalog card hover and per-band appear | `.agents/atlas/home.md` | Kit `hover-lift` owns lift/shadow; title links keep `hit-target`. | `motion-toggle-css.test.ts` | 2026-11-13 |
 | Registry component page order | `.agents/atlas/docs-site.md` | Example, Use it, install-or-copy, guidance; Preview is the violet stage. | `ComponentPage` | 2026-11-13 |
 | Docs UI sidebar groups | `.agents/atlas/docs-site.md` | Job headings are Fumadocs separators, not nested `ui/<group>/` dirs. | `check.mjs` | 2026-11-12 |

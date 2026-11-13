@@ -61,6 +61,23 @@ Partial lists return as success. There is no truncated flag.
 | GitHub review fallbacks | 40 PRs |
 | Hosted runs API | 10 pages × 200 (`limit`) |
 
+## Home hero active run (client)
+
+The home illustration polls the same hosted list from the browser:
+`GET {NEXT_PUBLIC_ZEDOS_RUNS_API_BASE}/<live-service>/api/runs?active=1&limit=1`
+(`fetchActiveHeroRun`). This is not the `/issues` feed (`/issues` stays
+build-time only).
+
+The consumer keeps a row only when `version === 1`, `runs` is an array,
+and the first run has `active === true` and `stale !== true`. Envelope
+`kind` is ignored. The run must include `runId`, boolean `active` /
+`stale`, optional `title` / `issue` / `pr` / `liveUrl`, and `steps`
+with the five keys `plan`, `build`, `check`, `fix`, `done` (status
+`pending` | `active` | `done` | `failed` | `skipped`, optional
+`summary`). Extra step objects and extra run keys are ignored. Parse
+or fetch errors keep the last live card and mark it stale; empty or
+inactive/stale lists return the placeholder.
+
 ## Version
 
 Both shapes require `"version": 1`. Any other version fails closed.
