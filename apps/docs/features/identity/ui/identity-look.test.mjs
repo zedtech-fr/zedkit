@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { identityPresets } from "@zedtech/zedkit-ui";
 
-import { tokensForLook } from "../lib/identity-look.ts";
+import { tokensForLook } from "./identity-look.ts";
 
 test("tokensForLook returns a preset by id", () => {
   assert.equal(tokensForLook("mist", []), identityPresets.mist);

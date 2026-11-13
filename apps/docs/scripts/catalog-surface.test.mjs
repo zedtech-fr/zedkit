@@ -186,7 +186,7 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(customize, /identityContrastWarnings\(props\.tokens\)/);
   assert.match(customize, /data-dock-contrast/);
   assert.match(panel, /dispatchIdentityEditorDraftApply/);
-  assert.doesNotMatch(read("lib/identity-editor-draft-apply.ts"), /Use this look/);
+  assert.doesNotMatch(read("features/identity/ui/identity-editor-draft-apply.ts"), /Use this look/);
   assert.doesNotMatch(read("features/identity/ui/use-creator-handoff.ts"), /placed in the form|form is filled/);
   assert.doesNotMatch(read("components/i18n/identity-assistant-copy.ts"), /preview above/);
 });

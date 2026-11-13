@@ -22,10 +22,10 @@ import { IdentityLookForm } from "@/components/identity-look-form";
 import { IdentityEditorExport } from "@/components/identity-editor-export";
 import { IdentityEditorKeepBar, IdentityEditorPreviewBar } from "@/components/identity-editor-toolbar";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { IDENTITY_EDITOR_DRAFT_APPLY } from "@/lib/identity-editor-draft-apply";
-import { useDraftTokens, useIdentityTokenSheet } from "@/lib/identity-editor-draft";
+import { IDENTITY_EDITOR_DRAFT_APPLY } from "./identity-editor-draft-apply";
+import { useDraftTokens, useIdentityTokenSheet } from "./identity-editor-draft";
 import { bindLookLibrary } from "./identity-look-bind";
-import { tokensForLook } from "@/lib/identity-look";
+import { tokensForLook } from "./identity-look";
 import {
   namedIdentityOptions,
   readLibrarySnapshot,
