@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { GITHUB_REPO, githubIssueHref, githubPullHref } from "./github-hrefs.ts";
-import { issueOpenTarget } from "./issue-open-target.ts";
+import { issueOpenTarget, resolveIssueOpenId } from "./issue-open-target.ts";
 
 test("GitHub hrefs point at the public zedkit repo", () => {
   assert.equal(GITHUB_REPO, "zedtech-fr/zedkit");
@@ -20,4 +20,15 @@ test("issue open target prefers a specific hash over open=first", () => {
   assert.equal(issueOpenTarget("", "#issue-x"), null);
   assert.equal(issueOpenTarget("open=all", ""), null);
   assert.equal(issueOpenTarget("", ""), null);
+});
+
+test("resolveIssueOpenId defaults to the first id", () => {
+  const ids = ["issue-386", "issue-108", "pr-54"];
+  assert.equal(resolveIssueOpenId(ids, "", ""), "issue-386");
+  assert.equal(resolveIssueOpenId(ids, "?open=first", ""), "issue-386");
+  assert.equal(resolveIssueOpenId(ids, "", "#first"), "issue-386");
+  assert.equal(resolveIssueOpenId(ids, "open=first", "#issue-108"), "issue-108");
+  assert.equal(resolveIssueOpenId(ids, "", "#pr-54"), "pr-54");
+  assert.equal(resolveIssueOpenId(ids, "", "#issue-999"), "issue-386");
+  assert.equal(resolveIssueOpenId([], "", "#issue-108"), null);
 });

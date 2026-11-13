@@ -4,7 +4,7 @@ import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy";
 
 async function firstIssueRow(page: Page) {
-  const rows = page.locator("main details[data-issues-row]");
+  const rows = page.locator("main [data-issues-row]");
   if ((await rows.count()) === 0) return null;
   return rows.first();
 }
@@ -20,7 +20,7 @@ function emptyListVisible(page: Page) {
   return page.getByText(/No public runs yet|Could not load public runs/);
 }
 
-test("issue rows are native closed accordions that expand in place", async ({ page }) => {
+test("issue rows are selectable list links with the first item open", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 900 });
   await page.goto("/issues");
   const first = await firstIssueRow(page);
@@ -28,42 +28,43 @@ test("issue rows are native closed accordions that expand in place", async ({ pa
     await expect(emptyListVisible(page)).toBeVisible();
     return;
   }
-  await expect(first).not.toHaveAttribute("open");
-  const summary = first.locator(":scope > summary");
-  await expect(summary).toBeVisible();
-  const box = await summary.boundingBox();
+  await expect(first).toHaveAttribute("aria-current", "page");
+  await expect(first).toHaveAttribute("data-active", "");
+  const detail = page.locator("[data-issues-detail]");
+  await expect(detail).toBeVisible();
+  await expect(detail.getByRole("link", { name: "Timeline" })).toHaveCount(0);
+  await expect(detail.getByRole("link", { name: new RegExp(`^${reviewsCopy.list.githubIssue} #`) })).toBeVisible();
+  await expect(detail.getByRole("link", { name: reviewsCopy.issue.viewLog }).first()).toBeVisible();
+  await page.getByRole("button", { name: reviewsCopy.list.title, exact: true }).click();
+  const visible = page.locator("[data-issues-row]:visible").first();
+  await expect(visible).toHaveAttribute("aria-current", "page");
+  const box = await visible.boundingBox();
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(43.5);
-  await expect(summary.getByRole("link")).toHaveCount(0);
-  await expect(summary.getByText(/Pull request #\d+/)).toHaveCount(0);
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  await expect(first).toHaveAttribute("open", "");
-  await expect(first.getByRole("link", { name: "Timeline" })).toHaveCount(0);
-  await expect(first.getByRole("link", { name: new RegExp(`^${reviewsCopy.list.githubIssue} #`) })).toBeVisible();
-  await expect(first.getByRole("link", { name: reviewsCopy.issue.viewLog }).first()).toBeVisible();
+  await expect(visible.locator("a")).toHaveCount(0);
+  await expect(visible.getByText(/Pull request #\d+/)).toHaveCount(0);
 });
 
-test("open=first and a home illustration click open the first accordion", async ({ page }) => {
+test("open=first and a home illustration click select the first issue", async ({ page }) => {
   await expectNoPageErrors(page, async () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
     await page.getByRole("link", { name: homeHeroCopy.heroIllustration.viewPublicRun }).click();
     await expect(page).toHaveURL(/\/issues\?open=first/);
     const fromHome = await firstIssueRow(page);
-    if (fromHome !== null) await expect(fromHome).toHaveAttribute("open", "");
+    if (fromHome !== null) await expect(fromHome).toHaveAttribute("aria-current", "page");
   });
 
   await page.goto("/issues#first", { waitUntil: "networkidle" });
   const fromHash = await firstIssueRow(page);
-  if (fromHash !== null) await expect(fromHash).toHaveAttribute("open", "");
+  if (fromHash !== null) await expect(fromHash).toHaveAttribute("aria-current", "page");
 
-  const deep = page.locator("main details[data-issues-row]").nth(1);
+  const deep = page.locator("main [data-issues-row]").nth(1);
   if ((await deep.count()) === 0) return;
   const deepId = await deep.getAttribute("id");
   expect(deepId).toBeTruthy();
   await page.goto(`/issues#${deepId}`, { waitUntil: "networkidle" });
-  await expect(deep).toHaveAttribute("open", "");
-  await expect(page.locator("main details[data-issues-row]").first()).not.toHaveAttribute("open");
+  await expect(deep).toHaveAttribute("aria-current", "page");
+  await expect(page.locator("main [data-issues-row]").first()).not.toHaveAttribute("aria-current");
 });
 
 test("issues heading lines up with the header brand at 1440", async ({ page }) => {
@@ -91,11 +92,34 @@ test("open=first at 375 stacks duration and finished time", async ({ page }) => 
     await expect(emptyListVisible(page)).toBeVisible();
     return;
   }
-  await expect(first).toHaveAttribute("open", "");
-  const took = first.getByText(new RegExp(`^${reviewsCopy.list.took} `)).first();
-  const finished = first.getByText(new RegExp(`^${reviewsCopy.list.finished} `)).first();
+  await expect(first).toHaveAttribute("aria-current", "page");
+  const detail = page.locator("[data-issues-detail]");
+  const took = detail.getByText(new RegExp(`^${reviewsCopy.list.took} `)).first();
+  const finished = detail.getByText(new RegExp(`^${reviewsCopy.list.finished} `)).first();
   if ((await took.count()) === 0 || (await finished.count()) === 0) return;
   await expectNotSideBySide(took, finished);
+});
+
+test("desktop workspace is a two-pane layout with independent scrollports", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/issues", { waitUntil: "networkidle" });
+  const aside = page.locator("[data-issues-aside]");
+  const detail = page.locator("[data-issues-detail]");
+  if ((await aside.count()) === 0) {
+    await expect(emptyListVisible(page)).toBeVisible();
+    return;
+  }
+  await expect(aside).toBeVisible();
+  await expect(detail).toBeVisible();
+  const asideBox = await aside.boundingBox();
+  const detailBox = await detail.boundingBox();
+  expect(asideBox).toBeTruthy();
+  expect(detailBox).toBeTruthy();
+  expect((asideBox?.x ?? 0) + (asideBox?.width ?? 0)).toBeLessThan((detailBox?.x ?? 0) + 2);
+  const asideOverflow = await aside.evaluate((node) => getComputedStyle(node).overflowY);
+  const detailOverflow = await detail.evaluate((node) => getComputedStyle(node).overflowY);
+  expect(asideOverflow).toBe("auto");
+  expect(detailOverflow).toBe("auto");
 });
 
 async function expectNotSideBySide(a: Locator, b: Locator) {

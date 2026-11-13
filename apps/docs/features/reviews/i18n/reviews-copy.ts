@@ -37,7 +37,7 @@ export const reviewsCopy = {
   },
   list: {
     title: "Issues",
-    description: "Public work log: open a row to see how each issue was planned, built, and reviewed.",
+    description: "Public work log of how each issue was planned, built, and reviewed.",
     empty: "No public runs yet",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
@@ -49,7 +49,9 @@ export const reviewsCopy = {
     run: "run",
     runs: "runs",
     took: "Took",
+    duration: "Duration",
     finished: "Finished",
+    started: "Started",
     opensInNewTab: "opens in a new tab",
   },
   issue: {

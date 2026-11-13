@@ -1,0 +1,52 @@
+/*
+ * Public /issues master-detail. Page-owned: AppShell would nest a second
+ * main inside the site landmark. Dual panes use the same tokens as AppShell
+ * (`w-app-shell-sidebar`, muted wash, shell padding) and start at `md`,
+ * bounded under the site header so the document does not scroll behind them.
+ */
+@media (min-width: 48rem) {
+  [data-page-shell]:has([data-issues-layout="workspace"]) {
+    height: calc(100svh - var(--zk-site-header-height));
+    overflow: hidden;
+  }
+
+  [data-page-shell]:has([data-issues-layout="workspace"]) > :first-child {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  [data-slot="theme-scope"]:has(> [data-issues-layout="workspace"]) {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  [data-issues-column][data-issues-layout="workspace"] {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding-block: var(--zk-gap-lg);
+  }
+
+  [data-issues-column][data-issues-layout="workspace"] > [data-slot="stack"] {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  [data-issues-column][data-issues-layout="workspace"] [data-slot="page-header"] {
+    flex-shrink: 0;
+  }
+
+  [data-issues-workspace] {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+}
