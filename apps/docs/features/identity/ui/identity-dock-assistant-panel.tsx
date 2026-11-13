@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { identityContrastWarnings, Stack, type IdentityTokens } from "@zedtech/zedkit-ui";
+import { identityContrastWarnings, Stack, Tabs, TabsList, TabsTrigger, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { IdentityDockActionBar } from "@/features/identity/ui/identity-dock-action-bar";
 import { IdentityDockCustomize } from "@/features/identity/ui/identity-dock-customize";
@@ -45,7 +45,7 @@ export function IdentityDockAssistantPanel({
 }) {
   const { setExpanded } = useIdentityAssistantStore();
   const [status, setStatus] = useState("");
-  const warningCount = identityContrastWarnings(tokens).length;
+  const warningCount = identityContrastWarnings(tokens).filter((warning) => warning.min === 4.5).length;
 
   useEffect(() => {
     const message =
@@ -56,24 +56,40 @@ export function IdentityDockAssistantPanel({
     return () => window.clearTimeout(id);
   }, [warningCount]);
 
+  const modes = identityEditorCopy.modes;
+
   return (
     <Stack className="pane-shrink flex-1 gap-flush overflow-hidden" data-slot="identity-dock-body">
-      <IdentityDockPanelToolbar onClose={() => setExpanded(false)} />
-      <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-start">
-        <IdentityDockCustomize
-          tokens={tokens}
-          onPatchPreview={(key, value, palette) => patchDockLook(tokens, onTokens, [[key, value]], palette)}
-          onPatchPreviewMany={(entries) => patchDockLook(tokens, onTokens, entries)}
+      <Tabs defaultValue="simple" className="flex pane-shrink flex-1 flex-col overflow-hidden">
+        <Stack className="shrink-0 border-b border-border">
+          <IdentityDockPanelToolbar onClose={() => setExpanded(false)} />
+          <Stack className="pad-row">
+            <TabsList aria-label={modes.label} className="flex w-full">
+              <TabsTrigger value="simple" className="flex-1">
+                {modes.simple}
+              </TabsTrigger>
+              <TabsTrigger value="expert" className="flex-1">
+                {modes.expert}
+              </TabsTrigger>
+            </TabsList>
+          </Stack>
+        </Stack>
+        <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-start">
+          <IdentityDockCustomize
+            tokens={tokens}
+            onPatchPreview={(key, value, palette) => patchDockLook(tokens, onTokens, [[key, value]], palette)}
+            onPatchPreviewMany={(entries) => patchDockLook(tokens, onTokens, entries)}
+          />
+        </Stack>
+        <IdentityDockActionBar
+          status={status}
+          onReset={() => {
+            resetDocsSiteLook();
+            onTokens(docsSiteDefaultTokens());
+            setStatus(identityDockCopy.statusRestored);
+          }}
         />
-      </Stack>
-      <IdentityDockActionBar
-        status={status}
-        onReset={() => {
-          resetDocsSiteLook();
-          onTokens(docsSiteDefaultTokens());
-          setStatus(identityDockCopy.statusRestored);
-        }}
-      />
+      </Tabs>
     </Stack>
   );
 }

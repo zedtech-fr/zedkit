@@ -1320,6 +1320,7 @@ html [data-vaul-handle] {
   height: var(--spacing-drawer-handle-height);
   background-color: hsl(var(--muted-foreground) / 0.5);
   opacity: 1;
+  touch-action: none;
 }
 
 /* Side drawers close by dragging the panel itself: no handle (vaul sets display: block unlayered). */

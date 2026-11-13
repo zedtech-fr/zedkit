@@ -77,6 +77,14 @@ test("look form tabs are named and KeepBar sits after both modes", () => {
   assert.doesNotMatch(form, /afterSimple/);
 });
 
+test("the editor owns Classic/Expert tabs; the dock embeds panels in the drawer header", () => {
+  const form = read("components/identity-look-form.tsx");
+  assert.match(form, /tabs = "owned"/);
+  assert.match(form, /tabs === "embedded"/);
+  assert.doesNotMatch(form, /stickyTabs/);
+  assert.doesNotMatch(form, /sticky pin-top z-header/);
+});
+
 test("Classic groups colour, shape, type and depth; each colour row is one label", () => {
   const form = read("components/identity-classic-fields.tsx");
   for (const section of ["ColourSection", "ShapeSection", "TypeSection", "DepthSection"]) {

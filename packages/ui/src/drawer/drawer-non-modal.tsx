@@ -8,6 +8,7 @@ import { cn } from "../utils.js";
 import type { DrawerSize } from "./drawer-panel-classes.js";
 import { drawerPanelClassName } from "./drawer-panel-classes.js";
 import { useNonModalDrawer } from "./drawer-non-modal-context.js";
+import { startNonModalDrawerDismiss } from "./drawer-non-modal-effects.js";
 
 function NonModalDrawerTrigger(props: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
   const { asChild, children, ref: triggerRefProp, ...rest } = props;
@@ -66,6 +67,7 @@ function NonModalDrawerContent({
   children,
   size = "md",
   ref,
+  onPointerDown,
   ...props
 }: React.ComponentProps<"div"> & { size?: DrawerSize }) {
   const ctx = useNonModalDrawer();
@@ -100,6 +102,17 @@ function NonModalDrawerContent({
           drawerPanelClassName(size, className),
           "outline-none",
         )}
+        onPointerDown={(event) => {
+          onPointerDown?.(event);
+          if (event.defaultPrevented) return;
+          startNonModalDrawerDismiss({
+            event,
+            kind: "body",
+            direction: ctx.direction,
+            dismissible: ctx.dismissible,
+            onOpenChange: ctx.onOpenChange,
+          });
+        }}
         {...props}
       >
         <OverlayMountContext.Provider value={mount}>{children}</OverlayMountContext.Provider>
@@ -152,7 +165,8 @@ function NonModalDrawerDescription({
   );
 }
 
-function NonModalDrawerHandle({ className, ...props }: React.ComponentProps<"div">) {
+function NonModalDrawerHandle({ className, onPointerDown, ...props }: React.ComponentProps<"div">) {
+  const { direction, dismissible, onOpenChange } = useNonModalDrawer();
   return (
     <div
       data-slot="drawer-handle"
@@ -164,6 +178,17 @@ function NonModalDrawerHandle({ className, ...props }: React.ComponentProps<"div
         "in-data-[vaul-drawer-direction=top]:order-last in-data-[vaul-drawer-direction=top]:trim-top in-data-[vaul-drawer-direction=top]:mb-drawer-handle-top",
         className,
       )}
+      onPointerDown={(event) => {
+        onPointerDown?.(event);
+        if (event.defaultPrevented) return;
+        startNonModalDrawerDismiss({
+          event,
+          kind: "handle",
+          direction,
+          dismissible,
+          onOpenChange,
+        });
+      }}
       {...props}
     />
   );

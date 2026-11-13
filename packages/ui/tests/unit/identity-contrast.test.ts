@@ -25,6 +25,40 @@ describe("identityContrastWarnings", () => {
     }
   });
 
+  it("does not warn on the default white / near-black text pair", () => {
+    const tokens = identityTokenSchema.parse({
+      ...identityPresets.glass,
+      light: {
+        ...identityPresets.glass.light,
+        background: "0 0% 100%",
+        foreground: "240 10% 3.9%",
+      },
+    });
+    expect(ofToken(tokens, "foreground", "light")).toEqual([]);
+  });
+
+  it("warns only on the docs-default light hairline border at 3:1", () => {
+    const tokens = identityTokenSchema.parse({
+      ...identityPresets.glass,
+      light: {
+        ...identityPresets.glass.light,
+        background: "0 0% 100%",
+        foreground: "240 10% 3.9%",
+        mutedForeground: "240 5% 32%",
+        border: "240 5.9% 90%",
+      },
+    });
+    const warnings = identityContrastWarnings(tokens);
+    expect(warnings).toEqual([
+      expect.objectContaining({
+        scheme: "light",
+        token: "border",
+        min: 3,
+        ratio: 1.27,
+      }),
+    ]);
+  });
+
   it("warns when light foreground matches the background", () => {
     const tokens = identityTokenSchema.parse({
       ...identityPresets.mist,

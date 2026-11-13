@@ -50,7 +50,7 @@ function IdentityDockCustomize(props: {
           {copy.views.customizeHint}
         </Text>
       </Stack>
-      <IdentityLookForm tokens={props.tokens} scheme="light" defaultMode="simple" idPrefix="identity-dock" stickyTabs onPatch={props.onPatchPreview} onPatchMany={props.onPatchPreviewMany} />
+      <IdentityLookForm tokens={props.tokens} scheme="light" defaultMode="simple" idPrefix="identity-dock" tabs="embedded" onPatch={props.onPatchPreview} onPatchMany={props.onPatchPreviewMany} />
       <DockContrastChecker tokens={props.tokens} onPatchPreview={props.onPatchPreview} />
     </Stack>
   );

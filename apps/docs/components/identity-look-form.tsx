@@ -7,6 +7,33 @@ import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
 import { SimpleFields, type PatchMany } from "@/components/identity-classic-fields";
 import { EditorFields } from "@/components/identity-editor-fields";
 
+function LookFormPanels({
+  tokens,
+  scheme,
+  idPrefix,
+  onPatch,
+  onPatchMany,
+  afterShape,
+}: {
+  tokens: IdentityTokens;
+  scheme: "light" | "dark";
+  idPrefix: string;
+  onPatch: (key: string, value: string, palette?: "light" | "dark") => void;
+  onPatchMany: PatchMany;
+  afterShape?: ReactNode;
+}) {
+  return (
+    <>
+      <TabsContent value="simple">
+        <SimpleFields tokens={tokens} scheme={scheme} idPrefix={idPrefix} onPatch={onPatch} onPatchMany={onPatchMany} />
+      </TabsContent>
+      <TabsContent value="expert">
+        <EditorFields tokens={tokens} scheme={scheme} idPrefix={idPrefix} onPatch={onPatch} afterShape={afterShape} />
+      </TabsContent>
+    </>
+  );
+}
+
 function IdentityLookForm({
   tokens,
   scheme,
@@ -16,7 +43,7 @@ function IdentityLookForm({
   afterForm,
   afterShape,
   idPrefix = "identity-editor",
-  stickyTabs = false,
+  tabs = "owned",
 }: {
   tokens: IdentityTokens;
   scheme: "light" | "dark";
@@ -27,23 +54,36 @@ function IdentityLookForm({
   afterShape?: ReactNode;
   /** Field ids are prefixed per host so the dock and the editor page never share an id. */
   idPrefix?: string;
-  /** Keep the Classic/Expert tabs pinned while the host scrolls (dock drawer). */
-  stickyTabs?: boolean;
+  /** `owned` wraps Classic/Expert tabs. `embedded` renders panels for a parent `Tabs`. */
+  tabs?: "owned" | "embedded";
 }) {
   const copy = identityEditorCopy.modes;
+  const panels = (
+    <LookFormPanels
+      tokens={tokens}
+      scheme={scheme}
+      idPrefix={idPrefix}
+      onPatch={onPatch}
+      onPatchMany={onPatchMany}
+      afterShape={afterShape}
+    />
+  );
+  if (tabs === "embedded") {
+    return (
+      <Stack gap="md">
+        {panels}
+        {afterForm}
+      </Stack>
+    );
+  }
   return (
     <Stack gap="md">
       <Tabs defaultValue={defaultMode}>
-        <TabsList aria-label={copy.label} className={stickyTabs ? "sticky pin-top z-header" : undefined}>
+        <TabsList aria-label={copy.label}>
           <TabsTrigger value="simple">{copy.simple}</TabsTrigger>
           <TabsTrigger value="expert">{copy.expert}</TabsTrigger>
         </TabsList>
-        <TabsContent value="simple">
-          <SimpleFields tokens={tokens} scheme={scheme} idPrefix={idPrefix} onPatch={onPatch} onPatchMany={onPatchMany} />
-        </TabsContent>
-        <TabsContent value="expert">
-          <EditorFields tokens={tokens} scheme={scheme} idPrefix={idPrefix} onPatch={onPatch} afterShape={afterShape} />
-        </TabsContent>
+        {panels}
       </Tabs>
       {afterForm}
     </Stack>

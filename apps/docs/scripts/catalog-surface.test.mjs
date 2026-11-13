@@ -177,6 +177,9 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   const panel = read("features/identity/ui/identity-dock-assistant-panel.tsx");
   const customize = read("features/identity/ui/identity-dock-customize.tsx");
   assert.match(widget, /IdentityDockAssistantPanel/);
+  assert.match(widget, /modal=\{false\}/);
+  assert.doesNotMatch(widget, /handleOnly/);
+  assert.doesNotMatch(widget, /noBodyStyles/);
   assert.match(panel, /IdentityDockCustomize/);
   assert.doesNotMatch(panel, /ViewSwitch/);
   assert.doesNotMatch(panel, /Conversation/);
@@ -190,7 +193,14 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.match(customize, /IdentityLookForm/);
   assert.match(customize, /defaultMode="simple"/);
   assert.match(customize, /data-dock-customize/);
-  assert.match(customize, /stickyTabs/);
+  assert.match(customize, /tabs="embedded"/);
+  assert.doesNotMatch(customize, /stickyTabs/);
+  assert.doesNotMatch(panel, /stickyTabs/);
+  const tabsListAt = panel.indexOf("TabsList");
+  const scrollAt = panel.indexOf("data-dock-scroll");
+  assert.notEqual(tabsListAt, -1);
+  assert.notEqual(scrollAt, -1);
+  assert.ok(tabsListAt < scrollAt, "Classic/Expert TabsList belongs in the fixed header, not the scroll region");
   // Dock form fields must not reuse the editor's field ids on the editor page.
   assert.match(customize, /idPrefix="identity-dock"/);
   // Colour checker with Fix, and hints, inside the dock form.
@@ -208,6 +218,7 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   const bar = read("features/identity/ui/identity-dock-action-bar.tsx");
   const copy = read("components/i18n/identity-dock-copy.ts");
   const editorCopy = read("components/i18n/identity-editor-copy.ts");
+  assert.match(panel, /filter\(\(warning\) => warning\.min === 4\.5\)/);
   assert.match(panel, /IdentityDockActionBar/);
   assert.match(bar, /data-dock-action-bar/);
   assert.match(bar, /toolbar\.reset/);

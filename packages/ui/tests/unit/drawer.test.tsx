@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
@@ -770,6 +770,115 @@ describe("drawer", () => {
     );
     await user.click(screen.getByRole("button", { name: "Dismiss" }));
     expect(screen.getByRole("dialog", { name: "Inline panel" })).not.toBeNull();
+  });
+
+  describe("non-modal swipe-to-dismiss", () => {
+    const PANEL_HEIGHT = 400;
+    const DISMISS_DRAG = 120;
+
+    function stubPanelRect(el: HTMLElement, height = PANEL_HEIGHT) {
+      vi.spyOn(el, "getBoundingClientRect").mockReturnValue({
+        x: 0,
+        y: 0,
+        top: 0,
+        left: 0,
+        right: 320,
+        width: 320,
+        bottom: height,
+        height,
+        toJSON: () => ({}),
+      });
+    }
+
+    function swipe(target: Document | Element | Window, fromY: number, toY: number) {
+      const start = target instanceof Window ? document.body : target;
+      fireEvent.pointerDown(start, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: fromY,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: toY });
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: toY });
+    }
+
+    function renderBottomSheet(props?: { dismissible?: boolean; scrolled?: boolean; withField?: boolean }) {
+      render(
+        <Drawer defaultOpen modal={false} direction="bottom" dismissible={props?.dismissible ?? true}>
+          <DrawerContent modal={false}>
+            <DrawerHandle data-testid="handle" />
+            <DrawerTitle>Delivery details</DrawerTitle>
+            <DrawerBody data-testid="body">
+              {props?.withField ? <input aria-label="Name" defaultValue="Ada" /> : <p>Body copy</p>}
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>,
+      );
+      const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+      stubPanelRect(dialog);
+      const body = screen.getByTestId("body");
+      if (props?.scrolled) body.scrollTop = 80;
+      return { dialog, body, handle: screen.getByTestId("handle") };
+    }
+
+    it("closes when the handle is dragged down", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when the handle is activated without a drag", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 12, 12);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when the body is dragged down at rest", () => {
+      const { body } = renderBottomSheet();
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when the body is dragged while scrolled", () => {
+      const { body } = renderBottomSheet({ scrolled: true });
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not dismiss from a form control", () => {
+      renderBottomSheet({ withField: true });
+      swipe(screen.getByRole("textbox", { name: "Name" }), 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open on handle drag when not dismissible", () => {
+      const { handle } = renderBottomSheet({ dismissible: false });
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("closes from the handle under reduced motion without sliding the panel", () => {
+      document.documentElement.setAttribute("data-motion", "reduce");
+      const { handle, dialog } = renderBottomSheet();
+      fireEvent.pointerDown(handle, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(dialog.style.transform).toBe("");
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(screen.queryByRole("dialog")).toBeNull();
+      document.documentElement.removeAttribute("data-motion");
+    });
+
+    it("still has no overlay when modal is false", () => {
+      renderBottomSheet();
+      expect(document.querySelector("[data-vaul-overlay]")).toBeNull();
+    });
   });
 
   it("has no axe violations when open", async () => {
