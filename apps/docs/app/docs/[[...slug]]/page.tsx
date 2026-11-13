@@ -13,7 +13,7 @@ import { pageUrl } from "@/lib/site";
 import { isFoundationsPath } from "@/lib/site-nav-data";
 import { getMDXComponents } from "@/mdx-components";
 import { DocsMainContent } from "./_docs/docs-main-content";
-import { SiteMaintainerFooter } from "@/ui/site-footer";
+import { SiteMaintainerFooter } from "@/components/site-chrome/site-footer";
 import { source } from "#source";
 
 export async function generateStaticParams() {

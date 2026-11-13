@@ -9,7 +9,7 @@ import {
 } from "fumadocs-ui/layouts/shared/slots/search-trigger";
 import { ThemeSwitch, type ThemeSwitchProps } from "fumadocs-ui/layouts/shared/slots/theme-switch";
 import { IconButton, cn } from "@zedtech/zedkit-ui";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 
 export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerProps) {
   const { setOpenSearch, enabled } = useSearchContext();

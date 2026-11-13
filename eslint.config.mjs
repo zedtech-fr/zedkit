@@ -26,7 +26,6 @@ function docsLayerGroup(folder) {
 
 const docsAppGroup = docsLayerGroup("app");
 const docsFeatureGroup = docsLayerGroup("features");
-const docsUiGroup = docsLayerGroup("ui");
 const docsComponentsGroup = docsLayerGroup("components");
 
 const docsAppFeatureBan = {
@@ -52,7 +51,7 @@ const docsFeatureHashImportBan = {
 };
 
 const docsLibUiBan = {
-  group: [...docsComponentsGroup, ...docsUiGroup],
+  group: docsComponentsGroup,
   message: "One-way imports: lib may not import composed UI.",
 };
 
@@ -281,7 +280,6 @@ export default tseslint.config(
     files: [
       "apps/docs/components/**/*.{ts,tsx,mjs,js,jsx}",
       "apps/docs/lib/**/*.{ts,tsx,mjs,js,jsx}",
-      "apps/docs/ui/**/*.{ts,tsx,mjs,js,jsx}",
     ],
     rules: {
       "no-restricted-imports": [
