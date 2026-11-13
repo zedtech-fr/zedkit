@@ -89,6 +89,14 @@ describe("docs-render job", () => {
     assert.match(job, /unset DOCS_ROUTES/);
     assert.match(job, /unset DOCS_LOOKS/);
   });
+
+  it("skips unless the docs detector is true and the diff is not workflow-only", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    assert.match(
+      job,
+      /^ {4}if: needs\.changes\.outputs\.docs == 'true' && needs\.changes\.outputs\.workflow_only != 'true'\s*$/m,
+    );
+  });
 });
 
 describe("nightly Chromium sitemap", () => {
