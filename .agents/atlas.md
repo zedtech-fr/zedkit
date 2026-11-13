@@ -28,7 +28,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Model per kind × stakes | `.agents/atlas/ai-kit.md` | The only home of model ids: base model + effort. | `route` | 2026-11-07 |
 | Rules with IDs, tests and checkers | `.agents/atlas/ai-kit.md` | A-xx, H-xx, P-xx, S-xx live under `.agents/domain/`. | `AGENTS.md` | 2026-11-07 |
 | Evidence of the last setup run | `.agents/atlas/setup-ai.md` | One-shot reading log; not maintained. | nothing: read-only history | 2026-11-07 |
-| Public hygiene checks | `.agents/atlas/ci-gates.md` | CI `hygiene` runs the three scripts; never spell a banned term. | `hygiene` | 2026-11-07 |
+| Public hygiene checks | `.agents/atlas/ci-gates.md` | CI `hygiene` runs the three scripts; skip `*.png`; never spell a banned term. | `hygiene` | 2026-11-13 |
 | CI scope and branch rules | `.agents/atlas/ci-gates.md` | PRs into `dev` are affected-only; `main` is full CI. | which CI jobs run for a PR | 2026-11-07 |
 | CI registry-deps for test:registry | `.agents/atlas/ci-gates.md` | Unconditional dist build for registry-imported packages. | `scripts/ci-hygiene.test.mjs` | 2026-11-13 |
 | docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-13 |

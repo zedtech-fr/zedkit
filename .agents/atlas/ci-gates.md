@@ -6,7 +6,7 @@ Full Entry paths, traps, and Touches for the index rows that point here. The ind
 
 | Topic | Entry | Why it lives there / trap | Touches | Checked |
 | --- | --- | --- | --- | --- |
-| Public hygiene checks | `scripts/check-no-private-refs.sh`, `scripts/check-tone.sh`, `scripts/check-no-artifacts.sh` | CI job `hygiene` runs them; the banned terms are encoded in the scripts, never spell one in a file | CI `hygiene`; every commit and PR body | 2026-11-07 |
+| Public hygiene checks | `scripts/check-no-private-refs.sh`, `scripts/check-tone.sh`, `scripts/check-no-artifacts.sh` | CI job `hygiene` runs them; the banned terms are encoded in the scripts, never spell one in a file. `check-no-private-refs` content scan is `git grep -IinE` with pathspec `':!*.png'` (untracked: `git ls-files -z \| xargs -0 grep -IHinE`); compressed evidence bytes collide with short denylist tokens. | CI `hygiene`; every commit and PR body | 2026-11-13 |
 | CI scope and branch rules | `docs/ci-branch-protection.md` | A PR into `dev` takes the affected-only path; `main` runs full CI | which CI jobs run for a PR | 2026-11-07 |
 | CI registry-deps for test:registry | `.github/workflows/ci.yml#Build (registry deps)` | Unconditional dist build for packages test:registry imports (seo, ui, server, live via reviews github.ts). Affected/empty-diff skips the full Build; omitting a filter is ERR_MODULE_NOT_FOUND. | `scripts/ci-hygiene.test.mjs`; job `checks` | 2026-11-13 |
 | actionlint CI installer | `scripts/install-actionlint.sh` | workflow-lint pins v1.7.10; Releases download 504s on github-hosted, official API asset is the fallback; SHA-256 fail-closed | `node --test scripts/install-actionlint.test.mjs`; job `workflow-lint` | 2026-11-08 |
