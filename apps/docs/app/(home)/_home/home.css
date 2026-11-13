@@ -22,8 +22,8 @@
 /*
  * Looks pills: inverted selected chip. Unlayered so ink beats kit tab
  * utilities and inherited muted color (selected contrast walks [role=tab]).
- * Instant color/fill lives in the motion gate below (the kit trigger fades
- * only when motion is allowed).
+ * The trigger snaps with `transition-none` (evidence uses reduced motion;
+ * a CSS snap inside the no-preference gate never applies).
  */
 #home-page [data-look-tab][data-state="active"] {
   background-color: hsl(var(--foreground));
@@ -143,11 +143,6 @@
 
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) {
-  /* Looks pills snap: a mid-fade chip is gray on a partial foreground fill (below 4.5 until the fade ends). */
-  #home-page [data-look-tab] {
-    transition: none;
-  }
-
   /* 1. Load: the lead, one block at a time. Opacity and a short rise; `backwards`, so nothing is left applied. */
   #home-page [data-home-hero] [data-home-hero-lead] > * {
     animation: zk-home-hero-rise 360ms var(--zk-home-ease) backwards;

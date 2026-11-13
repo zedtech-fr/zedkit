@@ -357,14 +357,14 @@ const DOCS_TABLISTS = [
 test("look tabs selected chip keeps 4.5:1 inverted ink on fill", () => {
   const shell = loadShell();
   assert.doesNotMatch(shell.css, /#home-page \[data-slot="tabs-trigger"\]\[data-state="active"\]/);
-  const rest = ruleBody(
-    read(homeCssPath),
-    /^#home-page \[data-look-tab\]$/,
-    "look tab rest",
-  );
-  assert.match(rest.replace(/\s+/g, " "), /transition:\s*none/);
+  const looks = read(join(app, "app/(home)/_home/home-identity-looks-tabs.tsx"));
+  // Evidence emulateMedia reducedMotion=reduce; a CSS snap inside the
+  // no-preference gate never applies, so the kit color fade is measured.
+  assert.match(looks, /className="[^"]*\btransition-none\b/);
+  const homeCss = stripComments(read(homeCssPath));
+  assert.doesNotMatch(homeCss, /#home-page \[data-look-tab\][^{]*\{[^}]*transition\s*:/);
   const rule = ruleBody(
-    read(homeCssPath),
+    homeCss,
     /^#home-page \[data-look-tab\]\[data-state="active"\]$/,
     "look tab selected",
   );
