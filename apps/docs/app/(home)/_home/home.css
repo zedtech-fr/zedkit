@@ -1,5 +1,6 @@
 /*
- * Home hero: the proposition beside a static glass illustration of one run.
+ * Home hero: the proposition beside a glass illustration of one run
+ * (live when an active run exists, otherwise the static placeholder).
  *
  * Below `lg` the lead comes first and the illustration follows at the full measure. From `lg` they sit in two
  * columns. The page scrolls normally: nothing is pinned.
@@ -121,6 +122,15 @@
   border-top: var(--zk-border-width, 1px) solid hsl(var(--border) / 0.6);
 }
 
+#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="pending"],
+#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="skipped"] {
+  opacity: 0.4;
+}
+
+#home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step][data-hero-run-status="failed"] {
+  color: hsl(var(--destructive));
+}
+
 #home-page [data-hero-run-stage] > [data-slot="surface"] {
   position: relative;
   z-index: 1;
@@ -164,6 +174,10 @@
 
   #home-page [data-hero-run-step][data-hero-run-beat="done"] {
     animation: zk-home-run-done 16s linear infinite;
+  }
+
+  #home-page [data-hero-run-stage][data-hero-run-live] [data-hero-run-step] {
+    animation: none;
   }
 
   #home-page [data-hero-run-drift] {
