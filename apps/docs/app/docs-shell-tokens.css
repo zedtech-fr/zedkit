@@ -67,7 +67,8 @@ html[data-docs-shell].dark[data-identity] {
 
 /*
  * Mockup 1200px measure with 120px sides at 1440: drop the extra 24px
- * inside the box. Docs article keeps 24px. 390 stays 1.5rem above.
+ * inside the box. Docs article keeps 24px. 390 stays 1.5rem above, except
+ * home (1rem overlay in _home/home.css #411).
  */
 @media (min-width: 90rem) {
   #home-page,
