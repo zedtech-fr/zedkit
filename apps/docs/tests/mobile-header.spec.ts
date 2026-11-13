@@ -40,7 +40,7 @@ async function openPhoneMenu(page: Page): Promise<{ menu: Locator; dialog: Locat
   return { menu, dialog };
 }
 
-test("the phone header lists AI, UI, Docs, and Catalog with Catalog current", async ({ page }) => {
+test("the phone header lists AI, UI, Docs, Catalog, and Issues with Catalog current", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/catalog");
   const header = page.locator("#nd-mobile-nav");
@@ -54,13 +54,27 @@ test("the phone header lists AI, UI, Docs, and Catalog with Catalog current", as
   await expect(dialog.getByRole("link", { name: "AI", exact: true })).toHaveAttribute("href", "/docs/ai/setup");
   await expect(dialog.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
   await expect(dialog.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
+  await expect(dialog.getByRole("link", { name: "Issues", exact: true })).toHaveAttribute("href", "/issues");
+  await expect(dialog.getByRole("link", { name: "Issues", exact: true })).not.toHaveAttribute("aria-current", "page");
   await expect(dialog.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
-  await expect(dialog.getByRole("listitem")).toHaveCount(5);
+  await expect(dialog.getByRole("listitem")).toHaveCount(6);
   expect((await current.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(TAP);
   const brand = header.getByRole("link", { name: "zedkit home" });
   const searchBox = await header.getByRole("button", { name: SEARCH_NAME, exact: true }).boundingBox();
   const brandBox = await brand.boundingBox();
   expect(Math.abs((searchBox?.y ?? 99) - (brandBox?.y ?? 0))).toBeLessThan(ROW);
+});
+
+test("the phone menu marks Issues current on /issues", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/issues");
+  const { dialog } = await openPhoneMenu(page);
+  const current = dialog.getByRole("link", { name: "Issues", exact: true });
+  await expect(current).toHaveAttribute("href", "/issues");
+  await expect(current).toHaveAttribute("aria-current", "page");
+  await expect(current).toHaveCSS("text-decoration-line", "underline");
+  await expect(dialog.getByRole("link", { name: "Catalog", exact: true })).not.toHaveAttribute("aria-current", "page");
+  await expect(dialog.getByRole("link", { name: "Reviews" })).toHaveCount(0);
 });
 
 test("the docs phone bar keeps a painted fill without an 80% background class", async ({ page }) => {
@@ -172,6 +186,7 @@ for (const path of PAGES) {
       await expect(dialog.getByRole("link", { name: "UI", exact: true })).toHaveAttribute("href", "/docs/foundations");
       await expect(dialog.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
       await expect(dialog.getByRole("link", { name: "Catalog", exact: true })).toHaveAttribute("href", "/catalog");
+      await expect(dialog.getByRole("link", { name: "Issues", exact: true })).toHaveAttribute("href", "/issues");
       await expect(dialog.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toHaveAttribute(
         "href",
         "https://github.com/zedtech-fr/zedkit",

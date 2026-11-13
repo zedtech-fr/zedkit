@@ -159,8 +159,8 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(nav, /text: "UI"/);
   assert.match(nav, /text: "Docs"/);
   assert.match(nav, /text: "Catalog"/);
+  assert.match(nav, /text: "Issues"/);
   assert.doesNotMatch(nav, /text: "Reviews"/);
-  assert.doesNotMatch(nav, /text: "Issues"/);
 });
 
 test("home below-hero order is same-idea, six-sentences, paste, identities, limits, manifesto, closing (#210)", () => {
@@ -709,6 +709,10 @@ test("phone header is one compact row with a kit Drawer site menu", () => {
   assert.match(
     compact,
     /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav, #nd-nav\[data-catalog-header\] nav, #nd-nav\[data-docs-header\] nav, #nd-mobile-nav, #nd-mobile-nav nav ul\) \{\s*gap: 1\.5rem;/,
+  );
+  assert.match(
+    compact,
+    /:root\[data-identity\] :is\(#nd-nav\[data-home-header\] nav ul, #nd-nav\[data-catalog-header\] nav ul, #nd-nav\[data-docs-header\] nav ul\) \{\s*(?:\/\*[^*]*\*\/\s*)?gap: 1rem;/,
   );
   assert.doesNotMatch(compact, /--zk-site-header-height-wrapped/);
 });

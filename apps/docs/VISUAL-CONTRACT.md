@@ -97,7 +97,7 @@ Title, purpose (role), maturity including Stable, package, source, preview, usag
 
 Compose by priority, not by stacking desktop. The first screen reaches the example or its start. Secondary tools are disclosed. Wide data scrolls in its own region, never clipped.
 
-**#73 adjustment (#261):** at 390 the quiet-glass mockup wraps the header onto two rows. The shipped phone bar is one compact row (wordmark; Get started or icon search; Menu) no taller than 64px. Menu is a kit Drawer of AI, UI, Docs, Catalog, and GitHub. Desktop 1440 stays the mockup single row at 56px (`--zk-site-header-height`), not the mockup 60px.
+**#73 adjustment (#261, #303):** at 390 the quiet-glass mockup wraps the header onto two rows. The shipped phone bar is one compact row (wordmark; Get started or icon search; Menu) no taller than 64px. Menu is a kit Drawer of AI, UI, Docs, Catalog, Issues, and GitHub (#303 adds Issues; the mockup still omits it). Desktop 1440 stays the mockup single row at 56px (`--zk-site-header-height`), not the mockup 60px.
 
 **#73 adjustment (#258):** the quiet-glass mockup Home hero shows AI / UI / AI + UI pills. The shipped hero has no selector: one map prompt and one caption. Kit choice stays in `map.md`.
 

@@ -26,7 +26,7 @@ import { isSiteNavLinkActive, siteHeaderChrome, type SiteNavLink } from "@/lib/s
  * Client personas: integrating developers who own the consuming app.
  * Customers: those same developers (this site is the product surface).
  * Customer personas: hurried first visit on a 390px phone — next action is Get started or a primary nav link, not a taller chrome that pushes the hero off the first screen.
- * UI decisions: compact one-row bar (wordmark left; Get started or icon search, then Menu) because customer = hurried phone visitor who needs the first screen to start at the hero. Menu is a kit Drawer of AI / UI / Docs / Catalog / GitHub because those links must stay reachable after the wrap is removed.
+ * UI decisions: compact one-row bar (wordmark left; Get started or icon search, then Menu) because customer = hurried phone visitor who needs the first screen to start at the hero. Menu is a kit Drawer of AI / UI / Docs / Catalog / Issues / GitHub because those links must stay reachable after the wrap is removed.
  *
  * Phone header (< md): wordmark; path primary action; Menu. Home: Get started, no search.
  * Else: icon search. GitHub lives in the menu. Docs routes do not open a page-tree drawer:

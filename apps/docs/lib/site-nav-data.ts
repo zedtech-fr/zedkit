@@ -41,6 +41,7 @@ export function sitePrimaryNavLinks(): SiteNavLink[] {
     { text: "UI", href: "/docs/foundations", active: "url" },
     { text: "Docs", href: "/docs", active: "url" },
     { text: "Catalog", href: "/catalog", active: "url" },
+    { text: "Issues", href: "/issues", active: "nested-url" },
   ];
 }
 
