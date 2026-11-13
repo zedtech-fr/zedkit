@@ -20,7 +20,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | UI DoD v2 (matrix, blocking measures, evidence lens) | `.agents/atlas/visual-verify.md` | Rendering checks on UI surfaces; `UNSEEN` caps Confidence at 6. | `@zedtech/zedkit-ai` | 2026-11-12 |
 | PR Evidence on UI bodies | `.agents/atlas/visual-verify.md` | Skill `pr` ### Evidence owns the rule; not Visual work evidence. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Installer, sync, validate, route, scan CLI | `.agents/atlas/ai-kit.md` | `cli.ts` parses flags; one concern per other module. | `src/index.ts` | 2026-11-13 |
-| zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work (`zedkit-ai evidence`). | `@zedtech/zedkit-ai` | 2026-11-13 |
+| zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Kit tests | `.agents/atlas/ai-kit.md` | One file per behavior; `helpers.ts` has `put`, `tempDir`, `run`. | `pnpm --filter @zedtech/zedkit-ai test` | 2026-11-13 |
 | Slash commands | `.agents/atlas/ai-kit.md` | A command only names a skill; procedure lives in SKILL.md. | `command-shape.test.ts` | 2026-11-13 |
 | Entry command `/zedkit-ai` | `.agents/atlas/ai-kit.md` | Classifier then Route card then `orchestrate`; not CLI `route`. | `@zedtech/zedkit-ai` | 2026-11-13 |
@@ -66,7 +66,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |
 | Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/ui/`; persist key `zk-identity-dock-v2`. | `*.test.mjs` | 2026-11-13 |
-| Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; fail closed, never stand-in rows. | `reviews-feature.test.mjs` | 2026-11-13 |
+| Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
 | UI tokens, scales, container sizing | `.agents/atlas/ui-primitives.md` | Declared scales; new `:root` colour roles must copy into the mist reset. | `packages/ui/CATALOG.md` | 2026-11-11 |
 | Registry copy theme (shadcn path) | `.agents/atlas/registry.md` | cssVars are colour HSL roles only; do not double-wrap `color-*`. | `scripts/registry/theme-tokens.mjs` | 2026-11-11 |
 | Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. | `resolve-ui-source.mjs` | 2026-11-08 |
