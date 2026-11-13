@@ -64,7 +64,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`. | `identity-look-form.test.mjs` | 2026-11-13 |
-| Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
+| Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. Lives in `features/identity/ui/`, not `lib/`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |
 | Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/dock/ui/`; persist key `zk-identity-dock-v2`. | `*.test.mjs` | 2026-11-13 |
 | Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
