@@ -70,8 +70,8 @@ cross-feature, shrink-only baseline) and ESLint one-way rules.
   dead and single-owner there). Unit tests live beside their module,
   including under `app/` and `features/`; Playwright stays in `tests/`.
   `node --test` does not resolve tsconfig `@/` paths: a colocated test that
-  imports a `.ts` module using `@/` must register the alias first
-  (`features/reviews/model/review-appearance.test.mjs`).
+  imports a `.ts` module using `@/` must call `registerDocsAlias` from
+  `scripts/register-docs-alias.mjs` first (do not copy the data: resolver).
 - Baseline `apps/docs/scripts/module-placement.baseline.json` may only
   shrink. Move the file; never extend the baseline.
   `node apps/docs/scripts/module-placement.mjs --write-baseline`

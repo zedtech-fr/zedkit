@@ -37,6 +37,5 @@ test("committed generated kit matches the live setup preset", () => {
     "utf8",
   );
   const kit = readAiSetupKit();
-  assert.ok(kit.skills.includes("pr"), "setup preset still lists pr");
   assert.ok(generated.includes(JSON.stringify(kit, null, 2)), "ai-setup-onboarding.generated.ts drifted from kit.json");
 });

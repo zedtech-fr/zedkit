@@ -1,25 +1,14 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { register } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import { CUSTOM_IDENTITY_ID, identityPresets } from "@zedtech/zedkit-ui";
 
-// node --test does not read tsconfig `@/` paths; register before loading modules that use them.
-const docsRootHref = new URL("../../../", import.meta.url).href;
-register(
-  `data:text/javascript,${encodeURIComponent(`
-    export async function resolve(specifier, context, nextResolve) {
-      if (!specifier.startsWith("@/")) return nextResolve(specifier, context);
-      const rel = specifier.slice(2);
-      const withExt = /\\.(?:ts|tsx|mjs|js)$/.test(rel) ? rel : rel + ".ts";
-      return nextResolve(new URL(withExt, ${JSON.stringify(docsRootHref)}).href, context);
-    }
-  `)}`,
-  import.meta.url,
-);
+import { registerDocsAlias } from "../../../scripts/register-docs-alias.mjs";
+
+registerDocsAlias(import.meta.url);
 
 const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
 const { LIBRARY_KEY } = await import("@/lib/identity-library");
