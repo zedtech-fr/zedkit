@@ -994,7 +994,8 @@
           "width": "var(--spacing-drawer-handle-width)",
           "height": "var(--spacing-drawer-handle-height)",
           "background-color": "hsl(var(--muted-foreground) / 0.5)",
-          "opacity": "1"
+          "opacity": "1",
+          "touch-action": "none"
         },
         "html [data-vaul-drawer-direction=\"left\"] [data-vaul-handle], html [data-vaul-drawer-direction=\"right\"] [data-vaul-handle]": {
           "display": "none"
