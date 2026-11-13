@@ -136,6 +136,50 @@ test("docs home route-group files map to / when there is no page.tsx", () => {
   assert.deepEqual(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"]), []);
 });
 
+test("catalog demo files and kit source-family files map from the docs manifest", () => {
+  const catalog = {
+    rich: {
+      "Compose a live agent console from a run": {
+        source: "layout/agent-console.tsx",
+        demo: "AgentConsoleDemo",
+      },
+      "Show your brand logo": {
+        source: "brand/brand-logo.tsx",
+        demo: "BrandLogoDemo",
+      },
+      "Compose a public marketing page": {
+        source: "marketing/glass-surface.tsx",
+        demo: "GlassSurfaceDemo",
+        examples: { "Header and footer": "MarketingChromeDemo" },
+      },
+      "Horizontal scroll gallery row": {
+        source: "layout/scroll-gallery.tsx",
+        demo: "ScrollGalleryIdentityDemo",
+      },
+    },
+  };
+  assert.deepEqual(
+    routesFromFiles(
+      [
+        "packages/ui/src/layout/agent-console-model.ts",
+        "apps/docs/components/demos/brand-logo-demo.tsx",
+        "apps/docs/components/demos/marketing-demo.tsx",
+        "apps/docs/components/demos/scroll-gallery-demo.tsx",
+        "deploy/Caddyfile",
+      ],
+      catalog,
+    ).sort(),
+    [
+      "/docs/ui/compose-a-live-agent-console-from-a-run",
+      "/docs/ui/compose-a-public-marketing-page",
+      "/docs/ui/horizontal-scroll-gallery-row",
+      "/docs/ui/show-your-brand-logo",
+    ],
+  );
+  assert.deepEqual(routesFromFiles(["packages/ui/tests/unit/agent-console.test.tsx"], catalog), []);
+  assert.deepEqual(routesFromFiles(["packages/ui/src/layout/agent-console-model.ts"]), []);
+});
+
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({

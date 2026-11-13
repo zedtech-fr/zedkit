@@ -21,6 +21,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | PR Evidence on UI bodies | `.agents/atlas/visual-verify.md` | Skill `pr` ### Evidence owns the rule; not Visual work evidence. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Installer, sync, validate, route, scan CLI | `.agents/atlas/ai-kit.md` | `cli.ts` parses flags; one concern per other module. | `src/index.ts` | 2026-11-13 |
 | zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. | `@zedtech/zedkit-ai` | 2026-11-13 |
+| Evidence --changed catalog demos | `.agents/atlas/visual-verify.md` | Demo files and kit source-family files need the host docs-manifest or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Kit tests | `.agents/atlas/ai-kit.md` | One file per behavior; `helpers.ts` has `put`, `tempDir`, `run`. | `pnpm --filter @zedtech/zedkit-ai test` | 2026-11-13 |
 | Slash commands | `.agents/atlas/ai-kit.md` | A command only names a skill; procedure lives in SKILL.md. | `command-shape.test.ts` | 2026-11-13 |
 | Entry command `/zedkit-ai` | `.agents/atlas/ai-kit.md` | Classifier then Route card then `orchestrate`; not CLI `route`. | `@zedtech/zedkit-ai` | 2026-11-13 |
