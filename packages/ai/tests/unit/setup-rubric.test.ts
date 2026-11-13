@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { installKit } from "#install.js";
 import { kitDir, readManifest } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { tempDir } from "./helpers.js";
+import { failingIssues, tempDir } from "./helpers.js";
 
 const SCORE_AND_LEARN_TEMPLATES = [
   "templates/setup-rubric.md",
@@ -169,7 +169,7 @@ describe("setup rubric and score-and-learn", () => {
     for (const preset of presets()) {
       const root = tempDir();
       install(root, { preset });
-      expect(validateKit(join(root, ".agents")), preset).toEqual([]);
+      expect(failingIssues(validateKit(join(root, ".agents"))), preset).toEqual([]);
     }
     const root = tempDir();
     install(root, { preset: "setup", adopt: true });
@@ -179,7 +179,7 @@ describe("setup rubric and score-and-learn", () => {
         (a) => a.kind === "copy" || a.kind === "link" || a.kind === "write",
       ),
     ).toEqual([]);
-    expect(validateKit(join(root, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(root, ".agents")))).toEqual([]);
     expect(checkDrift(root, join(root, ".agents"))).toEqual([]);
   });
 });

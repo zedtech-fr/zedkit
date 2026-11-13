@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Touched-route list for the docs-render job. Dep-free (fs/path only) so it
 // runs under the same --filter="@zedtech/zedkit-docs..." install as docs-smoke.
-// Keep slugNeed / routesFromFiles in sync with packages/ai/scripts/visual-verify.mjs.
+// Keep slugNeed / routesFromFiles / looksGridTriggered in sync with
+// packages/ai/scripts/visual-verify.mjs.
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -22,6 +23,34 @@ export const DOCS_RENDER_FALLBACK_ROUTES = [
   "/catalog",
   "/docs/foundations",
 ];
+
+/** Same six ids as visual-verify `DEFAULT_LOOKS`. Do not import that file. */
+export const DEFAULT_LOOKS = ["mist", "press", "tide", "volt", "maison", "glass"];
+
+export function looksGridTriggered(files) {
+  return files.some((file) => {
+    const n = file.replaceAll("\\", "/");
+    if (/identities[^/]*\.css$/iu.test(n)) return true;
+    if (/(?:^|\/)(?:tokens?|styles)\.(?:css|ts)$/iu.test(n)) return true;
+    if (!/packages\/ui\/src\/.+\.tsx$/u.test(n)) return false;
+    return !/\.(?:test|spec)\./u.test(n);
+  });
+}
+
+export function docsRenderLooks(files) {
+  return looksGridTriggered(files) ? [...DEFAULT_LOOKS] : [];
+}
+
+/** `"full"` sitemap vs `"touched"` mapper. Event property, not a file list. */
+export function docsRenderSweepMode({ event, baseRef, headRef }) {
+  if (event === "push") return "full";
+  if (event !== "pull_request") return "touched";
+  if (baseRef === "main") return "full";
+  if (baseRef === "dev" && typeof headRef === "string" && headRef.startsWith("epic/")) {
+    return "full";
+  }
+  return "touched";
+}
 
 export function slugNeed(heading) {
   return heading.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
@@ -82,12 +111,26 @@ function loadSitemapRoutes(root) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const root = process.cwd();
-  const files = readFileSync(0, "utf8").split("\n").filter(Boolean);
-  const routes = docsRenderRoutes({
-    files,
-    manifest: loadManifest(root),
-    sitemapRoutes: loadSitemapRoutes(root),
-  });
-  process.stdout.write(`${routes.join(",")}\n`);
+  if (process.argv.includes("--mode")) {
+    process.stdout.write(
+      `${docsRenderSweepMode({
+        event: process.env.EVENT,
+        baseRef: process.env.BASE_REF,
+        headRef: process.env.HEAD_REF,
+      })}\n`,
+    );
+  } else {
+    const root = process.cwd();
+    const files = readFileSync(0, "utf8").split("\n").filter(Boolean);
+    if (process.argv.includes("--looks")) {
+      process.stdout.write(`${docsRenderLooks(files).join(",")}\n`);
+    } else {
+      const routes = docsRenderRoutes({
+        files,
+        manifest: loadManifest(root),
+        sitemapRoutes: loadSitemapRoutes(root),
+      });
+      process.stdout.write(`${routes.join(",")}\n`);
+    }
+  }
 }

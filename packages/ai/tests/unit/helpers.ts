@@ -23,6 +23,11 @@ export function put(root: string, rel: string, content: string): void {
   writeFileSync(path, content);
 }
 
+/** CLI treats `warning:` as exit 0; tests that mean "valid" should ignore those lines. */
+export function failingIssues<T extends { message: string }>(issues: readonly T[]): T[] {
+  return issues.filter((issue) => !issue.message.startsWith("warning:"));
+}
+
 export const SKILL = (name: string): string =>
   `---\nname: ${name}\ndescription: "Does ${name}. Use when needed."\n---\n\n# ${name}\n`;
 

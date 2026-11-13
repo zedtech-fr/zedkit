@@ -5,7 +5,7 @@ import { installKit } from "#install.js";
 import { kitDir } from "#kit.js";
 import { applyTestPolicyToAgentsMd, detectRunner } from "#test-policy.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { put, tempDir } from "./helpers.js";
+import { failingIssues, put, tempDir } from "./helpers.js";
 
 const skillDir = join(kitDir(), "skills", "setup-ai");
 const readKit = (...rel: string[]): string => readFileSync(join(kitDir(), ...rel), "utf8");
@@ -154,7 +154,7 @@ describe("setup-ai product output: test recommendations", () => {
     expect(agents).not.toMatch(/run \d+ e2e/iu);
 
     expect(existsSync(join(dest, ".github/workflows/e2e.yml"))).toBe(true);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);
   });
 
