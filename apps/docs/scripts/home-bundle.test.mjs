@@ -117,8 +117,8 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(lead, /text-muted-foreground/);
   assert.match(lead, /homeHeroCopy\.hero\.titleClause/);
   assert.doesNotMatch(lead, /^["']use client["']/m);
-  assert.match(lead, /MAP_SETUP_MINI_PROMPT/);
-  assert.doesNotMatch(lead, /AI_SETUP_MINI_PROMPT|UI_SETUP_MINI_PROMPT/);
+  assert.match(lead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(lead, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b/);
   assert.match(lead, /HomeCopyCommandField/);
   assert.equal((lead.match(/<HomeCopyCommandField/g) ?? []).length, 1);
   assert.doesNotMatch(lead, /SecretField|\bmultiline\b/);
@@ -138,7 +138,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.match(copy, /promptAriaLabel: "Setup prompt"/);
   assert.match(
     copy,
-    /promptCaption: "Name the kits you want\. The agent installs only those, in map\.md order\."/,
+    /promptCaption: "Edit the prompt to name the kits you want — add Nest if you want it too\. The setup installs in the right order\."/,
   );
   assert.match(lead, /aria-label=\{homeHeroCopy\.hero\.promptAriaLabel\}/);
   assert.match(lead, /aria-describedby="home-hero-prompt-caption"/);
@@ -520,7 +520,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closing, /HomeCopyCommandField/);
   assert.doesNotMatch(closing, /SecretField|\bmultiline\b/);
   assert.match(closing, /w-full text-left/);
-  assert.match(closing, /MAP_SETUP_MINI_PROMPT/);
+  assert.match(closing, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(closing, /\bMAP_SETUP_MINI_PROMPT\b/);
   assert.match(closing, /aria-label=\{homeClosingCopy\.promptAriaLabel\}/);
   assert.match(closing, /copyLabel=\{homeClosingCopy\.promptCopyLabel\}/);
   assert.doesNotMatch(closing, /SetupEntryPrompt|data-setup-entry|homeClosingCopy\.actionHref/);
@@ -531,7 +532,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(closingCopy, /promptCopyLabel: "Copy closing prompt"/);
   assert.doesNotMatch(closingCopy, /promptCopyLabel: "Copy prompt"/);
   const smoke = readFileSync(join(app, "tests/home.spec.ts"), "utf8");
-  assert.match(smoke, /getByRole\("textbox", \{ name: "Setup prompt", exact: true \}\)/);
+  assert.match(smoke, /getByText\(MAP_AI_UI_SETUP_MINI_PROMPT\)/);
+  assert.doesNotMatch(smoke, /getByRole\("textbox"/);
   assert.match(smoke, /getByRole\("button", \{ name: "Copy prompt", exact: true \}\)/);
   assert.match(smoke, /getByRole\("button", \{ name: "Copy closing prompt", exact: true \}\)/);
   assert.doesNotMatch(closingCopy, /action: "Setup"/);

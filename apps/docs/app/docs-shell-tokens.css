@@ -302,8 +302,8 @@ html[data-docs-shell][data-identity] {
 
 /*
  * Hero and closing share one attached command field. One border around
- * the row; the site-action Copy sits on the right. Overflow stays inside
- * the input so the page does not grow sideways on 390.
+ * the row; the site-action Copy sits on the right. The value wraps so
+ * the page does not grow sideways on 390.
  */
 #home-page [data-home-copy-command] {
   display: flex;
@@ -316,23 +316,17 @@ html[data-docs-shell][data-identity] {
   background-color: hsl(var(--background));
 }
 
-#home-page [data-home-copy-command] [data-slot="input"] {
+#home-page [data-home-copy-command] [data-home-copy-command-value] {
   flex: 1 1 auto;
-  min-width: 0;
   min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));
-  height: auto;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
 }
 
-#home-page [data-home-copy-command] [data-slot="input"]:focus-visible,
-#home-page [data-home-copy-command] [data-slot="button"]:focus-visible {
+#home-page [data-home-copy-command] [data-slot="button"]:focus-visible,
+#home-page [data-home-copy-command] [data-home-copy-command-value]:focus-visible {
   outline-offset: calc(var(--ring-width-control, 2px) * -1);
 }
 
 #home-page [data-home-copy-command] [data-slot="button"] {
-  flex-shrink: 0;
   min-width: 88px;
   height: auto;
   border-radius: 0;

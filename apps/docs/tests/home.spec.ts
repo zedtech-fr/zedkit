@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
 import { homeHeroCopy } from "../ui/home/i18n/home-hero-copy";
 
 const homeHeroHeading = `${homeHeroCopy.hero.title} ${homeHeroCopy.hero.titleClause}`;
@@ -63,12 +64,11 @@ test("home hero matches the mockup first screen: clause, prompt, glass card (#11
   );
   await expect(page.locator("[data-home-hero-sub]")).toContainText("definition of done");
   await expect(
-    page.locator("[data-home-hero-prompt]").getByRole("textbox", { name: "Setup prompt", exact: true }),
+    page.locator("[data-home-hero-prompt]").getByText(MAP_AI_UI_SETUP_MINI_PROMPT),
   ).toBeVisible();
-  await expect(page.getByRole("textbox", { name: "Setup prompt", exact: true })).toHaveCount(1);
   await expect(
-    page.locator("[data-home-closing]").getByRole("textbox", { name: "Closing setup prompt", exact: true }),
-  ).toHaveCount(1);
+    page.locator("[data-home-closing]").getByText(MAP_AI_UI_SETUP_MINI_PROMPT),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
   await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
