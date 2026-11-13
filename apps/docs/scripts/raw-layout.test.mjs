@@ -41,12 +41,13 @@ test("legal kit layout is not a hit, including Text as=span", () => {
 });
 
 test("allowlisted basenames skip even a split <div", () => {
-  assert.deepEqual(checkRawLayoutFile("features/identity/ui/identity-dock-chrome.tsx", SPLIT_DIV), []);
+  assert.deepEqual(checkRawLayoutFile("features/identity/dock/ui/identity-dock-chrome.tsx", SPLIT_DIV), []);
   assert.deepEqual(
     checkRawLayoutFile("components/identity-dock-composer-footer.tsx", SPLIT_DIV),
     [],
   );
   assert.deepEqual(checkRawLayoutFile("features/docs/ui/component-preview.tsx", SPLIT_DIV), []);
+  assert.deepEqual(checkRawLayoutFile("components/site-chrome/site-chrome.tsx", SPLIT_DIV), []);
   assert.deepEqual(checkRawLayoutFile("components/frame.tsx", SPLIT_DIV), [
     "components/frame.tsx: raw <div> is banned; use kit Stack/Text/Section/Heading.",
   ]);

@@ -212,7 +212,7 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   const manifestoCopy = readFileSync(join(homeI18n, "home-manifesto-copy.ts"), "utf8");
   const closingCopy = readFileSync(join(homeI18n, "home-closing-copy.ts"), "utf8");
   const looksCopy = readFileSync(join(homeI18n, "home-identity-looks-copy.ts"), "utf8");
-  const dockCopy = readFileSync(join(app, "components/i18n/identity-dock-copy.ts"), "utf8");
+  const dockCopy = readFileSync(join(app, "features/identity/dock/i18n/identity-dock-copy.ts"), "utf8");
   const order = [
     ...src.matchAll(
       /<Home(SameIdea|SixSentences|Paste|Identities|Limits|Manifesto|Closing|ComponentFamilies|Secondary)Section/g,
@@ -685,11 +685,11 @@ test("admin dashboard guide demo wires save and delete to state", () => {
 });
 
 test("docs phone chrome keeps search; home chrome does not", () => {
-  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
-  const siteHeaders = readFileSync(join(app, "ui/site-headers.tsx"), "utf8");
-  const actions = readFileSync(join(app, "ui/home-header-actions.tsx"), "utf8");
+  const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
+  const siteHeaders = readFileSync(join(app, "components/site-chrome/site-headers.tsx"), "utf8");
+  const actions = readFileSync(join(app, "components/site-chrome/header-actions.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
-  const layout = readFileSync(join(app, "ui/site-layout.tsx"), "utf8");
+  const layout = readFileSync(join(app, "components/site-chrome/site-layout.tsx"), "utf8");
   assert.match(header, /siteHeaderChrome/);
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /aria-label=\{siteChromeCopy\.nav\.siteNavigation\}/);
@@ -747,7 +747,7 @@ test("docs phone chrome keeps search; home chrome does not", () => {
 });
 
 test("phone header is one compact row with a kit Drawer site menu", () => {
-  const header = readFileSync(join(app, "ui/mobile-header.tsx"), "utf8");
+  const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
   const compact = readFileSync(join(app, "app/site-compact.css"), "utf8");
   assert.match(header, /id="nd-mobile-nav"/);
   assert.match(header, /flex min-h-phone-bar flex-nowrap items-center/);
