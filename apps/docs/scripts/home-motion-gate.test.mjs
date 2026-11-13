@@ -114,6 +114,8 @@ test("mockup motion jobs map onto live names, not a rebuilt run", () => {
   assert.match(illustration, /data-hero-run-stage/);
   assert.match(illustration, /data-hero-run-step/);
   assert.match(css, /animation-play-state:\s*paused/);
+  assert.doesNotMatch(stripComments(css), /\.status-ping/);
+  assert.match(illustration, /pulse=\{dot\.pulse && !paused\}/);
   assert.doesNotMatch(live, /@keyframes zk-(?:up|in|drift|s[1-5])\b/);
   assert.doesNotMatch(live, /\bzk-s[1-5]\b/);
   assert.doesNotMatch(css, /\[data-hero-shapes\][^{]*\{[^}]*animation\s*:/);

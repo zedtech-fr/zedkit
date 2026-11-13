@@ -11,6 +11,7 @@ import {
   liveUpdateMessage,
   nextLivePollMs,
   resolveRunsApiBase,
+  startHeroLivePoll,
   type HeroActiveRun,
   type HeroStepStatus,
 } from "./home-hero-active-run";
@@ -67,7 +68,7 @@ function PlaceholderRows() {
   );
 }
 
-function LiveRows({ run }: { run: HeroActiveRun }) {
+function LiveRows({ run, paused }: { run: HeroActiveRun; paused: boolean }) {
   return (
     <ol className="trim-margin flex list-none flex-col">
       {run.steps.map((step) => {
@@ -83,7 +84,7 @@ function LiveRows({ run }: { run: HeroActiveRun }) {
               {heroStepLabel(step.key, copy)}
             </Text>
             <div className="inline-flex content-shrink flex-wrap items-center gap-icon">
-              <StatusDot tone={dot.tone} pulse={dot.pulse} />
+              <StatusDot tone={dot.tone} pulse={dot.pulse && !paused} />
               <Text as="span" variant="muted" className="line-clamp-1">
                 {STEP_STATUS_COPY[step.status]}
                 {step.summary === null ? "" : ` · ${step.summary}`}
@@ -99,7 +100,11 @@ function LiveRows({ run }: { run: HeroActiveRun }) {
 function PlaceholderLinks() {
   return (
     <Stack direction="horizontal" gap="md" className="min-h-target flex-wrap">
-      <HomeLink href="/issues?open=first" className={HERO_LINK_CLASS}>
+      <HomeLink
+        href="/issues?open=first"
+        className={HERO_LINK_CLASS}
+        aria-label={copy.viewPublicRunNamed(copy.emptyStateTitle)}
+      >
         {copy.viewPublicRun}
       </HomeLink>
     </Stack>
@@ -108,14 +113,15 @@ function PlaceholderLinks() {
 
 function LiveLinks({ run }: { run: HeroActiveRun }) {
   const follow = followRunHref(run);
+  const title = heroRunTitle(run, copy);
   return (
     <Stack direction="horizontal" gap="md" className="min-h-target flex-wrap">
       {follow === null ? null : follow.offPath ? (
-        <OffPathLink href={follow.href} className={HERO_LINK_CLASS}>
+        <OffPathLink href={follow.href} className={HERO_LINK_CLASS} aria-label={copy.followRunNamed(title)}>
           {copy.followRun}
         </OffPathLink>
       ) : (
-        <HomeLink href={follow.href} className={HERO_LINK_CLASS}>
+        <HomeLink href={follow.href} className={HERO_LINK_CLASS} aria-label={copy.followRunNamed(title)}>
           {copy.followRun}
         </HomeLink>
       )}
@@ -161,7 +167,7 @@ function RunCard({
           {control}
         </Button>
       </Stack>
-      {live === null ? <PlaceholderRows /> : <LiveRows run={live} />}
+      {live === null ? <PlaceholderRows /> : <LiveRows run={live} paused={paused} />}
       <Text variant="muted" typeRole="caption" className={HOME_METADATA_TEXT_CLASS}>
         {caption}
       </Text>
@@ -181,35 +187,16 @@ function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
     });
     const delay = nextLivePollMs(paused, base);
     if (delay === null) return;
-    const controller = new AbortController();
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    let cancelled = false;
-
-    const schedule = () => {
-      if (cancelled || controller.signal.aborted) return;
-      timer = setTimeout(tick, delay);
-    };
-
-    const tick = () => {
-      void fetchActiveHeroRun({
-        ...(envValue === undefined ? {} : { envValue }),
-        hostname: window.location.hostname,
-        signal: controller.signal,
-      })
-        .then((result) => {
-          if (cancelled || controller.signal.aborted) return;
-          if (result.ok) setLive(result.value);
-        })
-        .catch(() => undefined)
-        .then(schedule, schedule);
-    };
-
-    tick();
-    return () => {
-      cancelled = true;
-      controller.abort();
-      if (timer !== undefined) clearTimeout(timer);
-    };
+    return startHeroLivePoll({
+      delayMs: delay,
+      setLive,
+      poll: (signal) =>
+        fetchActiveHeroRun({
+          ...(envValue === undefined ? {} : { envValue }),
+          hostname: window.location.hostname,
+          signal,
+        }),
+    });
   }, [paused]);
 
   return live;
@@ -217,7 +204,8 @@ function useActiveHeroRun(paused: boolean): HeroActiveRun | null {
 
 /**
  * Site-owned high-value glass illustration. Client-fetches one active run
- * and falls back to the static placeholder on empty, stale, or fetch failure.
+ * and swaps in the live card; empty or stale lists return to the placeholder.
+ * A fetch or parse error keeps the last live card (does not clear).
  * Pause freezes CSS step motion and live polling (no fetch while paused).
  */
 export function HomeHeroIllustration() {

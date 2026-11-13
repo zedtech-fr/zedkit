@@ -30,6 +30,8 @@ export const ACTIVE_HERO_TIMEOUT_MS = 4_000;
 
 const RUN_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const STEP_STATUS = new Set<HeroStepStatus>(["pending", "active", "done", "failed", "skipped"]);
+const HERO_STEP_KEY_SET: ReadonlySet<string> = new Set(HERO_STEP_KEYS);
+/** Product decision: public hosts without env fetch the staging runs origin (prod and epic-73 included until that host expires). */
 const ORIGIN_FALLBACK_HOSTS = new Set(["zedkit.app", "dev.zedkit.app", "epic-73.dev.zedkit.app"]);
 const STAGING_RUNS_ORIGIN = "https://dev.zedkit.app";
 const TITLE_MAX = 160;
@@ -48,6 +50,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+/** Hero issue/PR numbers are GitHub ids: positive safe integers. Reviews `asSafeInt` accepts any safe int. */
 function asSafeInt(value: unknown): number | null | undefined {
   if (value === undefined || value === null) return null;
   if (typeof value === "number" && Number.isSafeInteger(value) && value > 0) return value;
@@ -127,14 +130,34 @@ function asStepStatus(value: unknown): HeroStepStatus | null {
   return STEP_STATUS.has(value as HeroStepStatus) ? (value as HeroStepStatus) : null;
 }
 
-function parseStep(value: unknown, expected: HeroStepKey): HeroRunStep | null {
-  if (!isRecord(value)) return null;
+function parseStep(value: Record<string, unknown>, expected: HeroStepKey): HeroRunStep | null {
   if (value.key !== expected) return null;
   const status = asStepStatus(value.status);
   if (status === null) return null;
   const summary = asSummary(value.summary);
   if (summary === undefined) return null;
   return { key: expected, status, summary };
+}
+
+function parseSteps(value: unknown): HeroRunStep[] | null {
+  if (!Array.isArray(value)) return null;
+  const byKey = new Map<HeroStepKey, HeroRunStep>();
+  for (const item of value) {
+    if (!isRecord(item)) return null;
+    if (!HERO_STEP_KEY_SET.has(item.key as string)) continue;
+    const key = item.key as HeroStepKey;
+    if (byKey.has(key)) return null;
+    const step = parseStep(item, key);
+    if (step === null) return null;
+    byKey.set(key, step);
+  }
+  const steps: HeroRunStep[] = [];
+  for (const key of HERO_STEP_KEYS) {
+    const step = byKey.get(key);
+    if (step === undefined) return null;
+    steps.push(step);
+  }
+  return steps;
 }
 
 function parseHeroRun(value: unknown): HeroActiveRun | null {
@@ -145,13 +168,8 @@ function parseHeroRun(value: unknown): HeroActiveRun | null {
   const title = asTitle(value.title);
   if (issue === undefined || pr === undefined || title === undefined) return null;
   if (typeof value.active !== "boolean" || typeof value.stale !== "boolean") return null;
-  if (!Array.isArray(value.steps) || value.steps.length !== HERO_STEP_KEYS.length) return null;
-  const steps: HeroRunStep[] = [];
-  for (const [index, key] of HERO_STEP_KEYS.entries()) {
-    const step = parseStep(value.steps[index], key);
-    if (step === null) return null;
-    steps.push(step);
-  }
+  const steps = parseSteps(value.steps);
+  if (steps === null) return null;
   const liveUrl =
     value.liveUrl === undefined || value.liveUrl === null
       ? null
@@ -168,9 +186,10 @@ export function parseActiveRunsEnvelope(value: unknown): Result<HeroActiveRun[],
   if (!Array.isArray(value.runs)) return err(new PermanentError("hero-runs: missing runs"));
   const first = value.runs[0];
   if (first === undefined) return ok([]);
+  if (!isRecord(first)) return err(new PermanentError("hero-runs: malformed run"));
+  if (first.active !== true || first.stale === true) return ok([]);
   const parsed = parseHeroRun(first);
   if (parsed === null) return err(new PermanentError("hero-runs: malformed run"));
-  if (!isRecord(first) || first.active !== true || first.stale === true) return ok([]);
   return ok([parsed]);
 }
 
@@ -234,6 +253,48 @@ export function liveUpdateMessage(run: HeroActiveRun, copy: HeroLiveCopy, paused
   if (paused) return copy.liveStatusPaused(title);
   const active = run.steps.find((step) => step.status === "active");
   return copy.liveStatus(title, active === undefined ? "" : heroStepLabel(active.key, copy));
+}
+
+export type HeroLivePollTimer = ReturnType<typeof setTimeout>;
+
+export type HeroLivePollOptions = {
+  delayMs: number;
+  poll: (signal: AbortSignal) => Promise<Result<HeroActiveRun | null, Error>>;
+  setLive: (run: HeroActiveRun | null) => void;
+  setTimeoutFn?: (fn: () => void, ms: number) => HeroLivePollTimer;
+  clearTimeoutFn?: (id: HeroLivePollTimer) => void;
+};
+
+/** Immediate tick, then re-arm after settle (empty, success, or error). Abort skips setLive. */
+export function startHeroLivePoll(options: HeroLivePollOptions): () => void {
+  const setTimeoutFn = options.setTimeoutFn ?? ((fn, ms) => setTimeout(fn, ms));
+  const clearTimeoutFn = options.clearTimeoutFn ?? ((id) => clearTimeout(id));
+  const controller = new AbortController();
+  let timer: HeroLivePollTimer | undefined;
+  let cancelled = false;
+
+  const schedule = () => {
+    if (cancelled || controller.signal.aborted) return;
+    timer = setTimeoutFn(tick, options.delayMs);
+  };
+
+  const tick = () => {
+    void options
+      .poll(controller.signal)
+      .then((result) => {
+        if (cancelled || controller.signal.aborted) return;
+        if (result.ok) options.setLive(result.value);
+      })
+      .catch(() => undefined)
+      .then(schedule, schedule);
+  };
+
+  tick();
+  return () => {
+    cancelled = true;
+    controller.abort();
+    if (timer !== undefined) clearTimeoutFn(timer);
+  };
 }
 
 export type FetchActiveHeroRunOptions = {

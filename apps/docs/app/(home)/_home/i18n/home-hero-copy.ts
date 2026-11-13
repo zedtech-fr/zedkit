@@ -15,10 +15,12 @@ export const homeHeroCopy = {
     playMotion: "Play illustration motion",
     caption: "An illustration of one run, not a recording.",
     viewPublicRun: "View a public run",
+    viewPublicRunNamed: (title: string) => `View a public run: ${title}`,
     liveCaption: "Showing an active run.",
     liveCaptionPaused: "Live updates paused.",
     stageLabel: "Run illustration",
     followRun: "View this run",
+    followRunNamed: (title: string) => `View this run: ${title}`,
     allRuns: "View all runs",
     untitled: "Active run",
     liveStatus: (title: string, step: string) =>

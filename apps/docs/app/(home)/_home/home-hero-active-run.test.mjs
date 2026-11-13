@@ -13,6 +13,7 @@ import {
   resolveRunsApiBase,
   sanitizeHeroLiveUrl,
   selectActiveHeroRun,
+  startHeroLivePoll,
   ACTIVE_HERO_POLL_MS,
 } from "./home-hero-active-run.ts";
 import { homeHeroCopy } from "./i18n/home-hero-copy.ts";
@@ -130,6 +131,11 @@ test("maps an active run title, steps, and CTA hrefs", () => {
   assert.equal(run.steps[1]?.status, "active");
   assert.equal(run.steps[1]?.summary, "build is underway");
   assert.deepEqual(followRunHref(run), { href: "/issues#issue-241", offPath: false });
+  assert.equal(copy.followRunNamed(heroRunTitle(run, TITLE)), "View this run: Add an empty state to the tasks list");
+  assert.equal(
+    copy.viewPublicRunNamed(copy.emptyStateTitle),
+    "View a public run: Add an empty state to the tasks list",
+  );
 });
 
 test("title falls back to issue, then pull request, then untitled", () => {
@@ -161,6 +167,32 @@ test("empty runs and inactive or stale rows fall back to no live card", () => {
   assert.equal(selectActiveHeroRun(parseActiveRunsEnvelope(envelope([])).value), null);
   assert.equal(selectActiveHeroRun(parseActiveRunsEnvelope(envelope([runRow({ active: false })])).value), null);
   assert.equal(selectActiveHeroRun(parseActiveRunsEnvelope(envelope([runRow({ stale: true })])).value), null);
+});
+
+test("inactive or stale rows skip parse so a malformed inactive row clears", () => {
+  const inactive = parseActiveRunsEnvelope(envelope([runRow({ active: false, runId: "../x" })]));
+  assert.equal(inactive.ok, true);
+  assert.deepEqual(inactive.value, []);
+  const stale = parseActiveRunsEnvelope(envelope([runRow({ stale: true, title: 12 })]));
+  assert.equal(stale.ok, true);
+  assert.deepEqual(stale.value, []);
+});
+
+test("maps required steps by key and ignores extras and order", () => {
+  const reordered = [...steps("build")].reverse();
+  const extra = [...reordered, { key: "review", status: "done", summary: null }];
+  const parsed = parseActiveRunsEnvelope(envelope([runRow({ steps: extra })]));
+  assert.equal(parsed.ok, true);
+  assert.deepEqual(
+    parsed.value[0].steps.map((row) => row.key),
+    ["plan", "build", "check", "fix", "done"],
+  );
+  assert.equal(parsed.value[0].steps[1]?.status, "active");
+});
+
+test("duplicate required step keys fail the card", () => {
+  const duplicate = [...steps("build"), step("plan", "done", "again")];
+  assert.equal(parseActiveRunsEnvelope(envelope([runRow({ steps: duplicate })])).ok, false);
 });
 
 test("version 1 envelopes parse without a kind field", () => {
@@ -219,6 +251,89 @@ test("fetch maps an active run and falls back when the list is empty", async () 
   });
   assert.equal(empty.ok, true);
   assert.equal(empty.value, null);
+});
+
+async function flushMicrotasks() {
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+}
+
+test("live poll ticks immediately and reschedules after empty, error, throw, and success", async () => {
+  const calls = [];
+  const queued = [];
+  let live = "unset";
+  let settle;
+  const stop = startHeroLivePoll({
+    delayMs: ACTIVE_HERO_POLL_MS,
+    setLive: (value) => {
+      live = value;
+    },
+    setTimeoutFn: (fn, ms) => {
+      queued.push({ fn, ms });
+      return queued.length;
+    },
+    clearTimeoutFn: () => {
+      queued.length = 0;
+    },
+    poll: () =>
+      new Promise((resolve, reject) => {
+        calls.push(calls.length);
+        settle = { resolve, reject };
+      }),
+  });
+
+  assert.deepEqual(calls, [0]);
+  assert.equal(queued.length, 0);
+  settle.resolve({ ok: true, value: null });
+  await flushMicrotasks();
+  assert.equal(live, null);
+  assert.equal(queued.length, 1);
+  assert.equal(queued[0]?.ms, ACTIVE_HERO_POLL_MS);
+
+  queued.shift().fn();
+  assert.deepEqual(calls, [0, 1]);
+  settle.resolve({ ok: false, error: new Error("down") });
+  await flushMicrotasks();
+  assert.equal(live, null);
+  assert.equal(queued.length, 1);
+
+  queued.shift().fn();
+  assert.deepEqual(calls, [0, 1, 2]);
+  settle.reject(new Error("boom"));
+  await flushMicrotasks();
+  assert.equal(live, null);
+  assert.equal(queued.length, 1);
+
+  queued.shift().fn();
+  assert.deepEqual(calls, [0, 1, 2, 3]);
+  settle.resolve({ ok: true, value: runRow() });
+  await flushMicrotasks();
+  assert.equal(live?.runId, "20261113T120000Z-hero1");
+  stop();
+});
+
+test("live poll abort ignores an in-flight result", async () => {
+  let live = "unset";
+  let resolvePoll;
+  const hanging = new Promise((resolve) => {
+    resolvePoll = resolve;
+  });
+  const stop = startHeroLivePoll({
+    delayMs: ACTIVE_HERO_POLL_MS,
+    setLive: (value) => {
+      live = value;
+    },
+    setTimeoutFn: () => 1,
+    clearTimeoutFn: () => undefined,
+    poll: () => hanging,
+  });
+  stop();
+  resolvePoll({ ok: true, value: runRow() });
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(live, "unset");
 });
 
 test("fetch failure leaves the caller with an error to keep the placeholder", async () => {
