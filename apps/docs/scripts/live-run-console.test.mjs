@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -164,7 +164,7 @@ test("parseLiveConsoleLocation reads id, item, and hash item", () => {
   assert.equal(parseLiveConsoleLocation("?id=run-1&item=" + "x".repeat(81)).itemId, null);
 });
 
-test("writeLiveConsoleSearch keeps appearance pins and drops t", () => {
+test("writeLiveConsoleSearch keeps appearance pins and id/item in the query", () => {
   const search = writeLiveConsoleSearch({
     search: "?identity=volt&t=secret&preview=dark&id=old",
     runId: "run-2",
@@ -499,4 +499,30 @@ test("live console UI uses kit states and does not duplicate AgentConsole", () =
   assert.doesNotMatch(adapter, /credentials:\s*["']include["']/);
   assert.match(adapter, /credentials:\s*["']omit["']/);
   assert.match(adapter, /pollingSource/);
+});
+
+test("live run routes omit look controls and inherit the site theme", () => {
+  const appearance = readFileSync(join(reviewsRoot, "ui/review-console-appearance.tsx"), "utf8");
+  const view = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+  const states = readFileSync(join(reviewsRoot, "ui/review-live-console-states.tsx"), "utf8");
+  const root = readFileSync(join(here, "../app/layout.tsx"), "utf8");
+  const listFrame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
+  const scope = readFileSync(join(reviewsRoot, "ui/use-review-appearance-scope.ts"), "utf8");
+  assert.match(root, /IdentityScript/);
+  assert.match(root, /<Provider>\{children\}<\/Provider>/);
+  assert.match(appearance, /useReviewAppearanceScope/);
+  assert.match(listFrame, /useReviewAppearanceScope/);
+  assert.match(scope, /hasReviewAppearanceQuery/);
+  assert.match(scope, /identity: pin \? appearance\.identity : undefined/);
+  assert.match(scope, /mode: pin \? appearance\.mode : undefined/);
+  assert.doesNotMatch(appearance, /mode=\{appearance\.mode\}/);
+  assert.doesNotMatch(appearance, /mode="light"/);
+  assert.doesNotMatch(appearance, /DEFAULT_REVIEW_APPEARANCE/);
+  assert.doesNotMatch(scope, /DEFAULT_REVIEW_APPEARANCE/);
+  assert.doesNotMatch(appearance, /LookField|IdentitySelect|DensitySelect|consoleAppearanceCopy/);
+  assert.doesNotMatch(appearance, /Token editor|Dark mode|Density/);
+  assert.doesNotMatch(view, /\(panel\)|\{panel\}/);
+  assert.doesNotMatch(states, /\(panel\)|\{panel\}/);
+  assert.doesNotMatch(view, /consoleAppearanceCopy/);
+  assert.equal(existsSync(join(reviewsRoot, "i18n/review-console-copy.ts")), false);
 });

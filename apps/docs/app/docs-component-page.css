@@ -95,6 +95,11 @@
   --color-fd-foreground: hsl(0 0% 98%);
   --muted-foreground: var(--zk-code-well-muted);
   --color-fd-muted-foreground: hsl(var(--zk-code-well-muted));
+  --color-muted-foreground: hsl(var(--zk-code-well-muted));
+  --accent-foreground: 0 0% 98%;
+  --color-fd-accent-foreground: hsl(var(--accent-foreground));
+  --ring: var(--zk-code-well-muted);
+  --color-fd-ring: hsl(var(--zk-code-well-muted));
   --color-fd-border: hsl(240 4% 16%);
   background-color: hsl(var(--zk-code-well));
   color: hsl(0 0% 98%);

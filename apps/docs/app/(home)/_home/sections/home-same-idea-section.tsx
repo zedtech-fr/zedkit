@@ -123,12 +123,6 @@ function SameIdeaCard({ id, componentCount }: { id: SameIdeaCardId; componentCou
 
 function SameIdeaLands({ componentCount }: { componentCount: number }) {
   const { kitCounts, lands } = homeSameIdeaCopy;
-  const items = [
-    { count: kitCounts.skills, label: lands.skills },
-    { count: kitCounts.agents, label: lands.agents },
-    { count: componentCount, label: lands.components },
-    { count: kitCounts.looks, label: lands.looks },
-  ];
   return (
     <Stack
       direction="horizontal"
@@ -139,29 +133,21 @@ function SameIdeaLands({ componentCount }: { componentCount: number }) {
       <Heading level={3} typeRole="body">
         {lands.heading}
       </Heading>
-      <Stack direction="horizontal" gap="lg" className="flex-wrap font-mono text-dense">
-        {items.map((item) => (
-          <Text as="span" key={item.label}>
-            <Text as="span">{item.count}</Text>{" "}
-            <Text as="span" variant="muted">
-              {item.label}
-            </Text>
-          </Text>
-        ))}
-        <Text as="span">{lands.mit}</Text>
-      </Stack>
+      <Text variant="muted" className={HOME_PERSUASION_TEXT_CLASS}>
+        {lands.proof(kitCounts.skills, kitCounts.agents, componentCount, kitCounts.looks)}
+      </Text>
     </Stack>
   );
 }
 
 /**
- * Right after the hero: AI, UI and Together as one idea, then what lands.
+ * Right after the hero: AI, UI and Together as one idea, then the proof bar.
  *
- * Compose-UI: three equal cards then a slim inverted count bar, because:
+ * Compose-UI: three equal cards then a slim inverted benefit-led proof bar, because:
  * client = integrating developer who needs the two kits and the combined
  * map as one band. Stack until lg, then three columns, because compose by
  * priority through the tablet step. Violet only in the 120px product
- * windows, because high-value panel accents, not page fill. Count bar
+ * windows, because high-value panel accents, not page fill. Proof bar
  * inverted zinc with a full `--zk-section-pad` above it, because the strip
  * is a contrast band and must keep the same breathing room as the other
  * home sections, not sit flush under the cards. No identity form, because

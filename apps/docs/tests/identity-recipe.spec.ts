@@ -7,7 +7,7 @@ import {
   parseIdentityEditorSearch,
   serializeIdentityEditorSearch,
 } from "../features/identity/ui/identity-editor-search";
-import { parseRecipe, serializeRecipe } from "../lib/identity-recipe";
+import { parseRecipe, serializeRecipe } from "../features/identity/ui/identity-recipe";
 
 /** The export is a recipe (see the export copy). These tests pin what that recipe preserves. */
 

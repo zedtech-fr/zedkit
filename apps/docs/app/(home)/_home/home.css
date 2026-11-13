@@ -20,8 +20,10 @@
 }
 
 /*
- * Looks pills: inverted selected chip. Unlayered so ink beats kit tab
- * utilities and inherited muted color (selected contrast walks [role=tab]).
+ * Looks pills: inverted selected chip. Ink also uses important utilities on
+ * the trigger (`text-background!`) because selected contrast walks [role=tab]
+ * and inherited muted from TabsList beats a layered color. Unlayered pin
+ * stays as a second belt.
  * Color snap is `transition-none` on the trigger class: evidence emulates
  * reduced motion, so a CSS snap inside the no-preference gate never applies.
  */
@@ -36,6 +38,18 @@
 }
 #home-page [data-home-hero-sub] {
   max-width: 32.5rem;
+}
+
+/*
+ * #411 wrap: 16px page gutter at ≤430 (signature mobile gutter). Covers the
+ * 390→391 cliff (358px box at 390 / 1rem vs 343px at 391 / 1.5rem) and
+ * 393/412 phones. The shell token stays 1.5rem. Wide home (≥90rem) zeros
+ * this token in docs-shell-tokens.css. Do not shrink --zk-type-h1-size here.
+ */
+@media (width <= 430px) {
+  #home-page {
+    --zk-page-gutter: 1rem;
+  }
 }
 
 /*
@@ -143,8 +157,8 @@
 
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) {
-  /* 1. Load: the lead, one block at a time. Transform-only rise; backwards fill so nothing is left applied. */
-  #home-page [data-home-hero] [data-home-hero-lead] > * {
+  /* 1. Load: lead sentence and prompt. Skip the first child (h1 stack) so LCP is not delayed. */
+  #home-page [data-home-hero] [data-home-hero-lead] > :nth-child(n + 2) {
     animation: zk-home-hero-rise 360ms var(--zk-home-ease) backwards;
     animation-delay: calc(var(--zk-lead-beat, 0) * 70ms);
   }

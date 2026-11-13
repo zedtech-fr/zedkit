@@ -30,7 +30,15 @@ export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerPr
 }
 
 export function SiteFullSearchTrigger({ className, ...props }: FullSearchTriggerProps) {
-  return <FullSearchTrigger {...props} className={cn("focus-ring-control", className)} data-search="" />;
+  return (
+    <FullSearchTrigger
+      {...props}
+      className={cn("focus-ring-control", className)}
+      data-search=""
+      aria-label={undefined}
+      title={undefined}
+    />
+  );
 }
 
 export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchProps) {

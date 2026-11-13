@@ -7,7 +7,7 @@ import { IdentityDockActionBar } from "@/features/identity/dock/ui/identity-dock
 import { IdentityDockCustomize } from "@/features/identity/dock/ui/identity-dock-customize";
 import { IdentityDockPanelToolbar } from "@/features/identity/dock/ui/identity-dock-panel-toolbar";
 import { identityDockCopy } from "@/features/identity/dock/i18n/identity-dock-copy";
-import { identityEditorCopy } from "@/components/i18n/identity-editor-copy";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import { docsSiteDefaultTokens } from "@/features/identity/ui/docs-site-default-tokens";
 import { applyDocsSiteLook, resetDocsSiteLook } from "@/features/identity/ui/docs-site-look";
 import { dispatchIdentityEditorDraftApply } from "@/features/identity/ui/identity-editor-draft-apply";
