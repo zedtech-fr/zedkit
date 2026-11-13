@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Container, Stack, Text } from "@zedtech/zedkit-ui";
 import { siteFooterLinkSpecs } from "@/lib/site-links.mjs";
-import { siteChromeCopy } from "@/ui/i18n/site-chrome-copy";
-import { OffPathLink } from "@/ui/off-path-link";
+import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
+import { OffPathLink } from "@/components/site-chrome/off-path-link";
 
 const linkClassName = "inline-flex min-h-target items-center rounded-sm text-dense text-muted-foreground link-offset hover:underline focus-ring";
 

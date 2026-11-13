@@ -16,7 +16,7 @@ One decision, one owner. Fix a repeated problem at the lowest layer that shares 
 |---|---|---|---|
 | Token | A value every consumer reads: sizes, spacing, radii, colours, shadows, motion | `packages/ui/src/identities*.css`, `shared-type-scale.css`, `styles.css` | Two components or two looks disagree on a value |
 | Primitive | One component's states and structure (focus ring, hit area, containment) | `packages/ui/src/*.tsx` | The same control misbehaves on two pages |
-| Composed component | A recurring arrangement of primitives | `apps/docs/components`, `apps/docs/ui` | The arrangement repeats and has its own states |
+| Composed component | A recurring arrangement of primitives | `apps/docs/components` | The arrangement repeats and has its own states |
 | Docs shell | The site's own chrome: header, nav, prose, tables, code, gutters | `app/docs-*.css`, `app/home-*.css` | It is the site's presentation, on every page |
 | Identity scope | The look a specimen wears, resolved on its own `ThemeScope` node | `packages/ui/src/identities/*.css` | A look's token or the boundary between looks is wrong |
 | Page | Order, spacing and content of one composition | the route and its view | Nothing else shares it |
