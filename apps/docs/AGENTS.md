@@ -144,9 +144,11 @@ reject dead `/r/<name>.json` links.
   is local-only, never a merge gate. A new spec must be listed in the
   `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
   or `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
-  `test-results/`. Intended truncation that is not `truncate` /
-  `line-clamp-*` uses `data-allow-clip` plus a `CLIP_EXCEPTIONS` row in
-  `tests/a11y-exceptions.mjs` (owner and `removeBy`, same as axe excludes).
+  `test-results/`. Generated evidence PNGs under `tests/evidence/` are
+  gitignored; attach them on the PR, never commit. Intended truncation
+  that is not `truncate` / `line-clamp-*` uses `data-allow-clip` plus a
+  `CLIP_EXCEPTIONS` row in `tests/a11y-exceptions.mjs` (owner and
+  `removeBy`, same as axe excludes).
   The overflow detector already skips visually-hidden nodes (sr-only, clip /
   clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
   ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.

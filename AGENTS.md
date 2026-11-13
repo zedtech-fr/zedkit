@@ -23,7 +23,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - **No empty packages.** A package exists only when real code backs it now.
 - **Never commit build artifacts.** Before every commit and PR: run
   `git status` and `git diff --stat`, never `git add -A` blindly, and
-  confirm no binaries, caches, build output, or files over 200KB are
+  confirm no binaries, caches, build output, files over 200KB, or
+  generated evidence PNGs (`apps/docs/tests/evidence/**/*.png`) are
   staged. CI enforces this via `scripts/check-no-artifacts.sh`; if you
   extend `.gitignore`, extend the script to match.
 - **Publishing is live.** Changesets version the packages; merging a
@@ -76,7 +77,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
 - Look up before you search: read the row for your topic in
   [.agents/atlas.md](.agents/atlas.md) (where things live, words, commands,
-  why), open its Entry, widen only if it does not hold. A search that cost 3+
+  why), open its Entry — including `.agents/atlas/<topic>.md` when the row
+  names one — and widen only if it does not hold. A search that cost 3+
   reads, a correction, or a moved file or changed command fixes that row in the
   same turn. `zedkit-ai validate` fails on a path that is gone.
 - Each package PR updates the root README package table, adds a

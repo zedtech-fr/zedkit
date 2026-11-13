@@ -119,7 +119,7 @@ test("home hero matches the mockup first screen: two-beat title, prompt, glass c
   await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute("role", "group");
   await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute(
     "aria-label",
-    "An illustration of one run, not a recording.",
+    homeHeroCopy.heroIllustration.stageLabel,
   );
   const badgeInSpan = await page.evaluate(
     () =>
