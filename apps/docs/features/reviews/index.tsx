@@ -150,6 +150,7 @@ export async function ReviewIssueRunFeature({
   return (
     <ReviewConsoleView
       issueNumber={issue.number}
+      runId={id}
       run={mapped.run}
       items={mapped.items}
       decision={mapped.decision ?? null}

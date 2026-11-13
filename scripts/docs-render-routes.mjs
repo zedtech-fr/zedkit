@@ -78,6 +78,13 @@ export function routesFromFiles(files, manifest) {
         routes.add(`/${segs.join("/")}`);
       }
     }
+    if (
+      /(?:^|\/)apps\/docs\/features\/reviews\//u.test(n) ||
+      /(?:^|\/)apps\/docs\/app\/\(run-console\)\//u.test(n) ||
+      /(?:^|\/)apps\/docs\/app\/\([^/]+\)\/issues\//u.test(n)
+    ) {
+      routes.add("/issues");
+    }
     for (const row of sources) {
       if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
     }
@@ -85,8 +92,27 @@ export function routesFromFiles(files, manifest) {
   return [...routes];
 }
 
+/** Index-only run pages in the public sitemap. Live recorded-run URLs 404 when lives are empty. */
+const REVIEW_RUN_ROUTES = ["/issues/108/runs/run-108-impl", "/issues/93/runs/run-93-impl"];
+
+function reviewRunRoutesFromFiles(files) {
+  const hit = files.some((file) => {
+    const n = file.replaceAll("\\", "/");
+    return (
+      /(?:^|\/)apps\/docs\/features\/reviews\//u.test(n) ||
+      /(?:^|\/)apps\/docs\/app\/\(run-console\)\//u.test(n) ||
+      /(?:^|\/)apps\/docs\/app\/\([^/]+\)\/issues\//u.test(n)
+    );
+  });
+  return hit ? REVIEW_RUN_ROUTES : [];
+}
+
 export function docsRenderRoutes({ files, manifest, sitemapRoutes }) {
-  const mapped = [...new Set(routesFromFiles(files, manifest).map(normalizeRoute))];
+  const mapped = [
+    ...new Set(
+      [...routesFromFiles(files, manifest), ...reviewRunRoutesFromFiles(files)].map(normalizeRoute),
+    ),
+  ];
   const chosen = mapped.length > 0 ? mapped : [...DOCS_RENDER_FALLBACK_ROUTES];
   if (!sitemapRoutes) return chosen;
   const allowed = new Set([...sitemapRoutes, ...EXTRA_SITEMAP_ROUTES].map(normalizeRoute));

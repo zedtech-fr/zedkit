@@ -3,11 +3,13 @@
  * .bg-card) for catalog specimens; this host must not restyle those.
  * Extra .bg-card raises specificity over the Glass sheen rule.
  */
-[data-slot="agent-console"] [data-slot="agent-console-decision"].bg-card {
+[data-review-console] [data-slot="agent-console"] [data-slot="agent-console-decision"].bg-card {
   box-shadow: none;
   background-color: hsl(var(--background));
   background-image: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   border-radius: var(--radius-xl, 0.75rem);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

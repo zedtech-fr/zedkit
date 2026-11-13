@@ -139,13 +139,14 @@ function LookField({
       <Button
         type="button"
         variant="outline"
+        className="min-h-floor"
         aria-pressed={appearance.mode === "dark"}
         onClick={() => onChange({ ...appearance, mode: appearance.mode === "dark" ? "light" : "dark" })}
       >
         {copy.mode}
       </Button>
       <DensitySelect id={densityId} copy={copy} appearance={appearance} onChange={onChange} dense={dense} />
-      <Button type="button" variant="outline" onClick={() => onChange(DEFAULT_REVIEW_APPEARANCE)}>
+      <Button type="button" variant="outline" className="min-h-floor" onClick={() => onChange(DEFAULT_REVIEW_APPEARANCE)}>
         {copy.reset}
       </Button>
       <Button asChild variant="link">
@@ -219,7 +220,8 @@ export function ReviewConsoleAppearanceFrame({ children }: { children: (panel: R
       ref={scopeRef}
       identity={appearance.identity}
       mode={appearance.mode}
-      className="flex h-svh flex-col overflow-hidden bg-background text-foreground"
+      data-review-console=""
+      className="flex h-svh pane-shrink flex-col overflow-hidden bg-background text-foreground"
     >
       {children(panel)}
     </ThemeScope>
