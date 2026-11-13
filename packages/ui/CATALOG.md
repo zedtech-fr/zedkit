@@ -2403,11 +2403,11 @@ void css;
 - Status: beta
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
-- Purpose: Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site.
+- Purpose: Design a look on a live card, then apply it. `repairContrast` nudges failing pairs toward AA; `adjusted` is colours moved, `remaining` still miss.
 - When to use: To try a look on one card, with contrast warnings and an automatic AA dark pair, then apply that draft to the whole page identity.
 - When not to use: To switch a published built-in look — use `IdentitySwitcher` or `data-identity` on the root instead.
 - See also: `Switch the visual identity with one attribute`
-- Examples: Write a draft sheet
+- Examples: Write a draft sheet, Repair contrast
 - A11y: Every field has a visible label. Reset, Dark, Suggest, Apply, Discard and Apply to the whole site are named buttons (`aria-pressed` on Dark). The draft card is a live preview of the tokens. Colour fields accept HSL channels (`H S% L%`). Each exportable text pair (body, primary, muted) must reach 4.5:1 against its surface; accent and border need 3:1 against the background — warnings show inline with a Fix that nudges lightness. Copy CSS/JSON stays behind an explicit confirm while any pair fails. Suggest never writes tokens until Apply. While a custom identity is active, a status bar offers Reset to default.
 - Troubleshooting: The whole docs page changed — Apply to the whole site wrote `:root`; Reset to default clears `IDENTITY_CUSTOM_STORAGE_KEY`; picking a built-in identity only parks the sheet. A field snaps back — the value failed the token schema (HSL, leading, or tracking). A refresh loses the draft — the address bar holds only fields that differ from the chosen look, plus `theme=dark` when the dark preview is on. Suggest shows a keyword match — the HTTP service is off, rate-limited, or the response failed the token schema.
 
@@ -2420,7 +2420,11 @@ applyIdentityTokenSheet(
 );
 ```
 
-
+```ts
+import { repairContrast, identityPresets } from "@zedtech/zedkit-ui";
+const { tokens, adjusted, remaining } = repairContrast(identityPresets.mist);
+void { tokens, adjusted, remaining };
+```
 
 ## Compose a public marketing page
 

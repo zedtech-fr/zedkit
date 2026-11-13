@@ -6012,7 +6012,7 @@
           "status": "beta",
           "shortName": "Draft look",
           "audience": "Teams that want to try spacing, borders, type and colour on a live card before copying tokens.",
-          "purpose": "Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site.",
+          "purpose": "Design a look on a live card, then apply it. `repairContrast` nudges failing pairs toward AA; `adjusted` is colours moved, `remaining` still miss.",
           "whenToUse": "To try a look on one card, with contrast warnings and an automatic AA dark pair, then apply that draft to the whole page identity.",
           "whenNotToUse": "To switch a published built-in look — use `IdentitySwitcher` or `data-identity` on the root instead.",
           "derivedFrom": null,
@@ -6021,6 +6021,10 @@
             {
               "title": "Write a draft sheet",
               "code": "import { applyIdentityTokenSheet, identityPresets } from \"@zedtech/zedkit-ui\";\n\napplyIdentityTokenSheet(\n  identityPresets.mist,\n  '[data-identity-scope][data-identity=\"draft\"]',\n);"
+            },
+            {
+              "title": "Repair contrast",
+              "code": "import { repairContrast, identityPresets } from \"@zedtech/zedkit-ui\";\nconst { tokens, adjusted, remaining } = repairContrast(identityPresets.mist);\nvoid { tokens, adjusted, remaining };"
             }
           ],
           "adoption": {

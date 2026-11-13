@@ -132,4 +132,73 @@ describe("createStoredChoice", () => {
     expect(choice.isValue("bun")).toBe(false);
     expect(choice.isValue("")).toBe(false);
   });
+
+  it("keeps a listed empty-string choice after set, including when storage is blocked", () => {
+    const values = ["x", ""] as const;
+    const choice = createStoredChoice("pm-empty", values);
+    function EmptyProbe() {
+      const [value, set] = choice.useChoice();
+      return (
+        <>
+          <span data-testid="choice">{value}</span>
+          <button type="button" onClick={() => set("")}>
+            pick empty
+          </button>
+        </>
+      );
+    }
+    render(<EmptyProbe />);
+    expect(screen.getByTestId("choice").textContent).toBe("x");
+    act(() => {
+      screen.getByRole("button", { name: "pick empty" }).click();
+    });
+    expect(screen.getByTestId("choice").textContent).toBe("");
+    expect(localStorage.getItem("pm-empty")).toBe("");
+
+    cleanup();
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    const blocked = createStoredChoice("pm-empty-blocked", values);
+    function BlockedEmpty() {
+      const [value, set] = blocked.useChoice();
+      return (
+        <>
+          <span data-testid="blocked">{value}</span>
+          <button type="button" onClick={() => set("")}>
+            pick blocked empty
+          </button>
+        </>
+      );
+    }
+    render(<BlockedEmpty />);
+    act(() => {
+      screen.getByRole("button", { name: "pick blocked empty" }).click();
+    });
+    expect(screen.getByTestId("blocked").textContent).toBe("");
+  });
+
+  it("ignores an unlisted set from a JS caller", () => {
+    const choice = createStoredChoice("pm-unlisted", VALUES);
+    function Unlisted() {
+      const [value, set] = choice.useChoice();
+      return (
+        <>
+          <span data-testid="choice">{value}</span>
+          <button type="button" onClick={() => set("bun" as (typeof VALUES)[number])}>
+            pick unlisted
+          </button>
+        </>
+      );
+    }
+    render(<Unlisted />);
+    act(() => {
+      screen.getByRole("button", { name: "pick unlisted" }).click();
+    });
+    expect(screen.getByTestId("choice").textContent).toBe("npm");
+    expect(localStorage.getItem("pm-unlisted")).toBeNull();
+  });
 });

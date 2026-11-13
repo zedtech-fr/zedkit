@@ -27,6 +27,8 @@ describe("repairContrast", () => {
   });
 
   it("reaches 4.5:1 on a mid-tone background the old one-way nudge left failing", () => {
+    // Gray 62% has luminance just above the black/white crossover but under 0.5, so lightening the text can never
+    // pass; only darkening does. The previous nudge lightened, ended at white and still reported success.
     const midTone = {
       ...identityPresets.mist,
       light: { ...identityPresets.mist.light, background: "0 0% 62%", foreground: "0 0% 70%" },
