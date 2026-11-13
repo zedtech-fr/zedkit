@@ -10,17 +10,17 @@ import {
   Text,
   ThemeScope,
 } from "@zedtech/zedkit-ui";
-import { isIdentityId, type IdentityId } from "@/ui/home/home-identity-facts";
-import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
-import { HomeIdentityExampleMist } from "@/ui/home/home-identity-example-mist";
-import { HomeIdentityLooksTabs } from "@/ui/home/home-identity-looks-tabs";
+import { isIdentityId, type IdentityId } from "./home-identity-facts";
+import { homeIdentityLooksCopy } from "./i18n/home-identity-looks-copy";
+import { HomeIdentityExampleMist } from "./home-identity-example-mist";
+import { HomeIdentityLooksTabs } from "./home-identity-looks-tabs";
+import { useLookFade } from "./use-look-fade";
 import {
   HOME_LOOKS_GRID,
   HOME_METADATA_TEXT_CLASS,
   HOME_PARALLAX_SCROLL_PROPS,
   HOME_PERSUASION_TEXT_CLASS,
 } from "@/ui/home/home-rhythm";
-import { useLookFade } from "@/ui/home/use-look-fade";
 import { useMotionOk } from "@/ui/home/use-motion-ok";
 
 const noop = () => () => {};

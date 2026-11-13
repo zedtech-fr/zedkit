@@ -4,10 +4,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-const app = join(dirname(fileURLToPath(import.meta.url)), "..");
-const home = (...parts) => join(app, "ui/home", ...parts);
+const here = dirname(fileURLToPath(import.meta.url));
+const app = join(here, "../../..");
+const home = (...parts) => join(here, ...parts);
 
 function readHome(name) {
+  if (name.endsWith("-copy.ts")) {
+    return readFileSync(join(here, "i18n", name), "utf8");
+  }
   return readFileSync(home(name), "utf8");
 }
 

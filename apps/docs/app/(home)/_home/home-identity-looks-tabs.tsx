@@ -4,8 +4,8 @@ import { TabsList, TabsTrigger, Text } from "@zedtech/zedkit-ui";
 import {
   HOME_IDENTITY_FACTS,
   IDENTITY_IDS,
-} from "@/ui/home/home-identity-facts";
-import { homeIdentityLooksCopy } from "@/ui/home/home-identity-looks-copy";
+} from "./home-identity-facts";
+import { homeIdentityLooksCopy } from "./i18n/home-identity-looks-copy";
 
 export function HomeIdentityLooksTabs() {
   return (

@@ -91,6 +91,22 @@ test("docs identity feature modules map to the editor route", () => {
   assert.deepEqual(routesFromFiles(["apps/docs/features/identity/ui/identity-look.test.mjs"]), []);
 });
 
+test("docs home route-group files map to / when there is no page.tsx", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/app/(home)/_home/home-identity-looks.tsx",
+      "apps/docs/app/(home)/_home/home-identity-looks.test.mjs",
+      ".agents/atlas.md",
+    ]),
+    ["/"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps\\docs\\app\\(home)\\_home\\home-identity-looks.tsx"]),
+    ["/"],
+  );
+  assert.deepEqual(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"]), []);
+});
+
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({

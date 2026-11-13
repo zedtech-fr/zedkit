@@ -143,12 +143,12 @@ test("each home band has one appear or scroll, never on Section", () => {
   const six = readApp("app/(home)/_home/sections/home-six-sentences-section.tsx");
   const paste = readApp("app/(home)/_home/sections/home-paste-section.tsx");
   const identities = readApp("app/(home)/_home/sections/home-identities-section.tsx");
-  const looks = readApp("ui/home/home-identity-looks.tsx");
+  const looks = readApp("app/(home)/_home/home-identity-looks.tsx");
   const limits = readApp("app/(home)/_home/sections/home-limits-section.tsx");
   const manifesto = readApp("app/(home)/_home/sections/home-manifesto-section.tsx");
   const closing = readApp("app/(home)/_home/sections/home-closing-section.tsx");
   const illustration = readApp("ui/home/home-hero-illustration.tsx");
-  const mist = readApp("ui/home/home-identity-example-mist.tsx");
+  const mist = readApp("app/(home)/_home/home-identity-example-mist.tsx");
   for (const rel of HOME_SECTIONS) {
     const src = readApp(rel);
     assert.doesNotMatch(src, /HOME_SECTION_REVEAL_PROPS/);

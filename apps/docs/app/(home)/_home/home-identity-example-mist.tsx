@@ -11,8 +11,8 @@ import {
   Stack,
   Text,
 } from "@zedtech/zedkit-ui";
-import { homeIdentityExamplesCopy } from "@/ui/home/home-identity-examples-copy";
-import { HomeIdentityExampleMistControls } from "@/ui/home/home-identity-example-mist-controls";
+import { homeIdentityExamplesCopy } from "./i18n/home-identity-examples-copy";
+import { HomeIdentityExampleMistControls } from "./home-identity-example-mist-controls";
 
 const copy = homeIdentityExamplesCopy.mist;
 
