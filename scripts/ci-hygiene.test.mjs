@@ -47,6 +47,36 @@ describe("ci-required aggregate", () => {
     assert.match(required, /QUICKSTART_SMOKE/);
     assert.match(required, /ADOPTION_SMOKE/);
   });
+
+  it("needs docs-render and passes DOCS_RENDER in", () => {
+    const required = workflow.split(/^ {2}ci-required:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(required, "", "ci-required job block not found");
+    assert.match(required, /docs-render/);
+    assert.match(required, /DOCS_RENDER/);
+  });
+});
+
+describe("docs-render job", () => {
+  it("reuses docs-out, sets DOCS_ROUTES, and runs e2e:routes", () => {
+    const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(job, "", "docs-render job block not found");
+    assert.match(job, /timeout-minutes: 10/);
+    assert.match(job, /needs: \[changes, docs-build\]/);
+    assert.match(job, /e2e:routes/);
+    assert.match(job, /DOCS_ROUTES/);
+    assert.match(job, /docs-render-routes\.mjs/);
+    assert.match(job, /playwright install chromium/);
+    assert.match(job, /serve@14\.2\.6/);
+    assert.ok(job.includes("EVENT: ${{ github.event_name }}"));
+    assert.ok(job.includes("BASE_REF: ${{ github.base_ref }}"));
+    assert.ok(job.includes("BEFORE: ${{ github.event.before }}"));
+    assert.ok(!job.includes('git fetch origin "${{ github.base_ref }}"'));
+    assert.match(job, /serve never became ready/);
+    assert.match(job, /docs-start\.log/);
+    assert.match(job, /docs-render-results/);
+    assert.match(job, /if: failure\(\)/);
+    assert.match(job, /apps\/docs\/test-results\//);
+  });
 });
 
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));

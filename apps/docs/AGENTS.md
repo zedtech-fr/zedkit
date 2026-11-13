@@ -66,13 +66,23 @@ reject dead `/r/<name>.json` links.
   `pnpm --filter @zedtech/zedkit-docs visual:verify` (alias of
   `zedkit-ai visual-verify`; the script already passes `--changed` and the
   fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
-- **PR / CI:** browser proof is `smoke` only (home, search, catalog, a
-  component page, getting-started). Unit tests, `catalog:check`, the SEO
-  export check and the first-load budget cover the rest. `pnpm e2e` is
-  local-only, never a merge gate. A new spec must be listed in the
-  `smoke` or `e2e` script; specs must not embed `127.0.0.1` or
-  `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
-  `test-results/`.
+- **PR / CI:** merge-gate browsers are `smoke` (home, search, catalog, a
+  component page, getting-started) plus `docs-render` (load-time overflow,
+  axe serious/critical, clipped text on mapped routes). Unmapped diffs
+  (chrome, `[[...slug]]` content) and deleted pages use the five host
+  fallback routes (`visual:verify --routes`), not the whole sitemap.
+  Empty `DOCS_ROUTES` fails closed. Keyboard, motion and interaction stay
+  in the sampled `smoke` / `e2e` suites. Unit tests, `catalog:check`, the
+  SEO export check and the first-load budget cover the rest. `pnpm e2e`
+  is local-only, never a merge gate. A new spec must be listed in the
+  `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
+  or `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
+  `test-results/`. Intended truncation that is not `truncate` /
+  `line-clamp-*` uses `data-allow-clip` plus a `CLIP_EXCEPTIONS` row in
+  `tests/a11y-exceptions.mjs` (owner and `removeBy`, same as axe excludes).
+  The overflow detector already skips visually-hidden nodes (sr-only, clip /
+  clip-path hide, 1×1 boxes), native inputs, computed line-clamp, and Radix
+  ScrollArea viewports; do not list those in CLIP_EXCEPTIONS.
 - **Reproducing a failed `docs-smoke` job:** CI already built `out/`
   (`docs-build`). Locally, only when :3100 is free — or set
   `DOCS_E2E_BASE_URL` to the port `serve` actually bound:
@@ -82,6 +92,18 @@ reject dead `/r/<name>.json` links.
   pnpm dlx serve@14.2.6 apps/docs/out -l 3100 &
   pnpm exec playwright install chromium
   pnpm --filter @zedtech/zedkit-docs run smoke
+  ```
+- **Reproducing a failed `docs-render` job:** same `out/` as docs-smoke.
+  Pin routes with `DOCS_ROUTES` (comma-separated). Unmapped / deleted-page
+  green path is the host fallback set:
+
+  ```sh
+  pnpm exec turbo run build --filter=@zedtech/zedkit-docs
+  pnpm dlx serve@14.2.6 apps/docs/out -l 3100 &
+  pnpm exec playwright install chromium
+  DOCS_ROUTES=/catalog pnpm --filter @zedtech/zedkit-docs run e2e:routes
+  DOCS_ROUTES=/,/docs,/docs/ui/trigger-actions-with-buttons,/catalog,/docs/foundations \
+    pnpm --filter @zedtech/zedkit-docs run e2e:routes
   ```
 - Done = Local loop green + manifest/check in sync for catalog edits +
   examined screenshots for visual changes + a rendered-page critique
