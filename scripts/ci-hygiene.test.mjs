@@ -29,6 +29,12 @@ describe("ci hygiene job", () => {
       assert.ok(hygiene.includes(script), `hygiene job lost ${script}`);
     }
   });
+
+  it("skips binary files and PNGs in the private-refs content scan", () => {
+    const src = readFileSync(join(root, "scripts/check-no-private-refs.sh"), "utf8");
+    assert.match(src, /git grep -IinE/);
+    assert.match(src, /':!\*\.png'/);
+  });
 });
 
 describe("ci-required aggregate", () => {
