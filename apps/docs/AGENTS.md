@@ -68,15 +68,17 @@ reject dead `/r/<name>.json` links.
   fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
 - **PR / CI:** merge-gate browsers are `smoke` (home, search, catalog, a
   component page, getting-started) plus `docs-render` (load-time overflow,
-  axe serious/critical, clipped text on mapped routes). Unmapped diffs
-  (chrome, `[[...slug]]` content) and deleted pages use the five host
-  fallback routes (`visual:verify --routes`), not the whole sitemap.
-  Empty `DOCS_ROUTES` fails closed. A shared token, primitive, or identity
-  sheet sets `DOCS_LOOKS` and rotates mist, press, tide, volt, maison, and
-  glass at 375/809/1440 × light/dark; other docs diffs keep the default
-  site look. Keyboard, motion and interaction stay in the sampled `smoke`
-  / `e2e` suites. Unit tests, `catalog:check`, the
-  SEO export check and the first-load budget cover the rest. `pnpm e2e`
+  axe serious/critical, clipped text). Ordinary PRs into `dev` run the
+  mapper: touched routes, or the five host fallbacks (`visual:verify
+  --routes`) when the diff is unmapped chrome, `[[...slug]]` content, or
+  a deleted page. Empty `DOCS_ROUTES` fails closed. A shared token,
+  primitive, or identity sheet sets `DOCS_LOOKS` and rotates mist, press,
+  tide, volt, maison, and glass at 375/809/1440 × light/dark; other docs
+  diffs keep the default site look. `epic/*` PRs into `dev`, PRs and
+  pushes into `main`, and nightly Chromium walk every published route
+  (default look, `DOCS_ROUTES` unset). Keyboard, motion and interaction
+  stay in the sampled `smoke` / `e2e` suites. Unit tests, `catalog:check`,
+  the SEO export check and the first-load budget cover the rest. `pnpm e2e`
   is local-only, never a merge gate. A new spec must be listed in the
   `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
   or `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
@@ -98,7 +100,8 @@ reject dead `/r/<name>.json` links.
   ```
 - **Reproducing a failed `docs-render` job:** same `out/` as docs-smoke.
   Pin routes with `DOCS_ROUTES` (comma-separated). Unmapped / deleted-page
-  green path is the host fallback set:
+  green path is the host fallback set. Full sitemap (`epic/*` → `dev`,
+  into `main`, nightly Chromium): unset `DOCS_ROUTES` and `DOCS_LOOKS`.
 
   ```sh
   pnpm exec turbo run build --filter=@zedtech/zedkit-docs
@@ -108,6 +111,7 @@ reject dead `/r/<name>.json` links.
   DOCS_ROUTES=/catalog DOCS_LOOKS=glass,tide pnpm --filter @zedtech/zedkit-docs run e2e:routes
   DOCS_ROUTES=/,/docs,/docs/ui/trigger-actions-with-buttons,/catalog,/docs/foundations \
     pnpm --filter @zedtech/zedkit-docs run e2e:routes
+  env -u DOCS_ROUTES -u DOCS_LOOKS pnpm --filter @zedtech/zedkit-docs run e2e:routes
   ```
 - Done = Local loop green + manifest/check in sync for catalog edits +
   examined screenshots for visual changes + a rendered-page critique

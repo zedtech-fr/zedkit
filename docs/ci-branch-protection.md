@@ -50,7 +50,7 @@ self-hosted path landed in `ci.yml`.
 | `adoption-smoke` | Shown install recipes; packed runtime workspace closure, not npm |
 | `docs-build` | One docs static export, shared with Playwright smoke |
 | `docs-smoke` | Critical docs journeys (home, search, catalog, a component page) |
-| `docs-render` | Overflow, axe, clipped text on mapped routes (static export; unmapped diffs use five fallback routes; empty `DOCS_ROUTES` fails closed) |
+| `docs-render` | Overflow, axe, clipped text on the static export. Ordinary PRs into `dev`: mapped routes (five fallbacks when unmapped; empty `DOCS_ROUTES` fails closed). Full sitemap (default look) on `epic/*` → `dev`, PRs and pushes into `main`, and nightly Chromium |
 
 `deploy-docs` and `release` run on `main` after merge; they are **not**
 required for merging PRs.
