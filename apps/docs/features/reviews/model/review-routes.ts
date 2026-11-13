@@ -48,20 +48,6 @@ function runParams<T extends { number: number }>(
   );
 }
 
-function pushRunTree(
-  paths: string[],
-  rows: readonly { number: number; entries: readonly { runId: string }[] }[],
-  itemPath: (n: number) => string,
-  runPath: (n: number, id: string) => string,
-): void {
-  for (const row of rows) {
-    paths.push(itemPath(row.number));
-    for (const id of uniqueRunIds(row.entries.map((entry) => entry.runId))) {
-      paths.push(runPath(row.number, id));
-    }
-  }
-}
-
 export async function listIssueParamsFrom(port: ReviewPort) {
   return orPlaceholder(prParams(await port.listIssues()), ISSUE_STATIC_PLACEHOLDER);
 }
@@ -118,12 +104,48 @@ export function linkedPrRunFallbackPath(issueNumber: number | null, runId: strin
   return issueNumber === null ? null : issueRunPath(issueNumber, runId);
 }
 
+export function runRedirectTarget(liveUrl: string | null, fallbackPath: string): string {
+  return liveUrl ?? fallbackPath;
+}
+
+function liveUrlForRun(
+  entries: readonly { runId: string; liveUrl: string | null }[],
+  runId: string,
+): string | null {
+  for (const entry of entries) {
+    if (entry.runId === runId && entry.liveUrl !== null) return entry.liveUrl;
+  }
+  return null;
+}
+
+/** Static-export HTML stubs for `/issues/:n/runs/:id` and unlinked run URLs. */
+export async function listIssueRunRedirectsFrom(port: ReviewPort): Promise<ReviewRedirect[]> {
+  const redirects: ReviewRedirect[] = [];
+  for (const issue of await port.listIssues()) {
+    for (const id of uniqueRunIds(issue.entries.map((entry) => entry.runId))) {
+      redirects.push({
+        from: issueRunPath(issue.number, id),
+        to: runRedirectTarget(liveUrlForRun(issue.entries, id), issuePath(issue.number)),
+      });
+    }
+  }
+  for (const row of await port.listUnlinkedPullRequests()) {
+    for (const id of uniqueRunIds(row.entries.map((entry) => entry.runId))) {
+      redirects.push({
+        from: unlinkedRunPath(row.number, id),
+        to: runRedirectTarget(liveUrlForRun(row.entries, id), unlinkedPrPath(row.number)),
+      });
+    }
+  }
+  return redirects;
+}
+
 export async function listIssueSitemapPathsFrom(port: ReviewPort) {
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
   const paths = ["/issues"];
-  pushRunTree(paths, issues, issuePath, issueRunPath);
-  pushRunTree(paths, unlinked, unlinkedPrPath, unlinkedRunPath);
+  for (const row of issues) paths.push(issuePath(row.number));
+  for (const row of unlinked) paths.push(unlinkedPrPath(row.number));
   return paths;
 }
 

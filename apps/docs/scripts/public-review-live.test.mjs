@@ -574,7 +574,7 @@ test("client review files never mention GitHub token env names", () => {
   for (const file of [
     "ui/review-list-view.tsx",
     "ui/review-pr-view.tsx",
-    "ui/review-run-view.tsx",
+    "ui/review-timeline-row.tsx",
     "ui/appearance-panel.tsx",
   ]) {
     const source = readFileSync(join(reviewsRoot, file), "utf8");

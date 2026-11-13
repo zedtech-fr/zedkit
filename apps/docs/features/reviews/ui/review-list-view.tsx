@@ -2,6 +2,7 @@
 
 import { useId, type ReactNode } from "react";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import {
   Badge,
   Button,
@@ -15,16 +16,11 @@ import {
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
 import { latestEntry, latestStatus } from "../model/latest-status";
-import {
-  issuePath,
-  issueRunPath,
-  uniqueRunIds,
-  unlinkedPrPath,
-  unlinkedRunPath,
-} from "../model/review-routes";
-import type { IssueRecord, UnlinkedPullRequest } from "../ports/review-port";
+import { issuePath, uniqueRunIds, unlinkedPrPath } from "../model/review-routes";
+import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { LatestStatusMark } from "./issue-status";
+import { TimelineRow } from "./review-timeline-row";
 
 function linkedPrLabel(count: number, copy: ReviewsCopy): string {
   return count === 1 ? copy.list.linkedPr : copy.list.linkedPrs;
@@ -34,63 +30,101 @@ function runCountLabel(count: number, copy: ReviewsCopy): string {
   return `${count} ${count === 1 ? copy.list.run : copy.list.runs}`;
 }
 
-function ListScanRow({ title, meta }: { title: ReactNode; meta: ReactNode }) {
+function RowSummary({
+  title,
+  meta,
+}: {
+  title: ReactNode;
+  meta: ReactNode;
+}) {
   return (
-    <Stack
-      direction="horizontal"
-      gap="sm"
-      className="flex-wrap items-center border-b border-border py-row max-md:flex-col max-md:items-stretch"
-    >
-      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
-        {title}
+    <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-stack-sm py-row focus-ring-control [&::-webkit-details-marker]:hidden">
+      <Stack
+        direction="horizontal"
+        gap="sm"
+        className="content-shrink flex-1 flex-wrap items-center max-md:flex-col max-md:items-stretch"
+      >
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+          {title}
+        </Stack>
+        <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
+          {meta}
+        </Stack>
       </Stack>
-      <Stack direction="horizontal" gap="sm" className="flex-wrap items-center">
-        {meta}
-      </Stack>
+      <ChevronDown
+        aria-hidden="true"
+        className="size-icon shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
+      />
+    </summary>
+  );
+}
+
+function StepsPanel({
+  entries,
+  timelineHref,
+  timelineLabel,
+  empty,
+  copy,
+}: {
+  entries: readonly TimelineEntry[];
+  timelineHref: string;
+  timelineLabel: string;
+  empty: string;
+  copy: ReviewsCopy;
+}) {
+  return (
+    <Stack gap="sm" className="pl-control-inline">
+      {entries.length === 0 ? (
+        <EmptyState description={empty} />
+      ) : (
+        <ul aria-label={copy.issue.timeline}>
+          {entries.map((entry) => (
+            <li key={entry.id}>
+              <TimelineRow entry={entry} href={entry.liveUrl} copy={copy} />
+            </li>
+          ))}
+        </ul>
+      )}
+      <Button asChild variant="link" className="min-h-target w-fit">
+        <Link href={timelineHref}>{timelineLabel}</Link>
+      </Button>
     </Stack>
   );
 }
 
 function IssueRow({ issue, copy }: { issue: IssueRecord; copy: ReviewsCopy }) {
   const status = latestStatus(issue.entries);
-  const last = latestEntry(issue.entries);
   return (
-    <ListScanRow
-      title={
-        <>
-          <Button asChild variant="link" className="min-h-target w-fit">
-            <Link
-              href={
-                last
-                  ? issueRunPath(issue.number, last.runId)
-                  : issuePath(issue.number)
-              }
-            >
-              #{issue.number} {issue.title}
-            </Link>
-          </Button>
-          {last ? (
-            <Button asChild variant="link" className="min-h-target w-fit">
-              <Link href={issuePath(issue.number)}>{copy.issue.timeline}</Link>
-            </Button>
-          ) : null}
-        </>
-      }
-      meta={
-        <>
-          <Badge variant="outline">{copy.state[issue.state]}</Badge>
-          {status ? <LatestStatusMark status={status} copy={copy} /> : null}
-          {issue.pullRequests.length > 0 ? (
-            <Text variant="muted" typeRole="caption">
-              {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
-                .map((n) => `#${n}`)
-                .join(", ")}`}
-            </Text>
-          ) : null}
-          <UpdatedAgo date={new Date(issue.lastRunAt)} />
-        </>
-      }
-    />
+    <details data-issues-row="" id={`issue-${issue.number}`} className="group border-b border-border">
+      <RowSummary
+        title={
+          <Text className="font-medium">
+            #{issue.number} {issue.title}
+          </Text>
+        }
+        meta={
+          <>
+            <Badge variant="outline">{copy.state[issue.state]}</Badge>
+            {status ? <LatestStatusMark status={status} copy={copy} /> : null}
+            {issue.pullRequests.length > 0 ? (
+              <Text variant="muted" typeRole="caption">
+                {`${linkedPrLabel(issue.pullRequests.length, copy)} ${issue.pullRequests
+                  .map((n) => `#${n}`)
+                  .join(", ")}`}
+              </Text>
+            ) : null}
+            <UpdatedAgo date={new Date(issue.lastRunAt)} />
+          </>
+        }
+      />
+      <StepsPanel
+        entries={issue.entries}
+        timelineHref={issuePath(issue.number)}
+        timelineLabel={copy.issue.timeline}
+        empty={copy.issue.timelineEmpty}
+        copy={copy}
+      />
+    </details>
   );
 }
 
@@ -105,44 +139,32 @@ function UnlinkedRow({
   const last = latestEntry(entry.entries);
   const runCount = uniqueRunIds(entry.entries.map((item) => item.runId)).length;
   return (
-    <ListScanRow
-      title={
-        <>
-          <Button asChild variant="link" className="min-h-target w-fit">
-            <Link
-              href={
-                last
-                  ? unlinkedRunPath(entry.number, last.runId)
-                  : unlinkedPrPath(entry.number)
-              }
-            >
-              #{entry.number}
-            </Link>
-          </Button>
-          {last ? (
-            <Button asChild variant="link" className="min-h-target w-fit">
-              <Link href={unlinkedPrPath(entry.number)}>
-                {copy.issue.timeline}
-              </Link>
-            </Button>
-          ) : null}
-        </>
-      }
-      meta={
-        <>
-          {last ? (
+    <details data-issues-row="" id={`pr-${entry.number}`} className="group border-b border-border">
+      <RowSummary
+        title={<Text className="font-medium">#{entry.number}</Text>}
+        meta={
+          <>
+            {last ? (
+              <Text variant="muted" typeRole="caption">
+                {copy.type[last.type]}
+              </Text>
+            ) : null}
+            {status ? <LatestStatusMark status={status} copy={copy} /> : null}
             <Text variant="muted" typeRole="caption">
-              {copy.type[last.type]}
+              {runCountLabel(runCount, copy)}
             </Text>
-          ) : null}
-          {status ? <LatestStatusMark status={status} copy={copy} /> : null}
-          <Text variant="muted" typeRole="caption">
-            {runCountLabel(runCount, copy)}
-          </Text>
-          <UpdatedAgo date={new Date(entry.lastRunAt)} />
-        </>
-      }
-    />
+            <UpdatedAgo date={new Date(entry.lastRunAt)} />
+          </>
+        }
+      />
+      <StepsPanel
+        entries={entry.entries}
+        timelineHref={unlinkedPrPath(entry.number)}
+        timelineLabel={copy.issue.timeline}
+        empty={copy.unlinked.timelineEmpty}
+        copy={copy}
+      />
+    </details>
   );
 }
 

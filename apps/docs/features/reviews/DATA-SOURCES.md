@@ -183,10 +183,11 @@ omit when unknown):
   unlinked (`/issues/pr/:n`).
 - `live_url` — hosted live console URL. The public gate keeps it only
   when it matches `HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id;
-  otherwise the index-only run page gets `null`. Index-only run pages
-  still use this as the outbound link when no live row exists. A
-  live-backed `/issues/N/runs/<id>` mounts the shared kit console
-  instead. `review_url` is a GitHub review link and is **not** a hosted
+  otherwise the index stores `null`. Index-only `/issues/N/runs/<id>`
+  (and unlinked run URLs) redirect to that href, or to the issue /
+  unlinked page when it is missing. A live-backed `/issues/N/runs/<id>`
+  still mounts the shared kit console when a live row exists.
+  `review_url` is a GitHub review link and is **not** a hosted
   console URL; the mapper never copies it to `liveUrl`.
 - `issue_title`, `opened_pr_url` — already accepted. Title falls back
   to `Issue #N` when `issue_title` is empty. Issue `state` is `open`
