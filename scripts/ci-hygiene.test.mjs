@@ -60,7 +60,7 @@ describe("docs-render job", () => {
   it("reuses docs-out, sets DOCS_ROUTES, and runs e2e:routes", () => {
     const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.notEqual(job, "", "docs-render job block not found");
-    assert.match(job, /timeout-minutes: 10/);
+    assert.match(job, /timeout-minutes: 6/);
     assert.match(job, /needs: \[changes, docs-build\]/);
     assert.match(job, /e2e:routes/);
     assert.match(job, /DOCS_ROUTES/);

@@ -29,6 +29,7 @@ export const AI_SETUP_KIT = {
     "adversarial-tests",
     "plan",
     "implement",
+    "pr",
     "challenge",
     "to-spec",
     "to-tickets",
@@ -41,7 +42,8 @@ export const AI_SETUP_KIT = {
     "improve-from-review",
     "quick-wins",
     "handoff",
-    "triage"
+    "triage",
+    "zedkit-ai"
   ],
   "agents": [
     "explorer",
@@ -64,6 +66,7 @@ export const AI_SETUP_KIT = {
     "plan",
     "challenge",
     "implement",
+    "pr",
     "orchestrate",
     "improve-config",
     "research",
@@ -72,7 +75,8 @@ export const AI_SETUP_KIT = {
     "fix",
     "improve-from-review",
     "quick-wins",
-    "triage"
+    "triage",
+    "zedkit-ai"
   ],
   "installed": [
     {
@@ -164,6 +168,10 @@ export const AI_SETUP_KIT = {
       "kind": "dir"
     },
     {
+      "text": "│  │  ├─ pr/",
+      "kind": "dir"
+    },
+    {
       "text": "│  │  ├─ challenge/",
       "kind": "dir"
     },
@@ -212,7 +220,11 @@ export const AI_SETUP_KIT = {
       "kind": "dir"
     },
     {
-      "text": "│  │  └─ triage/",
+      "text": "│  │  ├─ triage/",
+      "kind": "dir"
+    },
+    {
+      "text": "│  │  └─ zedkit-ai/",
       "kind": "dir"
     },
     {
@@ -296,6 +308,10 @@ export const AI_SETUP_KIT = {
       "kind": "file"
     },
     {
+      "text": "│  │  ├─ pr.md",
+      "kind": "file"
+    },
+    {
       "text": "│  │  ├─ orchestrate.md",
       "kind": "file"
     },
@@ -328,7 +344,11 @@ export const AI_SETUP_KIT = {
       "kind": "file"
     },
     {
-      "text": "│  │  └─ triage.md",
+      "text": "│  │  ├─ triage.md",
+      "kind": "file"
+    },
+    {
+      "text": "│  │  └─ zedkit-ai.md",
       "kind": "file"
     },
     {
