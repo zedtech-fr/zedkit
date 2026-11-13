@@ -300,6 +300,19 @@ test("docs page-tree items are a flex column with 44px rows, not unstyled /base 
   assert.match(sidebar, /<Stack gap="tight"/);
   assert.match(sidebar, /SidebarFolderContent/);
   assert.doesNotMatch(sidebar, /fumadocs-ui\/layouts\/docs\/slots\/sidebar/);
+  assert.match(sidebar, /data-docs-tree-item=""/);
+  const itemHosts = ["DocsSidebarItem", "DocsSidebarFolderTrigger", "DocsSidebarFolderLink"];
+  for (const name of itemHosts) {
+    const start = sidebar.indexOf(`function ${name}`);
+    assert.notEqual(start, -1, name);
+    const end = sidebar.indexOf("\nfunction ", start + 1);
+    const body = sidebar.slice(start, end === -1 ? undefined : end);
+    assert.match(body, /data-docs-tree-item=""/);
+    assert.match(body, /itemClassName/);
+  }
+  const css = stripComments(read("app/docs-shell-tokens.css"));
+  assert.match(css, /\[data-docs-tree-item\]/);
+  assert.match(css, /min-height:\s*max\(24px,\s*var\(--zk-tap-min/);
 });
 
 test("docs layout on UI routes uses the job-grouped tree helper", () => {

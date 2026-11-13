@@ -29,9 +29,8 @@ export function SiteSearchTrigger({ hideIfDisabled, className }: SearchTriggerPr
   );
 }
 
-export function SiteFullSearchTrigger(props: FullSearchTriggerProps) {
-  const label = siteChromeCopy.search.triggerAriaLabel;
-  return <FullSearchTrigger {...props} title={label} aria-label={label} data-search="" />;
+export function SiteFullSearchTrigger({ className, ...props }: FullSearchTriggerProps) {
+  return <FullSearchTrigger {...props} className={cn("focus-ring-control", className)} data-search="" />;
 }
 
 export function SiteThemeSwitch({ className, mode = "light-dark" }: ThemeSwitchProps) {

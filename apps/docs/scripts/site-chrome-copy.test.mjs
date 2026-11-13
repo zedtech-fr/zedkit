@@ -106,7 +106,16 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(docsSidebar, /siteChromeCopy\.nav\.docsNavigation/);
   assert.doesNotMatch(docsSidebar, /"Docs pages"|"Documentation"/);
   const searchTrigger = read("ui/site-chrome.tsx");
-  assert.match(searchTrigger, /siteChromeCopy\.search\.triggerAriaLabel/);
+  const iconStart = searchTrigger.indexOf("export function SiteSearchTrigger");
+  const fullStart = searchTrigger.indexOf("export function SiteFullSearchTrigger");
+  const icon = searchTrigger.slice(iconStart, fullStart);
+  const full = searchTrigger.slice(fullStart);
+  assert.match(icon, /siteChromeCopy\.search\.triggerAriaLabel/);
+  assert.match(icon, /label=\{label\}/);
+  assert.doesNotMatch(full, /triggerAriaLabel/);
+  assert.doesNotMatch(full, /aria-label/);
+  assert.doesNotMatch(full, /\btitle=/);
+  assert.match(full, /focus-ring-control/);
   assert.doesNotMatch(searchTrigger, /"Search documentation"|"Search the documentation"/);
   assert.match(homeActions, /siteChromeCopy\.nav\.github/);
   assert.match(homeActions, /siteChromeCopy\.getStarted/);
@@ -126,6 +135,8 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   const shell = read("app/docs-shell-tokens.css");
   assert.match(shell, /\[data-skip-link\]/);
   assert.match(shell, /bottom:\s*100%/);
+  assert.match(shell, /\[data-search\]:focus-visible/);
+  assert.match(shell, /outline:\s*var\(--ring-width-control/);
   assert.match(brand, /siteChromeCopy\.brand\.name/);
   const offPath = read("ui/off-path-link.tsx");
   const a11y = read("ui/site-chrome-a11y.tsx");

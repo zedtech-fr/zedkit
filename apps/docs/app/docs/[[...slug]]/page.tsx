@@ -60,12 +60,6 @@ function docsPageChrome(opts: {
   }
   return {
     toc: opts.toc,
-    tableOfContentPopover: {
-      trigger: {
-        "aria-label": docsPageCopy.tableOfContents,
-        title: docsPageCopy.tableOfContents,
-      },
-    },
   };
 }
 
