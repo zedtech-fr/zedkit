@@ -14,7 +14,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
-import { githubIssueHref, githubPullHref } from "../model/github-hrefs";
+import { githubIssueHref, githubPullHref, issueFullTitle } from "../model/github-hrefs";
 import {
   entriesNewestFirst,
   headlineOutcome,
@@ -148,7 +148,7 @@ export function IssueDetail({
   return (
     <DetailCard
       headingId={headingId}
-      title={`#${issue.number} ${issue.title}`}
+      title={issueFullTitle(issue)}
       marks={
         <>
           <Badge variant="outline">{copy.state[issue.state]}</Badge>

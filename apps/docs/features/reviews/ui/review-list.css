@@ -10,15 +10,9 @@
     overflow: hidden;
   }
 
-  [data-page-shell]:has([data-issues-layout="workspace"]) > :first-child {
-    display: flex;
-    flex: 1 1 0;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  [data-slot="theme-scope"]:has(> [data-issues-layout="workspace"]) {
+  [data-page-shell]:has([data-issues-layout="workspace"]) > :first-child,
+  [data-slot="theme-scope"]:has(> [data-issues-layout="workspace"]),
+  [data-issues-column][data-issues-layout="workspace"] {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
@@ -27,11 +21,6 @@
   }
 
   [data-issues-column][data-issues-layout="workspace"] {
-    display: flex;
-    flex: 1 1 0;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
     padding-block: var(--zk-gap-lg);
   }
 

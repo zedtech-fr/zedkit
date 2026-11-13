@@ -1,6 +1,5 @@
 "use client";
 
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per scrollable-region-focusable (#396). */
 import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import {
   Button,
@@ -21,6 +20,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import { issueFullTitle } from "../model/github-hrefs";
 import { resolveIssueOpenId, shouldScrollSelectedIssue } from "../model/issue-open-target";
 import { headlineOutcome, latestEntry } from "../model/latest-status";
 import { uniqueRunIds } from "../model/review-routes";
@@ -61,9 +61,9 @@ function IssueListRow({
         href={`#issue-${issue.number}`}
         {...(withIds ? { id: `issue-${issue.number}` } : {})}
         data-issues-row=""
-        aria-label={`#${issue.number} ${issue.title}, ${label}`}
+        aria-label={`${issueFullTitle(issue)}, ${label}`}
       >
-        {`#${issue.number} ${issue.title}`}
+        {issueFullTitle(issue)}
       </a>
     </SidebarNavItem>
   );
@@ -178,7 +178,7 @@ function IssuesPane({
     >
       <aside
         data-issues-aside=""
-        tabIndex={0}
+        tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per #396.
         aria-label={copy.list.title}
         className="flex w-full shrink-0 flex-col border-b muted-wash max-md:hidden md:pane-shrink md:w-app-shell-sidebar md:overflow-y-auto md:border-r md:border-b-0 md:focus-ring"
       >
@@ -202,7 +202,6 @@ function IssuesPane({
           </DrawerHeader>
           <DrawerBody
             tabIndex={0}
-            aria-label={copy.list.openList}
             className="focus-ring"
             onClick={(event) => {
               if (event.target instanceof Element && event.target.closest("a")) setOpen(false);
@@ -217,7 +216,7 @@ function IssuesPane({
 }
 
 function detailLiveName(selected: ListItem | null, copy: ReviewsCopy): string {
-  if (selected?.kind === "issue") return `#${selected.issue.number} ${selected.issue.title}`;
+  if (selected?.kind === "issue") return issueFullTitle(selected.issue);
   if (selected?.kind === "pr") return `${copy.unlinked.title} #${selected.pull.number}`;
   return copy.list.missing;
 }
@@ -242,13 +241,13 @@ function IssuesWorkspace({
       detail={
         <article
           data-issues-detail=""
-          tabIndex={0}
+          tabIndex={0} // eslint-disable-line jsx-a11y/no-noninteractive-tabindex -- overflow scrollports are focusable per #396.
           className="content-shrink p-app-shell-padding md:pane-shrink md:flex-1 md:overflow-y-auto md:p-app-shell-padding-md md:focus-ring"
           aria-labelledby={detailHeadingId}
         >
-          <p className="sr-only" aria-live="polite">
+          <Text as="p" className="sr-only" aria-live="polite">
             {detailLiveName(selected, copy)}
-          </p>
+          </Text>
           {selected?.kind === "issue" ? (
             <IssueDetail issue={selected.issue} copy={copy} headingId={detailHeadingId} />
           ) : selected?.kind === "pr" ? (

@@ -1520,7 +1520,7 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
   assert.equal(reviewsCopy.list.openList, "Issue list");
-  assert.equal(reviewsCopy.list.missing, "This item is not on the public list.");
+  assert.equal(reviewsCopy.list.missing, "This issue or pull request is not on the public list.");
   assert.equal(reviewsCopy.list.missingNext, "Choose another from the list.");
   assert.equal(reviewsCopy.issue.missing, "This issue is not on the public list.");
   assert.equal(
@@ -1781,6 +1781,7 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.doesNotMatch(css, /\[data-issues-workspace\]/);
   assert.match(css, /min-width: 48rem/);
   assert.match(css, /100svh - var\(--zk-site-header-height\)/);
+  assert.equal([...css.matchAll(/flex-direction: column/g)].length, 1);
   assert.match(list, /SidebarNavItem/);
   assert.match(list, /OutcomeStatus/);
   assert.match(list, /w-app-shell-sidebar/);
@@ -1794,8 +1795,14 @@ test("list is a master-detail workspace; GitHub links stay in the detail", () =>
   assert.match(list, /aria-labelledby=\{detailHeadingId\}/);
   assert.match(list, /id=\{detailHeadingId\}/);
   assert.match(list, /level=\{2\}/);
-  assert.match(list, /sr-only" aria-live="polite"/);
+  assert.match(list, /<Text as="p" className="sr-only" aria-live="polite">/);
   assert.doesNotMatch(list, /<article[^>]*aria-live/);
+  assert.doesNotMatch(list, /\/\* eslint-disable jsx-a11y/);
+  assert.match(list, /eslint-disable-line jsx-a11y\/no-noninteractive-tabindex/);
+  assert.doesNotMatch(list, /<DrawerBody[^>]*aria-label=/);
+  assert.match(list, /issueFullTitle/);
+  assert.doesNotMatch(list, /#\$\{issue\.number\} \$\{issue\.title\}/);
+  assert.doesNotMatch(detail, /#\$\{issue\.number\} \$\{issue\.title\}/);
   assert.match(list, /shouldScrollSelectedIssue/);
   assert.match(list, /DrawerTitle className="sr-only">\{copy\.list\.openList\}/);
   assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
@@ -1818,6 +1825,8 @@ test("unlinked and timeline links take their accessible name from visible title 
   assert.doesNotMatch(list, /<Link[^>]*aria-label/);
   assert.doesNotMatch(list, /<Button[^>]*aria-label/);
   assert.doesNotMatch(list, /<summary[^>]*aria-label/);
+  assert.match(timeline, /issueFullTitle\(issue\)/);
+  assert.doesNotMatch(timeline, /#\$\{issue\.number\} \$\{issue\.title\}/);
   assert.match(timeline, /href=\{entry\.liveUrl\}/);
   assert.match(row, /copy\.type\[entry\.type\]/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);

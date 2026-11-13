@@ -1,13 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { GITHUB_REPO, githubIssueHref, githubPullHref } from "./github-hrefs.ts";
+import { GITHUB_REPO, githubIssueHref, githubPullHref, issueFullTitle } from "./github-hrefs.ts";
 import { issueOpenTarget, resolveIssueOpenId, shouldScrollSelectedIssue } from "./issue-open-target.ts";
 
 test("GitHub hrefs point at the public zedkit repo", () => {
   assert.equal(GITHUB_REPO, "zedtech-fr/zedkit");
   assert.equal(githubIssueHref(241), "https://github.com/zedtech-fr/zedkit/issues/241");
   assert.equal(githubPullHref(250), "https://github.com/zedtech-fr/zedkit/pull/250");
+});
+
+test("issueFullTitle is the visible #N title used on the list, detail, and live region", () => {
+  assert.equal(issueFullTitle({ number: 108, title: "Public run console" }), "#108 Public run console");
 });
 
 test("issue open target prefers a specific hash over open=first", () => {
