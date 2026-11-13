@@ -1,6 +1,6 @@
 ---
 name: visual-verify
-description: "Run zedkit-ai evidence (alias: visual-verify) and read the run record. Use when finishing visual work, filling a contact sheet, checking overflow, axe or clipped text, or when definition-of-done Visual work applies."
+description: "Run zedkit-ai evidence (alias: visual-verify) and read the run record. Use when finishing visual work, filling a contact sheet, checking overflow, axe, clipped text, or 24px hit targets, or when definition-of-done Visual work applies."
 ---
 
 # Visual verify
@@ -24,13 +24,29 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,
   dark. Full **looks grid** (every shipped look × both modes) only when a
-  token, a primitive, or `identities*.css` changed. `--identities` names
-  the looks; omitted, the looks grid uses mist, press, tide, volt,
-  maison, glass.
+  token, a primitive, or a shared identity sheet (`identities.css`)
+  changed. A look file `identities/<id>.css` adds that look only.
+  `--identities` names the looks; omitted, the looks grid uses mist,
+  press, tide, volt, maison, glass.
 - **Baseline:** `--baseline` path to a previous run record. Missing: this
   run is the baseline (0 new means 0 serious or critical).
 - **Ticket:** `--ticket` with a `Visual reference:` path, when the image
   exists on disk. The contact sheet includes that whole file, not a crop.
+  `States: no transient states` (plain or `**States:**`) adds no extra
+  cells. English `States:` names without `--states` are recorded as
+  `statesUnverified` on stdout and `summary.md`.
+- **States:** `--states <file>` JSON `[{ "name": "...", "click": "..." }]`.
+  `click` is optional; `{ "name": "..." }` adds a no-click cell. After the
+  default tree's axe and screenshot, each present `click` (2s timeout)
+  becomes another cell at the same width × mode × look. Screenshot stems
+  use `routeStem(name)` (`/` → `home`; spaces become `-`); colliding stems
+  get a numeric suffix.
+- **Mockup:** `--mockup <file-or-dir>` (wins over `Visual reference:`).
+  A file is reused at every width; a directory looks for
+  `{stem}-{width}.png` (`/` → `home-375.png`), else `{width}.png`, else
+  the only PNG. Missing path is exit 2. Unresolvable directory PNGs warn
+  and write no pair. Writes `pair-<stem>.png` per route. Pixel differences
+  do not fail the run.
 
 Done when: every flag you will pass is a real path, URL, or route.
 
@@ -38,7 +54,7 @@ Done when: every flag you will pass is a real path, URL, or route.
 
 ```sh
 zedkit-ai evidence --base-url <origin> --routes auto
-zedkit-ai evidence --dir ./out --routes /,/docs --out evidence/run
+zedkit-ai evidence --dir ./out --routes /,/docs --states states.json --mockup mockups --out evidence/run
 zedkit-ai visual-verify --url <origin> --changed
 ```
 
@@ -48,8 +64,9 @@ process has exited.
 
 ## 3. Collection, then verdicts
 
-If CSS or fonts did not load, **collection failed**: no overflow or axe
-verdict, exit 1, do not treat screenshots as evidence.
+If CSS or fonts did not load, or a `--states` click timed out or missed,
+**collection failed**: no overflow or axe verdict, exit 1, do not treat
+screenshots as evidence.
 
 Per cell, when collection succeeded, in this order: axe and the
 screenshot on the **default** tree, then clicks:
@@ -66,18 +83,29 @@ screenshot on the **default** tree, then clicks:
   within 48px of the block header)
 - one `h1` (fail when count is not 1 or `font-size` is 0); record
   font-size, line count, and share of the first screen
+- hit targets ≥ 24px on visible `a`/`button`/`input`/`select`/`textarea`
+  and button/link/tab/menuitem/checkbox/radio/switch/combobox roles.
+  Skip `display:inline`, `pointer-events:none`, `disabled`,
+  `visibility:hidden`, `display:none`, and zero-size boxes. Union the
+  border box with an **overlapping** `::before` / `::after` (distant
+  pseudos do not count). This host is intentionally stricter than SC
+  2.5.8 (inline only; no equivalent/essential/user-agent/Spacing). If a
+  listed exception applies, say so in the PR and mark that cell
+  `UNVERIFIED` — the command still fails the 24px gate.
 
 Done when: you have read the run record, not guessed the numbers.
 
 ## 4. Outputs
 
 - Run record: `evidence/<branch>/manifest.json` (or `--out`)
-- `summary.md` next to the run record (table, then `pass`/`fail`, then
-  the run-record path)
-- One contact-sheet PNG per route (3×2, plus the Visual reference file
-  when it exists)
-- Markdown table on stdout and `--md`, then `pass`/`fail` and the run
-  record path
+- `summary.md` next to the run record (table, then `statesUnverified`
+  when present, then `pass`/`fail`, then the run-record path)
+- One contact-sheet PNG per route (matrix cells, plus the Visual
+  reference or `--mockup` file when it exists)
+- One side-by-side PNG per route when `--mockup` or `Visual reference:`
+  is set (`pair-<stem>.png`, `/` → `pair-home.png`); not a fail
+- Markdown table on stdout and `--md`, then `statesUnverified` when
+  present, then `pass`/`fail` and the run record path
 
 Open the contact sheet. Generated-but-unread shots do not count. Paste
 the table into the PR. Done when: every required cell is described or
