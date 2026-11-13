@@ -28,7 +28,7 @@ import {
   parseReviewAppearance,
   serializeReviewAppearance,
   type ReviewAppearance,
-} from "@/lib/review-appearance";
+} from "../model/review-appearance";
 import { consoleAppearanceCopy, type ConsoleAppearanceCopy } from "../i18n/review-console-copy";
 import { mergeReviewShareUrl } from "../model/selection";
 

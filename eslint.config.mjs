@@ -299,26 +299,6 @@ export default tseslint.config(
     },
   },
   {
-    // L5: lift the reviews href to the home route, then drop this block.
-    name: "docs/one-way-exception-l5-home-hero",
-    files: ["apps/docs/ui/home/home-hero.tsx"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            deepRelativeImport,
-            {
-              group: docsAppGroup,
-              message: docsAppFeatureBan.message,
-            },
-            docsHashImportBan,
-          ],
-        },
-      ],
-    },
-  },
-  {
     // After uiPreset so other production checks stay. Tests keep the root ban.
     files: ["packages/ui/src/**/*.{ts,tsx}"],
     ignores: ["packages/ui/src/**/*.{test,spec}.*"],

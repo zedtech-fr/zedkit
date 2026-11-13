@@ -1,4 +1,4 @@
-import { DEFAULT_IDENTITY } from "./default-identity.ts";
+import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
 export type ReviewPreviewMode = "light" | "dark";
 export type ReviewDensity = "default" | "compact";

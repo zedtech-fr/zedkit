@@ -7,7 +7,7 @@ import {
   compactPreviewSpacing,
   hasReviewAppearanceQuery,
   parseReviewAppearance,
-} from "@/lib/review-appearance";
+} from "../model/review-appearance";
 
 export function ReviewAppearanceFrame({ children }: { children: ReactNode }) {
   const scopeRef = useRef<HTMLDivElement>(null);
