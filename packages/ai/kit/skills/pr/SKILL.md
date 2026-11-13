@@ -160,8 +160,8 @@ Required when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs includ
 
 Paste the visual-verify stdout table into the PR (skill `visual-verify`). Attach contact-sheet PNGs with a GitHub upload (or the host's equivalent) so reviewers can open them. The local run record (`evidence/<branch>/manifest.json`) is gitignored and is not itself the review surface. Links, not inlined binaries (no PNG bytes, no data URIs). An uploaded image embedded with Markdown image syntax is a link the host may render.
 
-- **Before:** ![short alt of the previous UI](<attached PNG URL>)
-  **After:** ![short alt of the changed UI](<attached PNG URL>)
+- **Before:** ![short alt of the previous UI](https://<attached PNG URL>)
+  **After:** ![short alt of the changed UI](https://<attached PNG URL>)
 
 Give alt text on embedded Before/After PNGs and on any embedded contact sheet.
 
