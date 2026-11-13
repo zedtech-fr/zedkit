@@ -5,7 +5,8 @@
   "description": "Public documentation site for zedkit (zedkit.app).",
   "type": "module",
   "imports": {
-    "#*": "./app/*"
+    "#*": "./app/*",
+    "#scripts/*": "./scripts/*"
   },
   "scripts": {
     "docs:generate": "pnpm --filter @zedtech/zedkit-seo build && node scripts/generate.mjs",
