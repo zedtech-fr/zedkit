@@ -22,3 +22,17 @@ export function filterPublishedRoutes(published, envValue) {
   }
   return hit;
 }
+
+/**
+ * Looks to rotate for `docs-render`. Unset or blank = one default-look cell
+ * (no identity init script). A comma list is those ids. Never a sitemap sweep.
+ */
+export function looksFromEnv(envValue) {
+  if (envValue === undefined) return [null];
+  const wanted = envValue
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (wanted.length === 0) return [null];
+  return wanted;
+}
