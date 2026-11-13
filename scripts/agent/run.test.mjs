@@ -8,23 +8,30 @@ import { fileURLToPath } from "node:url";
 import {
   DIFF_EXCLUDES,
   LIMITS,
+  buildE2eArgv,
+  buildLintArgv,
   buildNodeTestArgv,
   buildTestArgv,
+  buildTypecheckArgv,
   capLines,
   defaultNodeTestGlobs,
   formatDiff,
+  formatDuration,
   formatE2eSummary,
   formatLintSummary,
   formatNodeTestSummary,
   formatPr,
+  formatStatus,
   formatTypecheckSummary,
   groupLintMessages,
   isExcludedDiffPath,
   peelNodeTestArgs,
+  parseJson,
   parseNodeTestFailures,
   parseNodeTestStats,
   parseTscErrors,
   parseVitestFailures,
+  resolveLintTargets,
   run,
 } from "./run.mjs";
 
@@ -77,10 +84,13 @@ function capture(argv, deps) {
     write: (chunk) => chunks.push(chunk),
     now: () => new Date("2026-11-13T17:02:00.000Z"),
     durationMs: 1234,
+    pid: 1,
     ...deps,
   });
   return { code, out: chunks.join("") };
 }
+
+const STAMP = "2026-11-13T17-02-00-000Z-1";
 
 describe("capLines", () => {
   it("leaves short text alone", () => {
@@ -146,13 +156,17 @@ describe("typecheck formatting", () => {
     const errors = parseTscErrors(raw);
     assert.equal(errors.length, 2);
     assert.equal(errors[0]?.code, "TS2322");
+    assert.equal(errors[0]?.file, "packages/core/src/a.ts");
     assert.equal(errors[1]?.code, "TS2304");
+    assert.equal(errors[1]?.file, "src/b.ts");
   });
 
   it("prints error count and file(line,col): TSxxxx", () => {
     const out = formatTypecheckSummary({ raw, status: 1, ms: 2000, logPath: "log", cwd: "/repo" });
     assert.match(out, /^FAIL {2}errors=2/);
     assert.match(out, /packages\/core\/src\/a\.ts\(10,5\): TS2322/);
+    assert.match(out, /src\/b\.ts\(2,1\): TS2304/);
+    assert.doesNotMatch(out, /@zedtech\/zedkit-core:typecheck:/);
   });
 });
 
@@ -199,6 +213,9 @@ describe("node-test formatting", () => {
     assert.equal(peelNodeTestArgs(["scripts/*.test.mjs"]).nodeTest, true);
     assert.equal(peelNodeTestArgs(["@zedtech/zedkit-core"]).nodeTest, false);
     assert.equal(peelNodeTestArgs(["packages/core/src/foo.test.ts"]).nodeTest, false);
+    assert.equal(peelNodeTestArgs(["--reporter=json"]).nodeTest, false);
+    assert.equal(peelNodeTestArgs(["--test-name-pattern", "foo"]).nodeTest, false);
+    assert.equal(peelNodeTestArgs(["--reporter=json", "scripts/foo.test.mjs"]).nodeTest, true);
   });
 
   it("defaults node-test globs to test:registry:nodeploy", () => {
@@ -305,9 +322,9 @@ describe("run() wiring", () => {
     assert.equal(code, 17);
     assert.match(out, /^FAIL /);
     assert.match(out, /packages\/core\/src\/foo\.test\.ts:14/);
-    const log = join(dir, ".agent-logs", "2026-11-13T17-02-00-000Z-test.log");
+    const log = join(dir, ".agent-logs", `${STAMP}-test.log`);
     assert.match(readFileSync(log, "utf8"), /FAIL {2}packages\/core/);
-    assert.match(out, /LOG {2}.*2026-11-13T17-02-00-000Z-test\.log/);
+    assert.match(out, new RegExp(`LOG {2}.*${STAMP}-test\\.log`));
   });
 
   it("routes `test --test` to node --test, not turbo", (t) => {
@@ -342,6 +359,238 @@ describe("run() wiring", () => {
     assert.equal(argv[dash + 1], "--reporter=minimal");
     assert.ok(argv.slice(0, dash).includes("--filter=@zedtech/zedkit-ai"));
   });
+
+  it("keeps flags-only test args on turbo, not node --test", (t) => {
+    const dir = scratch(t, "agent-run-flags-");
+    const calls = [];
+    capture(["test", "--reporter=json"], {
+      cwd: dir,
+      spawn: (cmd, args) => {
+        calls.push([cmd, args]);
+        return { status: 0, stdout: "", stderr: "" };
+      },
+    });
+    assert.equal(calls[0]?.[0], "pnpm");
+    assert.ok(calls[0]?.[1].includes("turbo"));
+    assert.ok(calls[0]?.[1].includes("--reporter=json"));
+  });
+
+  it("preserves lint exit codes and writes the raw log", (t) => {
+    const dir = scratch(t, "agent-run-lint-");
+    const payload = [
+      {
+        filePath: `${dir}/a.ts`,
+        messages: [{ severity: 2, line: 4, ruleId: "eqeqeq", message: "Expected ===" }],
+      },
+    ];
+    const { code, out } = capture(["lint", "packages/core"], {
+      cwd: dir,
+      spawn: (_cmd, args) => {
+        assert.ok(args.includes("eslint"));
+        assert.ok(args.includes("--format"));
+        assert.ok(args.includes("json"));
+        return { status: 1, stdout: JSON.stringify(payload), stderr: "" };
+      },
+    });
+    assert.equal(code, 1);
+    assert.match(out, /^FAIL {2}errors=1/);
+    assert.match(out, /eqeqeq/);
+    assert.match(readFileSync(join(dir, ".agent-logs", `${STAMP}-lint.log`), "utf8"), /Expected ===/);
+  });
+
+  it("hints when lint output is not JSON", (t) => {
+    const dir = scratch(t, "agent-run-lint-crash-");
+    const { code, out } = capture(["lint"], {
+      cwd: dir,
+      spawn: () => ({ status: 2, stdout: "Oops, configuration error", stderr: "" }),
+    });
+    assert.equal(code, 2);
+    assert.match(out, /eslint output was not JSON/);
+    assert.doesNotMatch(out, /errors=0/);
+  });
+
+  it("preserves typecheck exit codes and strips turbo prefixes", (t) => {
+    const dir = scratch(t, "agent-run-tsc-");
+    const { code, out } = capture(["typecheck", "@zedtech/zedkit-core"], {
+      cwd: dir,
+      spawn: (_cmd, args) => {
+        assert.ok(args.includes("typecheck"));
+        assert.ok(args.includes("--pretty"));
+        assert.ok(args.includes("false"));
+        return {
+          status: 1,
+          stdout: "@zedtech/zedkit-core:typecheck: src/b.ts:2:1 - error TS2304: Cannot find name 'foo'.\n",
+          stderr: "",
+        };
+      },
+    });
+    assert.equal(code, 1);
+    assert.match(out, /src\/b\.ts\(2,1\): TS2304/);
+    assert.doesNotMatch(out, /@zedtech\/zedkit-core:typecheck:/);
+  });
+
+  it("derives a typecheck package filter from a test file or exits 2", (t) => {
+    const fromTest = buildTypecheckArgv(["packages/core/src/foo.test.ts"]);
+    assert.ok(fromTest.includes("--filter=./packages/core"));
+    assert.equal(buildTypecheckArgv(["orphan.test.ts"]), null);
+    const dir = scratch(t, "agent-run-tsc-orphan-");
+    let spawned = false;
+    const { code, out } = capture(["typecheck", "orphan.test.ts"], {
+      cwd: dir,
+      spawn: () => ((spawned = true), { status: 0, stdout: "", stderr: "" }),
+    });
+    assert.equal(code, 2);
+    assert.equal(spawned, false);
+    assert.match(out, /could not derive a package filter/);
+  });
+
+  it("preserves e2e exit codes and writes the log", (t) => {
+    const dir = scratch(t, "agent-run-e2e-");
+    const json = JSON.stringify({
+      stats: { unexpected: 1, expected: 0, skipped: 0, duration: 100 },
+      suites: [],
+    });
+    const { code, out } = capture(["e2e", "tests/home.spec.ts"], {
+      cwd: dir,
+      spawn: (_cmd, args) => {
+        assert.ok(args.includes("--reporter=json"));
+        assert.ok(args.includes("tests/home.spec.ts"));
+        return { status: 1, stdout: json, stderr: "" };
+      },
+    });
+    assert.equal(code, 1);
+    assert.match(out, /^FAIL /);
+    assert.match(out, /LOG /);
+    assert.match(readFileSync(join(dir, ".agent-logs", `${STAMP}-e2e.log`), "utf8"), /unexpected/);
+  });
+
+  it("writes the full diff to .agent-logs and prints LOG", (t) => {
+    const dir = scratch(t, "agent-run-diff-");
+    const body = Array.from({ length: 90 }, (_, i) => `+line ${i}`).join("\n");
+    const { code, out } = capture(["diff"], {
+      cwd: dir,
+      spawn: (_cmd, args) => {
+        if (args.includes("--name-only")) {
+          return { status: 0, stdout: "pnpm-lock.yaml\nscripts/agent/run.mjs\n", stderr: "" };
+        }
+        return { status: 0, stdout: body, stderr: "" };
+      },
+    });
+    assert.equal(code, 0);
+    assert.match(out, /truncated \d+ more lines/);
+    assert.match(out, /excluded \(changed\): pnpm-lock\.yaml/);
+    assert.match(out, /LOG /);
+    const log = readFileSync(join(dir, ".agent-logs", `${STAMP}-diff.log`), "utf8");
+    assert.match(log, /\+line 89/);
+  });
+
+  it("prints porcelain status and diff --stat", (t) => {
+    const dir = scratch(t, "agent-run-status-");
+    const { code, out } = capture(["status"], {
+      cwd: dir,
+      spawn: (_cmd, args) => {
+        if (args.includes("--porcelain=v1")) {
+          return { status: 0, stdout: "## main\n M scripts/agent/run.mjs\n", stderr: "" };
+        }
+        return { status: 0, stdout: " scripts/agent/run.mjs | 1 +\n", stderr: "" };
+      },
+    });
+    assert.equal(code, 0);
+    assert.match(out, /## main/);
+    assert.match(out, /scripts\/agent\/run\.mjs \| 1 \+/);
+  });
+
+  it("does not print all green when checks JSON is missing", (t) => {
+    const dir = scratch(t, "agent-run-pr-");
+    const { code, out } = capture(["pr", "12"], {
+      cwd: dir,
+      spawn: (_cmd, args) => {
+        if (args.includes("view")) {
+          return {
+            status: 0,
+            stdout: JSON.stringify({ number: 12, state: "OPEN", url: "https://example.com/pr/12", mergeable: "MERGEABLE" }),
+            stderr: "",
+          };
+        }
+        return { status: 1, stdout: "GraphQL: Resource not accessible", stderr: "gh: checks failed" };
+      },
+    });
+    assert.equal(code, 1);
+    assert.doesNotMatch(out, /all green/);
+    assert.match(out, /checks {2}failed/);
+    assert.match(out, /Resource not accessible/);
+  });
+
+  it("rejects leading-dash args on diff and pr", () => {
+    let spawned = false;
+    const spawn = () => ((spawned = true), { status: 0, stdout: "", stderr: "" });
+    const diff = capture(["diff", "--stat"], { spawn });
+    assert.equal(diff.code, 2);
+    const pr = capture(["pr", "--json"], { spawn });
+    assert.equal(pr.code, 2);
+    assert.equal(spawned, false);
+  });
+
+  it("exits 2 when node-test has no globs", (t) => {
+    const dir = scratch(t, "agent-empty-nt-");
+    writeFileSync(join(dir, "package.json"), JSON.stringify({ scripts: {} }));
+    let spawned = false;
+    const { code, out } = capture(["node-test"], {
+      cwd: dir,
+      spawn: () => ((spawned = true), { status: 0, stdout: "", stderr: "" }),
+    });
+    assert.equal(code, 2);
+    assert.equal(spawned, false);
+    assert.match(out, /no globs/);
+  });
+});
+
+describe("argv builders", () => {
+  it("buildTypecheckArgv keeps --pretty false after --", () => {
+    const argv = buildTypecheckArgv(["@zedtech/zedkit-core"]);
+    const dash = argv.indexOf("--");
+    assert.ok(dash >= 0);
+    assert.equal(argv[dash + 1], "--pretty");
+    assert.equal(argv[dash + 2], "false");
+    assert.ok(argv.slice(0, dash).includes("--filter=@zedtech/zedkit-core"));
+  });
+
+  it("resolveLintTargets maps package names when the folder exists", () => {
+    const targets = resolveLintTargets(["core"], root);
+    assert.ok(targets.some((target) => target.includes("packages/core") || target === "packages/core"));
+    assert.deepEqual(resolveLintTargets([], root), ["."]);
+  });
+
+  it("buildLintArgv always requests json format", () => {
+    const argv = buildLintArgv([], root);
+    assert.deepEqual(argv.slice(0, 4), ["exec", "eslint", "--format", "json"]);
+  });
+
+  it("buildE2eArgv uses the docs filter and line+json reporters", () => {
+    const all = buildE2eArgv([]);
+    assert.ok(all.includes("@zedtech/zedkit-docs"));
+    assert.ok(all.includes("--reporter=line"));
+    assert.ok(all.includes("--reporter=json"));
+    const one = buildE2eArgv(["apps/docs/tests/home.spec.ts"]);
+    assert.ok(one.includes("tests/home.spec.ts"));
+    assert.ok(!one.includes("apps/docs/tests/home.spec.ts"));
+  });
+
+  it("formatStatus joins porcelain and --stat", () => {
+    const out = formatStatus({ porcelain: "## main\n M a.ts\n", stat: " a.ts | 1 +\n" });
+    assert.match(out, /## main/);
+    assert.match(out, /a\.ts \| 1 \+/);
+  });
+
+  it("formatDuration clamps 60s up to the next minute", () => {
+    assert.equal(formatDuration(59_500), "59.5s");
+    assert.equal(formatDuration(119_600), "2m 00s");
+  });
+
+  it("parseJson returns undefined on malformed JSON instead of throwing", () => {
+    assert.equal(parseJson("{not json"), undefined);
+    assert.deepEqual(parseJson('{"ok":true}'), { ok: true });
+  });
 });
 
 describe("hygiene", () => {
@@ -365,7 +614,7 @@ describe("node-test live spawn", () => {
     assert.match(out, /LOG {2}/);
     assert.ok(out.length < 4000, `summary too large: ${out.length}`);
     const logDir = join(dir, ".agent-logs");
-    const logs = readFileSync(join(logDir, "2026-11-13T17-02-00-000Z-node-test.log"), "utf8");
+    const logs = readFileSync(join(logDir, `${STAMP}-node-test.log`), "utf8");
     assert.match(logs, /not ok 1 - boom/);
   });
 });

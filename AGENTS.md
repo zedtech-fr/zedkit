@@ -119,7 +119,7 @@ pnpm test:registry:nodeploy # node:test without deploy/* (self-hosted CI path)
 pnpm agent test [pkg...]    # turbo test --output-logs=errors-only -- --reporter=minimal
 pnpm agent node-test [glob] # node --test (default: test:registry:nodeploy globs)
 pnpm agent e2e [spec...]    # Playwright line+json
-pnpm agent lint [pkg...]    # eslint --format json, grouped
+pnpm agent lint [pkg...]    # eslint --format json, grouped (not docs extra checks)
 pnpm agent typecheck [pkg...]
 pnpm agent diff [base]      # git diff -U1, lockfile/catalog/registry omitted
 pnpm agent status

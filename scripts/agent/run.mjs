@@ -3,7 +3,7 @@
  * Compact command runner for coding agents: a short PASS/FAIL summary on
  * stdout, full tool output in gitignored `.agent-logs/`. Node builtins only.
  *
- *   pnpm agent test|e2e|lint|typecheck|diff|status|pr
+ *   pnpm agent test|node-test|e2e|lint|typecheck|diff|status|pr
  *   node scripts/agent/run.mjs <task> [args...]
  */
 
@@ -23,18 +23,20 @@ export const LIMITS = {
 
 export const DIFF_EXCLUDES = [":!pnpm-lock.yaml", ":!**/registry.json", ":!docs/catalog/catalog.json"];
 
-export const USAGE = `usage: node scripts/agent/run.mjs <task> [args...]
+export const USAGE = `usage: pnpm agent <task> [args...]
+       node scripts/agent/run.mjs <task> [args...]
 tasks:
   test [pkg-or-filter...]   turbo test, vitest --reporter=minimal
   node-test [globs...]      node --test (default: test:registry:nodeploy globs)
   e2e [spec-or-args...]     Playwright line+json (apps/docs)
-  lint [pkg...]             eslint --format json
+  lint [pkg...]             eslint --format json (not docs extra checks)
   typecheck [pkg...]        turbo typecheck, tsc --pretty false
   diff [base]               git diff -U1 (lockfile/catalog/registry omitted)
   status                    git status --porcelain=v1 -b + diff --stat
   pr [n]                    gh pr view/checks JSON (failing/pending only)
-logs: .agent-logs/<timestamp>-<task>.log  (gitignored)
+logs: .agent-logs/<timestamp>-<pid>-<task>.log  (gitignored)
   test also routes node --test targets (.mjs / scripts|apps/docs|deploy globs)
+  flags-only test args stay turbo; peel only with a non-flag node-test target
 `;
 
 const MAX_BUFFER = 64 * 1024 * 1024;
@@ -64,8 +66,8 @@ export function relPath(file, cwd) {
   return out.startsWith("..") ? file.replaceAll("\\", "/") : out.replaceAll("\\", "/");
 }
 
-export function stamp(date) {
-  return date.toISOString().replaceAll(":", "-").replaceAll(".", "-");
+export function stamp(date, pid = process.pid) {
+  return `${date.toISOString().replaceAll(":", "-").replaceAll(".", "-")}-${pid}`;
 }
 
 export function formatDuration(ms) {
@@ -73,7 +75,8 @@ export function formatDuration(ms) {
   if (!Number.isFinite(n) || n < 0) return "0.0s";
   if (n < 60_000) return `${(n / 1000).toFixed(1)}s`;
   const minutes = Math.floor(n / 60_000);
-  const seconds = Math.round((n % 60_000) / 1000);
+  let seconds = Math.round((n % 60_000) / 1000);
+  if (seconds === 60) return `${minutes + 1}m 00s`;
   return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
 }
 
@@ -136,7 +139,16 @@ export function buildTestArgv(args) {
 }
 
 export function buildTypecheckArgv(args) {
-  const { filters, extra } = splitTestArgs(args.filter((arg) => !isTestFileArg(arg)));
+  const files = args.filter(isTestFileArg);
+  const rest = args.filter((arg) => !isTestFileArg(arg));
+  const split = splitTestArgs(rest);
+  const filters = [...split.filters];
+  for (const file of files) {
+    const flag = packageFilterFromPath(file);
+    if (flag && !filters.includes(flag)) filters.push(flag);
+  }
+  if (files.length > 0 && filters.length === 0) return null;
+  const extra = split.extra;
   const pretty = extra.includes("--pretty") || extra.includes("--pretty=false") ? extra : ["--pretty", "false", ...extra];
   return ["turbo", "run", "typecheck", "--output-logs=errors-only", ...filters, "--", ...pretty];
 }
@@ -176,8 +188,8 @@ export function defaultNodeTestGlobs(cwd) {
   return [...script.matchAll(/"([^"]+)"/g)].map((match) => match[1] ?? "").filter(Boolean);
 }
 
-export function isNodeTestArg(arg) {
-  if (arg.startsWith("-")) return true;
+export function isNodeTestTarget(arg) {
+  if (arg.startsWith("-")) return false;
   const n = String(arg).replaceAll("\\", "/");
   if (n.includes("*")) return true;
   if (n.endsWith(".mjs") || n.endsWith(".cjs")) return true;
@@ -187,7 +199,12 @@ export function isNodeTestArg(arg) {
 export function peelNodeTestArgs(args) {
   if (args[0] === "node" && args[1] === "--test") return { nodeTest: true, rest: args.slice(2) };
   if (args[0] === "--test") return { nodeTest: true, rest: args.slice(1) };
-  if (args.length > 0 && args.every(isNodeTestArg) && !args.some((arg) => arg.startsWith("--filter") || arg.startsWith("@"))) {
+  const targets = args.filter((arg) => !arg.startsWith("-"));
+  if (
+    targets.length > 0 &&
+    targets.every(isNodeTestTarget) &&
+    !args.some((arg) => arg.startsWith("--filter") || arg.startsWith("@"))
+  ) {
     return { nodeTest: true, rest: args };
   }
   return { nodeTest: false, rest: args };
@@ -195,6 +212,7 @@ export function peelNodeTestArgs(args) {
 
 export function buildNodeTestArgv(args, { cwd, execPath = process.execPath } = {}) {
   const globs = args.length > 0 ? args : defaultNodeTestGlobs(cwd ?? process.cwd());
+  if (globs.length === 0) return { error: "node-test: no globs (expected test:registry:nodeploy or explicit paths)" };
   return { command: execPath, argv: ["--test", ...globs] };
 }
 
@@ -278,6 +296,10 @@ export function formatTestSummary({ raw, status, ms, logPath, cwd = process.cwd(
     : "";
   const head = [tag, tests, files, formatDuration(ms)].filter(Boolean).join("  ");
   const rows = formatFailureRows(failures, cwd);
+  if (status !== 0 && rows.length === 0 && !stats.tests.total) {
+    const excerpt = capLines(stripAnsi(raw).trim(), 10);
+    return [head, excerpt, `LOG  ${logPath}`].filter(Boolean).join("\n") + "\n";
+  }
   const body = capLines(rows.join("\n"), LIMITS.failLines);
   return [head, body, `LOG  ${logPath}`].filter(Boolean).join("\n") + "\n";
 }
@@ -372,11 +394,16 @@ export function looksLikeJson(text) {
   return trimmed.startsWith("[") || trimmed.startsWith("{");
 }
 
-/** Callers pass tool JSON. Invalid JSON throws (no try/catch in this file). */
 export function parseJson(text) {
   const trimmed = String(text ?? "").trim();
   if (!looksLikeJson(trimmed)) return undefined;
-  return JSON.parse(trimmed);
+  /* eslint-disable no-restricted-syntax -- scripts/agent is zero-dep; JSON.parse is the only throw */
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    return undefined;
+  }
+  /* eslint-enable no-restricted-syntax */
 }
 
 export function groupLintMessages(files, cwd) {
@@ -406,6 +433,9 @@ export function groupLintMessages(files, cwd) {
 
 export function formatLintSummary(files, { status, ms, logPath, cwd = process.cwd() }) {
   const grouped = groupLintMessages(files, cwd);
+  if (status !== 0 && grouped.errorCount === 0 && (files?.length ?? 0) === 0) {
+    return `FAIL  eslint output was not JSON  ${formatDuration(ms)}\nLOG  ${logPath}\n`;
+  }
   if (status === 0 && grouped.errorCount === 0) {
     const warn = grouped.warningCount ? `  warnings=${grouped.warningCount}` : "";
     return `PASS${warn}  ${formatDuration(ms)}\nLOG  ${logPath}\n`;
@@ -425,13 +455,23 @@ export function formatLintSummary(files, { status, ms, logPath, cwd = process.cw
   return `${lines.join("\n")}\n`;
 }
 
+export function stripTurboPrefix(line) {
+  let out = String(line ?? "");
+  for (let i = 0; i < 2; i += 1) {
+    const next = out.replace(/^[@\w./-]+:\s?/, "");
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
 export function parseTscErrors(text) {
   const clean = stripAnsi(text);
   const errors = [];
   for (const line of clean.split("\n")) {
-    const trimmed = line.replace(/^[\w@/.-]+:\s+/, "");
-    const parens = TSC_PARENS.exec(trimmed) ?? TSC_PARENS.exec(line);
-    const pretty = TSC_PRETTY.exec(trimmed) ?? TSC_PRETTY.exec(line);
+    const stripped = stripTurboPrefix(line);
+    const parens = TSC_PARENS.exec(stripped) ?? TSC_PARENS.exec(line);
+    const pretty = TSC_PRETTY.exec(stripped) ?? TSC_PRETTY.exec(line);
     const match = parens ?? pretty;
     if (!match) continue;
     errors.push({
@@ -520,7 +560,7 @@ export function formatE2eSummary({ raw, json, status, ms, logPath, jsonPath, cwd
   return `${lines.filter(Boolean).join("\n")}\n`;
 }
 
-export function formatDiff(diffText, { excluded = [], max = LIMITS.diffLines } = {}) {
+export function formatDiff(diffText, { excluded = [], max = LIMITS.diffLines, logPath } = {}) {
   const trimmed = String(diffText ?? "").trimEnd();
   const lines = [];
   if (!trimmed) lines.push("diff  (empty)");
@@ -528,6 +568,7 @@ export function formatDiff(diffText, { excluded = [], max = LIMITS.diffLines } =
   if (excluded.length) {
     lines.push("", `excluded (changed): ${excluded.join(", ")}`);
   }
+  if (logPath) lines.push(`LOG  ${logPath}`);
   return `${lines.join("\n")}\n`;
 }
 
@@ -547,13 +588,18 @@ function checkBucket(check) {
   return "pending";
 }
 
-export function formatPr({ view, checks }) {
+export function formatPr({ view, checks, checksError }) {
   const number = view?.number != null ? `#${view.number}` : "PR";
   const state = view?.state ?? "?";
   const url = view?.url ?? "";
   const mergeable = view?.mergeable ?? "";
   const lines = [`${number}  ${state}  ${url}`.trim()];
   if (mergeable) lines.push(`mergeable  ${mergeable}`);
+  if (checksError) {
+    lines.push("checks  failed");
+    lines.push(checksError);
+    return `${lines.join("\n")}\n`;
+  }
   const interesting = (checks ?? []).filter((check) => {
     const bucket = checkBucket(check);
     return bucket === "fail" || bucket === "pending" || bucket === "cancel";
@@ -601,9 +647,8 @@ function spawnStatus(result) {
 function combined(result) {
   const stdout = result.stdout ?? "";
   const stderr = result.stderr ?? "";
-  if (!stderr) return stdout;
-  if (!stdout) return stderr;
-  return `${stdout}\n${stderr}`;
+  const err = result.error?.message ? String(result.error.message) : "";
+  return [stdout, stderr, err].filter(Boolean).join("\n");
 }
 
 function ensureLogDir(deps) {
@@ -613,16 +658,26 @@ function ensureLogDir(deps) {
   return logDir;
 }
 
+function pidOf(deps) {
+  return deps.pid ?? process.pid;
+}
+
+function writeTaskLog(task, raw, deps, started) {
+  const when = started ?? deps.now?.() ?? new Date();
+  const logDir = ensureLogDir(deps);
+  const logPath = join(logDir, `${stamp(when, pidOf(deps))}-${task}.log`);
+  writeFileSync(logPath, raw ?? "");
+  return logPath;
+}
+
 function loggedSpawn(task, command, args, deps, extra = {}) {
   const started = deps.now?.() ?? new Date();
-  const logDir = ensureLogDir(deps);
   const t0 = process.hrtime.bigint();
   const result = spawn(command, args, deps, extra);
   const ms = deps.durationMs ?? Number(process.hrtime.bigint() - t0) / 1e6;
   const raw = combined(result);
-  const logPath = join(logDir, `${stamp(started)}-${task}.log`);
-  writeFileSync(logPath, raw);
-  return { status: spawnStatus(result), raw, stdout: result.stdout ?? "", logPath, logDir, ms, started };
+  const logPath = writeTaskLog(task, raw, deps, started);
+  return { status: spawnStatus(result), raw, stdout: result.stdout ?? "", logPath, logDir: ensureLogDir(deps), ms, started };
 }
 
 function gitLines(args, deps) {
@@ -636,8 +691,12 @@ function gitLines(args, deps) {
 
 function runNodeTest(args, deps) {
   const cwd = deps.cwd ?? process.cwd();
-  const { command, argv } = buildNodeTestArgv(args, { cwd, execPath: deps.execPath ?? process.execPath });
-  const logged = loggedSpawn("node-test", command, argv, deps);
+  const built = buildNodeTestArgv(args, { cwd, execPath: deps.execPath ?? process.execPath });
+  if (built.error) {
+    write(deps, `${built.error}\n`);
+    return 2;
+  }
+  const logged = loggedSpawn("node-test", built.command, built.argv, deps);
   write(deps, formatNodeTestSummary({ ...logged, cwd }));
   return logged.status;
 }
@@ -653,7 +712,12 @@ function runTest(args, deps) {
 
 function runTypecheck(args, deps) {
   const cwd = deps.cwd ?? process.cwd();
-  const logged = loggedSpawn("typecheck", "pnpm", buildTypecheckArgv(args), deps);
+  const argv = buildTypecheckArgv(args);
+  if (!argv) {
+    write(deps, "typecheck: could not derive a package filter from those paths\n");
+    return 2;
+  }
+  const logged = loggedSpawn("typecheck", "pnpm", argv, deps);
   write(deps, formatTypecheckSummary({ ...logged, cwd }));
   return logged.status;
 }
@@ -671,7 +735,7 @@ function runE2e(args, deps) {
   const cwd = deps.cwd ?? process.cwd();
   const started = deps.now?.() ?? new Date();
   const logDir = ensureLogDir(deps);
-  const jsonPath = join(logDir, `${stamp(started)}-e2e.json`);
+  const jsonPath = join(logDir, `${stamp(started, pidOf(deps))}-e2e.json`);
   const env = {
     ...process.env,
     NO_COLOR: "1",
@@ -704,7 +768,17 @@ function diffBaseArgs(base) {
   return base ? [base] : [];
 }
 
+function rejectLeadingDash(task, args, deps) {
+  const first = args[0];
+  if (first?.startsWith("-")) {
+    write(deps, `${task}: unexpected flag ${first}\n`);
+    return true;
+  }
+  return false;
+}
+
 function runDiff(args, deps) {
+  if (rejectLeadingDash("diff", args, deps)) return 2;
   const base = args[0];
   const names = gitLines(["diff", "--name-only", ...diffBaseArgs(base)], deps);
   const excluded = names.stdout
@@ -713,18 +787,28 @@ function runDiff(args, deps) {
     .filter(Boolean)
     .filter(isExcludedDiffPath);
   const diff = gitLines(["diff", "-U1", ...diffBaseArgs(base), "--", ".", ...DIFF_EXCLUDES], deps);
-  write(deps, formatDiff(diff.stdout, { excluded }));
+  const raw = [names.text, diff.text].filter(Boolean).join("\n");
+  const logPath = writeTaskLog("diff", raw, deps);
+  write(deps, formatDiff(diff.stdout, { excluded, logPath }));
   return diff.status || names.status;
 }
 
 function runStatus(deps) {
   const porcelain = gitLines(["status", "--porcelain=v1", "-b"], deps);
   const stat = gitLines(["diff", "--stat"], deps);
+  const status = porcelain.status || stat.status;
+  if (status !== 0) {
+    const raw = [porcelain.text, stat.text].filter(Boolean).join("\n");
+    const logPath = writeTaskLog("status", raw, deps);
+    write(deps, `${capLines(raw.trim() || "git status failed", 30)}\nLOG  ${logPath}\n`);
+    return status;
+  }
   write(deps, formatStatus({ porcelain: porcelain.stdout, stat: stat.stdout }));
-  return porcelain.status || stat.status;
+  return 0;
 }
 
 function runPr(args, deps) {
+  if (rejectLeadingDash("pr", args, deps)) return 2;
   const n = args[0] ? [args[0]] : [];
   const viewRes = spawn("gh", ["pr", "view", ...n, "--json", "state,url,mergeable,title,number"], deps);
   const checksRes = spawn("gh", ["pr", "checks", ...n, "--json", "name,state,bucket,link"], deps);
@@ -733,7 +817,17 @@ function runPr(args, deps) {
     return spawnStatus(viewRes);
   }
   const view = looksLikeJson(viewRes.stdout) ? parseJson(viewRes.stdout) : undefined;
-  const checks = looksLikeJson(checksRes.stdout) ? parseJson(checksRes.stdout) : [];
+  const checks = looksLikeJson(checksRes.stdout) ? parseJson(checksRes.stdout) : undefined;
+  if (spawnStatus(checksRes) !== 0 && !Array.isArray(checks)) {
+    write(
+      deps,
+      formatPr({
+        view,
+        checksError: capLines(combined(checksRes).trim() || "gh pr checks failed", 10),
+      }),
+    );
+    return spawnStatus(viewRes) || spawnStatus(checksRes);
+  }
   write(deps, formatPr({ view, checks: Array.isArray(checks) ? checks : [] }));
   return spawnStatus(viewRes) || spawnStatus(checksRes);
 }
