@@ -240,7 +240,7 @@ test("the identity form lives in the editor panel, not the catalog", () => {
   assert.doesNotMatch(view, /defaultMode="simple"/);
 });
 
-test("the dock drawer is the customize form, with no Conversation tab or AI input", () => {
+test("the dock drawer is starting points plus the customize form, with no Conversation tab or AI input", () => {
   const widget = read("features/identity/dock/ui/identity-dock-widget.tsx");
   const panel = read("features/identity/dock/ui/identity-dock-assistant-panel.tsx");
   const customize = read("features/identity/dock/ui/identity-dock-customize.tsx");
@@ -253,6 +253,12 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.doesNotMatch(widget, /handleOnly/);
   assert.doesNotMatch(widget, /noBodyStyles/);
   assert.match(panel, /IdentityDockCustomize/);
+  assert.match(panel, /IdentityDockStartingPoints/);
+  assert.match(panel, /onPick=\{applyStartingIdentity\}/);
+  assert.equal((panel.match(/dispatchIdentityEditorDraftApply\(/g) ?? []).length, 1);
+  const startingAt = panel.indexOf("<IdentityDockStartingPoints");
+  const customizeAt = panel.indexOf("<IdentityDockCustomize");
+  assert.ok(startingAt !== -1 && customizeAt !== -1 && startingAt < customizeAt);
   assert.doesNotMatch(panel, /ViewSwitch/);
   assert.doesNotMatch(panel, /Conversation/);
   assert.doesNotMatch(panel, /IdentityDockComposerFooter/);
@@ -277,6 +283,7 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   assert.notEqual(tabsListAt, -1);
   assert.notEqual(scrollAt, -1);
   assert.ok(headerAt < tabsListAt && tabsListAt < scrollAt, "Classic/Expert TabsList belongs in the fixed header, not the scroll region");
+  assert.ok(scrollAt < startingAt && startingAt < customizeAt, "Starting points open the scroll region, above the customize form");
   // Dock form fields must not reuse the editor's field ids on the editor page.
   assert.match(customize, /idPrefix="identity-dock"/);
   // Colour checker with Fix, and hints, inside the dock form.
