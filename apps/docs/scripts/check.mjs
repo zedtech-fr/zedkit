@@ -16,9 +16,15 @@
 //   8. the home gallery covers every UI need exactly once, with the
 //      manifest demo (or null);
 //   9. the gallery stats match the catalog counts;
-//  10. home scenarios resolve to catalog needs and current doc slugs;
-//  11. prose files match live pages, avoid generated section titles,
-//      and their first section appears in the merged output.
+//  10. prose files match live pages, avoid generated section titles,
+//      and their first section appears in the merged output;
+//  11. guide MDX files include the required `##` sections (`guideRequiredSections`);
+//  12. VISUAL-CONTRACT.md pins the two chrome-rule sentences; signature.md
+//      points at that owner; relative markdown links in those files resolve;
+//  13. foundations.mdx links VISUAL-CONTRACT.md and does not copy the owner table;
+//  14. ui/meta.json lists every published UI slug once under Fumadocs separators
+//      (Actions / Forms / Overlays / Data and states / More); other package
+//      meta.json files stay a flat slug list with no nested paths.
 //
 // Barrel parsing reuses scripts/catalog.mjs (import-safe).
 // Usage: `node scripts/check.mjs`.
@@ -46,8 +52,9 @@ import {
 } from "./generate.mjs";
 import { countPublishedCatalogNeeds, docsOmitNeed } from "./docs-omitted-needs.mjs";
 import { checkGeneratedPage } from "./page-checks.mjs";
+import { checkRawLayoutFile } from "./raw-layout.mjs";
+import { relativeMarkdownLinkErrors } from "./relative-markdown-links.mjs";
 import {
-  SITE_CHANGELOG_URL,
   SITE_HEADER_INTERNAL_PATHS,
   siteFooterLinkSpecs,
 } from "../lib/site-links.mjs";
@@ -75,10 +82,7 @@ const {
   gallery,
   stats,
   uiPackage,
-  homeScenarios,
-  homeEntryPoints,
   catalogIndex,
-  homeCuratedGallery,
   maturityModule,
 } = generate(tmp);
 const livePageKeys = catalogPageKeys(catalog);
@@ -199,6 +203,7 @@ const guideRequiredSections = {
     "Next steps",
   ],
   "maturity-and-compatibility.mdx": ["Next steps"],
+  "foundations.mdx": ["Color", "Type"],
 };
 for (const [file, sections] of Object.entries(guideRequiredSections)) {
   const sourcePath = join(guidesDir, file);
@@ -211,6 +216,41 @@ for (const [file, sections] of Object.entries(guideRequiredSections)) {
     if (!expanded.includes(`## ${section}`)) {
       errors.push(`guides: ${file} must include "## ${section}".`);
     }
+  }
+}
+const CHROME_PAGE_FILL = "indigo/violet are not page fill or body text";
+const CHROME_SITE_ACTIONS =
+  "site chrome actions are not Glass `--primary` unless inside a high-value panel";
+const OWNER_TABLE_HEADER = "Layer | Owns | Lives in | Fix here when";
+const visualContractPath = join(APP, "VISUAL-CONTRACT.md");
+const signaturePath = join(ROOT, "docs", "design", "signature.md");
+const visualContractText = readFileSync(visualContractPath, "utf8");
+const signatureText = readFileSync(signaturePath, "utf8");
+if (!visualContractText.includes(CHROME_PAGE_FILL)) {
+  errors.push(`VISUAL-CONTRACT.md: missing chrome rule "${CHROME_PAGE_FILL}".`);
+}
+if (!visualContractText.includes(CHROME_SITE_ACTIONS)) {
+  errors.push(`VISUAL-CONTRACT.md: missing chrome rule "${CHROME_SITE_ACTIONS}".`);
+}
+if (!signatureText.includes("VISUAL-CONTRACT.md")) {
+  errors.push("docs/design/signature.md: must point at VISUAL-CONTRACT.md as the chrome-rule owner.");
+}
+for (const [label, filePath, text] of [
+  ["docs/design/signature.md", signaturePath, signatureText],
+  ["VISUAL-CONTRACT.md", visualContractPath, visualContractText],
+]) {
+  for (const error of relativeMarkdownLinkErrors(filePath, text)) {
+    errors.push(error.replace(filePath, label));
+  }
+}
+const foundationsGuidePath = join(guidesDir, "foundations.mdx");
+if (existsSync(foundationsGuidePath)) {
+  const foundations = expandGuideSnippets(readFileSync(foundationsGuidePath, "utf8"));
+  if (!foundations.includes("VISUAL-CONTRACT.md")) {
+    errors.push("guides: foundations.mdx must link VISUAL-CONTRACT.md.");
+  }
+  if (foundations.includes(OWNER_TABLE_HEADER)) {
+    errors.push("guides: foundations.mdx must not copy the owner-table header row.");
   }
 }
 if (existsSync(snippetsDir)) {
@@ -280,6 +320,67 @@ if (existsSync(llmsPath)) {
     }
   }
 }
+const FUMADOCS_SEPARATOR = /^---(?<name>.+)---$/;
+const UI_SIDEBAR_LABELS = ["Actions", "Forms", "Overlays", "Data and states", "More"];
+const publishedUiSlugs = [...livePageKeys]
+  .filter((key) => key.startsWith("ui/"))
+  .map((key) => key.slice("ui/".length));
+const uiMetaPath = join(tmp, "ui", "meta.json");
+if (!existsSync(uiMetaPath)) {
+  errors.push("ui/meta.json missing after generate.");
+} else {
+  const uiMeta = JSON.parse(readFileSync(uiMetaPath, "utf8"));
+  const uiSlugs = [];
+  const uiLabels = [];
+  for (const entry of uiMeta.pages ?? []) {
+    const sep = FUMADOCS_SEPARATOR.exec(entry);
+    if (sep) {
+      uiLabels.push(sep.groups.name);
+      continue;
+    }
+    if (entry.includes("/")) {
+      errors.push(`ui/meta.json: nested path "${entry}" (URLs must stay /docs/ui/<slug>).`);
+    }
+    uiSlugs.push(entry);
+  }
+  if (new Set(uiSlugs).size !== uiSlugs.length) {
+    errors.push("ui/meta.json: duplicate slug in pages.");
+  }
+  for (const slug of publishedUiSlugs) {
+    if (!uiSlugs.includes(slug)) errors.push(`ui/meta.json: missing published slug "${slug}".`);
+    if (!existsSync(join(tmp, "ui", `${slug}.mdx`))) {
+      errors.push(`generator: missing flat page /docs/ui/${slug}.`);
+    }
+  }
+  for (const slug of uiSlugs) {
+    if (!publishedUiSlugs.includes(slug)) errors.push(`ui/meta.json: extra slug "${slug}".`);
+  }
+  let lastIdx = -1;
+  for (const label of uiLabels) {
+    const idx = UI_SIDEBAR_LABELS.indexOf(label);
+    if (idx === -1) {
+      errors.push(`ui/meta.json: unknown separator "${label}".`);
+      continue;
+    }
+    if (idx <= lastIdx) errors.push(`ui/meta.json: separator "${label}" out of order.`);
+    lastIdx = idx;
+  }
+}
+for (const entry of readdirSync(tmp, { withFileTypes: true })) {
+  if (!entry.isDirectory() || entry.name === "ui") continue;
+  const metaPath = join(tmp, entry.name, "meta.json");
+  if (!existsSync(metaPath)) continue;
+  const meta = JSON.parse(readFileSync(metaPath, "utf8"));
+  for (const page of meta.pages ?? []) {
+    if (FUMADOCS_SEPARATOR.test(page)) {
+      errors.push(`${entry.name}/meta.json: unexpected separator "${page}".`);
+    }
+    if (page.includes("/")) {
+      errors.push(`${entry.name}/meta.json: nested path "${page}".`);
+    }
+  }
+}
+
 const llmsFullPath = join(APP, "public", "llms-full.txt");
 if (!existsSync(llmsFullPath)) {
   errors.push("public/llms-full.txt missing (run docs:generate).");
@@ -417,36 +518,6 @@ if (catalogIndex.length !== countPublishedCatalogNeeds(catalog)) {
     `catalog index holds ${catalogIndex.length} entries for ${countPublishedCatalogNeeds(catalog)} published catalog needs.`,
   );
 }
-if (homeCuratedGallery.length < 4 || homeCuratedGallery.length > 8) {
-  errors.push(`home-curated.json: expected 4–8 UI previews, got ${homeCuratedGallery.length}.`);
-}
-for (const card of homeCuratedGallery) {
-  if (!byNeed.has(card.need)) {
-    errors.push(`home-curated: "${card.need}" is not in the UI gallery.`);
-  }
-}
-
-const scenariosPath = join(APP, "content", "home-scenarios.ts");
-if (!existsSync(scenariosPath)) {
-  errors.push("content/home-scenarios.ts missing (run pnpm docs:generate).");
-} else {
-  const onDisk = readFileSync(scenariosPath, "utf8");
-  const expected = JSON.stringify(homeScenarios, null, 2);
-  if (!onDisk.includes(expected)) {
-    errors.push("content/home-scenarios.ts is stale (run pnpm docs:generate).");
-  }
-}
-
-const entryPointsPath = join(APP, "content", "home-entry-points.ts");
-if (!existsSync(entryPointsPath)) {
-  errors.push("content/home-entry-points.ts missing (run pnpm docs:generate).");
-} else {
-  const onDisk = readFileSync(entryPointsPath, "utf8");
-  const expected = JSON.stringify(homeEntryPoints, null, 2);
-  if (!onDisk.includes(expected)) {
-    errors.push("content/home-entry-points.ts is stale (run pnpm docs:generate).");
-  }
-}
 
 const maturityPath = join(APP, "content", "maturity-compatibility.ts");
 if (!existsSync(maturityPath)) {
@@ -555,7 +626,7 @@ function tsxFiles(dir) {
   return out;
 }
 
-for (const dir of ["app", "ui"]) {
+for (const dir of ["app", "components/site-chrome", "features"]) {
   if (!existsSync(join(APP, dir))) continue;
   for (const file of tsxFiles(join(APP, dir))) {
     const rel = file.slice(APP.length + 1);
@@ -570,12 +641,11 @@ for (const dir of ["app", "ui"]) {
   }
 }
 
-for (const file of tsxFiles(join(APP, "components"))) {
-  const rel = file.slice(APP.length + 1);
-  for (const line of readFileSync(file, "utf8").split("\n")) {
-    if (/<(div|span)[\s>/]/.test(line)) {
-      errors.push(`${rel}: raw <${/<(div|span)[\s>/]/.exec(line)[1]}> is banned; use kit Stack/Text/Section/Heading.`);
-    }
+for (const dir of ["components", "features"]) {
+  if (!existsSync(join(APP, dir))) continue;
+  for (const file of tsxFiles(join(APP, dir))) {
+    const rel = file.slice(APP.length + 1);
+    errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
   }
 }
 
@@ -599,17 +669,17 @@ if (nextConfig.includes('output: "export"')) {
   }
 }
 
-for (const { href, external } of siteFooterLinkSpecs(SITE_CHANGELOG_URL)) {
+for (const { href, external } of siteFooterLinkSpecs()) {
   if (external && !href.startsWith("https://")) {
     errors.push(`site-footer: ${href} must be an https URL.`);
   }
 }
-const siteLayout = readFileSync(join(APP, "ui", "site-layout.tsx"), "utf8");
+const siteLayout = readFileSync(join(APP, "components/site-chrome", "site-layout.tsx"), "utf8");
 if (!siteLayout.includes("siteHeaderLinks")) {
   errors.push("site-layout: expected shared siteHeaderLinks in the marketing shell.");
 }
-if (!existsSync(join(APP, "ui", "site-footer.tsx"))) {
-  errors.push("site-footer: missing ui/site-footer.tsx.");
+if (!existsSync(join(APP, "components/site-chrome", "site-footer.tsx"))) {
+  errors.push("site-footer: missing components/site-chrome/site-footer.tsx.");
 }
 
 if (errors.length > 0) {
@@ -654,11 +724,6 @@ if (errors.length > 0) {
             stdio: "inherit",
           });
           if (agentIcons.status !== 0) process.exitCode = 1;
-          const domainIcons = spawnSync("node", [join(HERE, "check-domain-icons.mjs")], {
-            cwd: APP,
-            stdio: "inherit",
-          });
-          if (domainIcons.status !== 0) process.exitCode = 1;
         }
       }
     }

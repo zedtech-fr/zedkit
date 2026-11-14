@@ -2,16 +2,20 @@ import Link from "next/link";
 import { Button, Container, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
 import "@/app/identity-creator-type.css";
-import { identityEditorCopy } from "@/app/i18n/identity-editor-copy";
-import { IdentityEditorPanel } from "@/components/identity-editor-panel";
+import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
+import { IdentityEditorPanel } from "@/features/identity/editor/ui/identity-editor-panel";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
 
-export const metadata = docsPageMetadata("/features/identity-editor", {
-  title: identityEditorCopy.metadata.title,
-  description: identityEditorCopy.metadata.description,
-});
+export const metadata = docsPageMetadata(
+  "/features/identity-editor",
+  {
+    title: identityEditorCopy.metadata.title,
+    description: identityEditorCopy.metadata.description,
+  },
+  { index: false },
+);
 
 export default function IdentityEditorFeaturePage() {
   return (
@@ -19,7 +23,10 @@ export default function IdentityEditorFeaturePage() {
       <Stack gap="list">
         <Stack gap="sm">
           <Button asChild variant="link" size="sm" className="-mx-back pull-back w-fit" data-editor-back="">
-            <Link href="/#identities">{identityEditorCopy.back}</Link>
+            <Link href="/#identities">
+              <span aria-hidden="true">← </span>
+              {identityEditorCopy.back}
+            </Link>
           </Button>
           <Heading level={1} typeRole="section">
             {identityEditorCopy.heading}

@@ -9,6 +9,8 @@ export interface PageHeaderSkeletonProps {
   description?: boolean;
   actions?: boolean;
   className?: string;
+  /** False when nested under a composed route skeleton (one wrapper status). */
+  announce?: boolean;
 }
 
 /**
@@ -20,13 +22,15 @@ export function PageHeaderSkeleton({
   description = true,
   actions = true,
   className,
+  announce = true,
 }: PageHeaderSkeletonProps) {
   const messages = useUiMessages();
   return (
     <div
       data-slot="page-header-skeleton"
-      role="status"
-      aria-label={label ?? messages.loading}
+      {...(announce
+        ? { role: "status" as const, "aria-label": label ?? messages.loading }
+        : { "aria-hidden": true as const })}
       className={cn("mb-page-header-offset flex flex-col gap-page-header-title-gap", className)}
     >
       <div className="flex flex-wrap items-center justify-between gap-page-header-gap">

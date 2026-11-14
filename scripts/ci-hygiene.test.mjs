@@ -24,9 +24,27 @@ describe("ci hygiene job", () => {
       "scripts/check-tone.sh",
       "scripts/check-breaking-changeset.sh",
       "scripts/check-changeset-packages.sh",
+      "scripts/doc-pins.mjs",
     ]) {
       assert.ok(hygiene.includes(script), `hygiene job lost ${script}`);
     }
+  });
+
+  it("skips binary files and PNGs in the private-refs content scan", () => {
+    const src = readFileSync(join(root, "scripts/check-no-private-refs.sh"), "utf8");
+    assert.match(src, /git grep -IinE/);
+    assert.match(src, /':!\*\.png'/);
+    assert.match(src, /git ls-files -z --others --exclude-standard/);
+    assert.match(src, /xargs -0 grep -IHinE/);
+  });
+
+  it("allowlists the public live-service slug so callers write it in full", () => {
+    const src = readFileSync(join(root, "scripts/denylist-patterns.sh"), "utf8");
+    const tone = readFileSync(join(root, "scripts/check-tone.sh"), "utf8");
+    assert.match(src, /\$\{frag\}-bot/);
+    assert.match(src, /do not split them to dodge the scan/);
+    assert.match(tone, /_filter_public_live_slug/);
+    assert.match(tone, /public-slug/);
   });
 });
 
@@ -46,6 +64,50 @@ describe("ci-required aggregate", () => {
     assert.match(required, /QUICKSTART_SMOKE/);
     assert.match(required, /ADOPTION_SMOKE/);
   });
+
+  it("does not require browser E2E jobs", () => {
+    const required = workflow.split(/^ {2}ci-required:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(required, "", "ci-required job block not found");
+    assert.doesNotMatch(required, /docs-render/);
+    assert.doesNotMatch(required, /docs-smoke/);
+    assert.doesNotMatch(required, /ui-smoke/);
+    assert.doesNotMatch(required, /DOCS_RENDER/);
+    assert.doesNotMatch(required, /DOCS_SMOKE/);
+    assert.doesNotMatch(required, /UI_SMOKE/);
+    assert.match(required, /docs-build/);
+    assert.match(required, /DOCS_BUILD/);
+  });
+});
+
+describe("workflow-lint", () => {
+  it("skips deleted workflow files before actionlint", () => {
+    const job = workflow.split(/^ {2}workflow-lint:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(job, "", "workflow-lint job block not found");
+    assert.match(job, /skipping deleted/);
+    assert.match(job, /existing\+=\("\$f"\)/);
+  });
+});
+
+describe("CI does not run browser E2E", () => {
+  it("has no docs-render, docs-smoke, or ui-smoke jobs", () => {
+    assert.doesNotMatch(workflow, /^ {2}docs-render:/m);
+    assert.doesNotMatch(workflow, /^ {2}docs-smoke:/m);
+    assert.doesNotMatch(workflow, /^ {2}ui-smoke:/m);
+  });
+
+  it("does not compute docs_looks in the changes job", () => {
+    const changes = workflow.split(/^ {2}changes:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(changes, "", "changes job block not found");
+    assert.doesNotMatch(changes, /docs_looks/);
+    assert.doesNotMatch(changes, /docs-render-routes\.mjs/);
+  });
+
+  it("does not ship a nightly docs cross-browser workflow", () => {
+    assert.equal(
+      existsSync(join(root, ".github/workflows/nightly-docs-cross-browser.yml")),
+      false,
+    );
+  });
 });
 
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -62,6 +124,7 @@ const DEPLOY_ONLY_GLOBS = quotedGlobsFromScript(
 const REGISTRY_GLOBS = [...NODEPLOY_GLOBS, ...DEPLOY_ONLY_GLOBS];
 const VITEST_NODE_TEST_ELSEWHERE = new Set([
   "packages/devtools/tests/enabled.test.mjs",
+  "packages/ai/tests/visual-verify.test.mjs",
   ...globSync("packages/quality/tests/unit/*.test.mjs", { cwd: root }),
 ]);
 
@@ -85,6 +148,72 @@ describe("test:registry globs", () => {
       checks.split(/- name: test:registry \(exclude deploy\/\*\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
     assert.doesNotMatch(registryStep, /node --test/, "inline node --test file list");
   });
+
+  it("checks job runs pnpm knip", () => {
+    const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.match(checks, /^\s+- name: knip\n\s+run: pnpm knip$/m);
+  });
+
+  it("knip script is exact-pinned (no floating major)", () => {
+    assert.match(pkg.scripts.knip, /^pnpm dlx knip@\d+\.\d+\.\d+$/);
+  });
+
+  it("registry-deps build includes every dist test:registry imports", () => {
+    const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    const registryDeps =
+      checks.split(/- name: Build \(registry deps\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
+    assert.notEqual(registryDeps, "", "Build (registry deps) step not found");
+    for (const pkg of [
+      "@zedtech/zedkit-seo",
+      "@zedtech/zedkit-ui",
+      "@zedtech/zedkit-server",
+      "@zedtech/zedkit-live",
+    ]) {
+      assert.ok(registryDeps.includes(`--filter=${pkg}`), `registry-deps omitted ${pkg}`);
+    }
+  });
+});
+
+function knipJsonc() {
+  const text = readFileSync(join(root, "knip.jsonc"), "utf8").replace(/^\s*\/\/.*$/gm, "");
+  return JSON.parse(text);
+}
+
+function knipIgnoreGlobs(config) {
+  /** @type {Array<{ cwd: string, pattern: string }>} */
+  const globs = (config.ignore ?? []).map((pattern) => ({ cwd: root, pattern }));
+  for (const [workspace, body] of Object.entries(config.workspaces ?? {})) {
+    const cwd = workspace === "." ? root : join(root, workspace);
+    for (const pattern of body.ignore ?? []) globs.push({ cwd, pattern });
+  }
+  return globs;
+}
+
+describe("knip ignore paths", () => {
+  it("every ignore path still matches a tracked file", () => {
+    const tracked = new Set(
+      execSync("git ls-files", { cwd: root, encoding: "utf8" }).trim().split("\n").filter(Boolean),
+    );
+    const missing = [];
+    for (const { cwd, pattern } of knipIgnoreGlobs(knipJsonc())) {
+      const prefix = cwd === root ? "" : `${cwd.slice(root.length + 1).split("\\").join("/")}/`;
+      const hits = globSync(pattern, { cwd }).map((file) => `${prefix}${file.split("\\").join("/")}`);
+      if (!hits.some((file) => tracked.has(file))) missing.push(pattern);
+    }
+    assert.deepEqual(missing, [], `knip ignore matches nothing tracked: ${missing.join(", ")}`);
+  });
+});
+
+describe("AGENTS.md browser E2E truth", () => {
+  for (const rel of ["AGENTS.md", "apps/docs/AGENTS.md"]) {
+    it(`${rel} keeps Playwright local and does not claim CI runs browser E2E`, () => {
+      const text = readFileSync(join(root, rel), "utf8");
+      assert.doesNotMatch(text, /CI owns[^.]*\be2e\b/u);
+      assert.doesNotMatch(text, /Docs browser gates are `docs-smoke` and `docs-render`/);
+      assert.doesNotMatch(text, /merge-gate browsers are/);
+      assert.match(text, /(?:stays local|local-only|stay local)/u);
+    });
+  }
 });
 
 describe("pr template", () => {

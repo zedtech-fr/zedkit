@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 import { assertA11yGate } from "./a11y-helpers";
 import { persistDocsSiteLook, probe, useIdentity } from "./identity-helpers";
-import { openHeroPage } from "./hero-helpers";
 
 // Relative path: the config baseURL decides the port.
 const HOME = "/";
@@ -40,45 +39,24 @@ test.describe("tide identity", () => {
     });
   }
 
-  test("keeps UI changelog on one line at 1280", async ({ page }) => {
+  test("keeps primary nav labels on one line at 1280", async ({ page }) => {
     await persistDocsSiteLook(page, "tide", "light");
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto(HOME, { waitUntil: "networkidle" });
     await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    const link = page.locator("#nd-nav").getByRole("link", { name: "UI changelog" });
-    const lines = await link.evaluate((el) => el.getClientRects().length);
-    expect(lines).toBe(1);
+    const header = page.locator("#nd-nav");
+    for (const name of ["AI", "UI", "Docs", "Catalog"] as const) {
+      const link = header.getByRole("link", { name, exact: true });
+      const lines = await link.evaluate((el) => el.getClientRects().length);
+      expect(lines, name).toBe(1);
+    }
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
-  test("hero admin preview sizes to content on phone (no clipped overflow)", async ({ page }) => {
-    await persistDocsSiteLook(page, "tide", "light");
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(HOME, { waitUntil: "networkidle" });
-    await openHeroPage(page, "Apps");
-    await expect(page.locator("html")).toHaveAttribute("data-identity", "tide");
-    const preview = page.locator("[data-home-hero-preview]");
-    await preview.scrollIntoViewIfNeeded();
-    const clip = await preview.evaluate((el) => {
-      const style = getComputedStyle(el);
-      return {
-        overflowY: style.overflowY,
-        maxHeight: style.maxHeight,
-        clientHeight: el.clientHeight,
-        scrollHeight: el.scrollHeight,
-      };
-    });
-    expect(clip.overflowY).not.toBe("hidden");
-    expect(clip.clientHeight + 2).toBeGreaterThanOrEqual(clip.scrollHeight);
-    const card = page.locator("[data-home-dashboard-card]");
-    await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
-    await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
-  });
-
-  for (const width of [360, 390] as const) {
+  for (const width of [360, 390, 809] as const) {
     test(`does not overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto(HOME, { waitUntil: "networkidle" });

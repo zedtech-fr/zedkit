@@ -31,6 +31,16 @@ export const badgeCopy = {
       { name: "Storefront build", badge: "passed", variant: "default" as const },
     ],
   },
+  softStatus: {
+    subtitle: "Harbor Studio jobs, last hour",
+    jobs: [
+      { name: "Image optimisation", badge: "passed", variant: "soft-success" as const },
+      { name: "Deploy to staging", badge: "retry", variant: "soft-warning" as const },
+      { name: "Nightly orders export", badge: "failed", variant: "soft-danger" as const },
+      { name: "Storefront cache", badge: "notice", variant: "soft-info" as const },
+      { name: "Catalogue sync", badge: "queued", variant: "soft-neutral" as const },
+    ],
+  },
 } as const;
 
 export type BadgeCopy = typeof badgeCopy;

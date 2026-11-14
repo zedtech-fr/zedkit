@@ -1,6 +1,7 @@
 import { expect, test, type Page, type Route } from "@playwright/test";
 
 import { assertA11yGate, assertFocusUnclipped, assertFocusVisibleRing, focusWithKeyboard } from "./a11y-helpers";
+import { livePaintDockExpert } from "./identity-helpers";
 
 const EDITOR = "/features/identity-editor";
 /** `#create` is how a visitor arrives to create: the assistant opens, with focus in its form. */
@@ -49,70 +50,24 @@ async function brief(page: Page, text: string) {
   await page.locator("#identity-assistant-brief").fill(text);
 }
 
-test.describe("home closing scene", () => {
-  test("invites, shows an example brief with a fake link as the placeholder, and sends nothing", async ({ page }) => {
+test.describe("home identity entry (#210)", () => {
+  test("the in-page yours scene is gone; the dock And yours? remains", async ({ page }) => {
     const posts = await service(page, (_p, route) => route.abort());
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    const scene = page.locator("#your-identity");
-    await scene.scrollIntoViewIfNeeded();
-    await expect(scene.getByRole("heading", { name: "And yours?", level: 3 })).toBeVisible();
-    const field = scene.getByLabel("Your product and brand");
-    await expect(field).toHaveValue("");
-    expect(await field.getAttribute("placeholder")).toMatch(/hand-thrown ceramics[\s\S]*https:\/\/example\.com\//);
-    await field.focus();
-    await page.keyboard.type("A calm studio");
-    await page.mouse.wheel(0, 400);
+    await expect(page.locator("#your-identity, [data-home-yours]")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "And yours?", level: 3 })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Start creating" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
     expect(posts).toHaveLength(0);
   });
 
-  test("Start creating opens the widget in place with the text prefilled and focused; the URL does not change", async ({ page }) => {
-    const posts = await service(page, (_p, route) => route.abort());
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    const scene = page.locator("#your-identity");
-    await scene.scrollIntoViewIfNeeded();
-    await scene.getByLabel("Your product and brand").fill("Film restoration. Like https://atelier-nord.example.org/ please.");
-    await expect(scene.getByRole("list", { name: "Links found in your text" })).toContainText("atelier-nord.example.org");
-    await scene.getByRole("button", { name: "Start creating" }).click();
-    await expect(page).toHaveURL("/");
-    const field = page.locator("#identity-assistant-brief");
-    await expect(field).toBeVisible();
-    await expect(field).toHaveValue("Film restoration. Like https://atelier-nord.example.org/ please.");
-    await expect(field).toBeFocused();
-    expect(posts).toHaveLength(0);
-    await expect(page.getByRole("link", { name: "Open the detailed editor" })).toBeVisible();
-  });
-
-  test("Start creating with an empty brief opens the widget unchanged, and the editor link keeps a way back", async ({ page }) => {
+  test("the demo editor still links back to #identities", async ({ page }) => {
     await service(page, (_p, route) => route.abort());
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    const scene = page.locator("#your-identity");
-    await scene.scrollIntoViewIfNeeded();
-    await scene.getByRole("button", { name: "Start creating" }).click();
-    await expect(page).toHaveURL("/");
-    await expect(page.locator("#identity-assistant-brief")).toHaveValue("");
-    await page.getByRole("link", { name: "Open the detailed editor" }).click();
-    await page.waitForURL("**/features/identity-editor");
+    await page.goto("/features/identity-editor#create", { waitUntil: "networkidle" });
     await page.getByRole("link", { name: "← Back to the examples" }).click();
     await page.waitForURL("**/#identities");
-  });
-
-  test("links in the text, full or bare, become chips that can be dropped; a fourth is said not to be read", async ({ page }) => {
-    await page.goto("/", { waitUntil: "networkidle" });
-    const scene = page.locator("#your-identity");
-    await scene.scrollIntoViewIfNeeded();
-    const field = scene.getByLabel("Your product and brand");
-    await field.fill("Shop like https://a.example.org/, http://old.example.org and linear.app. Also https://b.example.org/");
-    const chips = scene.locator("[data-assistant-link-label]");
-    await expect(chips).toHaveCount(3);
-    await expect(chips).toHaveText(["a.example.org", "old.example.org", "linear.app"]);
-    await expect(scene).toContainText("Only the first 3 links are read.");
-    await scene.getByRole("button", { name: "Stop reading a.example.org" }).click();
-    await expect(chips).toHaveCount(3, { timeout: 5_000 });
-    await expect(chips).toHaveText(["old.example.org", "linear.app", "b.example.org"]);
-    await expect(field).not.toHaveValue(/a\.example\.org/);
   });
 });
 
@@ -277,7 +232,7 @@ test.describe("the assistant in the editor", () => {
     expect(await page.locator("[data-slot='identity-editor-preview']").evaluate((node) => getComputedStyle(node).borderRadius)).toBe(draftBefore);
     await proposal.getByRole("button", { name: "Use this look" }).click();
     await expect(page.locator("[data-assistant-proposal]")).toHaveCount(0);
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.25rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.25rem");
     await expect(page.locator("#identity-assistant-brief")).toBeFocused();
     await expect(page.locator("[data-assistant-thread]")).toContainText("Warmer paper");
     // A follow-up is a refinement and carries the exchange so far.
@@ -318,7 +273,7 @@ test.describe("the assistant in the editor", () => {
     release();
     await page.waitForTimeout(600);
     await expect(page.locator("[data-assistant-proposal]")).toHaveCount(0);
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.5rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.5rem");
   });
 
   test("the last proposal stays while the next one fails, and a quota refusal says when to retry without promising an allowance", async ({ page }) => {
@@ -343,7 +298,7 @@ test.describe("the assistant in the editor", () => {
     await page.getByRole("button", { name: "Generate" }).click();
     await expect(page.locator("[data-assistant-notice]")).toContainText("could not be used, so nothing changed");
     await expect(page.locator("[data-assistant-proposal]")).toHaveCount(0);
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.5rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.5rem");
   });
 
   test("when the assistant is off, it says so and the presets and fields still work", async ({ page }) => {
@@ -354,10 +309,10 @@ test.describe("the assistant in the editor", () => {
     await expect(page.locator("[data-assistant-unavailable]")).toContainText("not set up here yet");
     await brief(page, "A ceramics shop");
     await expect(page.getByRole("button", { name: "Generate" })).toBeDisabled();
-    await page.getByLabel("Spacing", { exact: true }).fill("0.3rem");
-    await expect(page.getByLabel("Spacing", { exact: true })).toHaveValue("0.3rem");
+    await page.getByLabel("--spacing", { exact: true }).fill("0.3rem");
+    await expect(page.getByLabel("--spacing", { exact: true })).toHaveValue("0.3rem");
     await page.getByLabel("Look").selectOption("press");
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0px");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0px");
     expect(posts).toHaveLength(0);
   });
 
@@ -365,7 +320,7 @@ test.describe("the assistant in the editor", () => {
     await page.route(`${SERVICE}/status`, (route) => route.fulfill({ status: 404, body: "" }));
     await page.goto(OPEN, { waitUntil: "networkidle" });
     await expect(page.locator("[data-assistant-unavailable]")).toContainText("not available here");
-    await expect(page.getByLabel("Radius", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("--radius", { exact: true })).toBeVisible();
   });
 });
 
@@ -387,7 +342,7 @@ test.describe("saved on this device", () => {
     await expect(page.getByText("Saved on this device as “Atelier”.")).toBeVisible();
     await page.reload({ waitUntil: "networkidle" });
     await page.getByLabel("Look").selectOption({ label: "Atelier" });
-    await expect(page.getByLabel("Radius", { exact: true })).toHaveValue("0.25rem");
+    await expect(page.getByLabel("--radius", { exact: true })).toHaveValue("0.25rem");
     expect(await page.evaluate(() => (JSON.parse(localStorage.getItem("zk-identity-library") ?? "{}") as { version: number }).version)).toBe(2);
     expect(await page.evaluate(() => localStorage.getItem("zk-identity-library"))).toContain("Cormorant");
   });
@@ -397,7 +352,7 @@ test.describe("saved on this device", () => {
     await page.getByLabel("Name", { exact: true }).fill("Atelier");
     await page.getByRole("button", { name: "Save look" }).click();
     await expect(page.getByText("Saved on this device as “Atelier”.")).toBeVisible();
-    await page.getByLabel("Radius", { exact: true }).fill("2px");
+    await page.getByLabel("--radius", { exact: true }).fill("2px");
     await page.getByLabel("Name", { exact: true }).fill("atelier");
     await page.getByRole("button", { name: "Save look" }).click();
     const clash = page.locator("[data-slot='identity-editor-clash']");
@@ -426,17 +381,17 @@ test.describe("saved on this device", () => {
     await page.addInitScript(() => localStorage.setItem("zk-identity-library", "{not json"));
     await page.goto(EDITOR, { waitUntil: "networkidle" });
     await expect(page.getByText("Saved looks on this device could not be read")).toBeVisible();
-    await expect(page.getByLabel("Radius", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("--radius", { exact: true })).toBeVisible();
   });
 
-  test("applying to the whole site is explicit, and removing it puts the site back", async ({ page }) => {
+  test("editor draft edits leave the site; a dock edit paints, and Reset puts it back", async ({ page }) => {
     await page.goto(EDITOR, { waitUntil: "networkidle" });
     const before = await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim());
-    await page.getByLabel("Background", { exact: true }).fill("0 80% 70%");
+    await page.getByLabel("--background", { exact: true }).fill("0 80% 70%");
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe(before);
-    await page.getByRole("button", { name: "Apply to the whole site" }).click();
+    await livePaintDockExpert(page, "--background", "0 80% 70%");
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe("0 80% 70%");
-    await page.getByRole("button", { name: "Remove from the whole site" }).click();
+    await page.locator("[data-slot=custom-identity-bar]").getByRole("button", { name: "Reset" }).click();
     await expect.poll(() => page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--background").trim())).toBe(before);
     expect(await page.evaluate(() => localStorage.getItem("zk-docs-site-identity-opt-in"))).toBeNull();
   });

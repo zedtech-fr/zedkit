@@ -106,6 +106,8 @@
     "react-day-picker": "catalog:",
     "react-hook-form": "catalog:",
     "sonner": "catalog:",
+    "react-markdown": "catalog:",
+    "rehype-sanitize": "catalog:",
     "tailwind-merge": "catalog:",
     "vaul": "catalog:",
     "zod": "catalog:"

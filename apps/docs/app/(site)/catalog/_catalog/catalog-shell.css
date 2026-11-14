@@ -1,0 +1,75 @@
+[data-catalog-shell] {
+  --zk-catalog-title-size: clamp(2rem, 1.7rem + 1.2vw, 2.5rem);
+  --zk-type-h1-size: var(--zk-catalog-title-size);
+}
+
+[data-catalog-shell] [data-catalog-header-band] {
+  border-bottom: var(--zk-border-width) solid hsl(var(--border));
+}
+
+/* Title beside the glass card at 1440; stacked under the title at 390. */
+[data-catalog-shell] [data-catalog-intro] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: center;
+  gap: calc(var(--spacing) * 12);
+}
+
+/*
+ * High-value purple pad: consumes the shared --zk-preview-stage-* recipe
+ * (docs-shell-tokens.css). Do not fork the values here.
+ */
+[data-catalog-shell] [data-catalog-counters] {
+  overflow: clip;
+  padding: calc(var(--spacing) * 7);
+  background-color: hsl(var(--zk-preview-stage-via));
+  background-image: var(--zk-preview-stage-halos), var(--zk-preview-stage-fill);
+  background-repeat: no-repeat;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-catalog-shell] [data-catalog-counters] {
+    background-image: var(--zk-preview-stage-fill);
+  }
+}
+
+[data-catalog-shell] [data-catalog-filter-search] {
+  color: hsl(var(--foreground));
+}
+
+@media (width >= 40rem) {
+  [data-catalog-shell] [data-catalog-filter-search] {
+    min-width: 12rem;
+  }
+}
+
+/* site-action pins radius to chrome; category chips stay pills. */
+[data-catalog-shell] [data-catalog-chip] {
+  border-radius: 9999px;
+}
+
+[data-catalog-shell] [data-catalog-results] {
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--border));
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+}
+
+@media (width >= 80rem) {
+  [data-catalog-shell] [data-catalog-results] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+[data-catalog-shell] [data-catalog-cell] {
+  background-color: hsl(var(--card));
+}
+
+/* Two-letter titles (`cn`) are ~19px wide as a flex item. Floor is the 24px evidence hit target. */
+[data-catalog-shell] [data-catalog-title] {
+  min-width: 24px;
+}
+
+[data-catalog-shell] [data-catalog-cell] [data-badge-link] {
+  flex-shrink: 0;
+}

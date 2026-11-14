@@ -23,7 +23,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - **No empty packages.** A package exists only when real code backs it now.
 - **Never commit build artifacts.** Before every commit and PR: run
   `git status` and `git diff --stat`, never `git add -A` blindly, and
-  confirm no binaries, caches, build output, or files over 200KB are
+  confirm no binaries, caches, build output, files over 200KB, or
+  generated evidence PNGs (`apps/docs/tests/evidence/**/*.png`) are
   staged. CI enforces this via `scripts/check-no-artifacts.sh`; if you
   extend `.gitignore`, extend the script to match.
 - **Publishing is live.** Changesets version the packages; merging a
@@ -50,14 +51,17 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 
 ## How to work
 
-- After an edit, run that area's **Local loop** (its AGENTS.md), or
-  `pnpm --filter <pkg> typecheck && pnpm --filter <pkg> lint && pnpm --filter <pkg> test`.
-  CI owns full-repo test, e2e and static-export smoke.
+- After an edit, run that area's **Local loop** (its AGENTS.md) with
+  `pnpm agent typecheck|lint|test|node-test` (or the `pnpm --filter <pkg> …`
+  forms). Full logs land in `.agent-logs/`; keep the transcript as the summary.
+  CI owns full-repo test, lint, typecheck, `docs-build` (static export, SEO, first-load budget, and export presence checks), and consumer install/build smokes. Playwright `smoke`, `e2e`, and `e2e:routes` stay local — CI does not run browser E2E.
 - Small PRs from fresh `main`, never stacked. One package per PR. Never
   commit on `dev` or `main`: open a work branch, then `gh pr create --base
   dev`.
   File budget (exclude generated and lockfiles): green ≤20, orange 21–30
   (warn and offer a split), red >30 (warn, propose seams, do not stop).
+  `epic/*` into `dev` may exceed the file budget and the one-package rule
+  (warn and propose seams, do not stop).
 - List assumptions before code or a plan. A missing assumptions table
   is a blocking challenge.
 - **Depth first, then route by shape.** On every user message, before an
@@ -69,13 +73,15 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   `orchestrate` (read tokenomics, pick a team). Plan, challenge and review:
   go deep, be strict, and be brutally honest. Review feedback:
   `/improve-from-review`. One topic, small wins: `/quick-wins`. Unclear
-  topic: `/to-audit`. Have an audit: `/from-audit`.
+  topic: `/to-audit`. Have an audit: `/from-audit`. Raw issue inbox:
+  `/triage`.
 - Encode the first reusable correction that changed the work, same turn
   (`rules-upkeep`). Close coding work with `Rules: none` or
   `Rules: <file> — <change>`. Map: [.agents/README.md](.agents/README.md).
 - Look up before you search: read the row for your topic in
   [.agents/atlas.md](.agents/atlas.md) (where things live, words, commands,
-  why), open its Entry, widen only if it does not hold. A search that cost 3+
+  why), open its Entry — including `.agents/atlas/<topic>.md` when the row
+  names one — and widen only if it does not hold. A search that cost 3+
   reads, a correction, or a moved file or changed command fixes that row in the
   same turn. `zedkit-ai validate` fails on a path that is gone.
 - Each package PR updates the root README package table, adds a
@@ -113,6 +119,15 @@ pnpm build                  # turbo: build everywhere (docs: static export in ap
 pnpm test                   # turbo: vitest in every package; not the line below
 pnpm test:registry          # node:test: test:registry:nodeploy globs + deploy/* (incl. packages/ai/scripts)
 pnpm test:registry:nodeploy # node:test without deploy/* (self-hosted CI path)
+# Compact agent gates (summary on stdout; full logs in .agent-logs/)
+pnpm agent test [pkg...]    # turbo test --output-logs=errors-only; peels node --test targets
+pnpm agent node-test [glob] # node --test (default: test:registry:nodeploy globs)
+pnpm agent e2e [spec...]    # Playwright line+json
+pnpm agent lint [pkg...]    # eslint --format json, grouped (not docs extra checks)
+pnpm agent typecheck [pkg...]
+pnpm agent diff [base]      # git diff -U1, lockfile/catalog/registry omitted
+pnpm agent status
+pnpm agent pr [n]
 pnpm changeset:status       # versioning dry-run (no publish)
 pnpm catalog:build          # regenerate docs/catalog/catalog.json
 pnpm catalog:check          # catalog + docs check (demo registry, previews, /r/ urls)
@@ -123,7 +138,7 @@ bash scripts/check-tone.sh
 
 CI runs the commands above plus the rest of
 [ci.yml](.github/workflows/ci.yml) (`pnpm exec eslint .`, API reports,
-registry smoke). Docs browser gate is `smoke`, not `pnpm e2e` —
+registry smoke). Playwright docs `smoke`, `e2e`, and `e2e:routes` stay local, never a merge gate —
 [apps/docs/AGENTS.md](apps/docs/AGENTS.md). A fresh clone has no
 `dist/`: `pnpm --filter <pkg> test|typecheck` and `pnpm catalog:check`
 fail until sibling packages are built. Build once

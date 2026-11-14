@@ -8,7 +8,8 @@
       "orchestrate",
       "parallel-work",
       "tdd",
-      "adversarial-tests"
+      "adversarial-tests",
+      "zedkit-ai"
     ],
     "setup": [
       "setup-ai",
@@ -19,6 +20,7 @@
       "domain-modeling",
       "persona-review",
       "compose-ui",
+      "visual-verify",
       "code-review",
       "ponytail-review",
       "retro",
@@ -29,6 +31,7 @@
       "adversarial-tests",
       "plan",
       "implement",
+      "pr",
       "challenge",
       "to-spec",
       "to-tickets",
@@ -40,7 +43,9 @@
       "fix",
       "improve-from-review",
       "quick-wins",
-      "handoff"
+      "handoff",
+      "triage",
+      "zedkit-ai"
     ],
     "core": [
       "ponytail",
@@ -56,6 +61,7 @@
       "handoff",
       "persona-review",
       "compose-ui",
+      "visual-verify",
       "codebase-design",
       "pr",
       "setup-ai",
@@ -74,7 +80,9 @@
       "to-audit",
       "fix",
       "improve-from-review",
-      "quick-wins"
+      "quick-wins",
+      "triage",
+      "zedkit-ai"
     ],
     "full": "*"
   },
@@ -119,7 +127,9 @@
     "to-audit",
     "fix",
     "improve-from-review",
-    "quick-wins"
+    "quick-wins",
+    "triage",
+    "zedkit-ai"
   ],
   "presetAgents": {
     "starter": ["explorer", "verifier", "orchestrator"],
@@ -140,21 +150,9 @@
     ]
   },
   "presetCommands": {
-    "starter": ["setup-ai", "review"],
-    "setup": [
-      "setup-ai",
-      "review",
-      "plan",
-      "challenge",
-      "implement",
-      "orchestrate",
-      "improve-config",
-      "research",
-      "from-audit",
-      "to-audit",
-      "fix",
-      "improve-from-review",
-      "quick-wins"
-    ]
+    "starter": ["zedkit-ai"],
+    "setup": ["zedkit-ai"],
+    "core": ["zedkit-ai"],
+    "full": ["zedkit-ai"]
   }
 }

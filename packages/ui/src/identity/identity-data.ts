@@ -85,7 +85,7 @@ const identities: readonly IdentityOption[] = [
   {
     id: "glass",
     label: "Glass",
-    description: "Frosted glass: translucent layers over soft colour.",
+    description: "Frosted glass: translucent layers over soft color.",
     fonts: ["Space Grotesk Variable", "Inter Variable", "JetBrains Mono Variable"],
   },
 ];

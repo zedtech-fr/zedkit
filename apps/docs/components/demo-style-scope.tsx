@@ -14,7 +14,7 @@ type ScopeAttrs = { "data-identity-scope": ""; "data-identity": string };
  * The preview inherits the page until someone picks a style.
  * A pick sets `data-identity-scope` on this demo only.
  * State stays in the component: a shared hook was memoized on the site
- * identity and ignored later picks. The home hero can use `DemoStyleScope`.
+ * identity and ignored later picks. Catalog demos can use `DemoStyleScope`.
  */
 function usePinnedLook() {
   const site = useIdentity(DEFAULT_IDENTITY);
@@ -54,7 +54,11 @@ function DemoStyleSelect({
         onChange={(event) => onPin(event.target.value === "follow-site" ? null : event.target.value)}
         className="h-control-height-sm max-w-scope rounded-md border border-input bg-background px-control-tight text-control text-foreground focus-ring-control"
       >
-        <option value="follow-site">{demoStyleScopeCopy.followSite}</option>
+        <option value="follow-site">
+          {pinned
+            ? demoStyleScopeCopy.followSite
+            : (identities.find((item) => item.id === look)?.label ?? demoStyleScopeCopy.followSite)}
+        </option>
         {identities.map((item) => (
           <option key={item.id} value={item.id}>
             {item.label}

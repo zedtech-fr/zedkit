@@ -1,20 +1,23 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 const footerLink = (page: Page, name: string) =>
   page.locator("footer").getByRole("link", { name, exact: true });
 
 test.describe("site shell", () => {
   test("home footer and header links", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
-    await expect(footerLink(page, "MIT License")).toBeVisible();
-    await expect(page.locator("header").getByRole("link", { name: "Documentation", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Guides" })).toBeVisible();
+    await expect(page.getByText("zedkit, by Zed Tech · MIT")).toBeVisible();
+    await expect(footerLink(page, "GitHub (opens in a new tab)")).toBeVisible();
+    const header = page.locator("#nd-nav");
+    await expect(header.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+    await expect(header.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Guides" })).toHaveCount(0);
   });
 
-  test("founder door: footer entry opens the honest no-code-first guide (#1078)", async ({ page }) => {
-    await page.goto("/", { waitUntil: "networkidle" });
-    await expect(footerLink(page, "Start without writing code")).toBeVisible();
+  test("founder door: the honest no-code-first guide is still reachable (#1078)", async ({ page }) => {
     await page.goto("/docs/start-without-writing-code", { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Start without writing code" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "What zedkit is not" })).toBeVisible();
@@ -34,18 +37,18 @@ test.describe("site shell", () => {
     await expect(page.getByRole("button", { name: "Add note" })).toBeVisible();
   });
 
-  test("footer offers Documentation and Catalog next steps (#1098)", async ({ page }) => {
+  test("footer offers Docs and Catalog next steps (#1098)", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
     const footer = page.locator("footer");
-    await expect(footer.getByRole("link", { name: "Documentation", exact: true })).toHaveAttribute("href", "/docs");
+    await expect(footer.getByRole("link", { name: "Docs", exact: true })).toHaveAttribute("href", "/docs");
     await expect(footer.getByRole("link", { name: "Catalog", exact: true })).toHaveAttribute("href", "/catalog");
   });
 
   test("docs and 404 share the footer", async ({ page }) => {
     await page.goto("/docs/getting-started", { waitUntil: "networkidle" });
-    await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
+    await expect(page.getByText("zedkit, by Zed Tech · MIT")).toBeVisible();
     await page.goto("/missing-page", { waitUntil: "networkidle" });
-    await expect(page.getByText("Maintained by ZED TECH")).toBeVisible();
-    await expect(footerLink(page, "Report a bug")).toBeVisible();
+    await expect(page.getByText("zedkit, by Zed Tech · MIT")).toBeVisible();
+    await expect(footerLink(page, "zedtech.fr (opens in a new tab)")).toBeVisible();
   });
 });

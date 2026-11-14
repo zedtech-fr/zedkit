@@ -1,0 +1,68 @@
+import { readFileSync } from "node:fs";
+
+import { tryCatch } from "@zedtech/zedkit-core";
+
+import { isLiveSnapshot, parsePublicReviewSnapshot } from "../model/parse-snapshot.ts";
+import { createComposedReviewPort } from "../model/port-from-index.ts";
+import { liveRunsToIndex, toPublicIndex, toPublicReviews } from "../model/public-review.ts";
+import { listIssueSitemapPathsFrom, listReviewSitemapPathsFrom } from "../model/review-routes.ts";
+import type { PublicIssueIndex, PublicLiveRun, ReviewPort } from "../ports/review-port";
+
+function liveRowsFromReviews(reviews: unknown): PublicLiveRun[] {
+  const parsed = parsePublicReviewSnapshot({
+    version: 1,
+    kind: "public-live-runs",
+    reviews,
+  });
+  if (!parsed.ok) {
+    throw new Error(`public review snapshot: ${parsed.error.message}`, { cause: parsed.error });
+  }
+  if (!isLiveSnapshot(parsed.value)) {
+    throw new Error("public review snapshot: reviews did not parse as live rows");
+  }
+  return toPublicReviews(parsed.value);
+}
+
+function livesFromIndexRaw(value: unknown): PublicLiveRun[] {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return [];
+  if (!("reviews" in value)) return [];
+  return liveRowsFromReviews((value as { reviews: unknown }).reviews);
+}
+
+function partsFromUnknown(value: unknown): { index: PublicIssueIndex; lives: PublicLiveRun[] } {
+  const parsed = parsePublicReviewSnapshot(value);
+  if (!parsed.ok) {
+    throw new Error(`public review snapshot: ${parsed.error.message}`, { cause: parsed.error });
+  }
+  if (isLiveSnapshot(parsed.value)) {
+    const lives = toPublicReviews(parsed.value);
+    return { lives, index: liveRunsToIndex(lives) };
+  }
+  return { index: toPublicIndex(parsed.value), lives: livesFromIndexRaw(value) };
+}
+
+function loadPublicParts(snapshotPath: string): { index: PublicIssueIndex; lives: PublicLiveRun[] } {
+  const text = tryCatch(() => readFileSync(snapshotPath, "utf8"));
+  if (!text.ok) {
+    throw new Error("public review snapshot: cannot read file", { cause: text.error });
+  }
+  const json = tryCatch(() => JSON.parse(text.value) as unknown);
+  if (!json.ok) {
+    throw new Error("public review snapshot: invalid JSON", { cause: json.error });
+  }
+  return partsFromUnknown(json.value);
+}
+
+/** Test helper: read a fixture path. Not the production `/issues` feed. */
+export function createSnapshotReviewPort(snapshotPath: string): ReviewPort {
+  const parts = loadPublicParts(snapshotPath);
+  return createComposedReviewPort(parts.index, parts.lives);
+}
+
+export function listIssueSitemapPaths(snapshotPath: string): Promise<string[]> {
+  return listIssueSitemapPathsFrom(createSnapshotReviewPort(snapshotPath));
+}
+
+export function listReviewSitemapPaths(snapshotPath: string): Promise<string[]> {
+  return listReviewSitemapPathsFrom(createSnapshotReviewPort(snapshotPath));
+}

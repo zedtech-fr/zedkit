@@ -5,8 +5,11 @@
  * the site pins a calmer unit, a compact header (bands keep the shared container).
  */
 :root[data-identity] {
+  /* 56px; mockup 60px declined so home / catalog / docs share one bar. */
   --zk-site-header-height: 3.5rem;
   --zk-header-height: var(--zk-site-header-height);
+  /* Desktop bar measure: pin on #nd-nav so docs-cluster --fd-layout-width cannot inherit. */
+  --zk-header-max-width: 1400px;
 }
 :root[data-identity="glass"] {
   --spacing: 0.26rem;
@@ -24,21 +27,28 @@
   backdrop-filter: none;
 }
 
-/* Header: fixed compact height, nav aligned to the content width.
-   Overflow stays visible so the Guides viewport can paint below the bar. */
+/* Header: fixed compact height on desktop and phone. */
 #nd-nav,
 #nd-nav > div,
-#nd-nav nav,
-#nd-mobile-nav {
+#nd-nav nav {
   height: var(--zk-site-header-height);
   min-height: 0;
 }
+/* Local --fd-layout-width so the bar stays 1400px outside and inside #nd-docs-layout. */
+#nd-nav {
+  --fd-layout-width: var(--zk-header-max-width);
+}
+#nd-mobile-nav {
+  height: var(--zk-site-header-height);
+  min-height: var(--zk-site-header-height);
+}
+/* Fumadocs inner bar clips overflowing children; wrapping header links must stay visible. */
 #nd-nav,
 #nd-nav > div {
   overflow: visible;
 }
-#nd-nav nav a:not([data-slot="badge"]),
-#nd-nav nav button:not([class*="max-w"]) {
+#nd-nav nav a:not([data-slot="badge"]):not(.site-action):not([data-site-action]),
+#nd-nav nav button:not([class*="max-w"]):not(.site-action):not([data-site-action]) {
   border-radius: 9999px;
   padding-block: 0.375rem;
   padding-inline: 0.75rem;
@@ -76,9 +86,24 @@
   min-width: var(--spacing-control-height-sm);
 }
 
-/* Scroll targets clear the compact header. */
-#nd-home-layout section[id] {
+/*
+ * Home mockup rhythm (#249): 88px / 96px bands, 8px heading→subtitle.
+ * Compact `--spacing * 8/18` is the 33.28/74.88 audit miss; do not derive
+ * home section steps from that unit. Catalog `spacing="sm"` stays outside
+ * `#home-page` so it does not inherit 88px.
+ */
+#home-page {
+  --zk-section-md: 5.5rem;
+  --zk-section-lg: 6rem;
+  --zk-heading-to-sub: 0.5rem;
+}
+
+/* Scroll targets clear the compact header at every width. */
+#home-page section[id] {
   scroll-margin-top: calc(var(--zk-header-height) + 1rem);
+}
+[data-scroll-anchor] {
+  scroll-margin-top: max(calc(var(--spacing) * 24), calc(var(--zk-header-height) + 1rem));
 }
 
 /*
@@ -91,16 +116,12 @@
   --zk-site-sheen: linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 55%);
 }
 /*
- * The hero example hosts fixed layers (toasts): a backdrop filter on the card itself would
- * trap them, so the frosted surface lives on a ::before layer behind the content instead.
- * Lighter than the site cards (10px, no double blur: the inner scope is already excluded).
+ * Identities frame: examples portal dialogs into the stage. A backdrop filter
+ * on the card itself would trap them, so the frosted surface lives on a
+ * ::before layer. Lighter than the site cards (10px, no double blur: the inner
+ * scope is already excluded).
  */
-:root[data-identity="glass"] #demo {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-/* Same relief for the identities frame: its examples portal dialogs into the stage, so the same ::before layer. */
-:root[data-identity="glass"] :is(#demo, [data-identity-frame-stage]) {
+:root[data-identity="glass"] [data-identity-frame-stage] {
   position: relative;
   isolation: isolate;
   background-color: transparent;
@@ -108,7 +129,7 @@
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
   box-shadow: var(--zk-shadow-md);
 }
-:root[data-identity="glass"] :is(#demo, [data-identity-frame-stage])::before {
+:root[data-identity="glass"] [data-identity-frame-stage]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -119,11 +140,11 @@
   -webkit-backdrop-filter: blur(min(var(--zk-glass-blur), 10px)) saturate(1.3);
   backdrop-filter: blur(min(var(--zk-glass-blur), 10px)) saturate(1.3);
 }
-:root.dark[data-identity="glass"] :is(#demo, [data-identity-frame-stage]) {
+:root.dark[data-identity="glass"] [data-identity-frame-stage] {
   box-shadow: var(--zk-shadow-md);
 }
 @media (prefers-reduced-transparency: reduce) {
-  :root[data-identity="glass"] :is(#demo, [data-identity-frame-stage])::before {
+  :root[data-identity="glass"] [data-identity-frame-stage]::before {
     background-color: hsl(var(--card) / 0.97);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -133,7 +154,7 @@
 #nd-nav nav .justify-end.flex-1 {
   gap: 0.5rem;
 }
-:root[data-identity="glass"] [data-slot="button"]:not([data-identity-scope] *):not([data-variant="ghost"]):not([data-variant="link"]) {
+:root[data-identity="glass"] [data-slot="button"]:not([data-identity-scope] *):not([data-variant="ghost"]):not([data-variant="link"]):not(.site-action):not([data-site-action]) {
   background-image: var(--zk-site-sheen);
   box-shadow: var(--zk-shadow-sm);
 }
@@ -144,15 +165,31 @@
   border-color: hsl(var(--zk-glass-edge) / var(--zk-glass-edge-alpha));
   box-shadow: var(--zk-shadow-sm);
 }
-
-/* The hero example in Glass: the same calmer unit as the site, so its pages share one frame height. */
-#demo [data-home-hero-visuals][data-identity="glass"] {
-  --spacing: 0.26rem;
+/* Home/Catalog/Docs mockup headers + phone: text links, mockup 24px/16px gaps (not identity stack gaps). */
+:root[data-identity] :is(#nd-nav[data-home-header] nav, #nd-nav[data-catalog-header] nav, #nd-nav[data-docs-header] nav, #nd-mobile-nav, #nd-mobile-nav nav ul) {
+  gap: 1.5rem;
+}
+:root[data-identity] :is(#nd-nav[data-home-header] nav ul, #nd-nav[data-catalog-header] nav ul, #nd-nav[data-docs-header] nav ul) {
+  /* Five primary items (#303 Issues) must stay one 3.5rem row at 809. */
+  gap: 1rem;
+}
+:root[data-identity] :is(#nd-nav[data-home-header], #nd-nav[data-catalog-header], #nd-nav[data-docs-header], #nd-mobile-nav) [data-header-actions] {
+  gap: 1rem;
+}
+:root[data-identity] :is(#nd-nav[data-home-header] nav, #nd-nav[data-catalog-header] nav, #nd-nav[data-docs-header] nav, #nd-mobile-nav) a:not([data-slot="button"]) {
+  border-radius: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  background-image: none;
+}
+#nd-nav:is([data-home-header], [data-catalog-header], [data-docs-header]) nav a:not([data-slot="button"]) {
+  padding-inline: 0;
 }
 
-/* Phones: one 16px gutter for the site (no extra inset stacked inside the bands or the hero example). */
+/* Phones: 24px gutter for the site (no extra inset stacked inside the bands or the hero example). Home at ≤430 is 16px via a higher-specificity #home-page overlay in _home/home.css (#411). */
 @media (max-width: 40rem) {
   :root[data-identity] {
-    --zk-page-gutter: 1rem;
+    --zk-page-gutter: 1.5rem;
   }
 }

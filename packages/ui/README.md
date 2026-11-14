@@ -31,6 +31,16 @@ pnpm add @zedtech/zedkit-ui
 Needs: React 19 + Tailwind v4 in the consumer (peer dependencies),
 `.dark` class strategy for dark mode (`next-themes` recommended).
 
+### Agent: one paste
+
+Docs walkthrough: [zedkit.app/docs/getting-started](https://zedkit.app/docs/getting-started). Agent steps (raw markdown): [zedkit.app/ui/setup.md](https://zedkit.app/ui/setup.md).
+
+Paste this single message in a new chat at the repo root:
+
+```text
+Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md
+```
+
 ## Usage
 
 Adopt in 3 lines:
@@ -102,14 +112,19 @@ kit packages.
 - Data: `DataTable` (sort, filter, pagination, empty/loading/
   error states) + `Table` primitives.
 - Layout: `AppShell` (sidebar + topbar + main slots), `PageHeader`,
-  `Stack`, `Section`, `SectionScroll`, `Container` (named widths + full-bleed bands).
+  `Stack`, `Section`, `SectionScroll`, `Container` (named widths + full-bleed bands),
+  `SidebarNavItem` / `SidebarNavGroup` (sidebar run-list rows),
+  `AgentConsole` (live agent run: sidebar, decision, transcript).
 - Motion: `Animate`, `AnimateObserver`, `observeAnimate` (`data-animate`
   appear / scroll / press / longpress / hover / focus), `WordRoll`, `MotionScript`,
   `useMotionPreference`. Parallax layers live on `@zedtech/zedkit-ui/motion`
   (`ParallaxSection`, `ParallaxLayer`; CSS scroll-driven, 0 JS). Original
   work by the same author.
+- Stored choice and identity repair: `createStoredChoice`, `repairContrast`.
+  Original work by the same author.
 - Wizard: `WizardSteps` (step indicator), `OptionCards` (multi-select cards, or pick-one with `multiple={false}`).
-- Detail: `DetailPanel` (key-value rows), `LivePulse` (live indicator).
+- Detail: `DetailPanel` (key-value rows, or `variant="grid"` stats), `LivePulse` (live indicator).
+- Transcript: `ToolCallRow`, `ThinkingRow`, `AssistantMessage`, `TranscriptBurst`, `groupToolCallBursts`.
 - Marketing (`@zedtech/zedkit-ui/marketing`, separate entry): `GlassSurface`.
 
 ## Provenance

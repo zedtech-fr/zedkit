@@ -5,7 +5,7 @@ import { main } from "#cli.js";
 import { parseFrontmatter } from "#frontmatter.js";
 import { installKit } from "#install.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { put, tempDir } from "./helpers.js";
+import { failingIssues, put, tempDir } from "./helpers.js";
 
 function run(...argv: string[]): { code: number; text: string; errors: string } {
   const out: string[] = [];
@@ -65,7 +65,7 @@ describe("Upgrading Cursor+Muse with a personalized orchestrate skill", () => {
     const sidecar = readFileSync(join(dest, ".agents", "skills", "zk-orchestrate", "SKILL.md"), "utf8");
     expect(sidecar).toContain("\nname: zk-orchestrate\n");
     expect(claimants(join(dest, ".agents"), "orchestrate")).toEqual(["orchestrate"]);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("a legacy verbatim sidecar fails validation as a duplicate skill name", () => {
@@ -97,7 +97,7 @@ describe("Upgrading Cursor+Muse with a personalized orchestrate skill", () => {
     expect(readFileSync(sidecarFile, "utf8")).toContain("Sidecar margin note.");
     expect(readFileSync(userFile, "utf8"), "user skill kept byte-identical").toBe(before);
     expect(claimants(join(dest, ".agents"), "orchestrate")).toEqual(["orchestrate"]);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
 
     const again = setup(dest);
     expect(again.filter((action) => action.kind !== "skip")).toEqual([]);
@@ -142,15 +142,15 @@ describe("Upgrading Cursor+Muse with a personalized orchestrate skill", () => {
     expect(readFileSync(sidecarFile, "utf8")).toBe("---\nname: [broken\n---\nbody\n");
   });
 
-  it("the orchestrate command keeps a unique skill target after migration", () => {
+  it("the orchestrate skill keeps a unique skill target after migration", () => {
     const dest = tempDir();
     seedLegacyCursorMuse(dest);
     setup(dest);
     revertSidecarName(dest);
     setup(dest);
 
-    expect(existsSync(join(dest, ".agents", "commands", "orchestrate.md"))).toBe(true);
-    const issues = validateKit(join(dest, ".agents"));
+    expect(existsSync(join(dest, ".agents", "commands", "orchestrate.md"))).toBe(false);
+    const issues = failingIssues(validateKit(join(dest, ".agents")));
     expect(issues.filter((issue) => issue.path.includes("orchestrate"))).toEqual([]);
     expect(claimants(join(dest, ".agents"), "orchestrate")).toEqual(["orchestrate"]);
   });

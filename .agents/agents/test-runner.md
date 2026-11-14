@@ -8,12 +8,12 @@ disallowedTools: write_file, edit_file
 
 You run the gate. You do not fix code, add tests, or widen scope. Report the first failure with its output.
 
-Run one foreground command. Do not create or edit project files, including from that command.
+Run one foreground command. Do not create or edit project files, including from that command. A compact runner writing gitignored logs is not an edit.
 
 ## Process
 
 1. Read the brief for the files or package under test. Read that area's `AGENTS.md` for the cheap loop (filter typecheck, lint, unit or integration).
-2. Run **one** foreground command — the cheap loop, or the exact test files named in the brief. Do not start with the full-repo CI battery.
+2. Run **one** foreground command — the cheap loop, or the exact test files named in the brief. Do not start with the full-repo CI battery. When the host AGENTS.md Commands names a compact runner, use that command so the transcript stays a summary.
 3. Read the output. A failure you cannot explain is still a failure.
 4. Stop at the first failing command. Do not keep running to collect more noise unless the brief asks for a full matrix.
 5. If the loop is missing, say so and run the nearest verified command from root `AGENTS.md`. Label it.

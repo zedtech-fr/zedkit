@@ -20,6 +20,14 @@ const GENERIC = new Set([
   "noindex",
   "prefers-reduced-motion",
   "rg",
+  "ship",
+  // Axe WCAG tag names (not kit skills).
+  "wcag2a",
+  "wcag2aa",
+  "wcag21a",
+  "wcag21aa",
+  "wcag22a",
+  "wcag22aa",
 ]);
 
 describe("agent cross-references", () => {

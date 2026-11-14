@@ -43,8 +43,22 @@ deploy/suggest.env
 deploy/suggest-dev.env
 apps/docs/.tmp-complete-examples/
 
+# visual-verify run records and contact sheets (never commit PNGs).
+# Capture-config JSON under apps/docs/tests/evidence/ stays tracked.
+evidence/
+!apps/docs/tests/evidence/
+!apps/docs/tests/evidence/**/
+!apps/docs/tests/evidence/*.json
+!apps/docs/tests/evidence/**/*.json
+apps/docs/tests/evidence/*.png
+apps/docs/tests/evidence/**/*.png
+
 # local working plans and tickets (zedkit-ai; the installer keeps this line)
 .scratch/
 
 # Cursor chat exports (keep outside the repo when possible)
 conversation-*.txt
+
+# Compact agent runner logs (scripts/agent/run.mjs). *.log already covers
+# the text files; this directory also holds Playwright JSON dumps.
+.agent-logs/

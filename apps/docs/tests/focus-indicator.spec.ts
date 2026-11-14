@@ -1,7 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { assertFocusUnclipped, assertFocusVisibleRing, focusWithKeyboard, readFocusIndicator } from "./a11y-helpers";
-import { openHeroPage } from "./hero-helpers";
 
 /**
  * The focus assertion reads what the browser paints. Each case is a plain page
@@ -105,10 +104,11 @@ test("a hairline ring fails", async ({ page }) => {
 
 test.describe("the kit's own button", () => {
   const PAGE = "/docs/ui/trigger-actions-with-buttons";
+  // Preview Display/Full/Site are kit Buttons (`data-slot=button`); the specimen is on the stage.
 
   test("paints a real indicator on keyboard focus", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
-    const button = page.locator("[data-component-preview] [data-slot='button']").first();
+    const button = page.locator("[data-preview-surface] [data-slot='button']").first();
     await focusWithKeyboard(button);
     await assertFocusVisibleRing(button);
   });
@@ -116,27 +116,20 @@ test.describe("the kit's own button", () => {
   test("fails once its indicator is removed", async ({ page }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await page.addStyleTag({ content: "[data-slot='button']:focus-visible{outline:none!important;box-shadow:none!important}" });
-    const button = page.locator("[data-component-preview] [data-slot='button']").first();
+    const button = page.locator("[data-preview-surface] [data-slot='button']").first();
     await focusWithKeyboard(button);
     await expect(assertFocusVisibleRing(button)).rejects.toThrow();
   });
 });
 
 test.describe("controls whose own styles used to hide the ring", () => {
-  test("home identity tabs, docs Preview/Code tabs and the hero selects paint a real indicator", async ({ page }) => {
+  test("home identity tabs and docs Preview tabs paint a real indicator", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    await openHeroPage(page, "Apps");
-    const tab = page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Dev console" });
+    const tab = page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Mist", exact: true });
     await tab.scrollIntoViewIfNeeded();
     await focusWithKeyboard(tab);
     await assertFocusVisibleRing(tab);
-    for (const name of ["Identity for this demo", "Color mode for this demo", "Table preview mode"]) {
-      const select = page.getByRole("combobox", { name });
-      await select.scrollIntoViewIfNeeded();
-      await focusWithKeyboard(select);
-      await assertFocusVisibleRing(select);
-    }
     await page.goto("/docs/ui/trigger-actions-with-buttons", { waitUntil: "networkidle" });
     const preview = page.getByRole("tab", { name: "Preview" }).first();
     await focusWithKeyboard(preview);
@@ -144,17 +137,17 @@ test.describe("controls whose own styles used to hide the ring", () => {
   });
 
   // Each one is a control inside a container that scrolls or clips: the ring must be drawn, and drawn whole.
-  const UNCLIPPED: { name: string; path: string; viewport?: number; find: (page: Page) => Locator }[] = [
-    { name: "hero page entry", path: "/", find: (page) => page.locator("#demo").getByRole("navigation", { name: "Pages of the example app" }).getByRole("button", { name: "Calendar", exact: true }) },
-    { name: "identity example tab", path: "/", find: (page) => page.locator("[data-home-identity-looks]").getByRole("tab", { name: /Dev console/ }) },
+  const UNCLIPPED: { name: string; path: string; find: (page: Page) => Locator }[] = [
+    { name: "identity example tab", path: "/", find: (page) => page.locator("[data-home-identity-looks]").getByRole("tab", { name: "Mist", exact: true }) },
+    { name: "hero copy prompt", path: "/", find: (page) => page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt", exact: true }) },
+    { name: "hero illustration pause", path: "/", find: (page) => page.locator("[data-home-hero-preview]").getByRole("button", { name: "Pause illustration motion" }) },
     { name: "docs Preview tab", path: "/docs/ui/trigger-actions-with-buttons", find: (page) => page.getByRole("tab", { name: "Preview" }).first() },
     { name: "editor Look select", path: "/features/identity-editor", find: (page) => page.getByLabel("Look", { exact: true }) },
     { name: "editor Preview dark", path: "/features/identity-editor", find: (page) => page.getByRole("button", { name: "Preview dark" }) },
-    { name: "hero page chip on a phone", path: "/", viewport: 390, find: (page) => page.locator("#demo").getByRole("navigation", { name: "Pages of the example app" }).getByRole("button", { name: "Team", exact: true }) },
   ];
   for (const target of UNCLIPPED) {
     test(`${target.name}: focus shows and nothing clips it`, async ({ page }) => {
-      await page.setViewportSize({ width: target.viewport ?? 1280, height: 900 });
+      await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(target.path, { waitUntil: "networkidle" });
       const control = target.find(page);
       await control.scrollIntoViewIfNeeded();
@@ -167,7 +160,7 @@ test.describe("controls whose own styles used to hide the ring", () => {
   test("forced colors keep drawing the focus outline", async ({ page }) => {
     await page.emulateMedia({ forcedColors: "active" });
     await page.goto("/docs/ui/trigger-actions-with-buttons", { waitUntil: "networkidle" });
-    const button = page.locator("[data-component-preview] [data-slot='button']").first();
+    const button = page.locator("[data-preview-surface] [data-slot='button']").first();
     await focusWithKeyboard(button);
     const outline = await button.evaluate((el) => {
       const style = getComputedStyle(el);

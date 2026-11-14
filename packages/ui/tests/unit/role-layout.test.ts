@@ -15,6 +15,7 @@ describe("layout job classes", () => {
     expect(utility("content-shrink")).toBe("min-width: 0;");
     expect(utility("min-h-target")).toBe("min-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));");
     expect(utility("min-h-floor")).toBe("min-height: max(24px, var(--zk-tap-min, 0px));");
+    expect(utility("min-h-segment")).toBe("min-height: max(24px, calc(var(--spacing) * 7));");
     expect(utility("min-w-target")).toBe("min-width: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 11));");
     expect(utility("pane-shrink")).toBe("min-height: 0;");
     expect(utility("pin-fill")).toBe("inset: 0;");
@@ -209,12 +210,16 @@ describe("layout job classes", () => {
   });
 
   it("keeps a 24px hit area on small controls, and the tap size on touch", () => {
-    const block = css.slice(css.indexOf("@utility hit-target"));
-    const hit = block.slice(0, block.indexOf("@utility", 1));
-    expect(hit).toContain("width: max(100%, 24px);");
-    expect(hit).toContain("height: max(100%, 24px);");
-    expect(hit).toContain("width: var(--spacing-tap);");
-    expect(hit).toContain("height: var(--spacing-tap);");
+    const utilityStart = css.indexOf("@utility hit-target");
+    const utility = css.slice(utilityStart, css.indexOf("@layer components", utilityStart));
+    expect(utility).toContain("width: max(100%, 24px);");
+    expect(utility).toContain("height: max(100%, 24px);");
+    expect(utility).toContain("width: var(--spacing-tap);");
+    expect(utility).toContain("height: var(--spacing-tap);");
+    // Sibling `@media` + `&::before` inside `@utility` compiles to pointer::before.
+    expect(utility).not.toMatch(/@utility hit-target \{[\s\S]*@media \(pointer: coarse\)[\s\S]*&::before/);
+    expect(utility).toMatch(/&::before \{[\s\S]*@media \(pointer: coarse\)/);
+    expect(css.slice(css.indexOf("@layer components"))).not.toContain(".hit-target::before");
   });
 
   it("keeps the chosen select value on one line", () => {
@@ -227,6 +232,8 @@ describe("layout job classes", () => {
   it("keeps a 24px hit area on a link badge, and the tap size on touch", () => {
     const start = css.indexOf('a[class*="px-badge-inline"]');
     const block = css.slice(start, css.indexOf("@layer components", start));
+    expect(block).toContain("min-width: 24px;");
+    expect(block).toContain("min-height: 24px;");
     expect(block).toContain("height: max(100%, 24px);");
     expect(block).toContain("min-height: var(--spacing-tap);");
   });

@@ -39,13 +39,13 @@ Every line under _UI decisions_ names the earlier line it serves: `dense list, h
 - **Kit tokens only.** No raw hex or ad-hoc pixel colours; fix a wrong value at the layer that owns it.
 - **Class names name a role.** Numbers stay in token values. The rule is [design-policy.md](../setup-ai/design-policy.md). The host's vocabulary wins. Do not restate it.
 
-## 4. Follow the repo's own spec
+## 4. Follow the host visual contract
 
-Open what exists, link it, never copy it:
+Page fill and body text use the host's page and text roles. Do not use the accent role as page background or body text unless that contract says so.
 
-- `docs/design/signature.md` and the frontend charter, when the repo has them <!-- if:skill=use-signature -->(see also `use-signature`)<!-- /if -->.
-- A visual contract or design file the nested `AGENTS.md` names.
-- Otherwise the kit's tokens and type roles.
+Open the visual contract or signature spec the nested `AGENTS.md` names; link it, never copy it <!-- if:skill=use-signature -->(see also `use-signature`)<!-- /if -->.
+
+Otherwise the kit's tokens and type roles.
 
 ## 5. Check
 

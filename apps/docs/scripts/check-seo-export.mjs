@@ -7,7 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
-import { SITE_CHANGELOG_URL, siteFooterLinkSpecs } from "../lib/site-links.mjs";
+import { siteFooterLinkSpecs } from "../lib/site-links.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -20,7 +20,24 @@ const LASTMOD_PATTERN =
 
 /** Scope line agents read in generated llms-full.txt (must match docs generate). */
 export const LLMS_FULL_SCOPE_LINE =
-  "Scope: install paths, zedkit AI setup, and a documentation index with links — not the full text of every docs page.";
+  "Scope: install paths, zedkit AI setup, the setup map, and a documentation index with links — not the full text of every docs page.";
+
+/** Plain-markdown agent setup files the static export must copy from `public/`. */
+export const AGENT_SETUP_PUBLIC_FILES = [
+  "ai/setup.md",
+  "map.md",
+  "suggest.md",
+  "ui/setup.md",
+  "nest/setup.md",
+];
+
+export const LLMS_AGENT_MARKDOWN_URLS = [
+  "https://zedkit.app/ai/setup.md",
+  "https://zedkit.app/ui/setup.md",
+  "https://zedkit.app/nest/setup.md",
+  "https://zedkit.app/map.md",
+  "https://zedkit.app/suggest.md",
+];
 
 function isPlausibleLastmod(value) {
   if (!LASTMOD_PATTERN.test(value)) return false;
@@ -92,6 +109,11 @@ export function checkLlms(text) {
   if (!text.includes("## Install or copy")) {
     errors.push("llms.txt: missing ## Install or copy section");
   }
+  for (const url of LLMS_AGENT_MARKDOWN_URLS) {
+    if (!text.includes(url)) {
+      errors.push(`llms.txt: missing ${url}`);
+    }
+  }
   return errors;
 }
 
@@ -113,6 +135,9 @@ export function checkLlmsFull(text) {
   }
   if (!text.includes("# Set up zedkit AI")) {
     errors.push("llms-full.txt: missing # Set up zedkit AI section");
+  }
+  if (!text.includes("# zedkit setup map")) {
+    errors.push("llms-full.txt: missing # zedkit setup map section");
   }
   return errors;
 }
@@ -155,12 +180,12 @@ export function checkNotFound(html) {
 
 export function checkSiteShell(html, label, footerSpecs) {
   const errors = [];
-  if (!html.includes("Maintained by ZED TECH")) {
-    errors.push(`${label}: missing maintainer footer text`);
+  if (!html.includes("by Zed Tech · MIT")) {
+    errors.push(`${label}: missing footer credit text`);
   }
-  for (const { label: linkLabel, href } of footerSpecs) {
+  for (const { copyKey, href } of footerSpecs) {
     if (!html.includes(href)) {
-      errors.push(`${label}: missing footer link ${linkLabel} (${href})`);
+      errors.push(`${label}: missing footer link ${copyKey} (${href})`);
     }
   }
   if (!html.includes('href="/docs"')) {
@@ -235,7 +260,7 @@ function main() {
   const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://zedkit.app").replace(/\/$/, "");
   const errors = [];
   let sitemapUrlCount = 0;
-  const footerSpecs = siteFooterLinkSpecs(SITE_CHANGELOG_URL);
+  const footerSpecs = siteFooterLinkSpecs();
 
   const robotsPath = requireFile(outDir, "robots.txt", errors);
   if (robotsPath) errors.push(...checkRobots(readFileSync(robotsPath, "utf8"), base));
@@ -253,9 +278,11 @@ function main() {
   const llmsFullPath = requireFile(outDir, "llms-full.txt", errors);
   if (llmsFullPath) errors.push(...checkLlmsFull(readFileSync(llmsFullPath, "utf8")));
 
-  const aiSetupMd = requireFile(outDir, "ai/setup.md", errors);
-  if (aiSetupMd && !hasSetupCommand(readFileSync(aiSetupMd, "utf8"))) {
-    errors.push("ai/setup.md: missing setup command");
+  for (const rel of AGENT_SETUP_PUBLIC_FILES) {
+    const path = requireFile(outDir, rel, errors);
+    if (rel === "ai/setup.md" && path && !hasSetupCommand(readFileSync(path, "utf8"))) {
+      errors.push("ai/setup.md: missing setup command");
+    }
   }
 
   const homePath = requireFile(outDir, "index.html", errors);

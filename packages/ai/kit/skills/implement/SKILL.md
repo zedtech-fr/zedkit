@@ -31,6 +31,8 @@ client business → personas → the client's customers → their personas → U
 choices. Do not edit UI until that brief exists.
 <!-- /if -->
 
+UI tickets carry a `States:` line (`to-tickets`); capture those states.
+
 Styling classes follow `../setup-ai/design-policy.md` (role names, no scale steps). Do not restate it. The host's vocabulary wins.
 
 Run typechecking regularly, single test files regularly, and the unit plus integration suites once at the end — never the end-to-end battery unless a critical path justifies it. When the diff adds or moves a routed or entry file, also run the area **build** from that area's AGENTS.md (`definition-of-done` names the cases). Typecheck does not load it. When shortening a check's output with a pipe, preserve its exit status (`set -o pipefail` under bash, or run the check through the `gate` wrapper and inspect its captured log): a passing pipeline must never mask a failing check — piping inside the gate does not itself preserve the status.
@@ -53,4 +55,4 @@ independent review and a `Human validation:` line.
 Commit on a work branch. If HEAD is trunk or the host integration branch,
 create a work branch from it before the first commit. After
 definition-of-done, open a pull request against the integration branch
-the host AGENTS.md names. Drafting a PR body is not that step.
+the host AGENTS.md names. Drafting a PR body is not that step.<!-- if:skill=pr --> When the change touches non-test `*.tsx`/`*.jsx`/`*.css` (skill `pr` defines non-test), that body's `## Evidence` is required and follows skill `pr`.<!-- /if -->

@@ -26,7 +26,7 @@ import {
   MUSE_NAME_ALIAS,
 } from "./generate.js";
 import { ALL_PROVIDERS, type Action } from "./install.js";
-import { adoptRel, kitDir } from "./kit.js";
+import { adoptRel, deprecatedCommandNames, kitDir, readManifest } from "./kit.js";
 import { isKitCopy } from "./legacy.js";
 import { isGenerated, PROVIDER_KEYS } from "./provider-keys.js";
 import { loadAgent, loadPolicy, resolveRoute } from "./route.js";
@@ -70,6 +70,11 @@ export type SyncOptions = {
    * same flag.
    */
   allowFast?: boolean;
+  /**
+   * Local kit directory (default: the bundled kit). Same directory as
+   * `InstallOptions.kit` and CLI `--kit`.
+   */
+  kit?: string;
 };
 
 const KIT_SUFFIX = ".kit.md";
@@ -79,6 +84,7 @@ type Ctx = {
   write: boolean;
   actions: Action[];
   avail: Availability | undefined;
+  kit: string;
 };
 
 function lstatOf(path: string): ReturnType<typeof lstatSync> | undefined {
@@ -261,7 +267,7 @@ function syncFile(ctx: Ctx, rel: string, name: string, source: string | undefine
     else put(ctx, "generate", rel, `regenerated${suffix}`, text);
     return;
   }
-  if (current !== undefined && isKitCopy("agents", name, current, source)) {
+  if (current !== undefined && isKitCopy("agents", name, current, source, ctx.kit)) {
     put(ctx, "generate", rel, `replaces a copy of the kit${suffix}`, text);
     return;
   }
@@ -289,7 +295,7 @@ function syncFile(ctx: Ctx, rel: string, name: string, source: string | undefine
     skip(ctx, sidecarPath, "up to date");
     return;
   }
-  if (hasMarker(beside) || isKitCopy("agents", name, beside, source)) {
+  if (hasMarker(beside) || isKitCopy("agents", name, beside, source, ctx.kit)) {
     put(ctx, "generate", sidecarPath, `kit version beside your ${rel}`, text);
     return;
   }
@@ -298,6 +304,56 @@ function syncFile(ctx: Ctx, rel: string, name: string, source: string | undefine
 
 // Marked files whose source agent is gone. Only files that carry the marker
 // are ever removed.
+function lf(text: string): string {
+  return text.replace(/\r\n/g, "\n");
+}
+
+function prunePath(ctx: Ctx, rel: string, note: string): void {
+  const full = join(ctx.dest, rel);
+  const stat = lstatOf(full);
+  if (stat === undefined || stat.isDirectory()) return;
+  if (ctx.write) rmSync(full);
+  ctx.actions.push({ kind: "prune", path: rel, note });
+}
+
+const KIT_COMMAND_LINK = (stem: string): string => `../../.agents/commands/${stem}.md`;
+
+/** Provider copy: kit command link or current kit bytes. Anything else is the user's. */
+function pruneDeprecatedCopy(ctx: Ctx, rel: string, stem: string, kitText: string, note: string): void {
+  const full = join(ctx.dest, rel);
+  const stat = lstatOf(full);
+  if (stat === undefined || stat.isDirectory()) return;
+  if (stat.isSymbolicLink()) {
+    const target = tryCatch(() => readlinkSync(full));
+    if (!target.ok || target.value !== KIT_COMMAND_LINK(stem)) return;
+  } else {
+    const text = readText(full);
+    if (text === undefined || lf(text) !== lf(kitText)) return;
+  }
+  prunePath(ctx, rel, note);
+}
+
+/** `--prune` only: drop a deprecated command whose bytes still equal the current kit file. */
+function pruneDeprecatedCommandStubs(ctx: Ctx): void {
+  const manifest = readManifest(ctx.kit);
+  if (!manifest.ok) return;
+  const sourceDir = join(".agents", "commands");
+  if (throughLink(ctx, sourceDir) !== undefined) return;
+  const note = "deprecated command matches current kit file";
+  for (const stem of deprecatedCommandNames(manifest.value)) {
+    const sourceRel = join(sourceDir, `${stem}.md`);
+    const sourceText = readText(join(ctx.dest, sourceRel));
+    const kitText = readText(join(ctx.kit, "commands", `${stem}.md`));
+    if (sourceText === undefined || kitText === undefined || lf(sourceText) !== lf(kitText)) continue;
+    for (const dirRel of [join(".cursor", "commands"), join(".claude", "commands")]) {
+      if (throughLink(ctx, dirRel) !== undefined) continue;
+      pruneDeprecatedCopy(ctx, join(dirRel, `${stem}.md`), stem, kitText, note);
+      pruneDeprecatedCopy(ctx, join(dirRel, `${stem}.kit.md`), stem, kitText, note);
+    }
+    prunePath(ctx, sourceRel, note);
+  }
+}
+
 function pruneOrphans(ctx: Ctx, dirRel: string, names: ReadonlySet<string>, allMarked: boolean): void {
   if (throughLink(ctx, dirRel) !== undefined) return;
   if (!lstatOf(join(ctx.dest, dirRel))?.isDirectory()) return;
@@ -328,10 +384,10 @@ function layerBlocked(ctx: Ctx, dirRel: string): boolean {
 // The directory a provider's agents go in. A link the kit made earlier
 // (`.claude/agents -> ../.agents/agents`) becomes a real directory; any other
 // link is not ours to touch.
-function isKitAgentsLink(full: string): boolean {
+function isKitAgentsLink(full: string, kit: string): boolean {
   const resolved = tryCatch(() => realpathSync(full));
-  const kit = tryCatch(() => realpathSync(join(kitDir(), "agents")));
-  return resolved.ok && kit.ok && resolved.value === kit.value;
+  const kitAgents = tryCatch(() => realpathSync(join(kit, "agents")));
+  return resolved.ok && kitAgents.ok && resolved.value === kitAgents.value;
 }
 
 function prepareDir(ctx: Ctx, dirRel: string): "ready" | "blocked" {
@@ -345,7 +401,7 @@ function prepareDir(ctx: Ctx, dirRel: string): "ready" | "blocked" {
       ctx.actions.push({ kind: "convert", path: dirRel, note: "link to .agents/agents -> real directory of generated files" });
       return "ready";
     }
-    if (isKitAgentsLink(full) || (target.ok && target.value === "../packages/ai/kit/agents")) {
+    if (isKitAgentsLink(full, ctx.kit) || (target.ok && target.value === "../packages/ai/kit/agents")) {
       if (ctx.write) unlinkSync(full);
       ctx.actions.push({ kind: "convert", path: dirRel, note: "link to kit agents -> real directory of Muse files" });
       return "ready";
@@ -386,7 +442,7 @@ function syncCommands(ctx: Ctx, names: readonly string[], source: (name: string)
   const known = new Set(names);
   for (const name of names) {
     const rel = join(dirRel, `${name}.md`);
-    const target = `../../.agents/commands/${name}.md`;
+    const target = KIT_COMMAND_LINK(name);
     const full = join(ctx.dest, rel);
     const stat = lstatOf(full);
     if (stat === undefined) {
@@ -397,7 +453,7 @@ function syncCommands(ctx: Ctx, names: readonly string[], source: (name: string)
       else skip(ctx, rel, `user link kept (${now.ok ? now.value : "?"})`);
     } else if (stat.isFile()) {
       const text = readText(full) ?? "";
-      if (isKitCopy("commands", name, text, source(name))) {
+      if (isKitCopy("commands", name, text, source(name), ctx.kit)) {
         makeLink(ctx, rel, target, "replaces a copy of the kit");
       } else {
         const beside = adoptRel(rel);
@@ -445,6 +501,8 @@ export type AgentSync = {
   avail?: Availability | undefined;
   /** See `SyncOptions.allowFast`. */
   allowFast?: boolean | undefined;
+  /** See `SyncOptions.kit`. */
+  kit?: string | undefined;
 };
 
 /**
@@ -452,12 +510,12 @@ export type AgentSync = {
  * refusal so a fast cell cannot leave a half-written provider layer.
  */
 export function assertAgentRoutes(
-  input: Pick<AgentSync, "policy" | "agentsDir" | "names" | "providers" | "allowFast">,
+  input: Pick<AgentSync, "policy" | "agentsDir" | "names" | "providers" | "allowFast" | "kit">,
 ): void {
   for (const provider of input.providers) {
     if (!isGenerated(provider)) continue;
     for (const name of input.names) {
-      const agent = loadAgent(input.agentsDir, name);
+      const agent = loadAgent(input.agentsDir, name, input.kit);
       if (!agent.ok) continue;
       const route = resolveRoute(input.policy, {
         stakes: "standard",
@@ -473,7 +531,13 @@ export function assertAgentRoutes(
 /** The generating half of `syncKit`: appends what it did (or would do) to `actions`. Throws on a source it cannot generate from. */
 export function syncAgents(input: AgentSync, actions: Action[]): void {
   assertAgentRoutes(input);
-  const ctx: Ctx = { dest: input.dest, write: input.write, actions, avail: input.avail };
+  const ctx: Ctx = {
+    dest: input.dest,
+    write: input.write,
+    actions,
+    avail: input.avail,
+    kit: input.kit ?? kitDir(),
+  };
   const known = new Set(input.names);
   for (const name of input.names) {
     const alias = MUSE_NAME_ALIAS[name];
@@ -504,7 +568,7 @@ export function syncAgents(input: AgentSync, actions: Action[]): void {
       ) {
         continue;
       }
-      const agent = loadAgent(input.agentsDir, name);
+      const agent = loadAgent(input.agentsDir, name, input.kit);
       if (!agent.ok) {
         skip(ctx, join(dirRel, `${name}.md`), `not synced: ${agent.error.message}`);
         continue;
@@ -528,7 +592,7 @@ export function syncAgents(input: AgentSync, actions: Action[]): void {
       });
       if (!route.ok) throw new Error(`${name}: ${route.error.message}`);
       const source = input.source(name) ?? "";
-      const kitText = readText(join(kitDir(), "agents", `${name}.md`));
+      const kitText = readText(join(ctx.kit, "agents", `${name}.md`));
       const made =
         provider === "muse"
           ? generateMuseAgent({
@@ -612,21 +676,24 @@ export function syncKit(options: SyncOptions): Result<Action[]> {
   if (providers.length === 0) return err(new Error("no provider layers found: pass --provider cursor,claude,codex,muse|all"));
   const unknown = providers.find((p) => !ALL_PROVIDERS.some((known) => known === p));
   if (unknown !== undefined) return err(new Error(`unknown provider "${unknown}" (cursor, claude, codex, muse, all)`));
-  const policy = loadPolicy(agentsDir);
+  const kit = options.kit ?? kitDir();
+  const policy = loadPolicy(agentsDir, kit);
   if (!policy.ok) return err(policy.error);
   const actions: Action[] = [];
   const avail = availabilityOf(agentsDir, names);
-  const run = tryCatch(() =>
+  const kitAgents = join(kit, "agents");
+  const write = options.check !== true && options.dryRun !== true;
+  const run = tryCatch(() => {
     syncAgents(
       {
         dest: options.dest,
-        write: options.check !== true && options.dryRun !== true,
+        write,
         providers,
         policy: policy.value,
         agentsDir,
         names,
         avail,
-        source: (name) => resolvedAgentText(options.dest, name, avail),
+        source: (name) => resolvedAgentText(options.dest, name, avail, kitAgents),
         commands: {
           names: commandNames(agentsDir),
           source: (name) => readText(join(agentsDir, "commands", `${name}.md`)),
@@ -634,11 +701,15 @@ export function syncKit(options: SyncOptions): Result<Action[]> {
         strict: true,
         prune: options.prune,
         noPrune: options.noPrune,
+        kit,
         ...(options.allowFast === true && { allowFast: true }),
       },
       actions,
-    ),
-  );
+    );
+    if (options.prune === true) {
+      pruneDeprecatedCommandStubs({ dest: options.dest, write, actions, avail, kit });
+    }
+  });
   return run.ok ? ok(actions) : err(run.error);
 }
 

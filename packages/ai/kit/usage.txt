@@ -1,18 +1,22 @@
 zedkit-ai <command>
 
-  setup [dir] [--provider ...] [--preset starter|setup|core|full] [--dry-run] [--allow-fast]
+  setup [dir] [--provider ...] [--preset starter|setup|core|full] [--kit <dir>] [--dry-run] [--allow-fast]
       One-shot onboarding: preset setup by default (override with --preset);
       same as init --adopt (keeps your existing agent files on collision).
-      Then run /setup-ai in your agent.
-  init [dir] [--preset starter|setup|core|full] [--provider ...] [--adopt] [--dry-run] [--allow-fast]
-      Copy skills, subagents, commands and an AGENTS.md template into dir
+      Then run /zedkit-ai (or the setup-ai skill) in your agent. On Muse,
+      paste "zedkit-ai: set up this repo from what it contains". Muse does
+      not scan .agents/commands; invoke the zedkit-ai skill by name.
+      --kit is a local kit directory (omit = bundled kit). Pass it again on
+      later sync and validate; it is not remembered.
+  init [dir] [--preset starter|setup|core|full] [--provider ...] [--kit <dir>] [--adopt] [--dry-run] [--allow-fast]
+      Copy skills, subagents, the /zedkit-ai command and an AGENTS.md template into dir
       (default .), then wire the providers (default all). Never overwrites
       existing files (an existing AGENTS.md without the ladder gets the
       ladder section appended). --adopt keeps a colliding user file and
       writes the kit version beside it (review.kit.md or zk-review).
       --provider takes cursor,claude,codex,muse,all; --target is an alias
       of --provider.
-  validate [dir] [--setup] [--plan <file>] [--allow-fast]
+  validate [dir] [--setup] [--plan <file>] [--kit <dir>] [--allow-fast]
       Check skills, subagents and commands, plus provider-copy drift
       (default dir: .agents; a project root is accepted too), and flags
       model names written outside .agents/tokenomics.md. Exit 1
@@ -48,7 +52,7 @@ zedkit-ai <command>
       needs a `Stakes raised: a -> b: <reason>` line. A critical file also
       needs `Second review:` and `Human validation:` lines. Exit 1 on
       problems, 2 on a bad flag, an unreadable file or a bad ref.
-  sync [dir] [--provider cursor,claude,codex,muse,all] [--check] [--dry-run] [--prune] [--no-prune] [--quiet] [--allow-fast]
+  sync [dir] [--provider cursor,claude,codex,muse,all] [--check] [--dry-run] [--prune] [--no-prune] [--quiet] [--kit <dir>] [--allow-fast]
       Write each tool's agent files from .agents/agents and
       .agents/tokenomics.md: .cursor/agents and .claude/agents get one
       generated copy per agent, and Muse writes native marked files in
@@ -58,8 +62,10 @@ zedkit-ai <command>
       copy is replaced, any other file is kept (Muse does not write a
       sidecar). Generated files whose source agent is gone are removed
       (--no-prune keeps them); --prune with --provider also removes those of
-      a provider left out. --check writes nothing and exits 1 when anything
-      is out of date. --allow-fast writes a fast model id, and only when the
+      a provider left out, and leftover deprecated command stubs whose bytes
+      still match the current kit file (not user-edited provider copies).
+      --check writes nothing and exits 1 when anything is out of date.
+      --allow-fast writes a fast model id, and only when the
       user explicitly requested fast mode in this request; validate and
       init/setup take the same flag. Without --provider the layers are inferred from
       non-empty .cursor/ and .claude/ and from Muse-native marked files in
@@ -70,5 +76,43 @@ zedkit-ai <command>
       START:, output, END:, CAUSE: when killed or out of memory, and
       EXIT:<code> as the last line. Caps the V8 heap at 4096 MB unless
       NODE_OPTIONS sets one; exits with the command's code.
+  visual-verify [--url <origin> | --base-url <origin> | --dir <static-export>]
+      [--changed] [--base <ref>] [--cwd <dir>] [--routes <path,path|auto>]
+      [--widths <n,n>] [--modes <mode,mode>] [--identities <id,id>]
+      [--baseline <run-record.json>] [--out <dir>] [--md <file>]
+      [--ticket <file>] [--states <file>] [--mockup <file-or-dir>]
+      [--manifest <docs-manifest.json>]
+      Render touched routes at 375, 809 and 1440 in light and dark.
+      Writes a run record (evidence/<branch>/manifest.json), summary.md,
+      one contact sheet PNG per route, an optional side-by-side mockup PNG,
+      and a Markdown table. Collection failed (no CSS or fonts, or a timed-out
+      state click) exits 1 with no verdict. Overflow, clipped text, hit targets
+      under 24px, page/console/HTTP errors (favicon 404s ignored), a new serious
+      axe violation, selected contrast below 4.5, a Copy button off its block, or
+      an h1 count other than 1 also exit 1. Missing Playwright/axe peers, bad
+      flags, invalid --states, and missing --states/--mockup files exit 2.
+      --routes auto is --changed. Omitted --routes implies --changed.
+      --widths and --modes default to 375,809,1440
+      and light,dark. --states is a JSON array of {name, click?}; extra cells
+      after the default tree. --mockup is a file or directory of width PNGs
+      (wins over Visual reference:); the pair PNG does not fail the run.
+      Unresolvable directory PNGs warn on stderr. --base defaults to origin/dev,
+      else origin/main, else HEAD~1, else HEAD. --cwd is the git and path root
+      (default: process cwd). Omitted --manifest loads
+      apps/docs/docs-manifest.json when that file exists.
+  evidence [--base-url <origin> | --url <origin> | --dir <static-export>]
+      [--routes <path,path|auto>] [--changed] [--base <ref>] [--cwd <dir>]
+      [--widths <n,n>] [--modes <mode,mode>] [--identities <id,id>]
+      [--baseline <run-record.json>] [--out <dir>] [--md <file>]
+      [--ticket <file>] [--states <file>] [--mockup <file-or-dir>]
+      [--manifest <docs-manifest.json>]
+      Public name for visual-verify. Same crawl, same exits. Writes
+      summary.md next to the run record. --routes auto is --changed.
+      Omitted --routes implies --changed. --widths and --modes default to
+      375,809,1440 and light,dark.
+      --states is a JSON array of {name, click?}; extra cells after the default
+      tree. --mockup is a file or directory of width PNGs (wins over Visual
+      reference:); the pair PNG does not fail the run. Omitted --manifest loads
+      apps/docs/docs-manifest.json when that file exists.
   list
       Show presets, subagents and commands.

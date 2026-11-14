@@ -65,7 +65,7 @@ function Table({ className, scrollAriaLabel, children, ...props }: TableProps) {
       data-slot="table-container"
       data-edge-left={edges.left || undefined}
       data-edge-right={edges.right || undefined}
-      className="relative w-full overflow-x-auto"
+      className="relative w-full content-shrink overflow-x-auto"
       tabIndex={0}
       aria-label={scrollAriaLabel ?? messages.scrollableTable}
     >

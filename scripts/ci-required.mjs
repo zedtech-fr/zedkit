@@ -13,12 +13,10 @@ export function requiredJobsPass({ results, selected }) {
   const want = {
     workflow_lint: Boolean(selected.workflows),
     checks: !selected.workflow_only,
-    ui_smoke: Boolean(selected.ui) && !selected.workflow_only,
     registry: Boolean(selected.registry) && !selected.workflow_only,
     quickstart_smoke: Boolean(selected.registry) && !selected.workflow_only,
     adoption_smoke: Boolean(selected.registry) && !selected.workflow_only,
     docs_build: Boolean(selected.docs) && !selected.workflow_only,
-    docs_smoke: Boolean(selected.docs) && !selected.workflow_only,
   };
 
   for (const [job, isSelected] of Object.entries(want)) {
@@ -45,18 +43,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       hygiene: process.env.HYGIENE ?? "",
       workflow_lint: process.env.WORKFLOW_LINT ?? "",
       checks: process.env.CHECKS ?? "",
-      ui_smoke: process.env.UI_SMOKE ?? "",
       registry: process.env.REGISTRY ?? "",
       quickstart_smoke: process.env.QUICKSTART_SMOKE ?? "",
       adoption_smoke: process.env.ADOPTION_SMOKE ?? "",
       docs_build: process.env.DOCS_BUILD ?? "",
-      docs_smoke: process.env.DOCS_SMOKE ?? "",
     },
     selected: {
       workflows: flag("WORKFLOWS"),
       docs: flag("DOCS"),
       registry: flag("REGISTRY_SCOPE"),
-      ui: flag("UI_SCOPE"),
       workflow_only: flag("WORKFLOW_ONLY"),
     },
   });

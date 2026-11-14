@@ -19,16 +19,16 @@ import {
   sourceNames,
   syncAgents,
 } from "./sync.js";
-import { adoptRel, kitDir, kitUniverse, readManifest } from "./kit.js";
+import { adoptRel, deprecatedCommandNames, ENTRY_COMMAND, kitDir, kitUniverse, readManifest } from "./kit.js";
 import { parseFrontmatter } from "./frontmatter.js";
 import {
   HEADER_KEYS,
-  KIT_HEADERS,
   SIDECAR,
+  kitHeaders,
   parseAgentHeader,
   readSidecar,
 } from "./agent-header.js";
-import { checkTokenomics, parseTokenomics } from "./tokenomics.js";
+import { checkTokenomics, loadDefaults, parseTokenomics } from "./tokenomics.js";
 import { lensClosureIssues } from "./lenses.js";
 import { danglingKitRefs, skillRefFiles } from "./skill-refs.js";
 import {
@@ -184,7 +184,7 @@ function checkNoHeaderKeys(
 // entry is fine unless strict: kit-name agents fall back to the shipped
 // table. An agent that cannot be invoked as `build` must also deny the write
 // tools in its own file, the one enforcement every tool honors.
-function checkSidecar(root: string, strict: boolean, issues: Issue[]): void {
+function checkSidecar(root: string, strict: boolean, issues: Issue[], kit: string): void {
   const sidecar = readSidecar(root);
   if (!sidecar.ok) {
     issues.push({
@@ -199,9 +199,10 @@ function checkSidecar(root: string, strict: boolean, issues: Issue[]): void {
       ? mdFiles(dir).map((file) => file.replace(/\.md$/, ""))
       : [],
   );
+  const table = kitHeaders(kit);
   for (const [name, entry] of Object.entries(sidecar.value)) {
     const path = SIDECAR;
-    if (!installed.has(name) && !KIT_HEADERS[name]) {
+    if (!installed.has(name) && !table[name]) {
       issues.push({
         path,
         message: `${name}: no agents/${name}.md in this directory`,
@@ -288,9 +289,17 @@ function checkCommand(
   file: string,
   skills: Set<string>,
   issues: Issue[],
+  deprecated: ReadonlySet<string>,
+  shipsEntry: boolean,
 ): void {
   const path = join("commands", file);
   const base = file.replace(/\.md$/, "");
+  if (deprecated.has(base) && shipsEntry) {
+    issues.push({
+      path,
+      message: `warning: command "${base}" is deprecated; use /${ENTRY_COMMAND} <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)`,
+    });
+  }
   if (!NAME.test(base) || base.length > MAX_NAME) {
     issues.push({
       path,
@@ -396,17 +405,32 @@ function checkLinks(root: string, kit: string, issues: Issue[]): void {
 
 const LADDER_SKILLS = ["plan", "implement", "review", "ponytail-review"];
 
-// The ponytail ladder must survive in the skills that ask it and in the
-// template every setup inherits. Only checked where the file exists, so
-// minimal or foreign layouts are unaffected.
+const LADDER_GONE =
+  "must state the ponytail ladder (regression: the 7 questions vanished)";
+
+// The ponytail ladder must survive in kit-owned copies of the skills that
+// ask it, and in the template every setup inherits. A `zk-<name>` sidecar
+// is the kit copy (same shadowing signal as skill-refs); the file it
+// shadows is user prose and is not checked. Folder name is not ownership.
+// Only checked where the file exists, so minimal or foreign layouts are
+// unaffected.
 function checkLadder(root: string, issues: Issue[]): void {
   for (const name of LADDER_SKILLS) {
     const file = join(root, "skills", name, "SKILL.md");
+    const sidecar = join(root, "skills", `zk-${name}`, "SKILL.md");
+    if (existsSync(sidecar)) {
+      if (!read(sidecar).toLowerCase().includes("ladder")) {
+        issues.push({
+          path: relative(root, sidecar),
+          message: LADDER_GONE,
+        });
+      }
+      continue;
+    }
     if (existsSync(file) && !read(file).toLowerCase().includes("ladder")) {
       issues.push({
         path: relative(root, file),
-        message:
-          "must state the ponytail ladder (regression: the 7 questions vanished)",
+        message: LADDER_GONE,
       });
     }
   }
@@ -581,15 +605,18 @@ function collect(root: string, kit: string): Issue[] {
       checkAgent(root, file, issues);
     }
   }
-  checkSidecar(root, strictHeaders(root), issues);
+  checkSidecar(root, strictHeaders(root), issues, kit);
   const commandsDir = join(root, "commands");
   if (existsSync(commandsDir)) {
+    const manifest = readManifest(kit);
+    const deprecated = new Set(manifest.ok ? deprecatedCommandNames(manifest.value) : []);
+    const shipsEntry = manifest.ok && (manifest.value.commands ?? []).includes(ENTRY_COMMAND);
     for (const file of mdFiles(commandsDir)) {
-      checkCommand(root, file, skills, issues);
+      checkCommand(root, file, skills, issues, deprecated, shipsEntry);
     }
   }
   checkManifest(root, issues);
-  checkPolicy(root, issues);
+  checkPolicy(root, issues, kit);
   checkLadder(root, issues);
   checkLineEndings(root, issues);
   checkSkillRefs(root, skills, kit, issues);
@@ -601,10 +628,15 @@ function collect(root: string, kit: string): Issue[] {
 // The project policy file, when present. The shipped defaults and the stub
 // (`tokenomics.defaults.md`, `tokenomics.template.md`) are kit data, not a
 // project file, so only `tokenomics.md` is checked here.
-function checkPolicy(root: string, issues: Issue[]): void {
+function checkPolicy(root: string, issues: Issue[], kit: string): void {
   const file = join(root, "tokenomics.md");
   if (!existsSync(file)) return;
-  for (const message of checkTokenomics(read(file)))
+  const defaults = loadDefaults(kit);
+  if (!defaults.ok) {
+    issues.push({ path: "tokenomics.md", message: defaults.error.message });
+    return;
+  }
+  for (const message of checkTokenomics(read(file), defaults.value))
     issues.push({ path: "tokenomics.md", message });
 }
 
@@ -803,6 +835,7 @@ function checkGenerated(
   source: string,
   issues: Issue[],
   allowFast: boolean,
+  kit: string,
 ): void {
   const providers = [".cursor", ".claude"]
     .filter((layer) => layerWired(projectRoot, layer))
@@ -810,7 +843,7 @@ function checkGenerated(
   if (museGenerated(projectRoot)) providers.push("muse");
   if (providers.length === 0) return;
   // A policy that does not parse is reported by the policy check, not here.
-  const policy = loadPolicy(source);
+  const policy = loadPolicy(source, kit);
   if (!policy.ok) return;
   const actions: Action[] = [];
   const names = (dir: string): string[] =>
@@ -821,6 +854,7 @@ function checkGenerated(
   // make every generated Cursor file look like "source agent removed".
   const agentNames = sourceNames(source) ?? names("agents");
   const avail = availabilityOf(source, agentNames);
+  const kitAgents = join(kit, "agents");
   syncAgents(
     {
       dest: projectRoot,
@@ -830,6 +864,7 @@ function checkGenerated(
       agentsDir: source,
       names: agentNames,
       avail,
+      kit,
       commands: {
         names: names("commands"),
         source: (name) => {
@@ -839,7 +874,7 @@ function checkGenerated(
           return text.ok ? text.value : undefined;
         },
       },
-      source: (name) => resolvedAgentText(projectRoot, name, avail),
+      source: (name) => resolvedAgentText(projectRoot, name, avail, kitAgents),
       ...(allowFast && { allowFast: true }),
     },
     actions,
@@ -912,11 +947,17 @@ function checkClaudeLayer(
 export function checkDrift(
   projectRoot: string,
   source: string,
-  options?: { allowFast?: boolean },
+  options?: { allowFast?: boolean; kit?: string },
 ): Issue[] {
   const run = tryCatch(() => {
     const issues: Issue[] = [];
-    checkGenerated(projectRoot, source, issues, options?.allowFast === true);
+    checkGenerated(
+      projectRoot,
+      source,
+      issues,
+      options?.allowFast === true,
+      options?.kit ?? kitDir(),
+    );
     checkDanglingLink(
       projectRoot,
       join(projectRoot, ".cursor", "skills"),

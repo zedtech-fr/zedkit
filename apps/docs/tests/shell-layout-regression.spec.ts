@@ -1,20 +1,23 @@
 import { expect, test } from "@playwright/test";
-import { openHeroPage } from "./hero-helpers";
 
 const DESKTOP_WIDTHS = [1280, 1440] as const;
 
 for (const width of DESKTOP_WIDTHS) {
-  test(`header search clears theme toggle at ${width}px light`, async ({ page }) => {
+  test(`header search sits beside GitHub at ${width}px light`, async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem("theme", "light"));
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
+    await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
     const layout = await page.evaluate(() => {
-      const search = document.querySelector("#nd-nav button[class*='max-w']");
-      const toggle = document.querySelector("[data-theme-toggle]");
-      if (!search || !toggle) return null;
-      const toggleLeft = toggle.getBoundingClientRect().left;
+      const search = document.querySelector(
+        "#nd-nav [data-search], #nd-nav [data-search-full], #nd-nav button[class*='max-w']",
+      );
+      const github = [...document.querySelectorAll("#nd-nav a")].find((a) =>
+        (a.textContent ?? "").includes("GitHub"),
+      );
+      if (!search || !github) return null;
+      const githubLeft = github.getBoundingClientRect().left;
       const nodes = [search, ...search.querySelectorAll("*")];
       let maxRight = Number.NEGATIVE_INFINITY;
       const offenders: { tag: string; right: number }[] = [];
@@ -22,19 +25,23 @@ for (const width of DESKTOP_WIDTHS) {
         const r = node.getBoundingClientRect();
         if (r.width === 0 || r.height === 0) continue;
         maxRight = Math.max(maxRight, r.right);
-        if (r.right > toggleLeft + 0.5) {
+        if (r.right > githubLeft + 0.5) {
           offenders.push({ tag: node.tagName.toLowerCase(), right: r.right });
         }
       }
       return {
-        gap: toggleLeft - maxRight,
+        gap: githubLeft - maxRight,
         offenders,
-        toggleLeft,
+        githubLeft,
         maxRight,
+        searchHeight: search.getBoundingClientRect().height,
+        themeToggle: document.querySelector("#nd-nav [data-theme-toggle]"),
       };
     });
     expect(layout).not.toBeNull();
-    expect(layout!.offenders, JSON.stringify(layout!.offenders)).toEqual([]);
+    expect(layout!.searchHeight).toBeGreaterThan(0);
+    expect(layout!.themeToggle).toBeNull();
+    expect(layout!.offenders).toEqual([]);
     expect(layout!.gap).toBeGreaterThanOrEqual(8);
   });
 
@@ -43,12 +50,12 @@ for (const width of DESKTOP_WIDTHS) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/catalog", { waitUntil: "networkidle" });
     await page.waitForFunction(() => document.querySelector("[data-catalog-filter-row]"));
-    await expect(page.locator("#catalog-results-heading")).toBeVisible();
+    await expect(page.locator("[data-catalog-results-heading]")).toBeVisible();
 
     const metrics = await page.evaluate(() => {
       const filterRow = document.querySelector("[data-catalog-filter-row]");
       const filterContainer = filterRow?.closest("[data-slot='container']");
-      const resultsHeading = document.querySelector("#catalog-results-heading");
+      const resultsHeading = document.querySelector("[data-catalog-results-heading]");
       const resultsContainer = resultsHeading?.closest("[data-slot='container']");
       if (!filterRow || !filterContainer || !resultsHeading || !resultsContainer) {
         return null;
@@ -72,39 +79,6 @@ for (const width of DESKTOP_WIDTHS) {
     expect(metrics!.resultsInWideColumn).toBe(true);
     expect(metrics!.filterRowInset).toBeLessThanOrEqual(2);
     expect(metrics!.resultsInset).toBeLessThanOrEqual(2);
-  });
-}
-
-for (const theme of ["light", "dark"] as const) {
-  test(`home hero admin demo shows table and detail at 390px ${theme}`, async ({ page }) => {
-    await page.addInitScript((mode) => localStorage.setItem("theme", mode), theme);
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/", { waitUntil: "networkidle" });
-    await openHeroPage(page, "Apps");
-
-    const card = page.locator("[data-home-dashboard-card]");
-    await card.scrollIntoViewIfNeeded();
-    await expect(card.getByRole("heading", { name: "Project apps", level: 2 })).toBeVisible();
-    await expect(card.locator("[data-slot='table']")).toBeVisible();
-    await expect(card.getByRole("columnheader", { name: "Region" })).toBeVisible();
-
-    const preview = page.locator("[data-home-hero-preview]");
-    await preview.scrollIntoViewIfNeeded();
-
-    await expect(card.getByRole("button", { name: "Edit console" })).toBeVisible();
-    await expect(card.getByRole("button", { name: "Delete console" })).toBeVisible();
-    await expect(card.locator("[data-slot='table']")).toBeVisible();
-
-    const visible = await preview.evaluate((el) => {
-      const style = getComputedStyle(el);
-      const hiddenClip =
-        style.overflowY === "hidden" ||
-        style.overflow === "hidden" ||
-        style.overflowX === "hidden";
-      const sizedToContent = el.clientHeight + 2 >= el.scrollHeight;
-      return { ok: !hiddenClip && sizedToContent, hiddenClip, sizedToContent };
-    });
-    expect(visible, JSON.stringify(visible)).toMatchObject({ ok: true });
   });
 }
 
@@ -138,9 +112,9 @@ test("install code on a docs page scrolls horizontally with a focusable region",
   expect(metrics, JSON.stringify(metrics)).toMatchObject({ ok: true });
 });
 
-test("home get-started install commands scroll horizontally at 390px", async ({ page }) => {
+test("component-page install commands scroll horizontally at 390px", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/#get-started", { waitUntil: "networkidle" });
+  await page.goto("/docs/ui/slide-in-a-drawer-panel#install-or-copy", { waitUntil: "networkidle" });
   const block = page.locator("#install-or-copy [data-adoption-step='install'] figure").first();
   const region = block.getByRole("region", { name: "Terminal", exact: true });
   await block.scrollIntoViewIfNeeded();
@@ -173,11 +147,26 @@ for (const width of [1280, 1600] as const) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/", { waitUntil: "networkidle" });
     await page.waitForFunction(() => {
-      const bandIds = ["ai-setup", "identities", "get-started", "components", "entry-points"] as const;
-      return bandIds.every((id) => {
-        const section = document.getElementById(id);
-        return section?.querySelector("[data-slot='container']") != null;
-      });
+      const bandIds = [
+        "same-idea",
+        "six-sentences",
+        "paste",
+        "identities",
+        "limits",
+        "manifesto",
+        "closing",
+      ] as const;
+      const hero = document.querySelector("[data-home-hero-band]");
+      const heroReady =
+        hero?.querySelector("[data-slot='container']") != null ||
+        hero?.matches("[data-slot='container']") === true;
+      return (
+        heroReady &&
+        bandIds.every((id) => {
+          const section = document.getElementById(id);
+          return section?.querySelector("[data-slot='container']") != null;
+        })
+      );
     });
 
     const metrics = await page.evaluate(() => {
@@ -189,18 +178,22 @@ for (const width of [1280, 1600] as const) {
       };
 
       const heroBand = document.querySelector("[data-home-hero-band]");
-      const aiSetup = document.getElementById("ai-setup");
+      const sameIdea = document.getElementById("same-idea");
+      const sixSentences = document.getElementById("six-sentences");
+      const paste = document.getElementById("paste");
       const identities = document.getElementById("identities");
-      const getStarted = document.getElementById("get-started");
-      const components = document.getElementById("components");
-      const entryPoints = document.getElementById("entry-points");
+      const limits = document.getElementById("limits");
+      const manifesto = document.getElementById("manifesto");
+      const closing = document.getElementById("closing");
       const boxes = [
         containerBox(heroBand),
-        containerBox(aiSetup),
+        containerBox(sameIdea),
+        containerBox(sixSentences),
+        containerBox(paste),
         containerBox(identities),
-        containerBox(getStarted),
-        containerBox(components),
-        containerBox(entryPoints),
+        containerBox(limits),
+        containerBox(manifesto),
+        containerBox(closing),
       ];
       if (boxes.some((box) => !box)) return null;
 
@@ -216,11 +209,13 @@ for (const width of [1280, 1600] as const) {
       const bandBottom = (el: Element | null) => el?.getBoundingClientRect().bottom ?? Number.NaN;
       const bandTop = (el: Element | null) => el?.getBoundingClientRect().top ?? Number.NaN;
       const gaps = [
-        bandTop(aiSetup) - bandBottom(heroBand),
-        bandTop(identities) - bandBottom(aiSetup),
-        bandTop(getStarted) - bandBottom(identities),
-        bandTop(components) - bandBottom(getStarted),
-        bandTop(entryPoints) - bandBottom(components),
+        bandTop(sameIdea) - bandBottom(heroBand),
+        bandTop(sixSentences) - bandBottom(sameIdea),
+        bandTop(paste) - bandBottom(sixSentences),
+        bandTop(identities) - bandBottom(paste),
+        bandTop(limits) - bandBottom(identities),
+        bandTop(manifesto) - bandBottom(limits),
+        bandTop(closing) - bandBottom(manifesto),
       ];
 
       const bands = boxes as DOMRect[];

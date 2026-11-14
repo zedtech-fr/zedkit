@@ -13,8 +13,10 @@ export type AssistantStreamStage = (typeof ASSISTANT_STREAM_STAGES)[number];
 
 const STAGES = new Set<string>(ASSISTANT_STREAM_STAGES);
 
-export function isAssistantStreamStage(value: string): value is AssistantStreamStage {
-  return STAGES.has(value);
+export function isAssistantStreamStage(value: string): value is AssistantStreamStage;
+export function isAssistantStreamStage(value: string, stages: readonly string[]): boolean;
+export function isAssistantStreamStage(value: string, stages?: readonly string[]): boolean {
+  return (stages === undefined ? STAGES : new Set(stages)).has(value);
 }
 
 export type SseFrame = { event: string; data: string };
@@ -25,11 +27,17 @@ export type AssistantStreamEvent =
   | { type: "complete"; payload: Record<string, unknown> }
   | { type: "error"; error: string; payload: Record<string, unknown> };
 
+/** WHATWG line ending: CRLF, else LF, else CR. */
+function lineEndingAt(buffer: string, i: number): number {
+  if (buffer.startsWith("\r\n", i)) return 2;
+  if (buffer[i] === "\n" || buffer[i] === "\r") return 1;
+  return 0;
+}
+
 function parseSsePart(part: string): SseFrame | null {
   let event = "message";
   const data: string[] = [];
-  for (const raw of part.split("\n")) {
-    const line = raw.endsWith("\r") ? raw.slice(0, -1) : raw;
+  for (const line of part.split(/\r\n|\n|\r/)) {
     if (line === "" || line.startsWith(":")) continue;
     if (line.startsWith("event:")) {
       event = line.slice(6).trim();
@@ -44,14 +52,30 @@ function parseSsePart(part: string): SseFrame | null {
 
 /** Complete SSE frames in `buffer`, leaving any trailing partial frame as `rest`. */
 export function pullSseFrames(buffer: string): { frames: SseFrame[]; rest: string } {
-  const parts = buffer.split("\n\n");
-  const rest = parts.pop() ?? "";
   const frames: SseFrame[] = [];
-  for (const part of parts) {
-    const frame = parseSsePart(part);
-    if (frame) frames.push(frame);
+  let i = 0;
+  let partStart = 0;
+  let pendingStart = -1;
+  let pendingEnd = -1;
+  while (i < buffer.length) {
+    const len = lineEndingAt(buffer, i);
+    if (len === 0) {
+      i += 1;
+      continue;
+    }
+    if (pendingEnd === i) {
+      const frame = parseSsePart(buffer.slice(partStart, pendingStart));
+      if (frame) frames.push(frame);
+      partStart = i + len;
+      pendingStart = -1;
+      pendingEnd = -1;
+    } else {
+      pendingStart = i;
+      pendingEnd = i + len;
+    }
+    i += len;
   }
-  return { frames, rest };
+  return { frames, rest: buffer.slice(partStart) };
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -59,13 +83,23 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 }
 
 /** One named assistant event from an SSE frame, or nothing if the frame is not one. */
-export function readAssistantStreamEvent(frame: SseFrame): AssistantStreamEvent | null {
+export function readAssistantStreamEvent(frame: SseFrame): AssistantStreamEvent | null;
+export function readAssistantStreamEvent(
+  frame: SseFrame,
+  stages: readonly string[],
+): Exclude<AssistantStreamEvent, { type: "status" }> | { type: "status"; stage: string } | null;
+export function readAssistantStreamEvent(
+  frame: SseFrame,
+  stages?: readonly string[],
+): Exclude<AssistantStreamEvent, { type: "status" }> | { type: "status"; stage: string } | null {
   const parsed = tryCatch(() => JSON.parse(frame.data) as unknown);
   const data = parsed.ok ? asRecord(parsed.value) : null;
   if (!data) return null;
   if (frame.event === "status") {
     const stage = typeof data.stage === "string" ? data.stage : "";
-    return isAssistantStreamStage(stage) ? { type: "status", stage } : null;
+    const allowed =
+      stages === undefined ? isAssistantStreamStage(stage) : isAssistantStreamStage(stage, stages);
+    return allowed ? { type: "status", stage } : null;
   }
   if (frame.event === "text") {
     return typeof data.delta === "string" && data.delta.length > 0 ? { type: "text", delta: data.delta } : null;

@@ -2,8 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-/** Extra routes the sitemap sweep should cover even if they are not listed yet. */
-export const EXTRA_SITEMAP_ROUTES = ["/features/identity-editor", "/features/identity-kit-demos"];
+import { EXTRA_SITEMAP_ROUTES, parseSitemapRoutes } from "../scripts/docs-route-parse.mjs";
+import { filterPublishedRoutes } from "../scripts/docs-routes-env.mjs";
+
+export { EXTRA_SITEMAP_ROUTES };
 
 function sitemapCandidates(): string[] {
   const here = path.dirname(fileURLToPath(import.meta.url));
@@ -20,7 +22,11 @@ export function publishedRoutes(): string[] {
   if (!sitemapPath) {
     throw new Error("apps/docs/out/sitemap.xml is missing; build the docs static export before e2e:routes");
   }
-  const xml = readFileSync(sitemapPath, "utf8");
-  const paths = [...xml.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((m) => m[1]!.replace(/\/$/, "") || "/");
+  const paths = parseSitemapRoutes(readFileSync(sitemapPath, "utf8"));
   return [...new Set([...paths, ...EXTRA_SITEMAP_ROUTES])].sort();
+}
+
+/** Sitemap routes, restricted to `DOCS_ROUTES` when that env is set. */
+export function routesForSweep(): string[] {
+  return filterPublishedRoutes(publishedRoutes(), process.env.DOCS_ROUTES);
 }

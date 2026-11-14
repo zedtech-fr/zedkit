@@ -33,7 +33,7 @@ Install from npm or copy the source through the shadcn registry.
 agent installs `zedkit-ai`, interviews you about the repo, and writes rules that
 match it. Cursor, Claude Code, Codex and friends share one set of skills,
 subagents, review and definition-of-done checks, validated in CI.
-([Prompt and file tree](https://zedkit.app/#ai-setup).)
+([Combined setup prompt](https://zedkit.app/#paste).)
 
 **🧱 The boring parts, done right** — SEO metadata, server helpers, storage,
 flags, i18n, observability: small, typed, dependency-light packages.
@@ -119,7 +119,7 @@ Maturity criteria: [docs/catalog/README.md](docs/catalog/README.md).
 
 | Package | Version | Maturity |
 |---|---|---|
-| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 1.2.0 | beta |
+| [`@zedtech/zedkit-ai`](packages/ai/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-ai)) | 1.2.0 | alpha |
 | [`@zedtech/zedkit-brand`](packages/brand/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-brand)) | 0.1.1 | alpha |
 | [`@zedtech/zedkit-core`](packages/core/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-core)) | 1.0.1 | stable |
 | [`@zedtech/zedkit-devtools`](packages/devtools/README.md) ([npm](https://www.npmjs.com/package/@zedtech/zedkit-devtools)) | 0.3.19 | beta |

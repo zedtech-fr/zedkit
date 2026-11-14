@@ -1,0 +1,6 @@
+[
+  {
+    "name": "First issue open",
+    "click": "main [data-issues-row]"
+  }
+]

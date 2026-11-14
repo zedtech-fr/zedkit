@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 import { probe } from "./identity-helpers";
 
 test.describe("site type hierarchy (P0)", () => {
-  test("home hero and component families @1440", async ({ page }) => {
+  test("home hero and same-idea marketing type @1440", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/?identity=tide", { waitUntil: "networkidle" });
 
@@ -11,18 +11,14 @@ test.describe("site type hierarchy (P0)", () => {
       const s = getComputedStyle(el);
       return { size: Number.parseFloat(s.fontSize), weight: s.fontWeight };
     });
-    expect(h1.size).toBeGreaterThanOrEqual(32);
-    expect(h1.weight).toBe("600");
+    expect(h1.size).toBeGreaterThanOrEqual(48);
+    expect(h1.weight).toBe("500");
 
     const size = (selector: string) =>
       page.locator(selector).first().evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
-    const sectionTitle = await size("#components h2");
-    // Example links are essential navigation, so they use the dense-UI size (13), not the 12px metadata size.
-    const exampleLink = await size("#components [data-home-component-families] a");
-    const cardBody = await size("#components .text-home-persuasion");
-    expect(exampleLink).toBe(13);
+    const sectionTitle = await size("#same-idea h2");
+    const cardBody = await size("#same-idea .text-home-persuasion");
     expect(cardBody).toBe(14);
-    expect(exampleLink).toBeLessThan(cardBody);
     expect(cardBody).toBeLessThan(sectionTitle);
   });
 

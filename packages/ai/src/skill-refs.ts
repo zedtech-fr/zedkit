@@ -2,6 +2,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, sep } from "node:path";
 import { withoutMarkers } from "./conditional.js";
+import { ENTRY_COMMAND } from "./kit.js";
 
 const NAME = "[a-z0-9]+(?:-[a-z0-9]+)*";
 
@@ -112,7 +113,7 @@ function kindOf(name: string, universe: RefUniverse): "skill" | "agent" | "comma
   return undefined;
 }
 
-/** Refs whose demanded kind is missing (Skill-tool/"skill `x`" = skill, "agent `x`" = agent, /name = command if the kit defines one, else any kind; bare backticked/hyphenated words match any kind in kit-origin files; /self satisfied). */
+/** Refs whose demanded kind is missing (Skill-tool/"skill `x`" = skill, "agent `x`" = agent, /name = command if the kit defines one, else any kind; an installed command satisfies its own /ref; a kit command other than the entry is also satisfied when the entry is installed and, if a skill of that stem exists, that skill is installed; bare backticked/hyphenated words match any kind in kit-origin files; /self satisfied). */
 export function danglingKitRefs(
   files: readonly RefFile[],
   installed: RefUniverse,
@@ -120,6 +121,13 @@ export function danglingKitRefs(
 ): SkillRefIssue[] {
   const issues: SkillRefIssue[] = [];
   const all = new Set([...installed.skills, ...installed.agents, ...installed.commands]);
+  const commandClosed = (name: string): boolean => {
+    if (installed.commands.has(name)) return true;
+    const skillOk = !universe.skills.has(name) || installed.skills.has(name);
+    return name !== ENTRY_COMMAND && installed.commands.has(ENTRY_COMMAND) && skillOk;
+  };
+  const present = (name: string, kind: "skill" | "agent" | "command"): boolean =>
+    kind === "command" ? commandClosed(name) : all.has(name);
   for (const file of files) {
     const seen = new Set<string>();
     const report = (name: string, has: boolean, kind: "skill" | "agent" | "command"): void => {
@@ -131,19 +139,22 @@ export function danglingKitRefs(
     const self = file.path.split(sep)[1]?.replace(/\.md$/, "");
     for (const name of slashRefNames(file.text)) {
       if (universe.commands.has(name) && name !== self) {
-        report(name, installed.commands.has(name), "command");
+        report(name, commandClosed(name), "command");
       } else {
         const kind = kindOf(name, universe);
-        if (kind !== undefined) report(name, all.has(name), kind);
+        if (kind !== undefined) report(name, present(name, kind), kind);
       }
     }
     for (const [word, name] of kindWordRefNames(file.text, universe)) report(name, installed[`${word}s`].has(name), word);
     if (!file.kitOrigin) continue;
     for (const name of backtickedRefNames(file.text)) {
       const kind = kindOf(name, universe);
-      if (kind !== undefined) report(name, all.has(name), kind);
+      if (kind !== undefined) report(name, present(name, kind), kind);
     }
-    for (const name of wordRefNames(file.text, universe)) report(name, all.has(name), kindOf(name, universe) ?? "skill");
+    for (const name of wordRefNames(file.text, universe)) {
+      const kind = kindOf(name, universe) ?? "skill";
+      report(name, present(name, kind), kind);
+    }
   }
   return issues;
 }

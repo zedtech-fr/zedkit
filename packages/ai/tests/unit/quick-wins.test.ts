@@ -2,7 +2,6 @@ import {
   existsSync,
   readdirSync,
   readFileSync,
-  readlinkSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -12,7 +11,7 @@ import { parseFrontmatter } from "#frontmatter.js";
 import { ALL_PROVIDERS, installKit } from "#install.js";
 import { commandsForPreset, kitDir, readManifest } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
-import { put, SKILL, tempDir } from "./helpers.js";
+import { failingIssues, put, SKILL, tempDir } from "./helpers.js";
 
 const read = (...parts: string[]): string =>
   readFileSync(join(kitDir(), ...parts), "utf8");
@@ -177,18 +176,18 @@ describe("quick-wins skill contract", () => {
     expect(skill).not.toMatch(
       /\b(claude|gpt|gemini|grok|composer)-[a-z0-9.]+/iu,
     );
-    expect(validateKit(kitDir())).toEqual([]);
+    expect(failingIssues(validateKit(kitDir()))).toEqual([]);
   });
 });
 
 describe("quick-wins shipping", () => {
-  it("ships one skill and one same-named command in setup, core and full, not in starter", () => {
+  it("ships the skill on setup, core and full, not a command, and not in starter", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const { presets } = manifest.value;
     for (const preset of ["setup", "core"]) {
       expect(presets[preset], preset).toContain("quick-wins");
-      expect(commandsForPreset(manifest.value, preset), preset).toContain(
+      expect(commandsForPreset(manifest.value, preset), preset).not.toContain(
         "quick-wins",
       );
     }
@@ -218,18 +217,18 @@ describe("quick-wins shipping", () => {
     expect(
       readFileSync(join(dest, ".agents/agents/orchestrator.md"), "utf8"),
     ).not.toContain("quick-wins");
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
-  it("a fresh install discovers the command and the skill once per provider layer", () => {
+  it("a fresh install discovers the skill once per provider layer and does not write the command", () => {
     const dest = tempDir();
     setup(dest, ALL_PROVIDERS);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);
     expect(claimants(join(dest, ".agents"), "quick-wins")).toEqual([
       "quick-wins",
     ]);
-    const kitCommand = read("commands", "quick-wins.md");
+    expect(existsSync(join(dest, ".agents/commands/quick-wins.md"))).toBe(false);
     for (const layer of [".cursor", ".claude"]) {
       const names = exposedSkillNames(join(dest, layer, "skills"));
       expect(
@@ -242,15 +241,8 @@ describe("quick-wins shipping", () => {
       const commands = readdirSync(join(dest, layer, "commands")).filter(
         (file) => file.startsWith("quick-wins"),
       );
-      expect(commands, `${layer} commands`).toEqual(["quick-wins.md"]);
-      expect(
-        readFileSync(join(dest, layer, "commands", "quick-wins.md"), "utf8"),
-        layer,
-      ).toBe(kitCommand);
+      expect(commands, `${layer} commands`).toEqual([]);
     }
-    expect(readlinkSync(join(dest, ".cursor/commands/quick-wins.md"))).toBe(
-      "../../.agents/commands/quick-wins.md",
-    );
   });
 
   it("repeating setup changes nothing and adds no sidecar", () => {
@@ -276,18 +268,15 @@ describe("quick-wins shipping", () => {
     expect(older).not.toBe(readFileSync(orchestrator, "utf8"));
     writeFileSync(orchestrator, older);
     rmSync(join(dest, ".agents/skills/quick-wins"), { recursive: true });
-    rmSync(join(dest, ".agents/commands/quick-wins.md"));
-    rmSync(join(dest, ".cursor/commands/quick-wins.md"));
 
     const changed = setup(dest)
       .filter((action) => action.kind !== "skip")
       .map((action) => action.path);
     expect(changed).toEqual(
-      expect.arrayContaining([
-        ".agents/skills/quick-wins",
-        ".agents/commands/quick-wins.md",
-        ".cursor/commands/quick-wins.md",
-      ]),
+      expect.arrayContaining([".agents/skills/quick-wins"]),
+    );
+    expect(changed.some((path) => path.includes("commands/quick-wins"))).toBe(
+      false,
     );
     expect(readFileSync(orchestrator, "utf8")).toBe(older);
     expect(
@@ -295,13 +284,13 @@ describe("quick-wins shipping", () => {
     ).toContain("`quick-wins`");
     // An older orchestrator has no row, so the hand-off names the skill file.
     expect(flat).toContain("Name this `SKILL.md` in the brief");
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(claimants(join(dest, ".agents"), "quick-wins")).toEqual([
       "quick-wins",
     ]);
   });
 
-  it("keeps a team's own /quick-wins command in real provider dirs and puts the kit's beside it", () => {
+  it("keeps a team's own leftover /quick-wins command and does not write a kit sidecar", () => {
     const dest = tempDir();
     const mine = "# our quick-wins\n";
     for (const layer of [".cursor", ".claude"]) {
@@ -314,10 +303,9 @@ describe("quick-wins shipping", () => {
         readFileSync(join(dest, layer, "commands/quick-wins.md"), "utf8"),
         layer,
       ).toBe(mine);
-      expect(
-        readFileSync(join(dest, layer, "commands/quick-wins.kit.md"), "utf8"),
-        layer,
-      ).toBe(read("commands", "quick-wins.md"));
+      expect(existsSync(join(dest, layer, "commands/quick-wins.kit.md")), layer).toBe(
+        false,
+      );
       const names = exposedSkillNames(join(dest, layer, "skills"));
       expect(names).toContain("team");
       expect(names.filter((name) => name === "quick-wins")).toHaveLength(1);
@@ -325,7 +313,7 @@ describe("quick-wins shipping", () => {
         names.length,
       );
     }
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("keeps a team's own quick-wins skill and gives the kit's a distinct name", () => {
@@ -342,7 +330,7 @@ describe("quick-wins shipping", () => {
     expect(claimants(join(dest, ".agents"), "zk-quick-wins")).toEqual([
       "zk-quick-wins",
     ]);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   // Known, pre-existing for every skill name a team already owns: with the

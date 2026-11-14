@@ -48,7 +48,7 @@ function main() {
   const require = createRequire(join(APP, "package.json"));
   const lucide = require("lucide-react");
   const kit = JSON.parse(readFileSync(join(ROOT, "packages", "ai", "kit", "kit.json"), "utf8"));
-  const source = readFileSync(join(APP, "lib", "agent-icons.ts"), "utf8");
+  const source = readFileSync(join(APP, "features", "docs", "agent-icons.ts"), "utf8");
   const errors = checkAgentIcons({ agents: kit.agents, source, lucide });
   if (errors.length > 0) {
     console.error(errors.join("\n"));

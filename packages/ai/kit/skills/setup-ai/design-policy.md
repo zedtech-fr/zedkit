@@ -40,4 +40,6 @@ Shipped default for every host. Token values and the role vocabulary belong to t
 
 The installer copies files and generates a skeleton. It does not read the host's tokens or class conventions. Reading the code is the setup skill. A green validate does not mean the host's written rules match this policy.
 
-If the host text tells people to author numeric or default-scale classes, do not keep that rule. Supersede it with this file.
+This file is the rule for kit-owned files (files this kit ships, and this repo's packages the kit authors). Host files are the consuming repo's AGENTS.md, nested AGENTS.md, design.md identity/convention rules, and application sources.
+
+Keep a host rule that tells authors to use numeric or default-scale classes. Semantic-only means authored classes name a role, a layout job, or a design purpose, not a scale step (`p-4`, `text-sm`, `grid-cols-3`, `w-1/2`). Replace that host rule with this file only when the owner has recorded a yes for the semantic-only migration (`source: owner` on the setup-log Decisions line). A recorded yes is the only opt-in; there is no CLI flag.

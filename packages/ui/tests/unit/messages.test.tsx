@@ -20,6 +20,7 @@ import { stubDrawerJsdom } from "./drawer-fixture.js";
 
 beforeAll(() => {
   stubDrawerJsdom();
+  Element.prototype.scrollTo = function scrollTo() {};
 });
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), "../../src");
@@ -29,7 +30,7 @@ const KIT_ENGLISH = [
   '"Close"',
   '"Confirm"',
   '"Cancel"',
-  '"Loading"',
+  '"Loading content"',
   '"Progress"',
   '"Filter…"',
   '"No results."',
@@ -49,12 +50,28 @@ const KIT_ENGLISH = [
   '" (default)"',
   '"The page behind this sheet updates as you choose."',
   '"Page {page} of {pageCount}"',
-  '"Loading…"',
+  '"Loading content…"',
   '"Loading options"',
   '" (selected)"',
   '"Remove {label}"',
   '"Main navigation"',
   '"Language"',
+  '"Final decision"',
+  '"No agents"',
+  '"Does not block merge"',
+  '"Posted review"',
+  '"Must change"',
+  '"Main flow"',
+  '"Review lenses"',
+  '"First pass"',
+  '"This run has no items yet."',
+  '"Jump to latest"',
+  '"Nothing to change before merge"',
+  '"Transcript"',
+  '"No transcript"',
+  '"This step left no readable transcript."',
+  '"{n} tools"',
+  '"{n} tool"',
 ];
 
 function walk(dir: string): string[] {

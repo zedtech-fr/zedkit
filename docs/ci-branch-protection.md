@@ -23,20 +23,25 @@ coverage run is skipped. `ci-required` accepts a skipped job only when
 the detector excluded it; a selected job that skipped, failed or cancelled
 is not green.
 
-**Same-repo PRs into `dev`** run the heavy jobs (`checks`, `registry-smoke`,
-`quickstart-smoke`, `adoption-smoke`, `docs-build`) on the Dedibox
-self-hosted runner (`[self-hosted, zedkit]`), with persistent `/runner-cache`
-(pnpm store, turbo, tsbuildinfo, eslint). Docs Playwright smoke and UI
-gallery checks (console, overflow, visibility) always run on
-`ubuntu-latest`. Job **names** stay
-neutral (`checks`, not `checks-dedibox`) so `ci-required` and the ruleset
-do not change. Fork PRs, PRs into `main`, and pushes stay on `ubuntu-latest`.
-The former trial workflow `ci-dedibox-trial.yml` was removed once this path
-landed in `ci.yml`.
+**PR and `dev` CI runs on GitHub-hosted `ubuntu-latest` runners** (4 vCPU /
+16 GB), with `actions/cache` for pnpm, Turbo, `apps/docs/.next/cache` and
+Playwright. The Dedibox self-hosted runners (`[self-hosted, zedkit]`,
+persistent `/runner-cache`) stay as a fallback: set the repository variable
+**`CI_RUNNER=self-hosted`** to switch the heavy jobs (`checks`,
+`registry-smoke`, `quickstart-smoke`, `adoption-smoke`, `docs-build`) back
+without a pull request. Job **names** stay neutral (`checks`, not
+`checks-dedibox`) so `ci-required` and the ruleset do not change. Docs
+Playwright smoke and UI gallery checks already run on `ubuntu-latest`
+(GitHub-hosted Chromium; Dedibox uses a different revision). `release`,
+`deploy-dev`, `deploy-docs` and `inspect-dev-vhost` are unchanged and already
+use `ubuntu-latest`. After this path is stable, the Dedibox runner pool can
+be reduced to 2–3 standby runners; that cut is not part of this change.
+The former trial workflow `ci-dedibox-trial.yml` was removed once the
+self-hosted path landed in `ci.yml`.
 
 | Check | Role |
 | --- | --- |
-| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + quickstart-smoke + adoption-smoke + docs-build + docs-smoke |
+| `ci-required` | Aggregate gate: hygiene + checks + registry-smoke + quickstart-smoke + adoption-smoke + docs-build + docs-smoke + docs-render |
 | `hygiene` | Artifact, tone, private-refs, changeset |
 | `checks` | typecheck, lint, build, tests, catalog, pack, API reports |
 | `ui-smoke` | UI gallery console, overflow and visibility on ubuntu-latest |
@@ -45,6 +50,7 @@ landed in `ci.yml`.
 | `adoption-smoke` | Shown install recipes; packed runtime workspace closure, not npm |
 | `docs-build` | One docs static export, shared with Playwright smoke |
 | `docs-smoke` | Critical docs journeys (home, search, catalog, a component page) |
+| `docs-render` | Overflow, axe, clipped text on the static export. Ordinary PRs into `dev`: mapped routes (five fallbacks when unmapped; empty `DOCS_ROUTES` fails closed). Full sitemap (default look) on `epic/*` → `dev`, PRs and pushes into `main`, and nightly Chromium |
 
 `deploy-docs` and `release` run on `main` after merge; they are **not**
 required for merging PRs.

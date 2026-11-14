@@ -45,7 +45,11 @@ describe("DataTable", () => {
     const { container } = render(<DataTable columns={columns} data={data} pageSize={1} />);
     const root = container.firstElementChild;
     expect(root?.classList.contains("space-y-data-table-stack")).toBe(true);
+    expect(root?.classList.contains("content-shrink")).toBe(true);
     expect(root?.className).not.toContain("space-y-4");
+    const scrollport = container.querySelector('[data-slot="table-container"]');
+    expect(scrollport?.classList.contains("content-shrink")).toBe(true);
+    expect(scrollport?.classList.contains("overflow-x-auto")).toBe(true);
     const filter = container.querySelector("input");
     expect(filter?.classList.contains("max-w-data-table-filter-width")).toBe(true);
     expect(filter?.className).not.toMatch(/(^|\s)max-w-sm(\s|$)/);
@@ -56,6 +60,7 @@ describe("DataTable", () => {
     expect(sortButton.querySelector("svg")?.classList.contains("size-icon-sm")).toBe(true);
     const pager = screen.getByText(/Page 1 of/).parentElement;
     expect(pager?.classList.contains("gap-data-table-pagination-gap")).toBe(true);
+    expect(pager?.classList.contains("flex-wrap")).toBe(true);
     expect(pager?.className).not.toContain("gap-2");
   });
 
@@ -135,7 +140,7 @@ describe("DataTable", () => {
   it("shows loading placeholders while loading", () => {
     const { container } = render(<DataTable columns={columns} data={data} loading />);
     expect(screen.getByRole("table").getAttribute("aria-busy")).toBe("true");
-    expect(screen.getByRole("status", { name: "Loading" })).toBeTruthy();
+    expect(screen.getByRole("status", { name: "Loading content" })).toBeTruthy();
     expect(container.querySelectorAll('[data-slot="data-table-loading"] .motion-safe\\:animate-pulse')).toHaveLength(3);
     expect(screen.queryByText("Ada")).toBeNull();
   });

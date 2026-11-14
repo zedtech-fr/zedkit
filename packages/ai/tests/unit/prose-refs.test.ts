@@ -1,8 +1,8 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { readManifest } from "#kit.js";
+import { deprecatedCommandNames, readManifest } from "#kit.js";
 import { lensTableRows, shippedNames, usageCommands, usageFlags, usageProviders } from "./helpers.js";
 
 const PROSE = [
@@ -99,6 +99,44 @@ describe("prose references", () => {
       for (const token of tokens) {
         checked += 1;
         expect([...known], `${rel} references ${token}`).toContain(token);
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it("catalog install page does not advertise leftover commands as live slash commands", () => {
+    const prose = readFileSync(
+      join(repoRoot(), "apps/docs/prose/ai/set-up-ai-agent-instructions-skills-subagents-and-commands-in-a-repo.mdx"),
+      "utf8",
+    );
+    expect(prose).not.toContain("Bundled slash commands");
+    expect(prose).not.toContain("`/orchestrate`");
+    expect(prose).toContain("/zedkit-ai <request>");
+    expect(prose).toMatch(/Deprecated leftover command files/);
+    const block = /kind="command"\s+names=\{\[([^\]]*)\]\}/.exec(prose);
+    expect(block, "DocsKitNameList command names").not.toBeNull();
+    const listed = [...(block?.[1] ?? "").matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1] ?? "");
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    expect(listed).toEqual(deprecatedCommandNames(manifest.value));
+  });
+
+  it("printed sync --prune commands include --provider", () => {
+    const rels = [
+      ...readdirSync(join(repoRoot(), ".changeset"))
+        .filter((name) => name.endsWith(".md"))
+        .map((name) => `.changeset/${name}`),
+      "packages/ai/README.md",
+    ];
+    let checked = 0;
+    for (const rel of rels) {
+      const text = readFileSync(join(repoRoot(), rel), "utf8");
+      for (const span of zedkitAiCommandExamples(text)) {
+        if (!/\bsync\b/.test(span) || !/--prune(?:\s|$)/.test(span)) continue;
+        checked += 1;
+        expect(span, `${rel}: --prune needs --provider (sync.ts exits 2 without it)`).toMatch(
+          /--provider/,
+        );
       }
     }
     expect(checked).toBeGreaterThan(0);

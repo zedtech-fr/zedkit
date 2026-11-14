@@ -1,0 +1,24 @@
+import { useEffect } from "react";
+
+import { readCreatorHandoff } from "@/features/identity/model/creator-handoff";
+import { readCreatorSessionBrief } from "@/features/identity/model/creator-session-brief";
+
+/**
+ * Says once, on arrival, that the visitor came here to create: with a brief carried over from the home page, with
+ * `#create` in the address, or with an unfinished brief still in this tab. The caller may store `brief`; the dock
+ * does not show it, and nothing is sent, so arriving never costs anything. The editor replaces `#create` with a look
+ * query, so a reload restores from session storage, not from the hash.
+ */
+export function useCreatorHandoff(onArrive: (brief: string | null) => void) {
+  useEffect(() => {
+    const storage = window.sessionStorage;
+    const handoff = readCreatorHandoff(storage);
+    if (handoff) {
+      onArrive(handoff.brief);
+      return;
+    }
+    const saved = readCreatorSessionBrief(storage);
+    if (saved || window.location.hash === "#create") onArrive(saved);
+    // Once, on arrival: the brief is stored (not shown) and the panel is focused a single time.
+  }, []);
+}

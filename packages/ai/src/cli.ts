@@ -1,5 +1,5 @@
 // Original work by the same author.
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { err, ok, tryCatch, type Result } from "@zedtech/zedkit-core";
@@ -10,7 +10,7 @@ import {
   installNextStepLines,
   prettierHintLines,
 } from "./install-next-step.js";
-import { kitDir, readManifest } from "./kit.js";
+import { deprecatedCommandNames, ENTRY_COMMAND, kitDir, readManifest } from "./kit.js";
 import { loadAgent, loadPolicy, resolveRoute, type Route } from "./route.js";
 import { scanRepo } from "./scan.js";
 import { inSync, isCheckedUnchanged, syncKit } from "./sync.js";
@@ -64,6 +64,7 @@ const OPTIONS = {
   preset: { type: "string" },
   provider: { type: "string" },
   target: { type: "string" },
+  kit: { type: "string" },
   adopt: { type: "boolean" },
   "dry-run": { type: "boolean" },
   "allow-fast": { type: "boolean" },
@@ -72,6 +73,7 @@ const OPTIONS = {
 const VALIDATE_OPTIONS = {
   setup: { type: "boolean" },
   plan: { type: "string" },
+  kit: { type: "string" },
   "allow-fast": { type: "boolean" },
 } as const;
 
@@ -100,6 +102,7 @@ const SYNC_OPTIONS = {
   prune: { type: "boolean" },
   "no-prune": { type: "boolean" },
   quiet: { type: "boolean" },
+  kit: { type: "string" },
   "allow-fast": { type: "boolean" },
 } as const;
 
@@ -149,6 +152,22 @@ function fail(message: string, sinks: Sinks): number {
   return 2;
 }
 
+function resolveKitFlag(
+  value: string | boolean | undefined,
+): Result<string | undefined> {
+  if (value === undefined) return ok(undefined);
+  if (typeof value !== "string" || value.trim() === "") {
+    return err(new Error("--kit needs a local directory"));
+  }
+  const dir = resolve(value);
+  if (!existsSync(dir)) return err(new Error(`--kit: no such directory: ${dir}`));
+  const st = tryCatch(() => statSync(dir));
+  if (!st.ok || !st.value.isDirectory()) {
+    return err(new Error(`--kit: not a directory: ${dir}`));
+  }
+  return ok(dir);
+}
+
 function runInstall(
   args: string[],
   sinks: Sinks,
@@ -159,6 +178,8 @@ function runInstall(
   const { values, positionals } = parsed.value;
   const providers = parseProviders(values.provider ?? values.target);
   if (!providers.ok) return fail(providers.error.message, sinks);
+  const kit = resolveKitFlag(values.kit);
+  if (!kit.ok) return fail(kit.error.message, sinks);
   const dryRun = values["dry-run"] === true;
   const presetFlag =
     typeof values.preset === "string" ? values.preset : undefined;
@@ -170,6 +191,7 @@ function runInstall(
     ...(providers.value !== undefined && { providers: providers.value }),
     dryRun,
     adopt,
+    ...(kit.value !== undefined && { kit: kit.value }),
     ...(values["allow-fast"] === true && { allowFast: true }),
   });
   if (!result.ok) return fail(result.error.message, sinks);
@@ -195,6 +217,8 @@ function runInstall(
 function runValidate(args: string[], sinks: Sinks): number {
   const parsed = parse(args, VALIDATE_OPTIONS, 1);
   if (!parsed.ok) return fail(parsed.error.message, sinks);
+  const kit = resolveKitFlag(parsed.value.values.kit);
+  if (!kit.ok) return fail(kit.error.message, sinks);
   const dir = resolve(parsed.value.positionals[0] ?? ".agents");
   if (!existsSync(dir))
     return fail(
@@ -207,14 +231,17 @@ function runValidate(args: string[], sinks: Sinks): number {
   const agentsDir = existsSync(nested) ? nested : dir;
   const projectRoot = agentsDir === dir ? dirname(dir) : dir;
   const allowFast = parsed.value.values["allow-fast"] === true;
+  const driftOpts =
+    allowFast || kit.value !== undefined
+      ? {
+          ...(allowFast && { allowFast: true }),
+          ...(kit.value !== undefined && { kit: kit.value }),
+        }
+      : undefined;
   const issues = [
-    ...validateKit(agentsDir),
-    ...checkDrift(
-      projectRoot,
-      agentsDir,
-      allowFast ? { allowFast: true } : undefined,
-    ),
-    ...checkKitDocs(projectRoot, agentsDir),
+    ...validateKit(agentsDir, kit.value ?? kitDir()),
+    ...checkDrift(projectRoot, agentsDir, driftOpts),
+    ...checkKitDocs(projectRoot, agentsDir, kit.value ?? kitDir()),
     ...checkPlaceholders(projectRoot, agentsDir),
     ...checkHardcodedModels(projectRoot, agentsDir),
     ...checkAtlas(projectRoot, agentsDir),
@@ -449,6 +476,8 @@ function runSync(args: string[], sinks: Sinks): number {
   const { values, positionals } = parsed.value;
   const named = parseProviders(values.provider);
   if (!named.ok) return fail(named.error.message, sinks);
+  const kit = resolveKitFlag(values.kit);
+  if (!kit.ok) return fail(kit.error.message, sinks);
   const dest = resolve(positionals[0] ?? ".");
   if (!existsSync(dest)) return fail(`no such directory: ${dest}`, sinks);
   const check = values.check === true;
@@ -461,6 +490,7 @@ function runSync(args: string[], sinks: Sinks): number {
     dryRun: values["dry-run"] === true,
     prune: values.prune === true,
     noPrune: values["no-prune"] === true,
+    ...(kit.value !== undefined && { kit: kit.value }),
     ...(values["allow-fast"] === true && { allowFast: true }),
   });
   if (!result.ok) return fail(result.error.message, sinks);
@@ -510,9 +540,12 @@ function runList(args: string[], sinks: Sinks): number {
     );
   }
   sinks.out(`agents: ${manifest.value.agents.join(", ")}`);
-  sinks.out(
-    `commands: ${(manifest.value.commands ?? []).join(", ") || "(none)"}`,
-  );
+  const commands = manifest.value.commands ?? [];
+  sinks.out(`commands: ${commands.includes(ENTRY_COMMAND) ? ENTRY_COMMAND : "(none)"}`);
+  const deprecated = deprecatedCommandNames(manifest.value);
+  if (deprecated.length > 0) {
+    sinks.out(`deprecated: ${deprecated.join(", ")}`);
+  }
   return 0;
 }
 

@@ -23,6 +23,16 @@ pnpm add @zedtech/zedkit-nest @fastify/static @nestjs/common @nestjs/config \
   reflect-metadata
 ```
 
+### Agent: one paste
+
+Docs walkthrough: [zedkit.app/docs/nest/start-a-safe-nestjs-api](https://zedkit.app/docs/nest/start-a-safe-nestjs-api). Agent steps (raw markdown): [zedkit.app/nest/setup.md](https://zedkit.app/nest/setup.md).
+
+Paste this single message in a new chat at the repo root:
+
+```text
+Set up zedkit Nest on this repo following https://zedkit.app/nest/setup.md
+```
+
 ## Usage
 
 `createNestApp({ module, envSchema, docs, ... })` wires only standard

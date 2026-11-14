@@ -11,7 +11,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
   test("hero and band copy use shared P0 type roles", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#components").scrollIntoViewIfNeeded();
+    await page.locator("#same-idea").scrollIntoViewIfNeeded();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -22,13 +22,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
         return { fontSize, lineHeight };
       };
 
-      const getStarted = document.querySelector("#get-started");
-      const startCopy = getStarted?.querySelector("#install-or-copy [data-adoption-mode] dd");
-
-      const components = document.querySelector("#components");
-      const componentsCopy = components?.querySelector(
-        "[data-home-component-families] .text-home-persuasion",
-      );
+      const sameIdeaCopy = document.querySelector("#same-idea .text-home-persuasion");
 
       const useCases = document.querySelector("#use-cases");
       const useCaseWhy = useCases?.querySelector(".text-home-persuasion");
@@ -36,8 +30,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
       return {
         heroLead: read(document.querySelector("[data-home-hero-sub]")),
         heroProof: read(document.querySelector("[data-home-hero-lead] .home-metadata-copy")),
-        startCopy: read(startCopy),
-        componentsCopy: read(componentsCopy),
+        sameIdeaCopy: read(sameIdeaCopy),
         useCaseWhy: read(useCaseWhy),
       };
     });
@@ -52,8 +45,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
     expect(readings.heroProof!.fontSize).toBeLessThanOrEqual(14);
 
     for (const [label, value] of Object.entries({
-      startCopy: readings.startCopy,
-      componentsCopy: readings.componentsCopy,
+      sameIdeaCopy: readings.sameIdeaCopy,
       useCaseWhy: readings.useCaseWhy,
     })) {
       expect(value, label).not.toBeNull();

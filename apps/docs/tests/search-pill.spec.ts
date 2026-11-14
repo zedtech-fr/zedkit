@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const PAGES = ["/", "/docs/getting-started"] as const;
+const PAGES = ["/docs/getting-started"] as const;
 const SIZES = [
   { width: 360, height: 640 },
   { width: 390, height: 844 },
@@ -12,7 +12,7 @@ for (const size of SIZES) {
       await page.setViewportSize(size);
       await page.goto(path);
       const header = page.locator("#nd-mobile-nav");
-      const headerSearch = header.getByRole("button", { name: "Search the documentation" });
+      const headerSearch = header.getByRole("button", { name: "Search documentation", exact: true });
       await expect(headerSearch).toBeVisible();
       await expect(page.locator("[data-search-pill]")).toHaveCount(0);
       await headerSearch.click();
@@ -29,7 +29,7 @@ for (const size of SIZES) {
 test("Tab stays inside the phone search dialog", async ({ page }) => {
   await page.setViewportSize(SIZES[1]);
   await page.goto("/docs/getting-started");
-  const headerSearch = page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" });
+  const headerSearch = page.locator("#nd-mobile-nav").getByRole("button", { name: "Search documentation", exact: true });
   await headerSearch.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
@@ -43,7 +43,7 @@ test("Tab stays inside the phone search dialog", async ({ page }) => {
 test("Shift+Tab stays inside the phone search dialog", async ({ page }) => {
   await page.setViewportSize(SIZES[1]);
   await page.goto("/docs/getting-started");
-  await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" }).click();
+  await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search documentation", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   await dialog.locator("input").first().focus();
@@ -56,8 +56,8 @@ test("Shift+Tab stays inside the phone search dialog", async ({ page }) => {
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
   test("search dialog opens without travel animations", async ({ page }) => {
-    await page.goto("/");
-    await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search the documentation" }).click();
+    await page.goto("/docs/getting-started");
+    await page.locator("#nd-mobile-nav").getByRole("button", { name: "Search documentation", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     expect(await page.evaluate(() => document.querySelector("[data-search-bar]")?.getAnimations().length ?? 0)).toBe(0);
     await page.keyboard.press("Escape");

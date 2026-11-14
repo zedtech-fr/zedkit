@@ -30,13 +30,13 @@ providers:
     decide:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: high }
-      sensitive: { model: muse-wonder-1.0, effort: high }
-      critical: { model: muse-wonder-full-1.0, effort: high }
+      sensitive: { model: muse-spark-1.3-contributor, effort: medium }
+      critical: { model: muse-spark-1.3-contributor, effort: high }
     design:
       trivial: { model: muse-spark-1.3-contributor, effort: medium }
       standard: { model: muse-spark-1.3-contributor, effort: high }
       sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-wonder-full-1.0, effort: high }
+      critical: { model: muse-spark-1.3-contributor, effort: medium }
     build:
       trivial: { model: muse-ember-1.0, effort: medium }
       standard: { model: muse-ember-1.0, effort: medium }
@@ -46,7 +46,7 @@ providers:
       trivial: { model: muse-ember-1.0, effort: medium }
       standard: { model: muse-ember-1.0, effort: medium }
       sensitive: { model: muse-spark-1.3-contributor, effort: high }
-      critical: { model: muse-wonder-full-1.0, effort: high }
+      critical: { model: muse-spark-1.3-contributor, effort: high }
 ---
 
 # Tokenomics
@@ -88,6 +88,4 @@ Cursor is the parent. Each cell holds a base `model` and an `effort`; the
 printed id may still be rejected by the session's Task allowlist, which is not
 the cell. The table floor is medium; `reasoning=low` lowers `trivial` and `standard` calls one step at run time.
 Grok and the Sonnet cells on `check`/`decide`/`design` sensitive and `build` critical use `max`; Opus keeps its listed id. Muse uses
-Ember on trivial and standard build and check (the cheap Muse model; if it fails a gate on real work, the owner edits these cells back to Spark), Spark elsewhere, Wonder on
-decide sensitive, and Wonder Full on decide critical, design critical, and
-check critical. Codex and Claude stay on shipped defaults.
+Ember on trivial and standard build and check (the cheap Muse model; if it fails a gate on real work, the owner edits these cells back to Spark), and Spark Contributor everywhere else. Wonder and Wonder Full are only a rare, explicitly justified exception (P0 cost rule, Nov 12 2026). Codex and Claude stay on shipped defaults.

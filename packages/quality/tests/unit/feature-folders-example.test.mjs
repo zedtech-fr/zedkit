@@ -44,6 +44,9 @@ describe("note-list example (no backend)", () => {
     expect(reduceNoteList(drafted, { type: "add-ok", note: { id: "1", title: "Hi" } })).toEqual({
       notes: [{ id: "1", title: "Hi" }],
       draft: "",
+      loadError: false,
+      pending: false,
+      addError: false,
     });
   });
 

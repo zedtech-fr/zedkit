@@ -2,6 +2,16 @@ export { zedkitUiMessagesEn, zedkitUiMessagesFr, type ZedkitUiMessages } from ".
 export { ZedkitUiProvider, useUiMessages } from "./ui-provider.js";
 export { Alert, AlertDescription, AlertTitle, alertVariants, type AlertProps } from "./feedback/alert.js";
 export { AppShell, type AppShellProps } from "./layout/app-shell.js";
+export { PersistentShell, type PersistentShellProps } from "./layout/persistent-shell.js";
+export {
+  AgentConsole,
+  type AgentConsoleDecision,
+  type AgentConsoleEntry,
+  type AgentConsoleFindingDisposition,
+  type AgentConsoleItem,
+  type AgentConsoleProps,
+  type AgentConsoleRun,
+} from "./layout/agent-console.js";
 export { Badge, badgeVariants, type BadgeProps } from "./feedback/badge.js";
 export { Button, buttonVariants, type ButtonProps } from "./button/button.js";
 export { Calendar, type CalendarProps } from "./calendar/calendar.js";
@@ -126,6 +136,11 @@ export {
   type AnimateProps,
   type AnimateTrigger,
 } from "./motion/animate.js";
+export {
+  PageTransition,
+  type PageTransitionPreset,
+  type PageTransitionProps,
+} from "./motion/page-transition.js";
 export { MotionScript, type MotionScriptProps } from "./motion/motion-script.js";
 export {
   MOTION_CHANGE_EVENT,
@@ -144,12 +159,14 @@ export { StatusLabel, type StatusLabelProps, type StatusLabelTone } from "./feed
 export { StreamStatus, type StreamStatusProps } from "./feedback/stream-status.js";
 export { StreamText, type StreamTextProps } from "./feedback/stream-text.js";
 export { ASSISTANT_STREAM_STAGES, consumeSseStream, isAssistantStreamStage, pullSseFrames, readAssistantStreamEvent, type AssistantStreamEvent, type AssistantStreamStage, type SseFrame } from "./assistant-stream.js";
+export { formatDuration } from "./feedback/format-duration.js";
 export { UpdatedAgo, type UpdatedAgoProps } from "./feedback/updated-ago.js";
 export { OfflineNote, type OfflineNoteProps } from "./feedback/offline-note.js";
 export { EmptyState, type EmptyStateProps } from "./feedback/empty-state.js";
 export { ErrorState, type ErrorStateProps } from "./feedback/error-state.js";
 export { Spinner, type SpinnerProps } from "./feedback/spinner.js";
 export { useOnlineStatus } from "./use-online-status.js";
+export { createStoredChoice } from "./use-stored-choice.js";
 export {
   OptionCard,
   OptionCards,
@@ -176,6 +193,12 @@ export {
   SelectValue,
 } from "./forms/select.js";
 export { Separator, type SeparatorProps } from "./layout/separator.js";
+export {
+  SidebarNavGroup,
+  SidebarNavItem,
+  type SidebarNavGroupProps,
+  type SidebarNavItemProps,
+} from "./layout/sidebar-nav.js";
 export { Surface, surfaceVariants, surfaceGlassPanelClass, applySurfaceGlassPanel, type SurfaceProps } from "./surfaces/surface.js";
 export { SCROLL_SCENES_MAX, ScrollScenes, type ScrollScene, type ScrollScenesProps } from "./layout/scroll-scenes.js";
 export {
@@ -232,11 +255,32 @@ export {
   type SignatureMotion,
 } from "./typography/typography.js";
 export { WordRoll, type WordRollProps } from "./typography/word-roll.js";
+export { Markdown, type MarkdownProps } from "./typography/markdown.js";
+export {
+  AssistantMessage,
+  ThinkingRow,
+  ToolCallRow,
+  TranscriptBurst,
+  groupToolCallBursts,
+  type AssistantMessageProps,
+  type ThinkingRowProps,
+  type ToolCallRowProps,
+  type TranscriptBurstProps,
+  type TranscriptGroupData,
+} from "./transcript/transcript-rows.js";
 export { cn } from "./utils.js";
 export { CardSkeleton, type CardSkeletonProps } from "./surfaces/card-skeleton.js";
 export { DataTableSkeleton, type DataTableSkeletonProps } from "./data-table/data-table-skeleton.js";
 export { DetailPanelSkeleton, type DetailPanelSkeletonProps } from "./layout/detail-panel-skeleton.js";
 export { PageHeaderSkeleton, type PageHeaderSkeletonProps } from "./layout/page-header-skeleton.js";
+export {
+  DetailPageSkeleton,
+  DocsPageSkeleton,
+  ListPageSkeleton,
+  type DetailPageSkeletonProps,
+  type DocsPageSkeletonProps,
+  type ListPageSkeletonProps,
+} from "./layout/route-skeletons.js";
 export { closeRoute, type CloseRouteOptions } from "./close-route.js";
 export {
   ScrollReset,
@@ -244,6 +288,18 @@ export {
   type ScrollResetOptions,
   type ScrollResetProps,
 } from "./scroll-reset.js";
+export {
+  InPageAnchorScroll,
+  scrollToFragment,
+  useInPageAnchorScroll,
+  type InPageAnchorScrollProps,
+} from "./in-page-anchor-scroll.js";
+export {
+  JumpToLatest,
+  useStickToBottom,
+  type JumpToLatestProps,
+  type StickToBottomOptions,
+} from "./layout/stick-to-bottom.js";
 export {
   RouteModal,
   type RouteModalDirection,
@@ -288,5 +344,6 @@ export {
   withIdentityDarkPair,
   type IdentityContrastWarning,
 } from "./identity/identity-contrast.js";
+export { repairContrast } from "./identity/identity-contrast-repair.js";
 export { BrandLogo, type BrandLogoProps } from "./brand/brand-logo.js";
 export { Logo, type LogoProps } from "./brand/logo.js";

@@ -6,6 +6,7 @@ import { AlertDemo } from "./alert-demo";
 import { BadgeVariantsDemo } from "./badge-variants-demo";
 import { BadgeTableRowDemo } from "./badge-table-row-demo";
 import { BadgeLinkDemo } from "./badge-link-demo";
+import { BadgeSoftStatusDemo } from "./badge-soft-status-demo";
 import { SeparatorVerticalDemo } from "./separator-vertical-demo";
 import { SkeletonTextDemo } from "./skeleton-text-demo";
 import { StatusDotTonesDemo } from "./status-dot-tones-demo";
@@ -18,10 +19,13 @@ import { StatusLabelOfflineDemo } from "./status-label-offline-demo";
 import { UpdatedAgoCustomDemo } from "./updated-ago-custom-demo";
 import { AlertSectionDemo } from "./alert-section-demo";
 import { HeadingLinkDemo } from "./heading-link-demo";
+import { AppShellMobileDrawerDemo } from "./app-shell-mobile-drawer-demo";
 import { AppShellNoTopbarDemo } from "./app-shell-no-topbar-demo";
+import { AppShellTriggerDemo } from "./app-shell-trigger-demo";
 import { GuideSaveRowDemo } from "./guide-save-row-demo";
 import { AdminDashboardGuideDemo } from "./admin-dashboard-guide-demo";
 import { RevealOnScrollDemo } from "./reveal-on-scroll-demo";
+import { AgentConsoleDemo } from "./agent-console-demo";
 import { AppShellDemo } from "./app-shell-demo";
 import { BadgeDemo } from "./badge-demo";
 import { BrandLogoDemo, BrandLogoHeaderDemo } from "./brand-logo-demo";
@@ -36,6 +40,7 @@ import {
   ScrollScenesPricingDemo,
 } from "./scroll-scenes-demo";
 import { PromptInputCompleteDemo, PromptInputDemo } from "./prompt-input-demo";
+import { TranscriptRowsBurstDemo, TranscriptRowsDemo } from "./transcript-rows-demo";
 import { StickyAsideDemo, StickyAsideDocStepsDemo } from "./sticky-aside-demo";
 import { CalendarDemo } from "./calendar-demo";
 import { CardDemo } from "./card-demo";
@@ -53,6 +58,7 @@ import { DataTablePaginationDemo } from "./data-table-pagination-demo";
 import { DataTableToolbarDemo } from "./data-table-toolbar-demo";
 import { DetailsComposedDemo } from "./details-composed-demo";
 import { DetailsDemo } from "./details-demo";
+import { DetailsStatGridDemo } from "./details-stat-grid-demo";
 import { DialogDemo } from "./dialog-demo";
 import { DialogTallDemo } from "./dialog-tall-demo";
 import { DropdownMenuDemo } from "./dropdown-menu-demo";
@@ -60,7 +66,6 @@ import { DrawerBottomSheetDemo } from "./drawer-bottom-sheet-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { DrawerSideMenuDemo } from "./drawer-side-menu-demo";
 import { FieldDemo } from "./field-demo";
-import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { PopoverDemo } from "./popover-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
@@ -78,6 +83,9 @@ import { SelectDemo } from "./select-demo";
 import { ComboboxDemo } from "./combobox-demo";
 import { MultiSelectDemo } from "./multi-select-demo";
 import { SeparatorDemo } from "./separator-demo";
+import { SidebarNavActiveDemo } from "./sidebar-nav-active-demo";
+import { SidebarNavItemDemo } from "./sidebar-nav-demo";
+import { SidebarNavGroupDemo } from "./sidebar-nav-group-demo";
 import { SkeletonDemo } from "./skeleton-demo";
 import { StackDemo } from "./stack-demo";
 import { StatusDotDemo } from "./status-dot-demo";
@@ -118,6 +126,8 @@ import { EmptyStateDemo } from "./empty-state-demo";
 import { ErrorStateDemo } from "./error-state-demo";
 import { ErrorStateRetryDemo } from "./error-state-retry-demo";
 import { OfflineNoteDemo, OfflineNoteWiredDemo, OfflineNoteWordingDemo } from "./offline-note-demo";
+import { PageTransitionDemo } from "./page-transition-demo";
+import { RouteSkeletonsDemo } from "./route-skeletons-demo";
 import { SpinnerDemo } from "./spinner-demo";
 import { SpinnerNamedDemo } from "./spinner-named-demo";
 import { SurfaceDemo } from "./surface-demo";
@@ -147,6 +157,7 @@ export interface DemoEntry {
 
 export const demoRegistry = {
   AlertDemo: { Demo: AlertDemo, file: "alert-demo.tsx" },
+  AgentConsoleDemo: { Demo: AgentConsoleDemo, file: "agent-console-demo.tsx" },
   AppShellDemo: { Demo: AppShellDemo, file: "app-shell-demo.tsx" },
   BadgeDemo: { Demo: BadgeDemo, file: "badge-demo.tsx", center: true },
   ButtonDemo: { Demo: ButtonDemo, file: "button-demo.tsx", center: true },
@@ -158,6 +169,7 @@ export const demoRegistry = {
   BadgeVariantsDemo: { Demo: BadgeVariantsDemo, file: "badge-variants-demo.tsx" },
   BadgeTableRowDemo: { Demo: BadgeTableRowDemo, file: "badge-table-row-demo.tsx" },
   BadgeLinkDemo: { Demo: BadgeLinkDemo, file: "badge-link-demo.tsx" },
+  BadgeSoftStatusDemo: { Demo: BadgeSoftStatusDemo, file: "badge-soft-status-demo.tsx" },
   SeparatorVerticalDemo: { Demo: SeparatorVerticalDemo, file: "separator-vertical-demo.tsx" },
   SkeletonTextDemo: { Demo: SkeletonTextDemo, file: "skeleton-text-demo.tsx" },
   StatusDotTonesDemo: { Demo: StatusDotTonesDemo, file: "status-dot-tones-demo.tsx" },
@@ -171,6 +183,8 @@ export const demoRegistry = {
   AlertSectionDemo: { Demo: AlertSectionDemo, file: "alert-section-demo.tsx" },
   HeadingLinkDemo: { Demo: HeadingLinkDemo, file: "heading-link-demo.tsx" },
   AppShellNoTopbarDemo: { Demo: AppShellNoTopbarDemo, file: "app-shell-no-topbar-demo.tsx" },
+  AppShellMobileDrawerDemo: { Demo: AppShellMobileDrawerDemo, file: "app-shell-mobile-drawer-demo.tsx" },
+  AppShellTriggerDemo: { Demo: AppShellTriggerDemo, file: "app-shell-trigger-demo.tsx" },
   GuideSaveRowDemo: { Demo: GuideSaveRowDemo, file: "guide-save-row-demo.tsx" },
   AdminDashboardGuideDemo: { Demo: AdminDashboardGuideDemo, file: "admin-dashboard-guide-demo.tsx" },
   AnimateDemo: { Demo: AnimateDemo, file: "animate-demo.tsx" },
@@ -195,6 +209,8 @@ export const demoRegistry = {
   OfflineNoteDemo: { Demo: OfflineNoteDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWiredDemo: { Demo: OfflineNoteWiredDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWordingDemo: { Demo: OfflineNoteWordingDemo, file: "offline-note-demo.tsx" },
+  PageTransitionDemo: { Demo: PageTransitionDemo, file: "page-transition-demo.tsx" },
+  RouteSkeletonsDemo: { Demo: RouteSkeletonsDemo, file: "route-skeletons-demo.tsx" },
   ThemeDemo: { Demo: ThemeDemo, file: "theme-demo.tsx" },
   ThemeTokensDemo: { Demo: ThemeTokensDemo, file: "theme-demo.tsx" },
   ThemeToggleDemo: { Demo: ThemeToggleDemo, file: "theme-demo.tsx" },
@@ -211,6 +227,7 @@ export const demoRegistry = {
   DataTableToolbarDemo: { Demo: DataTableToolbarDemo, file: "data-table-toolbar-demo.tsx" },
   DetailsDemo: { Demo: DetailsDemo, file: "details-demo.tsx" },
   DetailsComposedDemo: { Demo: DetailsComposedDemo, file: "details-composed-demo.tsx" },
+  DetailsStatGridDemo: { Demo: DetailsStatGridDemo, file: "details-stat-grid-demo.tsx" },
   DialogDemo: { Demo: DialogDemo, file: "dialog-demo.tsx" },
   DialogTallDemo: { Demo: DialogTallDemo, file: "dialog-tall-demo.tsx", center: true },
   DropdownMenuDemo: { Demo: DropdownMenuDemo, file: "dropdown-menu-demo.tsx", center: true },
@@ -219,7 +236,6 @@ export const demoRegistry = {
   DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
-  HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LabelDemo: { Demo: LabelDemo, file: "label-demo.tsx" },
   LabelNativeDemo: { Demo: LabelNativeDemo, file: "label-native-demo.tsx" },
@@ -237,6 +253,9 @@ export const demoRegistry = {
   ComboboxDemo: { Demo: ComboboxDemo, file: "combobox-demo.tsx" },
   MultiSelectDemo: { Demo: MultiSelectDemo, file: "multi-select-demo.tsx" },
   SeparatorDemo: { Demo: SeparatorDemo, file: "separator-demo.tsx" },
+  SidebarNavActiveDemo: { Demo: SidebarNavActiveDemo, file: "sidebar-nav-active-demo.tsx" },
+  SidebarNavGroupDemo: { Demo: SidebarNavGroupDemo, file: "sidebar-nav-group-demo.tsx" },
+  SidebarNavItemDemo: { Demo: SidebarNavItemDemo, file: "sidebar-nav-demo.tsx" },
   SkeletonDemo: { Demo: SkeletonDemo, file: "skeleton-demo.tsx" },
   StackDemo: { Demo: StackDemo, file: "stack-demo.tsx" },
   ContainerDemo: { Demo: ContainerDemo, file: "container-demo.tsx" },
@@ -256,6 +275,8 @@ export const demoRegistry = {
   ScrollScenesPricingDemo: { Demo: ScrollScenesPricingDemo, file: "scroll-scenes-demo.tsx", pinned: true },
   PromptInputCompleteDemo: { Demo: PromptInputCompleteDemo, file: "prompt-input-demo.tsx" },
   PromptInputDemo: { Demo: PromptInputDemo, file: "prompt-input-demo.tsx" },
+  TranscriptRowsBurstDemo: { Demo: TranscriptRowsBurstDemo, file: "transcript-rows-demo.tsx" },
+  TranscriptRowsDemo: { Demo: TranscriptRowsDemo, file: "transcript-rows-demo.tsx" },
   StickyAsideDemo: { Demo: StickyAsideDemo, file: "sticky-aside-demo.tsx" },
   StickyAsideDocStepsDemo: { Demo: StickyAsideDocStepsDemo, file: "sticky-aside-demo.tsx" },
   ToasterDemo: { Demo: ToasterDemo, file: "toaster-demo.tsx", center: true },

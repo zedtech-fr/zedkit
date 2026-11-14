@@ -1,22 +1,223 @@
-/* Doc page title stays 2rem / 1.75rem — not the marketing H1 clamp. */
+/*
+ * Shell display/section (home, catalog). Docs article H1 stays on
+ * --zk-type-doc-h1-size; docs H2 keeps the shared 22–26px scale.
+ */
+html[data-docs-shell][data-identity] {
+  --zk-type-h1-size: 3rem;
+  --zk-type-h1-weight: 500;
+  --zk-type-h1-leading: 1.08;
+  --zk-type-h1-tracking: -0.035em;
+  --zk-type-h2-size: 1.875rem;
+  --zk-type-h2-weight: 500;
+  --zk-type-h2-leading: 1.15;
+  --zk-type-h2-tracking: -0.025em;
+}
+
+/* Home display only: a fixed 48px eats the first screen on a phone. */
+#home-page {
+  --zk-type-h1-size: clamp(2.125rem, 1.6rem + 2.2vw, 3rem);
+  --zk-type-h1-leading: 1.08;
+  --zk-type-h1-tracking: -0.035em;
+}
+
+@media (max-width: 390px) {
+  html[data-docs-shell][data-identity] {
+    --zk-type-lead-size: 1.125rem;
+    --zk-type-lead-leading: 1.55;
+  }
+  #home-page {
+    --zk-home-band-sub-size: 1rem;
+    --zk-home-band-sub-leading: 1.55;
+    --zk-home-persuasion-font-size: 0.9375rem;
+    --zk-home-persuasion-leading: 1.55;
+  }
+}
+
+html[data-docs-shell] :is(h1, h2, h3, h4):not([data-identity-scope] *) {
+  font-family: var(--zk-font-sans);
+}
+
+html[data-docs-shell] h1:not([data-identity-scope] *) {
+  font-weight: var(--zk-type-h1-weight);
+  line-height: var(--zk-type-h1-leading);
+  letter-spacing: var(--zk-type-h1-tracking);
+}
+
+html[data-docs-shell] h2:not([data-identity-scope] *) {
+  font-weight: var(--zk-type-h2-weight);
+  line-height: var(--zk-type-h2-leading);
+  letter-spacing: var(--zk-type-h2-tracking);
+}
+
+/* Doc page title: clamp for consistency with the home display scale. */
 #nd-page {
-  --zk-type-doc-h1-size: 2rem;
+  --zk-type-doc-h1-size: clamp(1.75rem, 1.5rem + 1vw, 2.25rem);
+  --zk-type-doc-h1-weight: 600;
+  --zk-type-doc-h1-leading: 2.375rem;
+  --zk-type-doc-h1-tracking: var(--zk-heading-tracking, -0.02em);
+  --zk-type-h2-size: var(--text-2xl);
+  --zk-type-h2-weight: 600;
+  --zk-type-h2-leading: 1.2;
 }
 
 #nd-page h1 {
   font-size: var(--zk-type-doc-h1-size);
-  font-weight: 600;
-  line-height: 2.375rem;
-  letter-spacing: var(--zk-type-h1-tracking, -0.02em);
+  font-weight: var(--zk-type-doc-h1-weight);
+  line-height: var(--zk-type-doc-h1-leading);
+  letter-spacing: var(--zk-type-doc-h1-tracking);
+}
+
+/* Foundations keeps the marketing display scale; do not change #nd-page h1 globally. */
+#nd-page[data-foundations-page] {
+  max-width: var(--zk-container-wide);
+  --zk-foundations-quote-size: 1.25rem;
+  --zk-type-h2-size: 1.875rem;
+  --zk-type-h2-weight: 500;
+  --zk-type-h2-leading: 1.15;
+  --zk-type-h2-tracking: -0.025em;
+}
+
+#nd-page[data-foundations-page] h1 {
+  font-size: var(--zk-type-h1-size);
+  font-weight: var(--zk-type-h1-weight);
+  line-height: var(--zk-type-h1-leading);
+  letter-spacing: var(--zk-type-h1-tracking);
+}
+
+/*
+ * Title overlay on the hero only so the Inter 48 display specimen stays
+ * on the shell 3rem token. Catalog uses its own clamp overlay.
+ */
+#nd-page[data-foundations-page] [data-foundations-hero] {
+  --zk-foundations-title-size: 2.5rem;
+  --zk-type-h1-size: var(--zk-foundations-title-size);
+  --zk-type-h1-leading: 1.12;
+  --zk-type-h1-tracking: -0.03em;
+  /* Band follows --zk-site-band (light zinc / dark identity muted). Pin text
+   * to --zk-site-ink / --zk-site-body so they stay paired with the band.
+   * Inherited computed color from html.dark would ignore the variable. */
+  --foreground: var(--zk-site-ink);
+  --muted-foreground: var(--zk-site-body);
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--zk-site-band));
+  border-bottom: var(--zk-border-width, 1px) solid hsl(var(--zk-site-hairline));
+  padding-block: calc(var(--spacing) * 18) calc(var(--spacing) * 16);
+}
+
+#nd-page[data-foundations-page] [data-foundations-hero-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  align-items: center;
+  gap: calc(var(--spacing) * 12);
+}
+
+#nd-page[data-foundations-page] [data-palette-dots] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: calc(var(--spacing) * 4);
+}
+
+@media (min-width: 90rem) {
+  #nd-page[data-foundations-page] [data-palette-dots] {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  #nd-page[data-foundations-page] [data-palette-dots] > * {
+    min-width: 0;
+  }
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch] {
+  min-height: calc(var(--spacing) * 18);
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="page"],
+#nd-page[data-foundations-page] [data-foundations-swatch="band"] {
+  border: var(--zk-border-width, 1px) solid hsl(var(--zk-site-hairline));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="page"] {
+  background-color: hsl(var(--zk-site-page));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="band"] {
+  background-color: hsl(var(--zk-site-band));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="hairline"] {
+  background-color: hsl(var(--zk-site-hairline));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="body"] {
+  background-color: hsl(var(--zk-site-body));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="ink"] {
+  background-color: hsl(var(--zk-site-ink));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="action"] {
+  background-color: hsl(var(--zk-site-action));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="indigo"] {
+  background-color: hsl(var(--primary));
+}
+
+#nd-page[data-foundations-page] [data-foundations-swatch="violet"] {
+  background-color: hsl(var(--accent));
+}
+
+#nd-page[data-foundations-page] .prose {
+  max-width: none;
+}
+
+#nd-page[data-foundations-page] [data-type-spec] {
+  flex: 0 0 12rem;
+}
+
+#nd-page[data-foundations-page] [data-type-quote] {
+  font-size: var(--zk-foundations-quote-size);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+@media (width < 48rem) {
+  #nd-page[data-foundations-page] [data-foundations-type-row] {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--spacing) * 2);
+  }
+
+  #nd-page[data-foundations-page] [data-type-spec] {
+    flex: none;
+  }
+}
+
+#nd-page[data-foundations-page] h2 {
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  line-height: var(--zk-type-h2-leading);
+  letter-spacing: var(--zk-heading-tracking, -0.02em);
+}
+
+/*
+ * Fumadocs heading copy uses `p-1` and svg `size-4`. Dense looks
+ * (Press 0.2rem, Volt 0.225rem) shrink that box under the 24px
+ * evidence floor. The visible icon stays; the control box does not.
+ */
+#nd-page :is(h2, h3, h4, h5, h6) > button {
+  min-width: max(24px, var(--zk-tap-min, 0px));
+  min-height: max(24px, var(--zk-tap-min, 0px));
+}
+
+#nd-page :is(h2, h3, h4, h5, h6):focus-within > button {
+  opacity: 1;
 }
 
 @media (width < 48rem) {
   #nd-page {
-    --zk-type-doc-h1-size: 1.75rem;
-  }
-
-  #nd-page h1 {
-    line-height: 2.125rem;
+    --zk-type-doc-h1-leading: 2.125rem;
   }
 }
 
@@ -44,6 +245,8 @@
   letter-spacing: inherit;
   color: inherit;
   text-decoration: none;
+  min-height: max(24px, var(--zk-tap-min, 0px));
+  align-self: center;
 }
 
 #nd-page .prose > h2 a:hover,
@@ -101,7 +304,18 @@
   font-size: var(--zk-type-h2-size);
   font-weight: var(--zk-type-h2-weight);
   line-height: var(--zk-type-h2-leading);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--zk-type-h2-tracking);
+}
+
+#home-page [data-slot="section"] h2[data-slot="heading"] + [data-slot="text"] {
+  margin-top: var(--zk-heading-to-sub);
+}
+
+@media (max-width: 390px) {
+  #home-page [data-slot="section"] h2[data-slot="heading"] + [data-slot="text"] {
+    font-size: var(--zk-home-band-sub-size);
+    line-height: var(--zk-home-band-sub-leading);
+  }
 }
 
 #home-page h3[data-slot="heading"]:not([data-identity-scope] *) {
@@ -112,16 +326,17 @@
 }
 
 #home-page [data-home-hero-lead] [data-slot="heading"] {
+  font-family: var(--zk-font-sans);
   font-size: var(--zk-type-h1-size);
-  font-weight: var(--zk-type-h1-weight, 600);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-weight: var(--zk-type-h1-weight);
+  line-height: var(--zk-type-h1-leading);
+  letter-spacing: var(--zk-type-h1-tracking);
 }
 
 #home-page [data-home-hero-lead] [data-home-hero-sub] {
-  font-size: var(--zk-type-lead-size);
-  font-weight: var(--zk-type-lead-weight);
-  line-height: var(--zk-type-lead-leading);
+  font-size: var(--zk-type-body-size);
+  font-weight: var(--zk-type-body-weight);
+  line-height: var(--zk-type-body-leading);
 }
 
 #scenarios [data-slot="card-title"] {
@@ -137,12 +352,11 @@
   color: hsl(var(--muted-foreground));
 }
 
-[data-catalog-shell] h2[data-slot="heading"],
-[data-catalog-shell] [data-catalog-toolbar] {
+[data-catalog-shell] h2[data-slot="heading"] {
   font-size: var(--zk-type-h2-size);
   font-weight: var(--zk-type-h2-weight);
   line-height: var(--zk-type-h2-leading);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--zk-type-h2-tracking, -0.02em);
 }
 
 /* Badge links inside prose keep the badge look: no link underline. */
@@ -192,12 +406,6 @@
   color: hsl(var(--zk-subtle-foreground));
 }
 
-@media (width < 48rem) {
-  #home-page [data-home-marketing] [data-slot="section"] [data-slot="heading"] + [data-slot="text"] {
-    font-size: var(--zk-home-persuasion-font-size);
-    line-height: var(--zk-home-persuasion-leading);
-  }
-}
 
 @media (width >= 64rem) {
   #nd-docs-layout nav[aria-label] a,

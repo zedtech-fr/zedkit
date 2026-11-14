@@ -25,6 +25,14 @@ export const detailsCopy = {
     ],
     trackingStoppedHint: "Shown once tracking stops, for example after delivery.",
   },
+  statGrid: {
+    items: [
+      { label: "Requests", value: "12,480" },
+      { label: "Uptime", value: "99.9%" },
+      { label: "Latency", value: "42 ms" },
+      { label: "Errors", value: "0.12%" },
+    ],
+  },
 } as const;
 
 export type DetailsCopy = typeof detailsCopy;

@@ -17,32 +17,47 @@ function bodyOf(file: string): string {
 }
 
 describe("command shape", () => {
+  const deprecation = (name: string) =>
+    `Deprecated: use \`/zedkit-ai <request>\`. Forwarding as route \`${name}\`.`;
+
   const defaultBody = (name: string) =>
-    `Run the \`${name}\` skill on \`$ARGUMENTS\` (the text after the command, or the current context when empty).`;
+    `${deprecation(name)} Run the \`${name}\` skill on \`$ARGUMENTS\` (the text after the command, or the current context when empty).`;
 
   it("routes every command to its same-named skill with the $ARGUMENTS contract", () => {
     const files = commandFiles();
     expect(files.length).toBeGreaterThan(0);
     for (const file of files) {
       const name = file.replace(/\.md$/, "");
+      const body = bodyOf(file);
       if (name === "setup-ai") {
-        expect(bodyOf(file), file).toContain(
-          "Before anything else, tell the user",
-        );
-        expect(bodyOf(file), file).toContain("Tell the user first");
-        expect(bodyOf(file), file).toContain("before any tool call");
-        expect(bodyOf(file), file).toContain(
+        expect(
+          body.startsWith(
+            `${deprecation(name)} Before anything else, tell the user`,
+          ),
+          file,
+        ).toBe(true);
+        expect(body, file).toContain("Tell the user first");
+        expect(body, file).toContain("before any tool call");
+        expect(body, file).toContain(
           "Then run the `setup-ai` skill on `$ARGUMENTS`",
         );
         continue;
       }
       if (name === "improve-config") {
-        expect(bodyOf(file), file).toContain("`rules-upkeep`");
-        expect(bodyOf(file), file).toContain("`improve-config`");
-        expect(bodyOf(file), file).toContain("$ARGUMENTS");
+        expect(body, file).toBe(
+          `${deprecation(name)} Run the \`rules-upkeep\` skill (\`improve-config\`) on \`$ARGUMENTS\` (the text after the command, or the current context when empty).`,
+        );
         continue;
       }
-      expect(bodyOf(file), file).toBe(defaultBody(name));
+      if (name === "zedkit-ai") {
+        expect(body, file).not.toContain("Deprecated:");
+        expect(body, file).toContain("before any tool call");
+        expect(body, file).toContain(
+          "run the `zedkit-ai` skill on `$ARGUMENTS`",
+        );
+        continue;
+      }
+      expect(body, file).toBe(defaultBody(name));
     }
   });
 });

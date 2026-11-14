@@ -36,7 +36,9 @@ Return shapes follow the Next.js Metadata API (`MetadataRoute.Robots`,
 `MetadataRoute.Sitemap`, `Metadata`) so builders drop straight into
 `robots.ts`, `sitemap.ts`, and `generateMetadata`. JSON-LD builders
 return `schema-dts` types. Map CMS docs to the plain `pages`/`videos`
-inputs first — the package never talks to a CMS.
+inputs first — the package never talks to a CMS. The main entry has no
+React dependency. `JsonLd` is exported from `@zedtech/zedkit-seo/react`,
+whose react peer is optional.
 
 ## API
 
@@ -44,7 +46,9 @@ inputs first — the package never talks to a CMS.
 - `buildSitemapEntries({ siteUrl, locales, pages, localeInPath? })`
 - `buildVideoSitemap({ videos })`, `escapeXml(value)`
 - `buildOrganizationJsonLd`, `buildWebPageJsonLd`,
-  `buildBreadcrumbJsonLd`, `buildArticleJsonLd`
+  `buildBreadcrumbJsonLd`, `buildArticleJsonLd`,
+  `buildSoftwareSourceCodeJsonLd`
+- `JsonLd`, `JsonLdProps` from `@zedtech/zedkit-seo/react`
 - `buildPageMetadata({ site, page, locale, pathname, ogImage?, robots?, localeInPath? })`
 - `llmsTextResponse({ body })`, `normalizeLlmsBody`, `buildLlmsFull`
 - `truncateDescription`, `resolveDescription`, `resolveLocalizedField`

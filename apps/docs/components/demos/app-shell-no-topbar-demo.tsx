@@ -2,11 +2,13 @@ import { AppShell, PageHeader, Stack, Text } from "@zedtech/zedkit-ui";
 import { appShellNoTopbarCopy } from "@/components/demos/i18n/app-shell-no-topbar-copy";
 
 const NAV = appShellNoTopbarCopy.nav;
+const linkClassName =
+  "inline-flex min-h-target items-center rounded-md px-select-item-inline py-select-item-block text-dense focus-ring-control hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium";
 
 export function AppShellNoTopbarDemo() {
   return (
     <AppShell
-      className="h-frame pane-shrink overflow-hidden rounded-lg border"
+      className="h-frame pane-shrink overflow-y-auto rounded-lg border bg-background"
       sidebar={
         <Stack gap="tight" className="surface-pad-compact">
           <Text data-nav-label="" className="px-control-tight font-semibold">{appShellNoTopbarCopy.brand}</Text>
@@ -15,9 +17,9 @@ export function AppShellNoTopbarDemo() {
               {NAV.map((item, index) => (
                 <a
                   key={item}
-                  href={`#${item.toLowerCase()}`}
+                  href="#example"
                   aria-current={index === 0 ? "page" : undefined}
-                  className="rounded-md px-select-item-inline py-select-item-block text-dense hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:font-medium"
+                  className={linkClassName}
                 >
                   {item}
                 </a>

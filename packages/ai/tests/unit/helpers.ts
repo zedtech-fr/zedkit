@@ -2,8 +2,9 @@ import { lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, w
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach } from "vitest";
-import { kitDir, readManifest } from "#kit.js";
+import { main } from "#cli.js";
 import { MUSE_NAME_ALIAS } from "#generate.js";
+import { kitDir, readManifest } from "#kit.js";
 
 const dirs: string[] = [];
 
@@ -17,10 +18,22 @@ export function tempDir(): string {
   return dir;
 }
 
+export function run(...argv: string[]): { code: number; text: string; errors: string } {
+  const out: string[] = [];
+  const errors: string[] = [];
+  const code = main(argv, { out: (line) => out.push(line), err: (line) => errors.push(line) });
+  return { code, text: out.join("\n"), errors: errors.join("\n") };
+}
+
 export function put(root: string, rel: string, content: string): void {
   const path = join(root, rel);
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, content);
+}
+
+/** CLI treats `warning:` as exit 0; tests that mean "valid" should ignore those lines. */
+export function failingIssues<T extends { message: string }>(issues: readonly T[]): T[] {
+  return issues.filter((issue) => !issue.message.startsWith("warning:"));
 }
 
 export const SKILL = (name: string): string =>

@@ -2,9 +2,16 @@ import { expect, test } from "@playwright/test";
 
 const WIDTHS = [375, 390, 768, 1280] as const;
 
-const SECTION_IDS = ["identities", "get-started", "components", "entry-points"];
+const SECTION_IDS = [
+  "same-idea",
+  "six-sentences",
+  "paste",
+  "identities",
+  "limits",
+  "manifesto",
+  "closing",
+];
 const MIN_SECTION_PADDING_PX = 32;
-const MIN_CARD_PADDING_PX = 16;
 
 test.describe("home layout rhythm (#387)", () => {
   for (const width of WIDTHS) {
@@ -59,10 +66,8 @@ test.describe("home layout rhythm (#387)", () => {
       const sections = sectionIds
         .map((id) => document.getElementById(id))
         .filter((el): el is HTMLElement => el !== null);
-      const familyRows = [...document.querySelectorAll("[data-home-component-families] > div > div")];
       return {
         sectionPads: sections.map((el) => padding(el)),
-        familyPads: familyRows.map((el) => padding(el)),
       };
     }, SECTION_IDS);
 
@@ -70,28 +75,21 @@ test.describe("home layout rhythm (#387)", () => {
     for (const pad of metrics.sectionPads) {
       expect(pad).toBeGreaterThanOrEqual(MIN_SECTION_PADDING_PX);
     }
-    expect(metrics.familyPads.length).toBeGreaterThan(0);
-    for (const pad of metrics.familyPads) {
-      expect(pad).toBeGreaterThanOrEqual(MIN_CARD_PADDING_PX);
-    }
   });
 
-  test("proximity snap on the home scroll root; the looks band is not snapped", async ({ page }) => {
+  test("native document scroll on home; the looks band is not snapped", async ({ page }) => {
     const readSnap = () =>
       page.evaluate(() => {
         const html = getComputedStyle(document.documentElement);
-        const root = document.querySelector("[data-slot='section-scroll']");
         const identities = document.getElementById("identities");
-        const entry = document.getElementById("entry-points");
         const snap = (el: Element | null) => (el ? getComputedStyle(el).scrollSnapAlign : "");
         return {
           htmlType: html.scrollSnapType,
           htmlBehavior: html.scrollBehavior,
-          htmlPaddingTop: html.scrollPaddingTop,
-          rootType: root ? getComputedStyle(root).scrollSnapType : "",
+          sectionScroll: document.querySelector("[data-slot='section-scroll']"),
           identitiesAlign: snap(identities),
           identitiesSnap: identities?.getAttribute("data-snap"),
-          entryAlign: snap(entry),
+          identitiesMarginTop: identities ? getComputedStyle(identities).scrollMarginTop : "",
         };
       });
 
@@ -99,14 +97,13 @@ test.describe("home layout rhythm (#387)", () => {
       await page.setViewportSize({ width, height: width === 375 ? 812 : 900 });
       await page.goto("/", { waitUntil: "networkidle" });
       const metrics = await readSnap();
-      expect(metrics.htmlType, `${width}`).toMatch(/^y(\s+proximity)?$/);
-      expect(metrics.htmlType, `${width}`).not.toMatch(/mandatory/);
-      expect(metrics.rootType, `${width}`).toMatch(/^y(\s+proximity)?$/);
-      expect(metrics.htmlBehavior, `${width}`).toBe("smooth");
-      expect(Number.parseFloat(metrics.htmlPaddingTop), `${width}`).toBeGreaterThanOrEqual(48);
+      const type = metrics.htmlType.replace(/\s+/g, " ").trim();
+      expect(type, `${width}`).toMatch(/^none(\s+none)?$/);
+      expect(metrics.htmlBehavior, `${width}`).toMatch(/^(auto|normal)$/);
+      expect(metrics.sectionScroll, `${width}`).toBeNull();
       expect(metrics.identitiesSnap, `${width}`).toBe("none");
       expect(metrics.identitiesAlign, `${width}`).toBe("none");
-      expect(metrics.entryAlign, `${width}`).toMatch(/start/);
+      expect(parseFloat(metrics.identitiesMarginTop), `${width}`).toBeGreaterThan(0);
     }
   });
 });
@@ -121,11 +118,11 @@ test.describe("home bands (#1025)", () => {
         const r = el?.getBoundingClientRect();
         return r ? { left: r.left, right: r.right, width: r.width } : null;
       };
-      const section = document.getElementById("components");
+      const section = document.getElementById("same-idea");
       return {
         viewportWidth: document.documentElement.clientWidth,
         section: rect(section),
-        inner: rect(section?.querySelector(":scope > div")),
+        inner: rect(section?.querySelector("[data-slot='container']")),
         heading: rect(document.querySelector("#home-page h1")),
       };
     });
@@ -135,12 +132,13 @@ test.describe("home bands (#1025)", () => {
     expect(metrics.section!.right).toBeGreaterThanOrEqual(metrics.viewportWidth - 1);
 
     expect(metrics.inner).not.toBeNull();
-    expect(metrics.inner!.width).toBeGreaterThan(1200);
+    // Docs shell pins --zk-container-wide to 75rem (1200px); kit default is 90rem.
+    expect(metrics.inner!.width).toBeGreaterThanOrEqual(1200);
     expect(metrics.inner!.width).toBeLessThanOrEqual(1442);
     expect(Math.abs(metrics.inner!.left - (metrics.viewportWidth - metrics.inner!.right))).toBeLessThan(2);
 
     expect(metrics.heading).not.toBeNull();
-    expect(metrics.heading!.left).toBeLessThan((metrics.viewportWidth - 1440) / 2 + 48);
+    expect(metrics.heading!.left).toBeLessThan((metrics.viewportWidth - 1200) / 2 + 48);
   });
 });
 

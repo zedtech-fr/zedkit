@@ -22,12 +22,14 @@
           "muted-foreground": "hsl(240 5% 32%)",
           "accent": "hsl(240 4.8% 59.9%)",
           "accent-foreground": "hsl(240 5.9% 10%)",
-          "destructive": "hsl(0 72.2% 47%)",
+          "destructive": "hsl(0 72.2% 42%)",
           "destructive-foreground": "hsl(0 0% 98%)",
-          "success": "hsl(142.1 76.2% 27%)",
+          "success": "hsl(142.1 76.2% 25%)",
           "success-foreground": "hsl(0 0% 98%)",
-          "warning": "hsl(32 95% 44%)",
-          "warning-foreground": "hsl(240 10% 3.9%)",
+          "warning": "hsl(32 95% 29%)",
+          "warning-foreground": "hsl(0 0% 98%)",
+          "info": "hsl(215 55% 38%)",
+          "info-foreground": "hsl(0 0% 98%)",
           "overlay": "hsl(0 0% 0%)",
           "border": "hsl(240 5.9% 60%)",
           "input": "hsl(240 5.9% 57%)",
@@ -57,12 +59,14 @@
           "muted-foreground": "hsl(240 5% 64.9%)",
           "accent": "hsl(240 3.7% 37.9%)",
           "accent-foreground": "hsl(0 0% 98%)",
-          "destructive": "hsl(0 72.2% 66%)",
+          "destructive": "hsl(0 72.2% 72%)",
           "destructive-foreground": "hsl(240 10% 3.9%)",
           "success": "hsl(142.1 70.6% 45.3%)",
           "success-foreground": "hsl(240 10% 3.9%)",
-          "warning": "hsl(32 95% 32%)",
-          "warning-foreground": "hsl(0 0% 98%)",
+          "warning": "hsl(32 95% 49%)",
+          "warning-foreground": "hsl(240 10% 3.9%)",
+          "info": "hsl(215 25% 70%)",
+          "info-foreground": "hsl(240 10% 3.9%)",
           "overlay": "hsl(0 0% 0%)",
           "border": "hsl(240 3.7% 37.9%)",
           "input": "hsl(240 3.7% 46%)",
@@ -93,6 +97,8 @@
           "color-success-foreground": "var(--success-foreground)",
           "color-warning": "var(--warning)",
           "color-warning-foreground": "var(--warning-foreground)",
+          "color-info": "var(--info)",
+          "color-info-foreground": "var(--info-foreground)",
           "color-overlay": "var(--overlay)",
           "color-border": "var(--border)",
           "color-input": "var(--input)",
@@ -119,6 +125,7 @@
           "container-wide": "var(--zk-container-wide)",
           "spacing-badge-inline": "calc(var(--spacing) * 2.5)",
           "spacing-badge-block": "calc(var(--spacing) * 0.5)",
+          "spacing-code-inline": "calc(var(--spacing) * 2.5)",
           "spacing-control-height": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9))",
           "spacing-control-height-sm": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8))",
           "spacing-control-height-lg": "max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10))",
@@ -291,6 +298,18 @@
         "@utility badge-secondary-hover": {
           "background-color": "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)"
         },
+        "@utility badge-soft-destructive": {
+          "background-color": "color-mix(in oklab, hsl(var(--destructive)) 15%, transparent)"
+        },
+        "@utility badge-soft-info": {
+          "background-color": "color-mix(in oklab, hsl(var(--info)) 15%, transparent)"
+        },
+        "@utility badge-soft-success": {
+          "background-color": "color-mix(in oklab, hsl(var(--success)) 15%, transparent)"
+        },
+        "@utility badge-soft-warning": {
+          "background-color": "color-mix(in oklab, hsl(var(--warning)) 15%, transparent)"
+        },
         "@utility badge-success-hover": {
           "background-color": "color-mix(in oklab, hsl(var(--success)) 90%, transparent)"
         },
@@ -364,17 +383,42 @@
         "@utility gap-stack-sm": {
           "gap": "var(--zk-gap-sm)"
         },
+        "@utility gap-stack-tight": {
+          "gap": "var(--spacing)"
+        },
         "@utility ghost-hover": {
           "background-color": "color-mix(in oklab, hsl(var(--muted)) 80%, transparent)"
         },
         "@utility ghost-pressed": {
           "background-color": "color-mix(in oklab, hsl(var(--secondary)) 80%, transparent)"
         },
+        "@utility grid-pair": {
+          "grid-template-columns": "repeat(2, minmax(0, 1fr))"
+        },
+        "@utility grid-quint": {
+          "grid-template-columns": "repeat(5, minmax(0, 1fr))"
+        },
         "@utility grid-trio": {
           "grid-template-columns": "repeat(3, minmax(0, 1fr))"
         },
         "@utility h-skeleton-line": {
           "height": "calc(var(--spacing) * 4)"
+        },
+        "@utility hit-target": {
+          "position": "relative",
+          "&::before": {
+            "content": "\"\"",
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "translate": "-50% -50%",
+            "width": "max(100%, 24px)",
+            "height": "max(100%, 24px)",
+            "@media (pointer: coarse), (max-width: 40rem)": {
+              "width": "var(--spacing-tap)",
+              "height": "var(--spacing-tap)"
+            }
+          }
         },
         "@utility link-offset": {
           "text-underline-offset": "var(--zk-link-offset)"
@@ -468,6 +512,10 @@
           "line-height": "1",
           "font-weight": "600",
           "letter-spacing": "-0.02em"
+        },
+        "@utility text-stat": {
+          "font-size": "var(--text-2xl)",
+          "font-weight": "600"
         },
         "@utility text-zk-type-band": {
           "font-size": "var(--zk-type-h3-size)",
@@ -807,6 +855,8 @@
           },
           "a[class*=\"px-badge-inline\"]": {
             "position": "relative",
+            "min-width": "24px",
+            "min-height": "24px",
             "&::after": {
               "content": "\"\"",
               "position": "absolute",
@@ -965,7 +1015,8 @@
           "width": "var(--spacing-drawer-handle-width)",
           "height": "var(--spacing-drawer-handle-height)",
           "background-color": "hsl(var(--muted-foreground) / 0.5)",
-          "opacity": "1"
+          "opacity": "1",
+          "touch-action": "none"
         },
         "html [data-vaul-drawer-direction=\"left\"] [data-vaul-handle], html [data-vaul-drawer-direction=\"right\"] [data-vaul-handle]": {
           "display": "none"
@@ -1471,6 +1522,7 @@
             "opacity": "1",
             "translate": "none",
             "scale": "none",
+            "visibility": "visible",
             "animation": "none",
             "transition": "none"
           },
@@ -1480,7 +1532,7 @@
           ".hover-lift, .hover-press": {
             "transition": "none"
           },
-          ".hover-lift:hover, .hover-press:active": {
+          ".hover-lift:hover, .hover-lift:focus-visible, .hover-lift:focus-within, .hover-press:active": {
             "translate": "none"
           },
           ".motion-reveal, .motion-settle, .motion-emphasis": {
@@ -1518,6 +1570,8 @@
           "--color-success-foreground": "hsl(var(--success-foreground))",
           "--color-warning": "hsl(var(--warning))",
           "--color-warning-foreground": "hsl(var(--warning-foreground))",
+          "--color-info": "hsl(var(--info))",
+          "--color-info-foreground": "hsl(var(--info-foreground))",
           "--color-overlay": "hsl(var(--overlay))",
           "--color-border": "hsl(var(--border))",
           "--color-input": "hsl(var(--input))",
@@ -1712,12 +1766,14 @@
           "--zk-subtle-foreground": "240 4% 40%",
           "--accent": "240 4.8% 59.9%",
           "--accent-foreground": "240 5.9% 10%",
-          "--destructive": "0 72.2% 47%",
+          "--destructive": "0 72.2% 42%",
           "--destructive-foreground": "0 0% 98%",
-          "--success": "142.1 76.2% 27%",
+          "--success": "142.1 76.2% 25%",
           "--success-foreground": "0 0% 98%",
-          "--warning": "32 95% 44%",
-          "--warning-foreground": "240 10% 3.9%",
+          "--warning": "32 95% 29%",
+          "--warning-foreground": "0 0% 98%",
+          "--info": "215 55% 38%",
+          "--info-foreground": "0 0% 98%",
           "--overlay": "0 0% 0%",
           "--border": "240 5.9% 60%",
           "--input": "240 5.9% 57%",
@@ -1813,12 +1869,14 @@
           "--zk-subtle-foreground": "240 4% 72%",
           "--accent": "240 3.7% 37.9%",
           "--accent-foreground": "0 0% 98%",
-          "--destructive": "0 72.2% 66%",
+          "--destructive": "0 72.2% 72%",
           "--destructive-foreground": "240 10% 3.9%",
           "--success": "142.1 70.6% 45.3%",
           "--success-foreground": "240 10% 3.9%",
-          "--warning": "32 95% 32%",
-          "--warning-foreground": "0 0% 98%",
+          "--warning": "32 95% 49%",
+          "--warning-foreground": "240 10% 3.9%",
+          "--info": "215 25% 70%",
+          "--info-foreground": "240 10% 3.9%",
           "--overlay": "0 0% 0%",
           "--border": "240 3.7% 37.9%",
           "--input": "240 3.7% 46%",
@@ -1882,13 +1940,14 @@
           "opacity": "1",
           "translate": "none",
           "scale": "none",
+          "visibility": "visible",
           "animation": "none",
           "transition": "none"
         },
         ":root[data-motion=\"reduce\"] .hover-lift, :root[data-motion=\"reduce\"] .hover-press": {
           "transition": "none"
         },
-        ":root[data-motion=\"reduce\"] .hover-lift:hover, :root[data-motion=\"reduce\"] .hover-press:active": {
+        ":root[data-motion=\"reduce\"] .hover-lift:hover, :root[data-motion=\"reduce\"] .hover-lift:focus-visible, :root[data-motion=\"reduce\"] .hover-lift:focus-within, :root[data-motion=\"reduce\"] .hover-press:active": {
           "translate": "none"
         },
         "@media (max-width: 40rem)": {
@@ -2293,6 +2352,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/ui/motion-preference.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/ui/drawer-parts.tsx",
           "type": "registry:ui"
         },
@@ -2387,12 +2450,12 @@
       ],
       "cssVars": {
         "light": {
-          "success": "142.1 76.2% 27%",
-          "warning": "32 95% 44%"
+          "success": "142.1 76.2% 25%",
+          "warning": "32 95% 29%"
         },
         "dark": {
           "success": "142.1 70.6% 45.3%",
-          "warning": "32 95% 32%"
+          "warning": "32 95% 49%"
         },
         "theme": {
           "spacing-status-dot": "calc(var(--spacing) * 2)"
@@ -2705,12 +2768,33 @@
     {
       "name": "app-shell",
       "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
+        "@zedkit/drawer",
+        "@zedkit/icon-button",
         "utils"
       ],
       "files": [
         {
           "path": "registry/ui/app-shell.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/app-shell-drawer.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/ui-provider.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/messages.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/create-messages-context.tsx",
           "type": "registry:ui"
         }
       ],
@@ -2942,6 +3026,48 @@
       "files": [
         {
           "path": "registry/ui/icon-label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sidebar-nav",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/sidebar-nav.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "transcript-rows",
+      "type": "registry:ui",
+      "dependencies": [
+        "lucide-react",
+        "react-markdown",
+        "rehype-sanitize"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/ui/transcript-rows.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/stream-text.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/markdown.tsx",
           "type": "registry:ui"
         }
       ]

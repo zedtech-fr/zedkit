@@ -2,7 +2,9 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  AgentConsole,
   AppShell,
+  AssistantMessage,
   Badge,
   Button,
   Calendar,
@@ -20,8 +22,10 @@ import {
   DataTable,
   DataTableSkeleton,
   DatePicker,
+  DetailPageSkeleton,
   DetailPanel,
   DetailPanelSkeleton,
+  DocsPageSkeleton,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -40,8 +44,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Heading,
+  Markdown,
   Input,
   Label,
+  ListPageSkeleton,
   LivePulse,
   Section,
   Stack,
@@ -69,6 +75,8 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  SidebarNavGroup,
+  SidebarNavItem,
   Skeleton,
   Switch,
   Tabs,
@@ -77,10 +85,13 @@ import {
   TabsTrigger,
   Text,
   Textarea,
+  ThinkingRow,
   Toaster,
+  ToolCallRow,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  TranscriptBurst,
   WizardSteps,
   createDataTableColumns,
 } from "#index.js";
@@ -213,6 +224,41 @@ export function Gallery() {
             <Heading level={2}>Section title</Heading>
             <Text>Body copy for paragraphs.</Text>
             <Text variant="muted">Muted secondary copy.</Text>
+            {/* Markdown specimen (info links, wrapping fences, a list). */}
+            <Markdown>{`## Note
+
+A [docs](https://example.com) link and \`token\`.
+
+- first item
+
+\`\`\`
+const ok = true;
+const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+\`\`\`
+`}</Markdown>
+            <ThinkingRow text="Checking open invoices." />
+            <ToolCallRow name="listInvoices">{`{"status":"open"}`}</ToolCallRow>
+            <ToolCallRow name="searchDocs" open>
+              {`query: refunds`}
+            </ToolCallRow>
+            <ToolCallRow
+              name="listInvoices"
+              status={<StatusLabel tone="saved">Done</StatusLabel>}
+              duration="1m 04s"
+            >
+              {`{"status":"open"}`}
+            </ToolCallRow>
+            <ToolCallRow
+              name="searchDocs"
+              status={<StatusLabel tone="loading">Running searchDocs…</StatusLabel>}
+            >
+              {`query: refunds`}
+            </ToolCallRow>
+            <AssistantMessage>{"Found **three** open invoices."}</AssistantMessage>
+            <TranscriptBurst aria-label="Tool calls">
+              <ToolCallRow name="searchDocs">{`query: refunds`}</ToolCallRow>
+              <ToolCallRow name="readFile">{`path: refunds.md`}</ToolCallRow>
+            </TranscriptBurst>
           </div>
         </GallerySection>
 
@@ -333,6 +379,15 @@ export function Gallery() {
               { label: "Region", value: "eu" },
             ]}
           />
+          <DetailPanel
+            variant="grid"
+            items={[
+              { label: "Requests", value: "12,480" },
+              { label: "Uptime", value: "99.9%" },
+              { label: "Latency", value: "42 ms" },
+              { label: "Errors", value: "0.12%" },
+            ]}
+          />
           <Tabs defaultValue="one" data-example-width="">
             <TabsList>
               <TabsTrigger value="one">First</TabsTrigger>
@@ -366,6 +421,116 @@ export function Gallery() {
             <LivePulse />
             <LivePulse active={false} />
           </div>
+          <nav aria-label="Runs" data-example-width="">
+            <ul className="flex list-none flex-col gap-stack-tight">
+              <li>
+                <SidebarNavItem
+                  asChild
+                  active
+                  status={<StatusDot tone="success" />}
+                  meta="2m ago"
+                  count={<Badge variant="meta">3</Badge>}
+                >
+                  <a href="#nightly">Nightly</a>
+                </SidebarNavItem>
+              </li>
+              <li>
+                <SidebarNavGroup label="Scheduled" open>
+                  <ul className="flex list-none flex-col gap-stack-tight">
+                    <li>
+                      <SidebarNavItem status={<StatusDot tone="idle" />} meta="1h ago">
+                        Staging
+                      </SidebarNavItem>
+                    </li>
+                  </ul>
+                </SidebarNavGroup>
+              </li>
+              <li>
+                <SidebarNavGroup label="Queued">
+                  <ul className="flex list-none flex-col gap-stack-tight">
+                    <li>
+                      <SidebarNavItem status={<StatusDot tone="idle" />}>Canary</SidebarNavItem>
+                    </li>
+                  </ul>
+                </SidebarNavGroup>
+              </li>
+              <li>
+                <SidebarNavItem asChild disabled status={<StatusDot tone="idle" />} meta="archived">
+                  <a href="#archived">Archived</a>
+                </SidebarNavItem>
+              </li>
+            </ul>
+          </nav>
+          <AgentConsole
+            className="max-h-log"
+            run={{
+              pr: 12,
+              sha: "abc1234def",
+              engineLabel: "kit-engine",
+              durationMs: 377_000,
+              reviewSize: "8 files",
+              verdict: "approve",
+              confidence: 9,
+              postedReviewHref: null,
+            }}
+            items={[
+              {
+                id: "main",
+                name: "Coordinator",
+                kind: "main",
+                status: "done",
+                model: "docs",
+                durationMs: 120_000,
+                toolCount: 2,
+                startedAt: Date.now() - 120_000,
+                lastActivityAt: Date.now() - 60 * 60_000,
+                tokensIn: 12,
+                tokensOut: 4,
+                running: false,
+                entries: [
+                  { id: "tool-a", kind: "tool", name: "searchDocs", body: "query: console" },
+                  { id: "tool-b", kind: "tool", name: "readFile", body: "path: catalog.md" },
+                  { id: "msg-1", kind: "message", text: "The console mounts from mapped props." },
+                ],
+              },
+              {
+                id: "lens",
+                name: "Docs agent",
+                kind: "lens",
+                status: "running",
+                model: "docs",
+                durationMs: 64_000,
+                toolCount: 1,
+                startedAt: Date.now() - 64_000,
+                lastActivityAt: Date.now() - 60 * 60_000,
+                tokensIn: 6,
+                tokensOut: 2,
+                running: true,
+                streamLabel: "Writing the note",
+                entries: [{ id: "lens-msg", kind: "message", text: "Reading the catalog." }],
+              },
+            ]}
+            decision={{
+              verdict: "approve",
+              confidence: 9,
+              posted: true,
+              postedReviewHref: null,
+              summary: "Ship the console as mapped props.",
+              mustChange: [{ text: "Keep duration in milliseconds." }],
+              notes: [{ text: "Tone down the export warning.", tag: "downgraded" }],
+              dismissed: ["Old lint warning"],
+              firstPass: {
+                verdict: "request changes",
+                confidence: 6,
+                findings: [
+                  { id: "keep-1", text: "Name the empty pane.", disposition: "kept" },
+                  { id: "down-1", text: "Tone down the export warning.", disposition: "downgraded" },
+                  { id: "drop-1", text: "Drop the style nit.", disposition: "dismissed" },
+                ],
+              },
+              secondPass: { model: "docs-reviewer", blocksMerge: false, summary: "No merge block." },
+            }}
+          />
         </GallerySection>
 
         <GallerySection id="sizing" title="Container sizing">
@@ -466,6 +631,9 @@ export function Gallery() {
           </div>
           <DetailPanelSkeleton label="Loading details" rows={2} />
           <DataTableSkeleton label="Loading table" columns={3} rows={2} />
+          <DocsPageSkeleton label="Loading guide" />
+          <ListPageSkeleton label="Loading catalog" cards={2} />
+          <DetailPageSkeleton label="Loading item" rows={2} />
         </GallerySection>
 
         <GallerySection id="forms" title="Forms">

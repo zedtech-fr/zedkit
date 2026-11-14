@@ -29,6 +29,20 @@
         "stagger"
       ]
     },
+    "Keep chrome mounted across client navigations": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "PageTransition",
+      "props": "PageTransitionProps",
+      "source": "motion/page-transition.tsx",
+      "demo": "PageTransitionDemo",
+      "examples": {
+        "With a route key": "PageTransitionDemo"
+      },
+      "propsPriority": [
+        "routeKey",
+        "preset"
+      ]
+    },
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
       "component": "Button",
@@ -59,7 +73,8 @@
       "examples": {
         "Variants": "BadgeVariantsDemo",
         "In a table row": "BadgeTableRowDemo",
-        "As a link (asChild)": "BadgeLinkDemo"
+        "As a link (asChild)": "BadgeLinkDemo",
+        "Soft status": "BadgeSoftStatusDemo"
       }
     },
     "Label a form control": {
@@ -112,6 +127,17 @@
       "demo": "LoadingZonesDemo",
       "examples": {
         "Standalone": "CardSkeletonStandaloneDemo"
+      }
+    },
+    "Show a route-shaped skeleton while the next page loads": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DocsPageSkeleton",
+      "props": "DocsPageSkeletonProps",
+      "source": "layout/route-skeletons.tsx",
+      "demo": "RouteSkeletonsDemo",
+      "examples": {
+        "List page": "RouteSkeletonsDemo",
+        "Detail page": "RouteSkeletonsDemo"
       }
     },
     "Open modal dialogs": {
@@ -247,7 +273,28 @@
       "source": "layout/app-shell.tsx",
       "demo": "AppShellDemo",
       "examples": {
-        "Without topbar": "AppShellNoTopbarDemo"
+        "Without topbar": "AppShellNoTopbarDemo",
+        "Fixed height": "AppShellMobileDrawerDemo",
+        "Custom trigger": "AppShellTriggerDemo"
+      }
+    },
+    "Compose a live agent console from a run": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "AgentConsole",
+      "props": "AgentConsoleProps",
+      "source": "layout/agent-console.tsx",
+      "demo": "AgentConsoleDemo"
+    },
+    "List sidebar rows with status, title, meta, and count": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "SidebarNavItem",
+      "registry": "sidebar-nav",
+      "props": "SidebarNavItemProps",
+      "source": "layout/sidebar-nav.tsx",
+      "demo": "SidebarNavItemDemo",
+      "examples": {
+        "Active": "SidebarNavActiveDemo",
+        "Group": "SidebarNavGroupDemo"
       }
     },
     "Guide a multi-step flow with selectable option cards": {
@@ -271,7 +318,8 @@
       "source": "layout/detail-panel.tsx",
       "demo": "DetailsDemo",
       "examples": {
-        "Composed rows": "DetailsComposedDemo"
+        "Composed rows": "DetailsComposedDemo",
+        "Stat grid": "DetailsStatGridDemo"
       }
     },
     "Show determinate progress": {
@@ -585,6 +633,18 @@
       "examples": {
         "Simple": "PromptInputDemo",
         "Complete": "PromptInputCompleteDemo"
+      }
+    },
+    "Render a live assistant transcript from rows": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "ToolCallRow",
+      "registry": "transcript-rows",
+      "props": "ToolCallRowProps",
+      "source": "transcript/transcript-rows.tsx",
+      "demo": "TranscriptRowsDemo",
+      "examples": {
+        "Simple": "TranscriptRowsDemo",
+        "Burst": "TranscriptRowsBurstDemo"
       }
     },
     "Keep a side panel in view": {

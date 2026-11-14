@@ -25,19 +25,32 @@ function capture(argv, cwd = ROOT) {
 }
 
 /**
- * The validate output contract: exit 0 plus a single `ok` line that names its
+ * The validate output contract: exit 0, plus a single `ok` line that names its
  * structural-only scope (never a bare `ok`, never a browser/rendering claim).
+ * Leftover v1.x command stubs may print deprecation warnings before that line.
  */
 function assertValidateOut(validate, what) {
   if (validate.code !== 0) {
     throw new Error(`${what} failed: code=${validate.code} out=${validate.out} err=${validate.err}`);
   }
-  const out = validate.out.trim();
-  if (!out.startsWith("ok — structural kit checks only")) {
+
+  const lines = validate.out
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length > 0);
+  const okLines = lines.filter((line) => line.startsWith("ok — structural kit checks only"));
+  if (okLines.length !== 1) {
     throw new Error(`${what} changed contract: ${validate.out}`);
   }
-  if (!out.includes("NOT checked by validate")) {
+  if (!okLines[0].includes("NOT checked by validate")) {
     throw new Error(`${what} missing scope disclaimer: ${validate.out}`);
+  }
+  const deprecation =
+    /^commands\/[\w.-]+\.md: warning: command "[\w.-]+" is deprecated; use \/zedkit-ai/;
+  const unexpected = lines.filter((line) => line !== okLines[0] && !deprecation.test(line));
+  if (unexpected.length > 0) {
+    throw new Error(`${what} unexpected validate output: ${unexpected.join("\n")}`);
   }
 }
 
@@ -47,8 +60,8 @@ export function runEmptyRepoTutorial(dir) {
   if (list.code !== 0) {
     throw new Error(`list failed: code=${list.code} out=${list.out} err=${list.err}`);
   }
-  if (!list.out.includes("explorer") || !list.out.includes("review")) {
-    throw new Error(`list should name subagents and commands: ${list.out}`);
+  if (!list.out.includes("explorer") || !list.out.includes("zedkit-ai")) {
+    throw new Error(`list should name subagents and the entry command: ${list.out}`);
   }
   const init = capture(["init", dir, "--provider", "cursor", "--preset", "full"]);
   if (init.code !== 0) {
@@ -71,10 +84,10 @@ export function runCursorSetupTutorial(dir) {
   if (setup.code !== 0) {
     throw new Error(`setup failed: ${setup.err || setup.out}`);
   }
-  if (!setup.out.includes("/setup-ai")) {
-    throw new Error("setup should print the /setup-ai next step");
+  if (!setup.out.includes("/zedkit-ai")) {
+    throw new Error("setup should print the /zedkit-ai next step");
   }
-  for (const rel of [".agents/skills/setup-ai/SKILL.md", ".cursor/commands/setup-ai.md", ".cursor/rules/project.mdc"]) {
+  for (const rel of [".agents/skills/setup-ai/SKILL.md", ".cursor/commands/zedkit-ai.md", ".cursor/rules/project.mdc"]) {
     if (!existsSync(join(dir, rel))) throw new Error(`setup missing ${rel}`);
   }
   for (const rel of [".agents/skills/domain-modeling/SKILL.md", ".agents/agents/product-director.md"]) {
@@ -138,8 +151,8 @@ export function runHomeSnippetInit(dir) {
   const required = [
     "AGENTS.md",
     ".agents/skills/setup-ai/SKILL.md",
-    ".cursor/commands/setup-ai.md",
-    ".claude/commands/setup-ai.md",
+    ".cursor/commands/zedkit-ai.md",
+    ".claude/commands/zedkit-ai.md",
     ".cursor/rules/project.mdc",
   ];
   for (const rel of required) {

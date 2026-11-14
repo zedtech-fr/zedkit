@@ -9,7 +9,7 @@ export function TypographyDemo() {
       <Text>{typographyCopy.body}</Text>
       <Text variant="muted">{typographyCopy.secondary}</Text>
       <Heading level={2} asChild>
-        <a href="#typography-as-link">{typographyCopy.link}</a>
+        <a href="#typography-as-link" id="typography-as-link">{typographyCopy.link}</a>
       </Heading>
     </Stack>
   );

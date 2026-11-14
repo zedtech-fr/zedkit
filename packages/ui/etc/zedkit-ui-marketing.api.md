@@ -106,7 +106,7 @@ export type GlassSurfaceProps = React_2.ComponentProps<"div"> & VariantProps<typ
 // @public (undocumented)
 export const glassSurfaceVariants: (props?: ({
     tone?: "plain" | "raised" | "tinted" | null | undefined;
-    padding?: "none" | "sm" | "md" | "lg" | null | undefined;
+    padding?: "none" | "sm" | "lg" | "md" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -352,7 +352,7 @@ export const specimenMessagesEn: {
             readonly duration: "45 min";
         }, {
             readonly id: "color";
-            readonly label: "Colour";
+            readonly label: "Color";
             readonly duration: "90 min";
         }];
         readonly slotsAriaLabel: "Available times";

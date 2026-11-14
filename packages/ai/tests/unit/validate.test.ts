@@ -1,26 +1,68 @@
 import { mkdirSync, readFileSync, rmSync, symlinkSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { main } from "#cli.js";
 import { installKit } from "#install.js";
 import { syncKit } from "#sync.js";
 import { checkDrift, checkKitDocs, checkPlaceholders, validateKit } from "#validate.js";
 import { kitDir } from "#kit.js";
-import { AGENT, COMMAND, put, SKILL, tempDir } from "./helpers.js";
+import { AGENT, COMMAND, failingIssues, put, SKILL, tempDir } from "./helpers.js";
 
 function messages(root: string): string[] {
   return validateKit(root).map((i) => `${i.path}: ${i.message}`);
 }
 
+function deprecationKit(): string {
+  const kit = tempDir();
+  put(
+    kit,
+    "kit.json",
+    JSON.stringify({
+      presets: { starter: ["plan"] },
+      agents: ["plain"],
+      commands: ["zedkit-ai", "plan"],
+    }),
+  );
+  put(kit, "commands/zedkit-ai.md", COMMAND("zedkit-ai"));
+  put(kit, "commands/plan.md", COMMAND("plan"));
+  return kit;
+}
+
 describe("validateKit", () => {
   it("accepts the bundled kit", () => {
-    expect(validateKit(kitDir())).toEqual([]);
+    const issues = validateKit(kitDir());
+    expect(failingIssues(issues)).toEqual([]);
+    expect(
+      issues
+        .filter((issue) => issue.message.startsWith("warning: command"))
+        .map((issue) => issue.path)
+        .sort(),
+    ).toEqual([
+      "commands/audit.md",
+      "commands/challenge.md",
+      "commands/fix.md",
+      "commands/from-audit.md",
+      "commands/handoff.md",
+      "commands/implement.md",
+      "commands/improve-config.md",
+      "commands/improve-from-review.md",
+      "commands/orchestrate.md",
+      "commands/plan.md",
+      "commands/pr.md",
+      "commands/quick-wins.md",
+      "commands/research.md",
+      "commands/review.md",
+      "commands/setup-ai.md",
+      "commands/to-audit.md",
+      "commands/triage.md",
+    ]);
   });
 
   it("accepts a minimal valid layout", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
     put(root, "agents/beta.md", AGENT("beta", "model: inherit\n"));
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("reports a missing directory", () => {
@@ -37,13 +79,13 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
     put(root, "commands/run.md", COMMAND("alpha"));
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("does not flag host slash-commands /ask and /improve as missing skills", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nThen run /ask or \`/improve\`.\n`);
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("flags a lenses.md row marked exists whose runner is not installed", () => {
@@ -62,7 +104,7 @@ describe("validateKit", () => {
   it("ignores /names and words outside the kit universe (fiction routes)", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nRun \`/delta\` for the \`checkout\` step.\n`);
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("flags broken relative links but skips web links, anchors, and fenced code", () => {
@@ -134,7 +176,7 @@ describe("validateKit", () => {
     put(kit, "commands/duo.md", COMMAND("duo"));
     const root = tempDir();
     put(root, "skills/duo/SKILL.md", `${SKILL("duo")}\nWhen \`/duo\` starts, say hello.\n`);
-    expect(validateKit(root, kit)).toEqual([]);
+    expect(failingIssues(validateKit(root, kit))).toEqual([]);
   });
 
   it("lets /names fall back to an installed skill when the kit defines no command", () => {
@@ -144,7 +186,7 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nRun \`/solo\`.\n`);
     put(root, "skills/solo/SKILL.md", SKILL("solo"));
-    expect(validateKit(root, kit)).toEqual([]);
+    expect(failingIssues(validateKit(root, kit))).toEqual([]);
   });
 
   it("demands the skill for Skill-tool refs even when an agent shares the name", () => {
@@ -178,7 +220,7 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nUse skill \`duo\`.\n`);
     put(root, "skills/zk-duo/SKILL.md", SKILL("zk-duo"));
-    expect(validateKit(root, kit)).toEqual([]);
+    expect(failingIssues(validateKit(root, kit))).toEqual([]);
   });
 
   it("flags a skill, agent or command that runs a skill which is not installed", () => {
@@ -198,7 +240,7 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nCall the Skill tool with "beta". Run \`/beta\`.\n`);
     put(root, "skills/beta/SKILL.md", SKILL("beta"));
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("flags a kit file naming a kit skill no installed kind provides", () => {
@@ -217,20 +259,29 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/review/SKILL.md", `${SKILL("review")}\nUse \`tdd\`.\nladder\n`);
     put(root, "agents/tdd.md", AGENT("tdd"));
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("treats backticked kit names in user-authored files as ordinary words", () => {
     const root = tempDir();
     put(root, "skills/my-thing/SKILL.md", `${SKILL("my-thing")}\nRun the \`plan\` phase, then \`review\` output.\n`);
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("treats a user file shadowing a kit name as user prose, and satisfies refs from the sidecar", () => {
     const root = tempDir();
-    put(root, "skills/review/SKILL.md", `${SKILL("review")}\nMy own notes on the \`plan\` phase and ladder.\n`);
+    put(root, "skills/review/SKILL.md", `${SKILL("review")}\nMy own notes on the \`plan\` phase.\n`);
     put(root, "skills/zk-review/SKILL.md", `${SKILL("zk-review")}\nladder\n`);
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
+  });
+
+  it("accepts a preserved custom review skill that never mentions the ladder", () => {
+    const root = tempDir();
+    const userReview = `${SKILL("review")}\nHouse rules for our own review pass.\n`;
+    put(root, "skills/review/SKILL.md", userReview);
+    put(root, "skills/zk-review/SKILL.md", `${SKILL("zk-review")}\nladder\n`);
+    expect(failingIssues(validateKit(root))).toEqual([]);
+    expect(readFileSync(join(root, "skills/review/SKILL.md"), "utf8")).toBe(userReview);
   });
 
   it("flags a personas.md naming a kit skill the tree does not install", () => {
@@ -246,7 +297,7 @@ describe("validateKit", () => {
     const root = tempDir();
     put(root, "skills/review/SKILL.md", `${SKILL("review")}\nladder\n`);
     put(root, "THIRD_PARTY_NOTICES.md", "# Notices\n\nVendored skills: `tdd`, `ponytail`, `plan`.\n");
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("flags old AGENTS.md template lines naming an uninstalled skill, and skips user lines", () => {
@@ -295,7 +346,7 @@ describe("validateKit", () => {
   it("accepts a skill with a folded multi-line description (#484)", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", "---\nname: alpha\ndescription: >\n  folded line one\n  folded line two\n---\n");
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("flags missing or broken frontmatter", () => {
@@ -388,7 +439,7 @@ describe("validateKit", () => {
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
     put(root, "commands/plain.md", COMMAND("alpha"));
     put(root, "commands/inherit.md", "---\ndescription: Runs.\nmodel: inherit\n---\n\nRun the `alpha` skill.\n");
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
     put(root, "commands/pinned.md", "---\ndescription: Runs.\nmodel: some-made-up-id\n---\n\nRun the `alpha` skill.\n");
     expect(messages(root)).toEqual([expect.stringContaining('commands/pinned.md: model must be omitted or "inherit"')]);
   });
@@ -461,7 +512,7 @@ describe("validateKit", () => {
   it("accepts a quoted one-line description that contains a colon", () => {
     const root = tempDir();
     put(root, "agents/beta.md", '---\nname: beta\ndescription: "Use when: needed"\n---\n');
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("flags a mutated Muse restriction without --provider", () => {
@@ -696,10 +747,21 @@ providers:
     expect(found.some((m) => m.includes("skills/implement/SKILL.md"))).toBe(false);
   });
 
+  it("flags a kit review sidecar that lost the ladder and leaves the user file alone", () => {
+    const root = tempDir();
+    put(root, "skills/review/SKILL.md", `${SKILL("review")}\nHouse rules for our own review pass.\n`);
+    put(root, "skills/zk-review/SKILL.md", SKILL("zk-review"));
+    const found = messages(root);
+    expect(found).toContainEqual(
+      "skills/zk-review/SKILL.md: must state the ponytail ladder (regression: the 7 questions vanished)",
+    );
+    expect(found.some((m) => m.includes("skills/review/SKILL.md"))).toBe(false);
+  });
+
   it("ignores the ladder check for layouts without those files", () => {
     const root = tempDir();
     put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
-    expect(validateKit(root)).toEqual([]);
+    expect(failingIssues(validateKit(root))).toEqual([]);
   });
 
   it("reports an unreadable entry instead of throwing", () => {
@@ -767,5 +829,88 @@ providers:
       expect(found(root)).toEqual([]);
       expect(readFileSync(join(kitDir(), "AGENTS.template.md"), "utf8")).not.toContain("](<");
     });
+  });
+});
+
+describe("validateKit: deprecated commands", () => {
+  it("warns on a leftover kit command stem and stays silent for the entry command and unknown stems", () => {
+    const kit = deprecationKit();
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/plan.md", COMMAND("alpha"));
+    put(root, "commands/zedkit-ai.md", COMMAND("alpha"));
+    put(root, "commands/mine.md", COMMAND("alpha"));
+    const issues = validateKit(root, kit);
+    expect(issues).toContainEqual({
+      path: "commands/plan.md",
+      message:
+        'warning: command "plan" is deprecated; use /zedkit-ai <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)',
+    });
+    expect(issues.filter((issue) => issue.message.startsWith("warning: command"))).toEqual([
+      {
+        path: "commands/plan.md",
+        message:
+          'warning: command "plan" is deprecated; use /zedkit-ai <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)',
+      },
+    ]);
+  });
+
+  it("does not warn when the commands dir is missing or empty", () => {
+    const kit = deprecationKit();
+    const missing = tempDir();
+    put(missing, "skills/alpha/SKILL.md", SKILL("alpha"));
+    expect(validateKit(missing, kit).filter((issue) => issue.message.startsWith("warning:"))).toEqual([]);
+    const empty = tempDir();
+    put(empty, "skills/alpha/SKILL.md", SKILL("alpha"));
+    mkdirSync(join(empty, "commands"));
+    expect(validateKit(empty, kit).filter((issue) => issue.message.startsWith("warning:"))).toEqual([]);
+  });
+
+  it("validate CLI prints the warning and exits 0", () => {
+    const kit = deprecationKit();
+    const dest = tempDir();
+    put(dest, ".agents/skills/alpha/SKILL.md", SKILL("alpha"));
+    put(dest, ".agents/commands/plan.md", COMMAND("alpha"));
+    put(dest, ".agents/commands/zedkit-ai.md", COMMAND("alpha"));
+    const out: string[] = [];
+    const errors: string[] = [];
+    const code = main(["validate", dest, "--kit", kit], {
+      out: (line) => out.push(line),
+      err: (line) => errors.push(line),
+    });
+    expect(code).toBe(0);
+    expect(errors).toEqual([]);
+    expect(out.join("\n")).toContain(
+      'commands/plan.md: warning: command "plan" is deprecated; use /zedkit-ai <request> (delete the file or run npx @zedtech/zedkit-ai sync --prune --provider …; prune keeps edited copies)',
+    );
+    expect(out.join("\n")).toContain("ok — structural kit checks only");
+  });
+
+  it("does not warn when the kit manifest has no entry command", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({
+        presets: { starter: ["plan"] },
+        agents: ["plain"],
+        commands: ["plan"],
+      }),
+    );
+    put(kit, "commands/plan.md", COMMAND("plan"));
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/plan.md", COMMAND("alpha"));
+    expect(validateKit(root, kit).filter((issue) => issue.message.startsWith("warning: command"))).toEqual([]);
+  });
+
+  it("broken kit.json does not throw and does not emit deprecation warnings", () => {
+    const kit = deprecationKit();
+    put(kit, "kit.json", "{");
+    const root = tempDir();
+    put(root, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(root, "commands/plan.md", COMMAND("alpha"));
+    expect(() => validateKit(root, kit)).not.toThrow();
+    expect(validateKit(root, kit).filter((issue) => issue.message.startsWith("warning: command"))).toEqual([]);
   });
 });

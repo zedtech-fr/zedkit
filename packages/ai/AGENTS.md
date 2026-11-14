@@ -33,10 +33,14 @@
    tool` call carries the shared SKILL.md fallback on the same line
    (`tests/unit/skill-content.test.ts`). Presets stay reference-closed:
    setup ships the plan/implement playbooks, starter stays lean
-   (`tests/unit/preset-closure.test.ts`).
+   (`tests/unit/preset-closure.test.ts`). An on-disk leftover command
+   closes its own `/name` in validate and install (`commandClosed` in
+   `src/skill-refs.ts`); do not require `/zedkit-ai` for that stem.
 7. Installer never overwrites. `--adopt` keeps a different user file and
    writes a kit sidecar (`*.kit.md` or `zk-<name>`); a copy that already
    matches the kit is skipped. Commands keep the old skill name.
+   `sync --prune` of a leftover command drops a provider copy only when it
+   is the kit command link or current kit bytes.
    `setup` and `validate` print how to keep one copy. `validate` stays green. The
    reconciliation steps are in this package's README. Per-skill provider
    links cover dirs that exist under `.agents/skills`, not only the preset
@@ -46,6 +50,11 @@
    fail before writing. The install check uses the same agent names generation
    will write: the preset plus agents already on disk. Pass it only when the
    user asked for fast mode in this request.
+   `--kit <dir>` is accepted by `setup`, `init`, `sync` and `validate` (a local
+   kit directory; omit uses the bundled kit). Pass it on each of those commands;
+   it is not remembered. Install pre-flight passes that same `kit` into
+   `assertAgentRoutes` as `loadPolicy` / `generateAgents`. Broken custom-kit
+   defaults fail the install; they are not swallowed.
 9. An agent with `executes: true` in `agents.meta.json` must run a command.
    Muse keeps `bash` and still denies `write_file` and `edit_file`. Cursor
    does not set `readonly`. `test-runner` is that agent. Bash can still

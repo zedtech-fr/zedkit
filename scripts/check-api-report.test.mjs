@@ -159,6 +159,8 @@ function initSeoCatchUpRepo({ index, jsonld, headReport } = {}) {
 const entries = shellEntryLines();
 const marketingEntry = entries.find((e) => e.endsWith("|zedkit-ui-marketing.api.md"));
 assert.ok(marketingEntry, "shell entries must include zedkit-ui-marketing.api.md");
+const seoReactEntry = entries.find((e) => e.endsWith("|zedkit-seo-react.api.md"));
+assert.ok(seoReactEntry, "shell entries must include zedkit-seo-react.api.md");
 
 test("check-api-report.sh lists every packages/* workspace package", () => {
   const want = packageDirs();

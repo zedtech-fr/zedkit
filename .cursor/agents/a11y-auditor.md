@@ -22,9 +22,12 @@ barrier in the changed flow beats a checklist tour of untouched pages.
 3. **Forms.** Errors tied to fields (`aria-describedby`/`aria-invalid`),
    required marked programmatically, invalid submit moves attention to the
    problem. Color alone never carries meaning.
-4. **Contrast and targets.** Text contrast 4.5:1 (3:1 large text) in both
-   themes; pointer targets at least 24px CSS (the portable floor). A host
-   may require more; label that stricter number as the host's rule.
+4. **Contrast and targets.** Check both themes. A host may require more
+   than Visual work; label that stricter number as the host's rule.
+   Contrast, target size, selected/focus non-text UI, and axe tags
+   (`wcag2a` and the Visual work set) are `definition-of-done` Visual
+   work. Blocking measures, host baseline, clipped text, and touched
+   routes are the same Visual work.
 5. **Motion and timing.** No essential content by animation alone;
    `prefers-reduced-motion` respected; no hard timeouts without warning and
    extension.

@@ -44,3 +44,11 @@ Path: `apps/docs/prose/guides/<slug>.mdx` (plus `index.mdx` for `/docs`).
 - Full MDX with YAML front matter; not merged into catalog pages.
 - Code fences may use `{{snippet:name}}` to inline files from `prose/guides/snippets/` at generate time.
 - `GUIDE_NAV_SLUGS` in `scripts/generate.mjs` controls sidebar order before package folders.
+- Required `##` headings per file live in `guideRequiredSections` in `scripts/check.mjs`. `foundations.mdx` must link `VISUAL-CONTRACT.md` and must not copy the owner-table header. A missing heading or a copied owner table fails `pnpm docs:check`.
+
+## Sidebar order
+
+The generator writes `content/docs/**/meta.json`. Do not hand-edit those files.
+UI pages are listed under Actions, Forms, Overlays, Data and states, then More
+(`uiSidebarPages` in `features/docs/ui-sidebar-nav.mjs`). Other packages stay a
+catalog-order slug list. Page files and URLs stay `/docs/<folder>/<slug>`.

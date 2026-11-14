@@ -1,11 +1,23 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
-import { componentPageSections } from "../lib/component-page-sections.mjs";
-import { declarationOrigin } from "../lib/declared-props.mjs";
-import { partitionPropsEntries } from "../lib/props-priority.mjs";
-import { groupCatalogResults } from "../lib/catalog-result-groups.mjs";
+import {
+  COMPONENT_PAGE_SECTION_IDS,
+  componentPageHeaderMeta,
+  componentPageSections,
+} from "../features/docs/component-page-sections.mjs";
+import { declarationOrigin } from "../features/docs/declared-props.mjs";
+import { partitionPropsEntries } from "../features/docs/props-priority.mjs";
+import { uiSidebarGroupFor, uiSidebarPages } from "../features/docs/ui-sidebar-nav.mjs";
+import { docsLayoutTree } from "../app/docs/[[...slug]]/_docs/docs-layout-tree.mjs";
+import { kitUiSourceUrl, SITE_GITHUB_URL } from "../lib/site-links.mjs";
+import { docsOmitNeed } from "./docs-omitted-needs.mjs";
+
+const here = dirname(fileURLToPath(import.meta.url));
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -28,23 +40,6 @@ status: beta
 <Button>Save</Button>
 \`\`\`
 `;
-
-test("groupCatalogResults uses the same area labels as catalog filters", () => {
-  const groups = groupCatalogResults([
-    { area: "ui", package: "ui", href: "/docs/ui/a", title: "Button", need: "n", status: "stable" },
-    { area: "backend", package: "core", href: "/docs/core/a", title: "tryCatch", need: "n", status: "stable" },
-    { area: "backend", package: "quality", href: "/docs/quality/a", title: "lint", need: "n", status: "stable" },
-    { area: "agents", package: "ai", href: "/docs/ai/a", title: "setup-ai", need: "n", status: "stable" },
-  ]);
-  assert.deepEqual(
-    groups.map((group) => [group.id, group.label, group.entries.length]),
-    [
-      ["ui", "UI", 1],
-      ["backend", "Core & server", 2],
-      ["agents", "Agents", 1],
-    ],
-  );
-});
 
 test("partitionPropsEntries surfaces variant and size before inherited attrs", () => {
   const entries = [
@@ -106,13 +101,46 @@ test("declarationOrigin follows where a property is declared", () => {
 });
 
 test("componentPageSections lists a section only when it has content", () => {
-  const always = ["example", "guidance", "install-or-copy", "usage-and-states"];
-  assert.deepEqual(componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" }), always);
-  assert.deepEqual(
-    componentPageSections({ hasProps: true, a11y: "Name it.", related: [{ title: "x" }], troubleshooting: "Wire the CSS." }),
-    [...always, "props", "accessibility", "related", "troubleshooting"],
-  );
+  assert.deepEqual(COMPONENT_PAGE_SECTION_IDS, [
+    "example",
+    "usage-and-states",
+    "install-or-copy",
+    "guidance",
+    "props",
+    "accessibility",
+    "related",
+    "troubleshooting",
+  ]);
+  const always = ["example", "usage-and-states", "install-or-copy", "guidance"];
+  const sections = componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" });
+  assert.deepEqual(sections, always);
+  assert.ok(sections.indexOf("example") < sections.indexOf("usage-and-states"));
+  assert.ok(sections.indexOf("usage-and-states") < sections.indexOf("install-or-copy"));
+  assert.ok(sections.indexOf("install-or-copy") < sections.indexOf("guidance"));
+  const withProps = componentPageSections({
+    hasProps: true,
+    a11y: "Name it.",
+    related: [{ title: "x" }],
+    troubleshooting: "Wire the CSS.",
+  });
+  assert.deepEqual(withProps, [...always, "props", "accessibility", "related", "troubleshooting"]);
+  assert.ok(withProps.indexOf("usage-and-states") < withProps.indexOf("install-or-copy"));
+  assert.ok(withProps.indexOf("install-or-copy") < withProps.indexOf("guidance"));
+  assert.ok(withProps.indexOf("guidance") < withProps.indexOf("props"));
   assert.deepEqual(componentPageSections({ hasProps: false, a11y: "Name it." }), [...always, "accessibility"]);
+});
+
+test("component page header keeps Stable maturity, package, and wraps", () => {
+  const header = componentPageHeaderMeta({
+    status: "stable",
+    purpose: "A labeled button starts an action.",
+    packageName: "@zedtech/zedkit-ui",
+    wraps: "`@radix-ui/react-slot`",
+  });
+  assert.equal(header.maturity, "stable");
+  assert.equal(header.purpose, "A labeled button starts an action.");
+  assert.equal(header.packageName, "@zedtech/zedkit-ui");
+  assert.equal(header.wraps, "`@radix-ui/react-slot`");
 });
 
 test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () => {
@@ -131,8 +159,8 @@ test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () =>
 
 test("expandFencePreviews inserts a live preview and optional import", () => {
   const source = '---\ntitle: "Demo"\n---\n\n```tsx preview="ButtonDemo"\n<Button />\n```\n';
-  const out = expandFencePreviews(source, "../../components/component-preview");
-  assert.match(out, /import \{ ComponentPreview \} from "\.\.\/\.\.\/components\/component-preview"/);
+  const out = expandFencePreviews(source, "../../features/docs/ui/component-preview");
+  assert.match(out, /import \{ ComponentPreview \} from "\.\.\/\.\.\/features\/docs\/ui\/component-preview"/);
   assert.match(out, /<ComponentPreview demo="ButtonDemo"/);
   assert.match(out, /```tsx\n<Button \/>/);
   assert.equal(out.includes('preview="ButtonDemo"'), false);
@@ -186,6 +214,14 @@ test("checkGeneratedPage fails when a component page lacks the guidance block", 
     true,
   );
   assert.equal(
+    errors.some((entry) => entry.includes("lacks sourceFile")),
+    true,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks navGroup")),
+    true,
+  );
+  assert.equal(
     errors.some((entry) => entry.includes("lacks install tabs")),
     false,
   );
@@ -209,6 +245,21 @@ test("checkGeneratedPage fails when install tabs or description are missing", ()
   );
 });
 
+test("checkGeneratedPage fails when the description exceeds 160 characters", () => {
+  const errors = [];
+  const long = "A".repeat(161);
+  checkGeneratedPage(
+    "ui/too-long.mdx",
+    `---\ntitle: "Too long"\ndescription: ${JSON.stringify(long)}\n---\n\n## At a glance\n\n- **Who:** Who\n- **What:** What\n- **Use when:** When\n- **Avoid when:** Avoid\n\n<Tabs groupId="package-manager" persist items={["pnpm"]}>\n  <Tab value="pnpm">pnpm add @zedtech/zedkit-ui</Tab>\n</Tabs>\n`,
+    { seoMax: 160, descriptionsSeen: new Map() },
+    errors,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("description exceeds 160 characters")),
+    true,
+  );
+});
+
 test("checkGeneratedPage reports a duplicate description", () => {
   const seen = new Map();
   const errors = [];
@@ -218,4 +269,190 @@ test("checkGeneratedPage reports a duplicate description", () => {
     errors.some((entry) => entry.includes("duplicate description on ui/b.mdx and ui/a.mdx")),
     true,
   );
+});
+
+function slugsOf(pages) {
+  return pages.filter((entry) => !/^---.+---$/.test(entry));
+}
+
+test("uiSidebarPages groups Badge, Toaster, and DetailPanel with home-example order", () => {
+  const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
+    needs: [
+      { need: "Show a status or count badge", slug: "show-a-status-or-count-badge" },
+      { need: "Trigger actions with buttons", slug: "trigger-actions-with-buttons" },
+      { need: "Collect text input with a label", slug: "collect-text-input-with-a-label" },
+      { need: "Open modal dialogs", slug: "open-modal-dialogs" },
+      { need: "Slide in a drawer panel", slug: "slide-in-a-drawer-panel" },
+      { need: "Show toast notifications", slug: "show-toast-notifications" },
+      { need: "Show key-value details and a live indicator", slug: "show-key-value-details-and-a-live-indicator" },
+      { need: "Lay out an admin page (sidebar + topbar + header)", slug: "lay-out-an-admin-page-sidebar-topbar-header" },
+    ],
+    sourceByNeed: {
+      "Show a status or count badge": "feedback/badge.tsx",
+      "Trigger actions with buttons": "button/button.tsx",
+      "Collect text input with a label": "forms/input.tsx",
+      "Open modal dialogs": "overlays/dialog.tsx",
+      "Slide in a drawer panel": "drawer/drawer.tsx",
+      "Show toast notifications": "feedback/sonner.tsx",
+      "Show key-value details and a live indicator": "layout/detail-panel.tsx",
+      "Lay out an admin page (sidebar + topbar + header)": "layout/app-shell.tsx",
+    },
+  });
+  assert.deepEqual(pages, [
+    "---Actions---",
+    "trigger-actions-with-buttons",
+    "show-a-status-or-count-badge",
+    "show-toast-notifications",
+    "---Forms---",
+    "collect-text-input-with-a-label",
+    "---Overlays---",
+    "open-modal-dialogs",
+    "slide-in-a-drawer-panel",
+    "---Data and states---",
+    "show-key-value-details-and-a-live-indicator",
+    "---More---",
+    "lay-out-an-admin-page-sidebar-topbar-header",
+  ]);
+});
+
+test("uiSidebarPages drops omitted identity needs and sends unknown source to More", () => {
+  const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
+    needs: [
+      { need: "Design your identity", slug: "design-your-identity" },
+      { need: "Switch the visual identity with one attribute", slug: "switch-the-visual-identity-with-one-attribute" },
+      { need: "A need with no source", slug: "a-need-with-no-source" },
+      { need: "Brand the header", slug: "brand-the-header" },
+    ],
+    sourceByNeed: {
+      "Brand the header": "brand/brand-logo.tsx",
+    },
+  });
+  assert.deepEqual(pages, [
+    "---More---",
+    "a-need-with-no-source",
+    "brand-the-header",
+  ]);
+  assert.equal(pages.includes("design-your-identity"), false);
+  assert.equal(pages.includes("switch-the-visual-identity-with-one-attribute"), false);
+});
+
+test("uiSidebarPages skips an empty group and lists every published slug once", () => {
+  const needs = [
+    { need: "Collect text input with a label", slug: "collect-text-input-with-a-label" },
+    { need: "Lay out an admin page (sidebar + topbar + header)", slug: "lay-out-an-admin-page-sidebar-topbar-header" },
+  ];
+  const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
+    needs,
+    sourceByNeed: {
+      "Collect text input with a label": "forms/input.tsx",
+      "Lay out an admin page (sidebar + topbar + header)": "layout/app-shell.tsx",
+    },
+  });
+  assert.deepEqual(pages, [
+    "---Forms---",
+    "collect-text-input-with-a-label",
+    "---More---",
+    "lay-out-an-admin-page-sidebar-topbar-header",
+  ]);
+  assert.equal(pages.includes("---Actions---"), false);
+  assert.deepEqual(slugsOf(pages).sort(), needs.map((item) => item.slug).sort());
+  assert.equal(new Set(slugsOf(pages)).size, slugsOf(pages).length);
+  assert.equal(
+    slugsOf(pages).some((slug) => slug.includes("/")),
+    false,
+  );
+});
+
+test("uiSidebarPages throws on a duplicate slug", () => {
+  assert.throws(
+    () =>
+      uiSidebarPages({
+        omitNeed: docsOmitNeed,
+        needs: [
+          { need: "Trigger actions with buttons", slug: "shared" },
+          { need: "Collect text input with a label", slug: "shared" },
+        ],
+        sourceByNeed: {
+          "Trigger actions with buttons": "button/button.tsx",
+          "Collect text input with a label": "forms/input.tsx",
+        },
+      }),
+    /duplicate slug "shared"/,
+  );
+});
+
+test("uiSidebarPages does not throw for a new source folder", () => {
+  const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
+    needs: [{ need: "Motion helper", slug: "motion-helper" }],
+    sourceByNeed: { "Motion helper": "motion.css" },
+  });
+  assert.deepEqual(pages, ["---More---", "motion-helper"]);
+});
+
+test("uiSidebarGroupFor maps Button to Actions", () => {
+  assert.equal(uiSidebarGroupFor("Trigger actions with buttons", "button/button.tsx"), "Actions");
+  assert.equal(uiSidebarGroupFor("Show a status or count badge", "feedback/badge.tsx"), "Actions");
+  assert.equal(uiSidebarGroupFor("Unknown need", "mystery/x.tsx"), "More");
+});
+
+test("generate.mjs passes docsOmitNeed into uiSidebarPages", () => {
+  const src = readFileSync(join(here, "generate.mjs"), "utf8");
+  assert.match(src, /from "\.\.\/features\/docs\/ui-sidebar-nav\.mjs"/);
+  assert.match(src, /uiSidebarPages\(\{[^}]*omitNeed:\s*docsOmitNeed/);
+});
+
+test("ui-sidebar-nav.mjs does not import scripts", () => {
+  const src = readFileSync(join(here, "../features/docs/ui-sidebar-nav.mjs"), "utf8");
+  assert.doesNotMatch(src, /from ["'][^"']*scripts\//);
+  assert.doesNotMatch(src, /docs-omitted-needs/);
+});
+
+test("docsLayoutTree on a UI slug is the job-grouped folder, not package folders", () => {
+  const root = {
+    name: "Docs",
+    children: [
+      { type: "page", name: "Getting started", url: "/docs/getting-started" },
+      {
+        type: "folder",
+        $id: "ui",
+        name: "@zedtech/zedkit-ui",
+        children: [
+          { type: "separator", name: "Actions" },
+          { type: "page", name: "Button", url: "/docs/ui/trigger-actions-with-buttons" },
+          { type: "separator", name: "Forms" },
+        ],
+      },
+      {
+        type: "folder",
+        $id: "ai",
+        name: "@zedtech/zedkit-ai",
+        children: [{ type: "page", name: "Setup", url: "/docs/ai/setup" }],
+      },
+    ],
+  };
+  const ui = docsLayoutTree(root, ["ui", "trigger-actions-with-buttons"]);
+  assert.deepEqual(
+    ui.children.map((node) => node.name),
+    ["Actions", "Button", "Forms"],
+  );
+  assert.equal(
+    ui.children.some((node) => node.name === "Getting started" || node.$id === "ai"),
+    false,
+  );
+  const guides = docsLayoutTree(root, ["getting-started"]);
+  assert.equal(guides, root);
+  assert.equal(docsLayoutTree(root, []), root);
+});
+
+test("kitUiSourceUrl points at the kit file on GitHub", () => {
+  assert.equal(
+    kitUiSourceUrl("button/button.tsx"),
+    `${SITE_GITHUB_URL}/blob/main/packages/ui/src/button/button.tsx`,
+  );
+  assert.equal(kitUiSourceUrl(""), null);
+  assert.equal(kitUiSourceUrl("../secret"), null);
 });

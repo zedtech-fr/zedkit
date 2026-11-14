@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+
 import { DEFAULT_IDENTITY } from "../lib/default-identity";
 import { featuredPackageVersion } from "../content/gallery";
 import { persistDocsSiteLook, waitForAppliedLook } from "./identity-helpers";
@@ -24,16 +26,19 @@ for (const theme of ["light", "dark"] as const) {
       await page.goto("/", { waitUntil: "networkidle" });
       await waitForAppliedLook(page, DEFAULT_IDENTITY, theme);
       if (width < 768) {
-        await page.getByRole("button", { name: "Open menu" }).click();
-        await expect(page.getByRole("dialog")).toBeVisible();
-        await expect(page.locator("[data-shell-nav-drawer]")).toHaveScreenshot(`shell-nav-drawer-${theme}-${name}.png`);
-        await page.keyboard.press("Escape");
+        const mobile = page.locator("#nd-mobile-nav");
+        await expect(mobile.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
+        await expect(page.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+        await mobile.getByRole("button", { name: "Menu", exact: true }).click();
+        const dialog = page.getByRole("dialog", { name: "Site navigation" });
+        await expect(dialog.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+        await expect(dialog.getByRole("link", { name: "UI", exact: true })).toBeVisible();
+        await expect(dialog.getByRole("link", { name: "Docs", exact: true })).toBeVisible();
+        await expect(dialog.getByRole("link", { name: "Catalog", exact: true })).toBeVisible();
       } else {
         // The kit version label changes with every release, so only that one element is masked; the rest of the
         // header stays pixel-checked, and the label's text is still asserted in the guards below.
-        await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`, {
-          mask: [page.locator("#nd-nav [data-kit-version]")],
-        });
+        await expect(page.locator("#nd-nav")).toHaveScreenshot(`shell-nav-header-${theme}-${name}.png`);
       }
     });
   }
@@ -46,23 +51,25 @@ test.describe("shell nav calm guards", () => {
     await expect(page.getByLabel("Try another identity")).toHaveCount(0);
     const shell = page.locator("#nd-nav");
     await expect(shell.locator("select")).toHaveCount(0);
-    await expect(shell.getByText(VERSION_LABEL)).toHaveCount(1);
-    await expect(shell.getByRole("link", { name: VERSION_LABEL })).toHaveCount(0);
+    await expect(shell.getByText(VERSION_LABEL)).toHaveCount(0);
+    await expect(shell.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
+    await expect(shell.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
   });
 
-  test("phone header and drawer have no identity control or native select", async ({ page }) => {
+  test("phone header has no identity control, native select, or site-nav disclosure", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/", { waitUntil: "networkidle" });
     const mobile = page.locator("#nd-mobile-nav");
     await expect(mobile.getByLabel("Try another identity")).toHaveCount(0);
     await expect(mobile.locator("select")).toHaveCount(0);
-    await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(1);
-    await expect(mobile.getByRole("link", { name: VERSION_LABEL })).toHaveCount(0);
-    await page.getByRole("button", { name: "Open menu" }).click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog.getByLabel("Try another identity")).toHaveCount(0);
-    await expect(dialog.locator("select")).toHaveCount(0);
-    await expect(dialog.getByRole("navigation", { name: "Menu" }).getByRole("link", { name: "Guides", exact: true })).toHaveCount(0);
-    await expect(dialog.getByText("Guides", { exact: true })).toBeVisible();
+    await expect(mobile.getByText(VERSION_LABEL)).toHaveCount(0);
+    await expect(mobile.getByRole("button", { name: "Menu", exact: true })).toBeVisible();
+    await expect(mobile.getByRole("link", { name: siteChromeCopy.getStarted, exact: true })).toBeVisible();
+    await expect(mobile.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await mobile.getByRole("button", { name: "Menu", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Site navigation" });
+    await expect(dialog.getByRole("link", { name: "AI", exact: true })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: "GitHub (opens in a new tab)", exact: true })).toBeVisible();
   });
 });

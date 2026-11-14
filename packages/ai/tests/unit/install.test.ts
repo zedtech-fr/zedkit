@@ -20,6 +20,8 @@ import {
 } from "#kit.js";
 import { checkDrift, validateKit } from "#validate.js";
 import {
+  failingIssues,
+  AGENT,
   COMMAND,
   firstPartySkills,
   markdownFiles,
@@ -27,6 +29,8 @@ import {
   SKILL,
   tempDir,
 } from "./helpers.js";
+
+const STUB_DEFAULTS = "---\nschema: 1\n---\n";
 
 function install(
   dest: string,
@@ -60,7 +64,8 @@ describe("installKit", () => {
     expect(existsSync(join(dest, ".agents/agents/explorer.md"))).toBe(true);
     expect(existsSync(join(dest, ".agents/agents/architect.md"))).toBe(false);
     expect(existsSync(join(dest, ".agents/commands/plan.md"))).toBe(false);
-    expect(existsSync(join(dest, ".agents/commands/review.md"))).toBe(true);
+    expect(existsSync(join(dest, ".agents/commands/review.md"))).toBe(false);
+    expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(true);
     // Symlinks resolve through to real files.
     expect(readlinkSync(join(dest, ".claude/skills"))).toBe(
       "../.agents/skills",
@@ -79,15 +84,57 @@ describe("installKit", () => {
     ).toContain("alwaysApply: true");
   });
 
-  it("starter preset stays small: eight skills, three subagents, two commands", () => {
+  it("starter preset stays small: nine skills, three subagents, one command", () => {
     const manifest = readManifest();
     if (!manifest.ok) throw manifest.error;
     const starter = manifest.value.presets.starter;
     if (!Array.isArray(starter))
       throw new Error("starter preset must list skills");
-    expect(starter).toHaveLength(8);
+    expect(starter).toHaveLength(9);
     expect(agentsForPreset(manifest.value, "starter")).toHaveLength(3);
-    expect(commandsForPreset(manifest.value, "starter")).toHaveLength(2);
+    expect(commandsForPreset(manifest.value, "starter")).toEqual(["zedkit-ai"]);
+  });
+
+  it("every preset installs only the zedkit-ai command file", () => {
+    const manifest = readManifest();
+    if (!manifest.ok) throw manifest.error;
+    for (const preset of Object.keys(manifest.value.presets)) {
+      expect(commandsForPreset(manifest.value, preset), preset).toEqual(["zedkit-ai"]);
+      const dest = tempDir();
+      install(dest, { preset, providers: [] });
+      const dir = join(dest, ".agents/commands");
+      expect(readdirSync(dir).filter((name) => name.endsWith(".md")).sort(), preset).toEqual([
+        "zedkit-ai.md",
+      ]);
+    }
+  });
+
+  it("re-init keeps a leftover command file the preset no longer installs", () => {
+    const dest = tempDir();
+    install(dest, { preset: "starter", providers: [] });
+    const leftover = readFileSync(join(kitDir(), "commands", "setup-ai.md"), "utf8");
+    put(dest, ".agents/commands/setup-ai.md", leftover);
+    const again = install(dest, { preset: "starter", providers: [] });
+    expect(readFileSync(join(dest, ".agents/commands/setup-ai.md"), "utf8")).toBe(leftover);
+    expect(again.some((a) => a.path.includes("commands/setup-ai.md") && a.kind !== "skip")).toBe(
+      false,
+    );
+    expect(
+      readdirSync(join(dest, ".agents/commands")).filter((name) => name.endsWith(".md")).sort(),
+    ).toEqual(["setup-ai.md", "zedkit-ai.md"]);
+    const issues = validateKit(join(dest, ".agents"));
+    expect(failingIssues(issues)).toEqual([]);
+    expect(
+      issues.some((issue) => issue.message.startsWith("warning:") && issue.message.includes('"setup-ai"')),
+    ).toBe(true);
+  });
+
+  it("leftover plan.md closes /plan in leftover fix.md on starter", () => {
+    const dest = tempDir();
+    install(dest, { preset: "starter", providers: [] });
+    put(dest, ".agents/commands/plan.md", COMMAND("review"));
+    put(dest, ".agents/skills/fix/SKILL.md", `${SKILL("fix")}\nStop and point at \`/plan\`.\n`);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("starter lenses.md marks uninstalled runners planned and installed ones exists", () => {
@@ -109,7 +156,7 @@ describe("installKit", () => {
     expect(text).toMatch(
       /\| persona\s+\| skill `persona-review`[^\n]*\|\s*planned\s*\|/,
     );
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("init --adopt a second time is a no-op: no copy/link and validate stays clean", () => {
@@ -126,18 +173,18 @@ describe("installKit", () => {
       ),
     ).toEqual([]);
     expect(existsSync(join(dest, ".agents/skills/zk-review"))).toBe(false);
-    expect(existsSync(join(dest, ".agents/commands/review.kit.md"))).toBe(
+    expect(existsSync(join(dest, ".agents/commands/zedkit-ai.kit.md"))).toBe(
       false,
     );
     expect(existsSync(join(dest, ".agents/personas.kit.md"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);
   });
 
   it("init --adopt on an installed tree sidecars only the user-edited kit file", () => {
     const dest = tempDir();
     install(dest, { preset: "starter", providers: ["cursor"], adopt: true });
-    writeFileSync(join(dest, ".agents/commands/review.md"), "edited by user\n");
+    writeFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "edited by user\n");
     const again = install(dest, {
       preset: "starter",
       providers: ["cursor"],
@@ -146,13 +193,13 @@ describe("installKit", () => {
     expect(again.filter((a) => a.kind !== "skip")).toEqual([
       expect.objectContaining({
         kind: "copy",
-        path: join(".agents", "commands", "review.kit.md"),
+        path: join(".agents", "commands", "zedkit-ai.kit.md"),
       }),
     ]);
-    expect(readFileSync(join(dest, ".agents/commands/review.md"), "utf8")).toBe(
+    expect(readFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "utf8")).toBe(
       "edited by user\n",
     );
-    expect(existsSync(join(dest, ".cursor/commands/review.kit.md"))).toBe(
+    expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.kit.md"))).toBe(
       false,
     );
     expect(existsSync(join(dest, ".agents/skills/zk-review"))).toBe(false);
@@ -260,7 +307,7 @@ describe("installKit", () => {
     );
     const again = install(dest, { providers: [] });
     expect(again.filter((a) => a.kind !== "skip")).toEqual([]);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("leaves an edited tokenomics.md alone, with or without adopt, and writes no sidecar", () => {
@@ -300,7 +347,7 @@ describe("installKit", () => {
       join(dest, ".agents", "tokenomics.md"),
       "---\nschema: 1\ntiers: {}\n---\n",
     );
-    expect(validateKit(join(dest, ".agents"))).toEqual([
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([
       {
         path: "tokenomics.md",
         message: expect.stringContaining("tiers: unknown key"),
@@ -331,7 +378,7 @@ describe("installKit", () => {
       personas,
       readFileSync(personas, "utf8").replaceAll("Acme Bookings", "Real Corp"),
     );
-    writeFileSync(join(dest, ".agents/commands/review.md"), "edited by user\n");
+    writeFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "edited by user\n");
     const again = install(dest, {
       preset: "setup",
       providers: ["cursor"],
@@ -341,7 +388,7 @@ describe("installKit", () => {
     expect(again.filter((a) => a.kind !== "skip")).toEqual([
       expect.objectContaining({
         kind: "copy",
-        path: join(".agents", "commands", "review.kit.md"),
+        path: join(".agents", "commands", "zedkit-ai.kit.md"),
       }),
     ]);
   });
@@ -350,7 +397,7 @@ describe("installKit", () => {
     const dest = tempDir();
     put(dest, ".cursor/skills/team-own/SKILL.md", "team\n");
     put(dest, ".cursor/agents/explorer.md", "custom explorer\n");
-    put(dest, ".cursor/commands/review.md", "custom review\n");
+    put(dest, ".cursor/commands/zedkit-ai.md", "custom command\n");
     const actions = install(dest, { providers: ["cursor"], adopt: true });
     expect(
       readFileSync(join(dest, ".cursor/skills/team-own/SKILL.md"), "utf8"),
@@ -358,11 +405,11 @@ describe("installKit", () => {
     expect(readFileSync(join(dest, ".cursor/agents/explorer.md"), "utf8")).toBe(
       "custom explorer\n",
     );
-    expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe(
-      "custom review\n",
+    expect(readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8")).toBe(
+      "custom command\n",
     );
     expect(existsSync(join(dest, ".cursor/agents/explorer.kit.md"))).toBe(true);
-    expect(existsSync(join(dest, ".cursor/commands/review.kit.md"))).toBe(true);
+    expect(existsSync(join(dest, ".cursor/commands/zedkit-ai.kit.md"))).toBe(true);
     expect(
       lstatSync(join(dest, ".cursor/skills/ground-truth")).isSymbolicLink(),
     ).toBe(true);
@@ -370,7 +417,7 @@ describe("installKit", () => {
       ".agents/skills/ground-truth",
     );
     expect(actions.some((a) => a.note?.includes("kept user file"))).toBe(true);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(checkDrift(dest, join(dest, ".agents"))).toEqual([]);
   });
 
@@ -397,8 +444,7 @@ describe("installKit", () => {
   it("core preset validates clean: every command resolves to an installed skill", () => {
     const dest = tempDir();
     install(dest, { preset: "core" });
-    const issues = validateKit(join(dest, ".agents"));
-    expect(issues).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("installs every preset with no dangling skill reference", () => {
@@ -409,7 +455,7 @@ describe("installKit", () => {
       const result = installKit({ dest, preset, providers: [] });
       expect(result.ok, preset).toBe(true);
       if (!result.ok) continue;
-      expect(validateKit(join(dest, ".agents")), preset).toEqual([]);
+      expect(failingIssues(validateKit(join(dest, ".agents"))), preset).toEqual([]);
     }
   });
 
@@ -432,6 +478,7 @@ describe("installKit", () => {
     put(kit, "skills/beta/SKILL.md", SKILL("beta"));
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     const result = installKit({ dest, kit, preset: "tiny", providers: [] });
     expect(result.ok).toBe(false);
@@ -448,6 +495,33 @@ describe("installKit", () => {
       providers: [],
     });
     expect(full.ok).toBe(true);
+  });
+
+  it("installs a custom kit whose commands /ref each other without a zedkit-ai entry", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({
+        presets: { tiny: ["alpha"] },
+        agents: [],
+        commands: ["alpha", "beta"],
+      }),
+    );
+    put(kit, "skills/alpha/SKILL.md", `${SKILL("alpha")}\nRun \`/beta\`.\n`);
+    put(kit, "commands/alpha.md", `${COMMAND("alpha")}\nAlso \`/beta\`.\n`);
+    put(kit, "commands/beta.md", `${COMMAND("beta")}\nAlso \`/alpha\`.\n`);
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
+    const dest = tempDir();
+    const result = installKit({ dest, kit, preset: "tiny", providers: [] });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(existsSync(join(dest, ".agents/commands/alpha.md"))).toBe(true);
+      expect(existsSync(join(dest, ".agents/commands/beta.md"))).toBe(true);
+      expect(existsSync(join(dest, ".agents/commands/zedkit-ai.md"))).toBe(false);
+    }
   });
 
   it("installs personas.md from the template, keeps an existing one", () => {
@@ -481,7 +555,7 @@ describe("installKit", () => {
     expect(existsSync(join(starter, ".agents/skills/triage"))).toBe(false);
     const core = tempDir();
     install(core, { preset: "core" });
-    expect(existsSync(join(core, ".agents/skills/triage"))).toBe(false);
+    expect(existsSync(join(core, ".agents/skills/triage/SKILL.md"))).toBe(true);
     const full = tempDir();
     install(full, { preset: "full" });
     expect(existsSync(join(full, ".agents/skills/triage/SKILL.md"))).toBe(true);
@@ -490,7 +564,7 @@ describe("installKit", () => {
   it("produces output that passes validation", () => {
     const dest = tempDir();
     install(dest, { preset: "full" });
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("never overwrites: local edits survive, and a ladder-less AGENTS.md gets the section appended", () => {
@@ -532,6 +606,7 @@ describe("installKit", () => {
     put(v1, "skills/alpha/SKILL.md", "v1\n");
     put(v1, "AGENTS.template.md", "t");
     put(v1, "THIRD_PARTY_NOTICES.md", "n");
+    put(v1, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     install(dest, { kit: v1, preset: "core" });
     writeFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "edited\n");
@@ -545,6 +620,7 @@ describe("installKit", () => {
     put(v2, "skills/beta/SKILL.md", "new\n");
     put(v2, "AGENTS.template.md", "t");
     put(v2, "THIRD_PARTY_NOTICES.md", "n");
+    put(v2, "tokenomics.defaults.md", STUB_DEFAULTS);
     const again = install(dest, { kit: v2, preset: "core" });
     expect(
       readFileSync(join(dest, ".agents/skills/alpha/SKILL.md"), "utf8"),
@@ -590,6 +666,7 @@ describe("installKit", () => {
     put(kit, "skills/alpha/SKILL.md", "x");
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     put(dest, "AGENTS.md", "mine\n");
     const actions = install(dest, { kit, preset: "core" });
@@ -637,7 +714,7 @@ describe("installKit", () => {
     expect(
       readFileSync(join(dest, ".claude/skills/team-own/SKILL.md"), "utf8"),
     ).toBe("team\n");
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
     expect(
       checkDrift(dest, join(dest, ".agents")).filter((i) =>
         i.message.includes("unreachable"),
@@ -679,7 +756,7 @@ describe("installKit", () => {
       true,
     );
     expect(again.some((a) => a.path.includes("add-invoice"))).toBe(false);
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("writes nothing on a dry run", () => {
@@ -704,18 +781,19 @@ describe("installKit", () => {
     const dest = tempDir();
     install(dest, { preset: "core" });
     expect(
-      readFileSync(join(dest, ".agents/commands/review.md"), "utf8"),
-    ).toContain("`review`");
+      readFileSync(join(dest, ".agents/commands/zedkit-ai.md"), "utf8"),
+    ).toContain("`zedkit-ai`");
     expect(readlinkSync(join(dest, ".claude/commands"))).toBe(
       "../.agents/commands",
     );
-    expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(true);
+    expect(existsSync(join(dest, ".claude/commands/zedkit-ai.md"))).toBe(true);
+    expect(existsSync(join(dest, ".claude/commands/plan.md"))).toBe(false);
     expect(lstatSync(join(dest, ".cursor/commands")).isSymbolicLink()).toBe(
       false,
     );
     expect(
-      readFileSync(join(dest, ".cursor/commands/plan.md"), "utf8"),
-    ).toContain("`plan`");
+      readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8"),
+    ).toContain("`zedkit-ai`");
     expect(lstatSync(join(dest, ".cursor/agents")).isSymbolicLink()).toBe(
       false,
     );
@@ -746,10 +824,10 @@ describe("installKit", () => {
   it("never overwrites the cursor copies: edits survive a second run", () => {
     const dest = tempDir();
     install(dest, { providers: ["cursor"] });
-    writeFileSync(join(dest, ".cursor/commands/review.md"), "mine\n");
+    writeFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "mine\n");
     const again = install(dest, { providers: ["cursor"] });
     expect(again.every((a) => a.kind === "skip")).toBe(true);
-    expect(readFileSync(join(dest, ".cursor/commands/review.md"), "utf8")).toBe(
+    expect(readFileSync(join(dest, ".cursor/commands/zedkit-ai.md"), "utf8")).toBe(
       "mine\n",
     );
   });
@@ -784,6 +862,7 @@ describe("installKit", () => {
     put(kit, "skills/alpha/SKILL.md", "x");
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     install(dest, { kit, preset: "core" });
     expect(existsSync(join(dest, ".agents/commands"))).toBe(false);
@@ -845,6 +924,24 @@ describe("installKit", () => {
       expect(badResult.error.message).toContain("must be a string list");
   });
 
+  it("fails when custom-kit defaults are missing, without generating provider agents", () => {
+    const kit = tempDir();
+    put(
+      kit,
+      "kit.json",
+      JSON.stringify({ presets: { starter: ["alpha"] }, agents: ["explorer"] }),
+    );
+    put(kit, "skills/alpha/SKILL.md", SKILL("alpha"));
+    put(kit, "agents/explorer.md", AGENT("explorer"));
+    put(kit, "AGENTS.template.md", "t");
+    put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    const dest = tempDir();
+    const result = installKit({ dest, kit, providers: ["cursor"] });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.message).toContain("tokenomics.defaults.md");
+    expect(existsSync(join(dest, ".cursor/agents/explorer.md"))).toBe(false);
+  });
+
   it("still generates provider agents when project tokenomics does not parse, and notes inherit", () => {
     const dest = tempDir();
     put(dest, ".agents/tokenomics.md", "---\nschema: [broken\n---\n");
@@ -896,6 +993,7 @@ describe("installKit", () => {
     put(kit, "personas.template.md", 'Call the Skill tool with "ghost".\n');
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const result = installKit({
       dest: tempDir(),
       kit,
@@ -916,6 +1014,7 @@ describe("installKit", () => {
     put(kit, "personas.template.md", "v1 personas\n");
     put(kit, "AGENTS.template.md", "t");
     put(kit, "THIRD_PARTY_NOTICES.md", "n");
+    put(kit, "tokenomics.defaults.md", STUB_DEFAULTS);
     const dest = tempDir();
     const result = installKit({ dest, kit, preset: "setup", providers: [] });
     expect(result.ok).toBe(true);
@@ -1057,7 +1156,7 @@ describe("installKit", () => {
     expect(agents.startsWith(host)).toBe(true);
     expect(agents).toContain("Use p-4 for page padding.");
     expect(readFileSync(join(dest, ".agents", "skills", "setup-ai", "design-policy.md"), "utf8")).toContain("p-4");
-    expect(validateKit(join(dest, ".agents"))).toEqual([]);
+    expect(failingIssues(validateKit(join(dest, ".agents")))).toEqual([]);
   });
 
   it("skips project.mdc when AGENTS.md already exists and an always-on rule references it", () => {
@@ -1173,7 +1272,7 @@ describe("installKit", () => {
         "utf8",
       );
       const lines = text.trimEnd().split("\n").length;
-      const maxLines = name === "setup-ai" ? 12 : 6;
+      const maxLines = name === "setup-ai" || name === "zedkit-ai" ? 12 : 6;
       expect(lines, `${name} is ${lines} lines`).toBeGreaterThanOrEqual(3);
       expect(lines, `${name} is ${lines} lines`).toBeLessThanOrEqual(maxLines);
       expect(text).toContain(`\`${name}\``);
@@ -1277,7 +1376,10 @@ describe("installKit", () => {
     // 27 for `compose-ui` (persona chain brief before composing UI).
     // 29 for `from-audit` / `to-audit` (orchestrate-first audit entrypoints).
     // 32 for `fix`, `improve-from-review` and `quick-wins` (short path, review punchlist, two-mode topic).
-    expect(core.length).toBeLessThanOrEqual(32);
+    // 33 for `triage` (issue inbox on setup and core, not only full).
+    // 34 for `visual-verify` (host command for Visual work).
+    // 35 for `zedkit-ai` (entry command that classifies onto the others).
+    expect(core.length).toBeLessThanOrEqual(35);
   });
 
   it("core-installed skills only name skills and agents that core installs", () => {

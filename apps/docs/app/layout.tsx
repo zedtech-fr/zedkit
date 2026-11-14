@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { SkipLink } from "@/ui/skip-link";
+import { SkipLink } from "@/components/site-chrome/skip-link";
 
 import { rootLayoutCopy } from "@/app/i18n/root-layout-copy";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { docsSite, homePage } from "@/lib/site";
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import {
-  DOCS_SITE_IDENTITY_OPT_IN_KEY,
-  DOCS_SITE_IDENTITY_STORAGE_KEY,
-} from "@/lib/site-identity-storage";
+import { DOCS_SITE_IDENTITY_STORAGE_KEY } from "@/features/identity/ui/site-identity-storage";
 import { IdentityScript } from "@zedtech/zedkit-ui";
 import { preload } from "react-dom";
 import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2";
@@ -20,8 +17,6 @@ import "./code-syntax.css";
 import "./docs-typography.css";
 import "./docs-shell-tokens.css";
 import "./docs-signature.css";
-import "./home-hero.css";
-import "./catalog-shell.css";
 import "./tide-fit.css";
 import "./docs-tables.css";
 import "./code-scroll.css";
@@ -59,7 +54,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         <IdentityScript
           defaultIdentity={DEFAULT_IDENTITY}
           storageKey={DOCS_SITE_IDENTITY_STORAGE_KEY}
-          optInStorageKey={DOCS_SITE_IDENTITY_OPT_IN_KEY}
         />
       </head>
       <body>

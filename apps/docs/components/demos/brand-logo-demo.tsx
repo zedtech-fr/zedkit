@@ -40,10 +40,10 @@ export function BrandLogoDemo() {
             </Text>
           </a>
           <nav aria-label={brandLogoCopy.navAriaLabel} className="flex shrink-0 gap-stack-md text-dense text-muted-foreground">
-            <a href="/work" onClick={stay}>
+            <a href="#work" id="work" className="inline-flex min-h-floor items-center px-control-tight focus-ring-control">
               {brandLogoCopy.work}
             </a>
-            <a href="/about" onClick={stay}>
+            <a href="#about" id="about" className="inline-flex min-h-floor items-center px-control-tight focus-ring-control">
               {brandLogoCopy.about}
             </a>
           </nav>

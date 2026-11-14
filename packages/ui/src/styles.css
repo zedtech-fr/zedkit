@@ -49,12 +49,14 @@
   --muted-foreground: 240 5% 32%;
   --accent: 240 4.8% 59.9%;
   --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 72.2% 47%;
+  --destructive: 0 72.2% 42%;
   --destructive-foreground: 0 0% 98%;
-  --success: 142.1 76.2% 27%;
+  --success: 142.1 76.2% 25%;
   --success-foreground: 0 0% 98%;
-  --warning: 32 95% 44%;
-  --warning-foreground: 240 10% 3.9%;
+  --warning: 32 95% 29%;
+  --warning-foreground: 0 0% 98%;
+  --info: 215 55% 38%;
+  --info-foreground: 0 0% 98%;
   --overlay: 0 0% 0%;
   --border: 240 5.9% 60%;
   /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
@@ -102,12 +104,14 @@
   --muted-foreground: 240 5% 64.9%;
   --accent: 240 3.7% 37.9%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 72.2% 66%;
+  --destructive: 0 72.2% 72%;
   --destructive-foreground: 240 10% 3.9%;
   --success: 142.1 70.6% 45.3%;
   --success-foreground: 240 10% 3.9%;
-  --warning: 32 95% 32%;
-  --warning-foreground: 0 0% 98%;
+  --warning: 32 95% 49%;
+  --warning-foreground: 240 10% 3.9%;
+  --info: 215 25% 70%;
+  --info-foreground: 240 10% 3.9%;
   --overlay: 0 0% 0%;
   --border: 240 3.7% 37.9%;
   /* Resting field boundary: 3:1 against background, card and muted. Divider stays. */
@@ -182,6 +186,8 @@
   --color-success-foreground: hsl(var(--success-foreground));
   --color-warning: hsl(var(--warning));
   --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
   --color-overlay: hsl(var(--overlay));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -234,6 +240,7 @@
   --container-wide: var(--zk-container-wide);
   --spacing-badge-inline: calc(var(--spacing) * 2.5);
   --spacing-badge-block: calc(var(--spacing) * 0.5);
+  --spacing-code-inline: calc(var(--spacing) * 2.5);
   --spacing-control-height: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 9));
   --spacing-control-height-sm: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 8));
   --spacing-control-height-lg: max(var(--zk-tap-min, 0px), calc(var(--spacing) * 10));
@@ -699,6 +706,19 @@ ol[data-sonner-toaster] {
 @utility badge-warning-hover {
   background-color: color-mix(in oklab, hsl(var(--warning)) 90%, transparent);
 }
+/* Soft status badges. A 15% wash of the status colour, not a filled pill. */
+@utility badge-soft-success {
+  background-color: color-mix(in oklab, hsl(var(--success)) 15%, transparent);
+}
+@utility badge-soft-warning {
+  background-color: color-mix(in oklab, hsl(var(--warning)) 15%, transparent);
+}
+@utility badge-soft-destructive {
+  background-color: color-mix(in oklab, hsl(var(--destructive)) 15%, transparent);
+}
+@utility badge-soft-info {
+  background-color: color-mix(in oklab, hsl(var(--info)) 15%, transparent);
+}
 /* The dim layer behind a dialog. Glass replaces this with its own scrim. */
 @utility dialog-scrim {
   background-color: color-mix(in oklab, hsl(var(--overlay)) 80%, transparent);
@@ -887,9 +907,12 @@ section[data-gallery-section].border-b:last-child {
     translate: -50% -50%;
     width: max(100%, 24px);
     height: max(100%, 24px);
-  }
-  @media (pointer: coarse), (max-width: 40rem) {
-    &::before {
+    /*
+     * Nest `@media` inside `&::before`. A sibling `@media` + `&::before`
+     * inside `@utility` compiles to `@media (pointer::before: coarse)`.
+     * A components-layer override loses to this utility.
+     */
+    @media (pointer: coarse), (max-width: 40rem) {
       width: var(--spacing-tap);
       height: var(--spacing-tap);
     }
@@ -897,13 +920,14 @@ section[data-gallery-section].border-b:last-child {
 }
 
 /*
- * Link badges keep their small visual size. The hit area is at least the
- * 24px floor on every pointer, and the labelled tap size on touch or a
- * narrow screen.
+ * Link badges keep a 24px min box on every pointer. A ::after hit area
+ * still expands to the tap size on a coarse pointer or a narrow screen.
  */
 @layer components {
   a[class*="px-badge-inline"] {
     position: relative;
+    min-width: 24px;
+    min-height: 24px;
     &::after {
       content: "";
       position: absolute;
@@ -1289,9 +1313,11 @@ section[data-gallery-section].border-b:last-child {
 }
 
 /*
- * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
- * vanishes on dark and tinted identities. Draw it from the kit tokens
- * so it reads on every surface. The 44px hit area is vaul's own.
+ * Drawer handles: Vaul paints a light-grey 5×32px bar at 70% opacity that
+ * vanishes on dark and tinted identities. Draw modal (Vaul) and non-modal
+ * kit handles from the kit tokens so they read on every surface.
+ * `touch-action: none` applies to both, so the browser does not steal the
+ * drag for scroll. Modal 44px hit area is Vaul's; non-modal adds `hit-target`.
  * The whole vaul block below stays deliberately unlayered: vaul injects
  * unlayered styles, and layered CSS would lose to them.
  */
@@ -1300,6 +1326,7 @@ html [data-vaul-handle] {
   height: var(--spacing-drawer-handle-height);
   background-color: hsl(var(--muted-foreground) / 0.5);
   opacity: 1;
+  touch-action: none;
 }
 
 /* Side drawers close by dragging the panel itself: no handle (vaul sets display: block unlayered). */
@@ -1384,6 +1411,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 /* Four equal columns, such as a row of time slots. */
 @utility grid-quad {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+/* Five equal columns, such as a console stat strip on a wide pane. */
+@utility grid-quint {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 /* The rest of a three-column row: a detail value, a scene, a link group. */
 @utility span-rest {
@@ -1660,8 +1691,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-aside {
   min-height: calc(var(--spacing) * 80);
 }
+/* Compact desktop segment. Floor at 24px so dense looks stay above the CSS target. */
 @utility min-h-segment {
-  min-height: calc(var(--spacing) * 7);
+  min-height: max(24px, calc(var(--spacing) * 7));
 }
 /* Pulls a back link up into the page inset. */
 @utility pull-back {

@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
-# Publish the static docs export to the staging site directory only.
+# Publish the static docs export to a staging site directory only.
 # Static files only: no reverse-proxy reload, no container recreate, no
 # suggest env, and no git checkout on the host.
 #
-# Usage: publish-dev-static.sh <ssh-target>
+# Usage: publish-dev-static.sh <ssh-target> [dest-key]
+# dest-key defaults to zed-dev. Destinations are allowlisted in this
+# script so a caller cannot retarget them.
 set -euo pipefail
 
-target="${1:?usage: publish-dev-static.sh <ssh-target>}"
-remote="/data/srv/zedkit"
+target="${1:?usage: publish-dev-static.sh <ssh-target> [dest-key]}"
+dest_key="${2:-zed-dev}"
+case "$dest_key" in
+  zed-dev) remote="/data/srv/zedkit" ;;
+  zed-epic-73) remote="/data/srv/zedkit-epic-73" ;;
+  *)
+    echo "publish-dev-static: unknown dest $dest_key" >&2
+    exit 1
+    ;;
+esac
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 out="${DEPLOY_OUT:-$root/apps/docs/out}"
 
@@ -28,7 +38,6 @@ printf 'branch=%s\ncommit=%s\nbuilt=%s\n' "$branch" "$sha" "$(date -u +%Y-%m-%dT
 printf 'User-agent: *\nDisallow: /\n' > "$out/robots.txt"
 
 # Refuse a dest that is missing, a git checkout, or not the real directory.
-# The dest is a literal in this script so a caller cannot retarget it.
 ssh "$target" "set -euo pipefail
 dest='$remote'
 if [ ! -d \"\$dest\" ]; then

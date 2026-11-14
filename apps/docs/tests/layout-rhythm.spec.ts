@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 /*
  * Shell layout rhythm: the docs article keeps 20-24px mobile gutters from
- * the page-gutter token, and the catalog shell caps its band on a 1160px
+ * the page-gutter token, and the catalog shell caps its band on a 1200px
  * marketing container with a section rhythm that drops to the 48-72px
  * mobile band (72-112px on desktop). Scoped to docs + catalog: the home
  * page keeps its own rhythm (other lanes pin it exactly). Relative paths:
@@ -40,13 +40,13 @@ test("docs article keeps token gutters on mobile", async ({ page }) => {
   expect(Number.parseFloat(gutter)).toBeGreaterThanOrEqual(16);
 });
 
-test("catalog band sits on the 1160px container", async ({ page }) => {
+test("catalog band sits on the 1200px container", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/catalog", { waitUntil: "networkidle" });
   const maxWidth = await page
     .locator('[data-catalog-shell] section[data-slot="section"] > [data-slot="container"]')
     .evaluate((el) => getComputedStyle(el).maxWidth);
-  expect(maxWidth).toBe("1160px");
+  expect(maxWidth).toBe("1200px");
 });
 
 test("catalog section rhythm drops to the mobile band", async ({ page }) => {

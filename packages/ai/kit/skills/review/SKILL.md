@@ -15,7 +15,7 @@ Resolve the fixed point (commit, branch, tag, `HEAD~N`; ask when missing) and ca
 
 ## 2. Pick the lenses (route over `lenses.md`)
 
-Read `lenses.md` (same folder). Minimum on every review: `code`<!-- if:skill=ponytail -->, `ponytail`<!-- /if -->, `persona`, `quality gate`. Add each lens whose Trigger matches the pinned diff. A `planned` runner reports skipped-planned (not a blocker); skipping a mandatory lens whose runner exists IS a blocker. UI class names: open `../setup-ai/design-policy.md`. Do not restate it.
+Read `lenses.md` (same folder). Minimum on every review: `code`<!-- if:skill=ponytail -->, `ponytail`<!-- /if -->, `persona`, `quality gate`. Add each lens whose Trigger matches the pinned diff (`lenses.md` owns each trigger). For `evidence`, the synthesizer opens the sheet; do not spawn `review` for it. A `planned` runner reports skipped-planned (not a blocker); skipping a mandatory lens whose runner exists IS a blocker. UI class names: open `../setup-ai/design-policy.md`. Do not restate it.
 
 ## 3. Fan out
 
@@ -24,6 +24,8 @@ One subagent per lens, in parallel (`parallel-work`) in waves of at most 6; inli
 ## 4. Merge
 
 Dedupe, rank by severity, one verdict: ship, fix-then-ship (list blockers), or rework. Open with the lenses-run table (every lens: ran or skipped + reason; a `planned` runner reports skipped-planned with its reason, never a blocker and never silent; a preset that omits a runner is a product choice to record, not an automatic blocker; cross-check the PR description and drop accusations the second pass already recalibrated). Then a second independent `check` spawn (not the synthesizer) verifies each ranked finding against the same pinned commit. It may keep a finding, drop it, or adjust its severity either way, and it says why. It stays inside the synthesis. A finding it drops is not a blocker. If that pass cannot run, say so: its absence does not drop blockers.
+
+After the second pass, write the one final-decision record per [`decision.md`](decision.md).
 
 ## 5. Turn the miss into a rule
 

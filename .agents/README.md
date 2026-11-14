@@ -17,8 +17,9 @@ skills and subagents in `packages/ai/kit/` are the single source of truth.
 - Product / domain / tokenomics / design: `product.md`, `domain/*.md`,
   `tokenomics.md` (kind × stakes cells), `design.md`.
 - `atlas.md`: the lookup read before any search (where things live, words,
-  commands, why). One row per lesson, fixed in place, capped; `validate`
-  checks its paths. Skill `rules-upkeep` says when to write it.
+  commands, why). One row per lesson, fixed in place, capped; long traps live
+  in `.agents/atlas/<topic>.md`. `validate` checks index and topic-file paths. Skill
+  `rules-upkeep` says when to write it.
 
 Edit skills and unmarked agent sources in `packages/ai/kit/`, then run
 `npx @zedtech/zedkit-ai sync` and `pnpm exec turbo run test --filter=@zedtech/zedkit-ai`
@@ -57,6 +58,7 @@ On every message, pick depth first (root `AGENTS.md`). A search or inventory is 
 | `/fix` | One defect, inline, with its check. Does not go through `orchestrate`. |
 | `/improve-from-review` | Apply a review punchlist, then encode a reusable miss. |
 | `/quick-wins` | `audit <scope>` finds small wins (read-only); `implement <findings or topic>` ships them. |
+| `/triage` | Issue inbox: category and state roles, then an agent-ready brief. |
 
 ## Always-on vs globbed
 

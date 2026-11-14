@@ -37,19 +37,6 @@
   border-top-color: color-mix(in oklab, hsl(var(--border)) 40%, transparent);
 }
 
-/* Gallery card preview, tall enough that a lazy demo does not collapse the card. */
-[data-home-gallery-preview] {
-  min-height: calc(var(--spacing) * 32);
-}
-
-/* Hero title line, then the sentence under it. */
-[data-home-hero-lead] h1 {
-  max-width: 32rem;
-}
-[data-home-hero-sub] {
-  max-width: 28rem;
-}
-
 /* Chat turn. Stays inside the thread, with a little of the other side showing. */
 [data-assistant-log] > li {
   max-width: 90%;
@@ -57,14 +44,6 @@
 /* A notice beside the composer. Slightly wider than a thread turn. */
 [data-assistant-notice] {
   max-width: 95%;
-}
-
-/* Home index rows. The line is 60% of the border colour. The last row has no line. */
-[data-home-secondary-links] > [data-index-lead] {
-  border-bottom-color: color-mix(in oklab, hsl(var(--border)) 60%, transparent);
-}
-[data-home-secondary-links] > [data-index-lead].border-b:last-child {
-  border-bottom-width: 0;
 }
 
 /* The last job in the badge table has no line under it. */
@@ -80,17 +59,6 @@
 /* Inline URLs in the setup prompt. The line sits closer than a text link so it stays with the words. */
 [data-setup-prompt] a {
   text-underline-offset: 2px;
-}
-
-/* AI setup. The benefits column stays at most 30rem while the file tree scrolls. */
-[data-home-ai-setup] {
-  --zk-sticky-cols: minmax(0, 1fr) minmax(0, 30rem);
-}
-
-/* The file list scrolls. The focus ring sits inside it, so the clip does not hide the ring. */
-[data-home-ai-terminal] pre:focus-visible {
-  outline: var(--ring-width) solid hsl(var(--ring));
-  outline-offset: calc(var(--ring-offset-width) * -1);
 }
 
 /* The draft card stays above the form while it sticks. */
@@ -269,10 +237,9 @@
   border-color: color-mix(in oklab, hsl(var(--border)) 35%, transparent);
 }
 
-/* Identity dock + inline assistant: type roles via tokens (not Tailwind text-*). */
+/* Identity dock: type roles via tokens (not Tailwind text-*). */
 [data-testid="identity-dock"] [data-assistant-status],
-[data-testid="identity-dock"] [data-assistant-feedback],
-[data-slot="identity-assistant"] [data-assistant-status] {
+[data-testid="identity-dock"] [data-assistant-feedback] {
   font-size: var(--zk-type-label-size);
   font-weight: var(--zk-type-label-weight);
   line-height: var(--zk-type-label-leading);
@@ -280,8 +247,7 @@
 
 [data-testid="identity-dock"] [data-assistant-pane="conversation"] li,
 [data-testid="identity-dock"] [data-assistant-reference-report],
-[data-testid="identity-dock"] [data-assistant-link-report],
-[data-slot="identity-assistant"] [data-assistant-pane="conversation"] li {
+[data-testid="identity-dock"] [data-assistant-link-report] {
   font-size: var(--zk-type-body-size);
   font-weight: var(--zk-type-body-weight);
   line-height: var(--zk-type-body-leading);
@@ -302,10 +268,12 @@
 }
 
 /* One-off insets. The step matches another role; the job does not, so the number stays a literal here. */
-[data-dock-scroll],
-[data-hero-activity],
-[data-hero-nav] {
-  padding-bottom: calc(var(--spacing) * 2);
+[data-slot="identity-dock-panel"] {
+  background-color: hsl(var(--background));
+}
+
+[data-dock-scroll] {
+  padding-bottom: calc(var(--spacing) * 4);
 }
 
 /* A menu link that leaves the site. Quieter than the label, not the dialog close. */
@@ -313,15 +281,9 @@
   opacity: 0.7;
 }
 
-/* Site menu. At most 85% of the screen, and never taller than 640px. */
-[data-shell-nav-drawer] {
-  max-height: min(85dvh, 640px);
-}
-
 [data-under-rule],
 [data-proposal-before],
-[data-theme-card-body],
-[data-shell-nav-drawer] {
+[data-theme-card-body] {
   padding-top: calc(var(--spacing) * 2);
 }
 

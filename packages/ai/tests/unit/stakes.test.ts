@@ -239,10 +239,10 @@ describe("workflow skills", () => {
   const skill = (name: string): string => readFileSync(join(kitDir(), "skills", name, "SKILL.md"), "utf8");
 
   it("set or carry the stakes, route every spawn with its kind, and name the gate", () => {
-    for (const name of ["plan", "implement", "review", "orchestrate", "parallel-work", "definition-of-done"]) {
+    for (const name of ["plan", "implement", "review", "orchestrate", "parallel-work", "definition-of-done", "zedkit-ai"]) {
       expect(skill(name), name).toContain("Stakes");
     }
-    for (const name of ["implement", "review", "orchestrate", "parallel-work"]) {
+    for (const name of ["implement", "review", "orchestrate", "parallel-work", "zedkit-ai"]) {
       expect(skill(name), name).toContain("zedkit-ai route");
       expect(skill(name), name).toContain("--kind");
     }

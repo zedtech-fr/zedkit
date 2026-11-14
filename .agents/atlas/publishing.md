@@ -1,0 +1,14 @@
+# Versioning, release, catalog, staging publish
+
+Full Entry paths, traps, and Touches for the index rows that point here. The index in `.agents/atlas.md` stays a pointer; fix facts here and keep that row in sync.
+
+## Where
+
+| Topic | Entry | Why it lives there / trap | Touches | Checked |
+| --- | --- | --- | --- | --- |
+| Dev static publish (staging + epic-73 preview) | `deploy/publish-dev-static.sh`, `.github/workflows/deploy-dev.yml`, `.github/workflows/deploy-epic-preview.yml` | Allowlisted dest keys (`zed-dev` → `/data/srv/zedkit`, `zed-epic-73` → `/data/srv/zedkit-epic-73`); rsync only; never `deploy.sh` or production env. Staging docs builds set `NEXT_PUBLIC_ZEDOS_RUNS_API_BASE=https://dev.zedkit.app` (optional `GITHUB_TOKEN` for GitHub rate limit) and do not ingest a JSON snapshot. Dedibox Caddy vhost is out of repo. Trap: every in-repo `file_server` Caddy site has site-level `handle_errors` → `/404.html`; the epic host vhost must copy that rewrite. | `node --test deploy/publish-dev-static.test.mjs deploy/deploy-dev-workflow.test.mjs deploy/caddyfile.test.mjs` | 2026-11-13 |
+| Versioning and changesets | `.changeset/`, `docs/publishing.md` | One file per PR; `packages/ai/CHANGELOG.md` is written by the Version PR, not by hand. Do not `readFileSync` a named `.changeset/<file>.md` in package tests: the Version PR consumes it (ENOENT after release). Glob remaining files, or pin durable mapping tests instead. | release workflow, npm | 2026-11-13 |
+| Doc version pins | `scripts/doc-pins.mjs` | Version step rewrites `@zedtech/zedkit-<pkg>@X.Y.Z` plus `**X**`, `` `@X` ``, `^X`, `exactly at X` — not `at exactly \`X\``. map.md is in PINNED_FILES for the npx validate pin. Do not hand-pin on the Version PR. | `changeset:version`; hygiene `node scripts/doc-pins.mjs check` | 2026-11-10 |
+| Release publisher npm (OIDC) | `scripts/release-publisher.mjs`, `scripts/ensure-release-publisher.sh` | pnpm 9.15.9 prepends dirname(execPath); Node 22 ships npm 10; install the pin into the Node prefix, then assert | `.github/workflows/release.yml`; `node --test scripts/release-publisher.test.mjs` | 2026-11-08 |
+| Release publish auth | `scripts/export-release-auth.mjs` | Export NODE_AUTH_TOKEN only when NPM_TOKEN is non-empty; empty interpolation is ENEEDAUTH; OIDC otherwise | `.github/workflows/release.yml`; `node --test scripts/export-release-auth.test.mjs` | 2026-11-08 |
+| Catalog entries of a package | `packages/ui/CATALOG.md`, `packages/ai/CATALOG.md`, `docs/catalog/` | Every export in `src/index.ts` needs a row; `pnpm catalog:build` regenerates `catalog.json`. Need Purpose is the generated page description; registry/component pages are not truncated, so Purpose must be ≤160 chars (`SEO_DESCRIPTION_MAX`) or `catalog:check` fails. | `pnpm catalog:check`, docs catalog pages | 2026-11-11 |
