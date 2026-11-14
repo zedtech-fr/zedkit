@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
-import Link from "next/link";
 import {
   Button,
   Card,
@@ -290,14 +289,11 @@ export function ReviewListView({
       <PageHeader title={copy.list.title} description={copy.list.description} />
       {empty ? (
         // Empty state still needs a next step: nothing is selectable, so link home.
-        <EmptyState
-          description={copy.list.empty}
-          actions={
-            <Button asChild variant="outline">
-              <Link href="/">{copy.list.recoveryLabel}</Link>
-            </Button>
-          }
-        />
+        <EmptyState description={copy.list.empty} actions={
+          <Button asChild variant="outline">
+            <a href="/">{copy.list.recoveryLabel}</a>
+          </Button>
+        } />
       ) : (
         <IssuesWorkspace issues={issues} unlinked={unlinked} selected={selected} copy={copy} />
       )}

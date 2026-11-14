@@ -52,7 +52,7 @@ export function CatalogView({
   q?: string;
   onFilters?: (next: { area?: string; status?: string; q?: string }) => void;
 }) {
-  const { countsByArea, visible, total } = useMemo(
+  const { countsByArea, visible, areaTotal } = useMemo(
     () => catalogFilterView(entries, { area, status, q }),
     [entries, area, status, q],
   );
@@ -93,7 +93,7 @@ export function CatalogView({
         <Stack gap="md">
           <CatalogResultsBodyLazy filtered={visible} />
           <Stack data-catalog-results-heading="">
-            <CatalogResultsStatus shown={visible.length} total={total} />
+            <CatalogResultsStatus shown={visible.length} total={areaTotal} />
           </Stack>
         </Stack>
       </Container>

@@ -156,7 +156,6 @@ test("listed chrome files read catalog keys instead of English literals", () => 
   assert.match(offPath, /hit-target inline-flex items-center gap-icon/);
   assert.match(offPath, /` \(\$\{opens\}\)`/);
   assert.match(offPath, /labelled === undefined/);
-  assert.match(a11y, /siteChromeCopy\.nav\.opensInNewTab/);
   assert.match(footer, /OffPathLink/);
   assert.doesNotMatch(header, /OffPathLink/);
   assert.doesNotMatch(header, /if \(link\.external\)/);

@@ -5,7 +5,7 @@ export const identityEditorCopy = {
     description:
       "Try spacing, color, and type tokens in the browser. Demo only — not a shipped docs feature.",
   },
-  back: "← Back to identities",
+  back: "Back to identities",
   heading: "Try looks in the demo editor",
   body: "Tune tokens and preview them on a card. The link keeps your draft, so you can reopen it.",
   export: {

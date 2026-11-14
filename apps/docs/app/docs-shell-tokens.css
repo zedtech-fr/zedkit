@@ -594,7 +594,7 @@ html[data-docs-shell]:not(.dark):not([data-identity="custom"]) {
   --spacing: 0.25rem;
 }
 
-/* Skip-link: a real 24px box parked above the viewport until focus (not 1px sr-only). */
+/* Skip-link: a real 44px box parked above the viewport until focus (not 1px sr-only). */
 [data-skip-link] {
   bottom: 100%;
 }

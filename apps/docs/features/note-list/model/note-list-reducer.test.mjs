@@ -4,18 +4,36 @@ import test from "node:test";
 import { initialNoteList, reduceNoteList } from "./note-list-reducer.ts";
 
 test("initial state starts pending with no notes and no error", () => {
-  assert.deepEqual(initialNoteList, { notes: null, draft: "", loadError: false, pending: true });
+  assert.deepEqual(initialNoteList, {
+    notes: null,
+    draft: "",
+    loadError: false,
+    pending: true,
+    addError: false,
+  });
 });
 
 test("load-error records the failure and clears pending", () => {
   const state = reduceNoteList(initialNoteList, { type: "load-error" });
-  assert.deepEqual(state, { notes: null, draft: "", loadError: true, pending: false });
+  assert.deepEqual(state, {
+    notes: null,
+    draft: "",
+    loadError: true,
+    pending: false,
+    addError: false,
+  });
 });
 
-test("load-start clears a previous error for retry", () => {
+test("load-start keeps the error visible while retry is pending", () => {
   const failed = reduceNoteList(initialNoteList, { type: "load-error" });
   const retrying = reduceNoteList(failed, { type: "load-start" });
-  assert.deepEqual(retrying, { notes: null, draft: "", loadError: false, pending: true });
+  assert.deepEqual(retrying, {
+    notes: null,
+    draft: "",
+    loadError: true,
+    pending: true,
+    addError: false,
+  });
 });
 
 test("load-ok clears error and pending and stores the notes", () => {
@@ -23,7 +41,7 @@ test("load-ok clears error and pending and stores the notes", () => {
   const failed = reduceNoteList(initialNoteList, { type: "load-error" });
   const retried = reduceNoteList(failed, { type: "load-start" });
   const loaded = reduceNoteList(retried, { type: "load-ok", notes });
-  assert.deepEqual(loaded, { notes, draft: "", loadError: false, pending: false });
+  assert.deepEqual(loaded, { notes, draft: "", loadError: false, pending: false, addError: false });
 });
 
 test("draft updates the draft and nothing else", () => {
@@ -53,12 +71,13 @@ test("add-ok seeds the list when notes were never loaded", () => {
   assert.equal(added.pending, false);
 });
 
-test("add-error clears pending and keeps the draft for resubmission", () => {
+test("add-error clears pending, keeps the draft, and records the failure", () => {
   const loaded = reduceNoteList(initialNoteList, { type: "load-ok", notes: [] });
   const typed = reduceNoteList(loaded, { type: "draft", value: "Keep me" });
   const adding = reduceNoteList(typed, { type: "add-start" });
   const failed = reduceNoteList(adding, { type: "add-error" });
   assert.equal(failed.pending, false);
   assert.equal(failed.draft, "Keep me");
+  assert.equal(failed.addError, true);
   assert.deepEqual(failed.notes, []);
 });

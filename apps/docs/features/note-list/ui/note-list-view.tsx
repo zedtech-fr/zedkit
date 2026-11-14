@@ -48,9 +48,10 @@ type NoteListBodyProps = {
   notes: Note[];
   draft: string;
   pending: boolean;
+  addError: boolean;
 };
 
-function NoteListBody({ copy, port, dispatch, isMounted, notes, draft, pending }: NoteListBodyProps) {
+function NoteListBody({ copy, port, dispatch, isMounted, notes, draft, pending, addError }: NoteListBodyProps) {
   const draftEmpty = draft.trim().length === 0;
   return (
     <>
@@ -80,6 +81,11 @@ function NoteListBody({ copy, port, dispatch, isMounted, notes, draft, pending }
             value={draft}
             onChange={(event) => dispatch({ type: "draft", value: event.target.value })}
           />
+          {addError ? (
+            <Text variant="muted" role="alert">
+              {copy.addError}
+            </Text>
+          ) : null}
           <Button type="submit" disabled={draftEmpty || pending}>
             {copy.add}
           </Button>
@@ -112,7 +118,9 @@ export function NoteListView({ port, copy }: NoteListViewProps) {
       {notes === null ? (
         state.loadError ? (
           <Stack gap="sm">
-            <Text variant="muted">{copy.loadError}</Text>
+            <Text variant="muted" role="alert">
+              {copy.loadError}
+            </Text>
             <Button type="button" onClick={() => refresh(port, dispatch, isMounted)} disabled={state.pending}>
               {copy.retry}
             </Button>
@@ -129,6 +137,7 @@ export function NoteListView({ port, copy }: NoteListViewProps) {
           notes={notes}
           draft={state.draft}
           pending={state.pending}
+          addError={state.addError}
         />
       )}
     </Stack>

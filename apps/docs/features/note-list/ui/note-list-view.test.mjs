@@ -45,7 +45,7 @@ test("retry re-calls list() and recovers to load-ok", async () => {
 
   const retried = reduceNoteList(failed, { type: "load-start" });
   assert.equal(retried.pending, true);
-  assert.equal(retried.loadError, false);
+  assert.equal(retried.loadError, true);
 
   const loaded = await settleList(port, retried);
   assert.equal(calls, 2);
@@ -57,6 +57,7 @@ test("retry re-calls list() and recovers to load-ok", async () => {
 test("copy names the error and the retry action", () => {
   assert.equal(typeof noteListCopy.loadError, "string");
   assert.equal(typeof noteListCopy.retry, "string");
+  assert.equal(typeof noteListCopy.addError, "string");
   assert.match(viewSource, /\{copy\.loadError\}/);
   assert.match(viewSource, /\{copy\.retry\}/);
 });
@@ -67,6 +68,8 @@ test("view renders the error branch with a retry that re-dispatches list()", () 
   assert.match(viewSource, /function refresh\(/);
   assert.match(viewSource, /refresh\(port, dispatch/);
   assert.match(viewSource, /disabled=\{state\.pending\}/);
+  assert.match(viewSource, /role="alert"/);
+  assert.match(viewSource, /\{copy\.addError\}/);
 });
 
 test("add is disabled while the draft is empty and while pending", () => {

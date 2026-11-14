@@ -5,9 +5,16 @@ export type NoteListState = {
   draft: string;
   loadError: boolean;
   pending: boolean;
+  addError: boolean;
 };
 
-export const initialNoteList: NoteListState = { notes: null, draft: "", loadError: false, pending: true };
+export const initialNoteList: NoteListState = {
+  notes: null,
+  draft: "",
+  loadError: false,
+  pending: true,
+  addError: false,
+};
 
 export type NoteListAction =
   | { type: "load-start" }
@@ -21,7 +28,7 @@ export type NoteListAction =
 export function reduceNoteList(state: NoteListState, action: NoteListAction): NoteListState {
   switch (action.type) {
     case "load-start":
-      return { ...state, loadError: false, pending: true };
+      return { ...state, pending: true };
     case "load-ok":
       return { ...state, notes: action.notes, loadError: false, pending: false };
     case "load-error":
@@ -29,15 +36,16 @@ export function reduceNoteList(state: NoteListState, action: NoteListAction): No
     case "draft":
       return { ...state, draft: action.value };
     case "add-start":
-      return { ...state, pending: true };
+      return { ...state, pending: true, addError: false };
     case "add-ok":
       return {
         notes: state.notes === null ? [action.note] : [...state.notes, action.note],
         draft: "",
         loadError: state.loadError,
         pending: false,
+        addError: false,
       };
     case "add-error":
-      return { ...state, pending: false };
+      return { ...state, pending: false, addError: true };
   }
 }

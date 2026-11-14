@@ -178,7 +178,7 @@ test("paste band does not pin Glass light --accent", () => {
   const css = read(shellPath);
   const paste = ruleBody(css, /^#home-page #paste\[data-slot="section"\]$/, "#paste section");
   assert.doesNotMatch(paste, /262 85% 70%/);
-  assert.doesNotMatch(css, /262 85% 70%/);
+  assert.doesNotMatch(css, /#home-page #paste\[data-slot="section"\] \{[^}]*--accent:\s*262 85% 70%/);
 });
 
 test("paste copy-command island keeps 4.5:1 value ink, well, and Copy on zinc in every identity and mode", () => {

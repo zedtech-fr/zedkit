@@ -61,7 +61,9 @@ test("catalog view keeps the quiet filtered count and the copy lead", () => {
   const view = readFileSync(join(app, "app/(site)/catalog/_catalog/catalog-view.tsx"), "utf8");
   const page = readFileSync(join(app, "app/(site)/catalog/page.tsx"), "utf8");
   assert.match(view, /catalogCopy\.header\.lead\(entries\.length\)/);
-  assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
+  assert.match(view, /<CatalogResultsStatus/);
+  assert.match(view, /shown=\{visible\.length\}/);
+  assert.match(view, /total=\{areaTotal\}/);
   assert.match(view, /<CatalogCounters/);
   assert.match(view, /data-catalog-intro/);
   assert.match(page, /entries=\{catalogIndex\}/);

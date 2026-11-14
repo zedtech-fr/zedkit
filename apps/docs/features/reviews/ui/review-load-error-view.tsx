@@ -26,7 +26,11 @@ export function ReviewLoadErrorView({
         description={copy.loadError.description}
         actions={
           <Button asChild variant="outline">
-            <Link href={recoveryHref}>{recoveryLabel}</Link>
+            {recoveryHref === "/issues" ? (
+              <Link href="/issues">{recoveryLabel}</Link>
+            ) : (
+              <Link href={recoveryHref}>{recoveryLabel}</Link>
+            )}
           </Button>
         }
       />
