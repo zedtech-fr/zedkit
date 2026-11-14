@@ -1412,6 +1412,10 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility grid-quad {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+/* Five equal columns, such as a console stat strip on a wide pane. */
+@utility grid-quint {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
 /* The rest of a three-column row: a detail value, a scene, a link group. */
 @utility span-rest {
   grid-column: span 2 / span 2;

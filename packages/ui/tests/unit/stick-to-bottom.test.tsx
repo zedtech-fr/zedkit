@@ -104,6 +104,40 @@ describe("useStickToBottom", () => {
     expect(scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: "instant" });
   });
 
+  it("leaves the scroller alone while disabled", () => {
+    const { metrics, result, scrollTo } = mountHook({ enabled: false });
+    expect(result.current.isStuck).toBe(true);
+    expect(scrollTo).not.toHaveBeenCalled();
+    expect(metrics.scrollTop).toBe(0);
+  });
+
+  it("ignores scroll and growth while disabled", async () => {
+    const { el, metrics, result, scrollTo } = mountHook({ enabled: false });
+    await flushFrame();
+    metrics.scrollTop = 100;
+    act(() => {
+      el.dispatchEvent(new Event("scroll"));
+    });
+    expect(result.current.isStuck).toBe(true);
+    metrics.scrollHeight = 1200;
+    el.append("more");
+    await flushGrowth();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("pins again when re-enabled after being disabled", async () => {
+    const scroller = mockScroller();
+    const ref = { current: scroller.el as HTMLElement | null };
+    const hook = renderHook(({ enabled }: { enabled: boolean }) => useStickToBottom(ref, { enabled }), {
+      initialProps: { enabled: false },
+    });
+    expect(scroller.scrollTo).not.toHaveBeenCalled();
+    hook.rerender({ enabled: true });
+    await flushFrame();
+    expect(scroller.scrollTo).toHaveBeenCalledWith({ top: 800, left: 0, behavior: "instant" });
+    expect(hook.result.current.isStuck).toBe(true);
+  });
+
   it("unlatches on user scroll away from the bottom and ignores later growth", async () => {
     const { el, metrics, result, scrollTo } = mountHook();
     await flushFrame();

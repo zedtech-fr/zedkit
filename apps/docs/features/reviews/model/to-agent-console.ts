@@ -33,6 +33,7 @@ type MappedItem = {
   kind: string;
   status: string;
   model: string;
+  engineLabel: string | null;
   durationMs: number | null;
   toolCount: number;
   startedAt: number | null;
@@ -40,6 +41,7 @@ type MappedItem = {
   tokensIn: number;
   tokensOut: number;
   running: boolean;
+  streamLabel: string | null;
   entries: readonly MappedEntry[];
 };
 
@@ -52,6 +54,7 @@ type MappedRun = {
   verdict: string | null;
   confidence: number | null;
   postedReviewHref: string | null;
+  running: boolean;
 };
 
 type MappedNote = { text: string; tag?: "downgraded" | "approved" | null };
@@ -182,12 +185,14 @@ function mapEntry(entry: LiveEntry, itemId: string, index: number): MappedEntry 
 
 function mapItem(item: LiveItemDetail): MappedItem {
   const status = item.status;
+  const activity = typeof item.last_activity === "string" ? item.last_activity : "";
   return {
     id: item.id,
     name: item.name,
     kind: item.kind,
     status,
     model: item.model,
+    engineLabel: typeof item.engine_label === "string" ? item.engine_label : null,
     durationMs: secondsToMs(item.duration_s),
     toolCount: item.tool_count,
     startedAt: item.started_ms ?? null,
@@ -195,6 +200,7 @@ function mapItem(item: LiveItemDetail): MappedItem {
     tokensIn: item.tokens_in,
     tokensOut: item.tokens_out,
     running: isLiveRunActive(status),
+    streamLabel: activity.trim() === "" ? null : activity,
     entries: item.entries.flatMap((entry, index) => {
       const mapped = mapEntry(entry, item.id, index);
       return mapped === null ? [] : [mapped];
@@ -222,6 +228,7 @@ function mapRun(live: PublicLiveRun): MappedRun {
     verdict: live.decision?.verdict ?? live.run.verdict ?? null,
     confidence: live.decision?.confidence_score ?? live.run.confidence_score ?? null,
     postedReviewHref: postedReviewHref(live.decision, live.run),
+    running: isLiveRunActive(live.run.status),
   };
 }
 
