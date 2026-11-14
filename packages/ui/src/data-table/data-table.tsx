@@ -141,7 +141,7 @@ export function DataTablePagination({
   const messages = useUiMessages();
   const pageCountShown = Math.max(pageCount, 1);
   return (
-    <div data-slot="data-table-pagination" className={cn("flex items-center justify-end gap-data-table-pagination-gap", className)}>
+    <div data-slot="data-table-pagination" className={cn("flex flex-wrap items-center justify-end gap-data-table-pagination-gap", className)}>
       <span className="text-dense text-muted-foreground">
         {formatMessage(messages.pageOf, { page, pageCount: pageCountShown })}
       </span>
@@ -210,7 +210,7 @@ export function DataTable<TData extends RowData>({
   }, [table, pageSize]);
 
   return (
-    <div data-slot="data-table" className="space-y-data-table-stack">
+    <div data-slot="data-table" className="content-shrink space-y-data-table-stack">
       <DataTableToolbar
         value={globalFilter}
         onChange={(value) => {

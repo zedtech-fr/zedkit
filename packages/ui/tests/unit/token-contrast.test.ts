@@ -45,15 +45,33 @@ function contrast(fg: [number, number, number], bg: [number, number, number]): n
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-const SURFACES = ["background", "card", "muted", "secondary"] as const;
+/** sRGB source-over of `color` at `alpha` onto `surface` (badge-soft 15% wash). */
+function wash(color: [number, number, number], surface: [number, number, number], alpha: number): RGB {
+  const top = hslToRgb(...color);
+  const base = hslToRgb(...surface);
+  return [
+    alpha * top[0]! + (1 - alpha) * base[0]!,
+    alpha * top[1]! + (1 - alpha) * base[1]!,
+    alpha * top[2]! + (1 - alpha) * base[2]!,
+  ];
+}
 
-/** One CSS block that sets `--destructive` (stock theme or an identity, light or dark). */
-function destructiveBlocks(file: string, css: string): Array<{ label: string; body: string }> {
+function contrastOnRgb(fg: [number, number, number], bg: RGB): number {
+  const [a, b] = [luminance(hslToRgb(...fg)), luminance(bg)];
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+
+const SURFACES = ["background", "card", "muted", "secondary"] as const;
+const SOFT_WASH = 0.15;
+
+/** One CSS block that sets `--token` (stock theme or an identity, light or dark). */
+function tokenBlocks(file: string, css: string, token: string): Array<{ label: string; body: string }> {
   const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "");
   const found: Array<{ label: string; body: string }> = [];
+  const needle = `--${token}:`;
   for (const match of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     const body = match[2] ?? "";
-    if (!body.includes("--destructive:")) continue;
+    if (!body.includes(needle)) continue;
     const selector = (match[1] ?? "").replace(/\s+/g, " ").trim();
     const id = selector.match(/data-identity="([^"]+)"/)?.[1] ?? file;
     const theme = selector.includes(".dark") ? "dark" : "light";
@@ -69,35 +87,36 @@ function triplet(body: string, name: string, label: string): [number, number, nu
 }
 
 const identityDir = join(srcDir, "identities");
-const destructivePalettes = [
-  ...destructiveBlocks("styles.css", readFileSync(stylesPath, "utf8")),
-  ...destructiveBlocks("identities.css", readFileSync(identitiesPath, "utf8")),
+const identityCss = [
+  ["styles.css", readFileSync(stylesPath, "utf8")],
+  ["identities.css", readFileSync(identitiesPath, "utf8")],
   ...readdirSync(identityDir)
     .filter((file) => file.endsWith(".css"))
-    .flatMap((file) => destructiveBlocks(file, readFileSync(join(identityDir, file), "utf8"))),
-];
+    .map((file) => [file, readFileSync(join(identityDir, file), "utf8")] as const),
+] as const;
+const destructivePalettes = identityCss.flatMap(([file, css]) => tokenBlocks(file, css, "destructive"));
+const warningPalettes = identityCss.flatMap(([file, css]) => tokenBlocks(file, css, "warning"));
+const PALETTE_LABELS = [
+  "glass dark",
+  "glass light",
+  "maison dark",
+  "maison light",
+  "mist dark",
+  "mist light",
+  "press dark",
+  "press light",
+  "styles.css dark",
+  "styles.css light",
+  "tide dark",
+  "tide light",
+  "volt dark",
+  "volt light",
+].sort();
 
 describe("theme token contrast (WCAG AA, downstream axe scans depend on it)", () => {
   it("covers stock, mist, and every identity file in light and dark", () => {
-    const labels = destructivePalettes.map((palette) => palette.label).sort();
-    expect(labels).toEqual(
-      [
-        "glass dark",
-        "glass light",
-        "maison dark",
-        "maison light",
-        "mist dark",
-        "mist light",
-        "press dark",
-        "press light",
-        "styles.css dark",
-        "styles.css light",
-        "tide dark",
-        "tide light",
-        "volt dark",
-        "volt light",
-      ].sort(),
-    );
+    expect(destructivePalettes.map((palette) => palette.label).sort()).toEqual(PALETTE_LABELS);
+    expect(warningPalettes.map((palette) => palette.label).sort()).toEqual(PALETTE_LABELS);
   });
 
   it.each(destructivePalettes)("$label destructive button and text", ({ label, body }) => {
@@ -109,6 +128,17 @@ describe("theme token contrast (WCAG AA, downstream axe scans depend on it)", ()
     }
   });
 
+  it.each(warningPalettes)("$label warning fill, surface, and 15% wash", ({ label, body }) => {
+    const fill = triplet(body, "warning", label);
+    const ink = triplet(body, "warning-foreground", label);
+    expect(contrast(ink, fill), `${label} filled`).toBeGreaterThanOrEqual(4.5);
+    for (const surface of SURFACES) {
+      const bg = triplet(body, surface, label);
+      expect(contrast(fill, bg), `${label} on ${surface}`).toBeGreaterThanOrEqual(4.5);
+      expect(contrastOnRgb(fill, wash(fill, bg, SOFT_WASH)), `${label} wash on ${surface}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   it.each(["light", "dark"] as const)("muted text on card surfaces, %s", (theme) => {
     const ratio = contrast(token(theme, "muted-foreground"), token(theme, "card"));
     expect(ratio).toBeGreaterThanOrEqual(4.5);
@@ -117,6 +147,27 @@ describe("theme token contrast (WCAG AA, downstream axe scans depend on it)", ()
   it.each(["light", "dark"] as const)("success badge text on success fills, %s", (theme) => {
     const ratio = contrast(token(theme, "success-foreground"), token(theme, "success"));
     expect(ratio).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it.each(["light", "dark"] as const)("success ink on 15% wash, %s", (theme) => {
+    const fill = token(theme, "success");
+    for (const surface of SURFACES) {
+      const bg = token(theme, surface);
+      expect(contrastOnRgb(fill, wash(fill, bg, SOFT_WASH)), `${theme} success wash on ${surface}`).toBeGreaterThanOrEqual(
+        4.5,
+      );
+    }
+  });
+
+  it.each(["light", "dark"] as const)("destructive ink on 15% wash, %s", (theme) => {
+    const fill = token(theme, "destructive");
+    for (const surface of SURFACES) {
+      const bg = token(theme, surface);
+      expect(
+        contrastOnRgb(fill, wash(fill, bg, SOFT_WASH)),
+        `${theme} destructive wash on ${surface}`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it.each(["light", "dark"] as const)("info ink on surfaces, %s", (theme) => {

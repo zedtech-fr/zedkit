@@ -56,7 +56,7 @@ test.describe("tide identity", () => {
     expect(overflow).toBeLessThanOrEqual(0);
   });
 
-  for (const width of [360, 390] as const) {
+  for (const width of [360, 390, 809] as const) {
     test(`does not overflow at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto(HOME, { waitUntil: "networkidle" });
