@@ -7,11 +7,11 @@ import { catalogCopy } from "./i18n/catalog-copy";
 function CatalogCell({ entry }: { entry: CatalogIndexEntry }) {
   return (
     <Stack gap="tight" data-catalog-cell="" className="content-shrink hover-lift surface-pad-compact">
-      <Stack direction="horizontal" gap="sm" className="items-start justify-between">
+      <Stack direction="horizontal" gap="sm" className="content-shrink flex-wrap items-start justify-between">
         <Link
           href={entry.href}
           data-catalog-title=""
-          className="hit-target font-medium link-offset focus-ring hover:underline"
+          className="hit-target font-medium wrap-anywhere link-offset focus-ring hover:underline"
         >
           {entry.title}
         </Link>
@@ -39,7 +39,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
             elevation={0}
             radius="xl"
             padding="none"
-            className="grid overflow-hidden xl:grid-trio"
+            className="grid overflow-hidden"
             data-catalog-results=""
           >
             {filtered.map((entry) => (

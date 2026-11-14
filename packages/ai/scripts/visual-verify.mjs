@@ -254,6 +254,9 @@ export function routesFromFiles(files, manifest) {
     if (/(?:^|\/)apps\/docs\/app\/\(home\)\//u.test(n) && !skipTest) {
       routes.add("/");
     }
+    if (/(?:^|\/)apps\/docs\/app\/\(site\)\/catalog\//u.test(n) && !skipTest) {
+      routes.add("/catalog");
+    }
   }
   return [...routes];
 }

@@ -142,6 +142,48 @@ test("catalog title links floor the 24px hit target without shrinking to zero", 
   assert.match(css, /min-width:\s*24px/);
 });
 
+test("catalog results grid uses a shrinkable one-column track below xl and three from xl", () => {
+  const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
+  const body = functionSource(results, "CatalogResultsBody");
+  assert.match(body, /data-catalog-results=/);
+  assert.match(body, /className="grid overflow-hidden"/);
+  assert.doesNotMatch(body, /grid-trio/);
+  assert.doesNotMatch(body, /data-allow-clip/);
+  const start = css.indexOf("[data-catalog-shell] [data-catalog-results]");
+  assert.notEqual(start, -1, "missing results rule");
+  const open = css.indexOf("{", start);
+  const close = css.indexOf("}", open);
+  const baseRule = css.slice(start, close + 1);
+  assert.match(baseRule, /grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+  assert.doesNotMatch(baseRule, /repeat\(3/);
+  const media = css.match(
+    /@media \(width >= 80rem\)\s*\{[\s\S]*?\[data-catalog-shell\] \[data-catalog-results\]\s*\{[\s\S]*?\}/,
+  );
+  assert.equal(media !== null, true, "missing 80rem results track");
+  assert.match(media[0], /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+});
+
+test("catalog title row wraps and shrinks so the badge stays in the card", () => {
+  const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
+  const cell = functionSource(results, "CatalogCell");
+  const rowClass = cell.match(/direction="horizontal"[\s\S]*?className="([^"]+)"/);
+  assert.equal(rowClass !== null, true);
+  assert.match(rowClass[1], /content-shrink/);
+  assert.match(rowClass[1], /flex-wrap/);
+  const titleClass = cell.match(/data-catalog-title=""\s+className="([^"]+)"/);
+  assert.equal(titleClass !== null, true);
+  assert.match(titleClass[1], /hit-target/);
+  assert.match(titleClass[1], /wrap-anywhere/);
+  assert.doesNotMatch(titleClass[1], /content-shrink/);
+  const badgeStart = css.indexOf("[data-catalog-cell] [data-badge-link]");
+  assert.notEqual(badgeStart, -1, "missing badge shrink rule");
+  const badgeOpen = css.indexOf("{", badgeStart);
+  const badgeClose = css.indexOf("}", badgeOpen);
+  assert.match(css.slice(badgeStart, badgeClose + 1), /flex-shrink:\s*0/);
+});
+
 test("catalog result cells lift on hover and focus; counters stay still", () => {
   const results = read("app/(site)/catalog/_catalog/catalog-results.tsx");
   const counters = read("app/(site)/catalog/_catalog/catalog-counters.tsx");

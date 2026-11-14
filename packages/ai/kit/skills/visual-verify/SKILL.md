@@ -25,7 +25,8 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   → `/docs/ai/setup`, public review files (`features/reviews`, issues App
   Router, `tests/evidence/issues`) → `/issues`, identity feature files
   (non-test) → `/features/identity-editor`, `apps/docs/app/(home)/**`
-  (non-test, including `_home/`) → `/`, optional `--manifest`
+  (non-test, including `_home/`) → `/`, `apps/docs/app/(site)/catalog/**`
+  (non-test, including `_catalog/`) → `/catalog`, optional `--manifest`
   (`source` → `/docs/ui/<slug>`, `demo`/`examples` →
   `apps/docs/components/demos/<kebab>.tsx`, kit files that share that
   source stem). Omitted `--manifest` loads `apps/docs/docs-manifest.json`

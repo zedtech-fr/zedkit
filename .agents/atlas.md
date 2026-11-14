@@ -22,6 +22,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Installer, sync, validate, route, scan CLI | `.agents/atlas/ai-kit.md` | `cli.ts` parses flags; one concern per other module. | `src/index.ts` | 2026-11-13 |
 | zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. Guide UI folders map to `/docs/<slug>`. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Evidence --changed catalog demos | `.agents/atlas/visual-verify.md` | Demo files and kit source-family files need the host docs-manifest or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-13 |
+| Evidence --changed /catalog page | `.agents/atlas/visual-verify.md` | Private `_catalog/` files need the `(site)/catalog` map or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-14 |
 | Kit tests | `.agents/atlas/ai-kit.md` | One file per behavior; `helpers.ts` has `put`, `tempDir`, `run`. | `pnpm --filter @zedtech/zedkit-ai test` | 2026-11-13 |
 | Slash commands | `.agents/atlas/ai-kit.md` | A command only names a skill; procedure lives in SKILL.md. | `command-shape.test.ts` | 2026-11-13 |
 | Entry command `/zedkit-ai` | `.agents/atlas/ai-kit.md` | Classifier then Route card then `orchestrate`; not CLI `route`. | `@zedtech/zedkit-ai` | 2026-11-13 |
@@ -94,7 +95,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |
 | Docs module-placement ratchet | `.agents/atlas/ci-gates.md` | Empty baseline is the success state; `--write-baseline` may write empty arrays and still refuses growth. | `module-placement.test.mjs` | 2026-11-13 |
-| Catalog page filters and results | `.agents/atlas/docs-site.md` | Default area is UI; empty URL = UI; `size=sm` chips need `text-dense`. | `catalog-filter.test.mjs` | 2026-11-12 |
+| Catalog page filters and results | `.agents/atlas/docs-site.md` | Default area is UI; results 1-col/`80rem` 3-col tracks live in `catalog-shell.css` (beats `xl:grid-trio`). | `catalog-surface.test.mjs` | 2026-11-14 |
 | Site-only text roles | `.agents/atlas/design-system.md` | Specimen/demo/home roles live with the site, not in the package. | `apps/docs/` | 2026-11-08 |
 | Adoption smoke dev server port | `.agents/atlas/setup-ai.md` | Next.js refuses 3659 inside 3400–3799. | `pnpm adoption:smoke` | 2026-11-13 |
 | UI npm install + Glass fonts | `.agents/atlas/home.md` | Install is fonts-inclusive (`GLASS_FONTS`); layout imports fonts. | `install.sh` | 2026-11-10 |

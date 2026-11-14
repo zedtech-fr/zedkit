@@ -158,6 +158,26 @@ test("docs home route-group files map to / when there is no page.tsx", () => {
   assert.deepEqual(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"]), []);
 });
 
+test("docs catalog private-folder files map to /catalog when there is no page.tsx", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/app/(site)/catalog/_catalog/catalog-results.tsx",
+      "apps/docs/app/(site)/catalog/_catalog/catalog-shell.css",
+      "apps/docs/app/(site)/catalog/_catalog/catalog-filter.test.mjs",
+      ".agents/atlas.md",
+    ]),
+    ["/catalog"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps\\docs\\app\\(site)\\catalog\\_catalog\\catalog-results.tsx"]),
+    ["/catalog"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps/docs/app/(site)/catalog/_catalog/catalog-filter.test.mjs"]),
+    [],
+  );
+});
+
 test("catalog demo files and kit source-family files map from the docs manifest", () => {
   const catalog = {
     rich: {
