@@ -65,7 +65,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs AGENTS.md path and symbol citations | `.agents/atlas/docs-site.md` | Backtick paths and PascalCase names must still exist. | `agents-paths.test.mjs` | 2026-11-13 |
 | Docs node-test `@/` alias | `.agents/atlas/docs-site.md` | `node --test` ignores tsconfig `@/`; register then `await import()`. | `register-docs-alias.test.mjs` | 2026-11-13 |
 | Global not-found screen | `.agents/atlas/docs-site.md` | Route-private `_not-found/`; never a `not-found/` folder beside the file. | `*-copy.ts` | 2026-11-12 |
-| Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
+| Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-14 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`; `defaultMode` is owned-tabs only. | `identity-look-form.test.mjs` | 2026-11-13 |
 | Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. Lives in `features/identity/ui/`, not `lib/`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |

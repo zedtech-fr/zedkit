@@ -10,7 +10,7 @@ function read(rel) {
   return readFileSync(join(app, rel), "utf8");
 }
 
-test("hero and closing share one wrapping copy-command field (#298)", () => {
+test("hero, paste, and closing share one wrapping copy-command field (#298, #429)", () => {
   const field = read("app/(home)/_home/home-copy-command-field.tsx");
   const copy = read("app/(home)/_home/i18n/home-copy-command-copy.ts");
   const tokens = read("app/docs-shell-tokens.css");

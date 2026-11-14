@@ -5,6 +5,8 @@ export const homePasteCopy = {
     description:
       "Name the kits. The agent follows the map, installs them in order and validates once at the end.",
   },
+  promptAriaLabel: "Paste setup prompt",
+  promptCopyLabel: "Copy paste prompt",
   timeline: [
     { label: "2 seconds", body: "The agent has the kits you named and starts the map." },
     {
