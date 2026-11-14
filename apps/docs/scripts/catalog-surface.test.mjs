@@ -280,7 +280,7 @@ test("the dock drawer is starting points plus the customize form, with no Conver
   assert.doesNotMatch(panel, /stickyTabs/);
   assert.doesNotMatch(panel, /\bsticky\b/);
   assert.doesNotMatch(customize, /\bsticky\b/);
-  const headerAt = panel.indexOf('className="shrink-0 border-b border-border"');
+  const headerAt = panel.indexOf('className="shrink-0 border-b border-border');
   const tabsListAt = panel.indexOf("<TabsList");
   const scrollAt = panel.indexOf("data-dock-scroll");
   assert.notEqual(headerAt, -1);
