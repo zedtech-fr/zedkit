@@ -17,6 +17,7 @@ import { LivePulse, Stack, UpdatedAgo } from "@zedtech/zedkit-ui";
 import { liveConsoleCopy } from "../i18n/review-live-console-copy";
 import { reviewsCopy } from "../i18n/reviews-copy";
 import { LIVE_CONSOLE_PATH, parseLiveConsoleLocation, writeLiveConsoleSearch } from "../model/live-console-href";
+import { liveRunParent } from "../model/live-run-parent";
 import {
   applyLiveRunResult,
   isLiveRunActive,
@@ -141,8 +142,9 @@ function LiveConsoleReady({
   status: Extract<LiveConsoleStatus, { kind: "ready" }>;
   onSelect: (id: string) => void;
 }) {
-  const liveIssue = status.live.run.issue ?? issueNumber ?? null;
-  const livePr = liveIssue == null ? (status.live.run.pr ?? unlinkedPr ?? null) : null;
+  const parent = liveRunParent(status.live.run, { issueNumber, unlinkedPr });
+  const liveIssue = parent.kind === "issue" ? parent.number : null;
+  const livePr = parent.kind === "unlinked-pr" ? parent.number : null;
   return (
     <ReviewConsoleView
       issueNumber={liveIssue}
