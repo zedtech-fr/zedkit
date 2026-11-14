@@ -49,10 +49,10 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Catalog entries of a package | `.agents/atlas/publishing.md` | Every `src/index.ts` export needs a CATALOG row; Purpose ≤160. | `pnpm catalog:check` | 2026-11-11 |
 | JSON-LD React script tag | `.agents/atlas/seo.md` | Import from `@zedtech/zedkit-seo/react`; escape `<` after stringify. | `@zedtech/zedkit-seo` | 2026-11-13 |
 | Live sources and JSON fetch | `.agents/atlas/live.md` | One-shot `Result` GET in live; injectable `fetch`/`sleep`. | `pnpm --filter @zedtech/zedkit-live test` | 2026-11-12 |
-| Docs site looks | `.agents/atlas/design-system.md` | Owner table by layer: link, never copy. Quiet-glass mockup is git-only. Foundations heading copy needs 24px under dense looks. Reading tokens follow the active theme. | `apps/docs/scripts/check.mjs` | 2026-11-13 |
+| Docs site looks | `.agents/atlas/design-system.md` | Owner table by layer: link, never copy. Quiet-glass mockup is git-only. Dense looks: 24px on heading copy, code-well copy, min-h-segment. Reading tokens follow the active theme. | `apps/docs/scripts/check.mjs` | 2026-11-13 |
 | Docs maturity-and-compatibility guide | `.agents/atlas/docs-site.md` | L7 folder shape; prose imports the view (knip entry). | `pnpm catalog:check` | 2026-11-12 |
 | Docs raw-layout and spelling guards | `.agents/atlas/docs-site.md` | Whole-file regex on components/features; do not import `check.mjs`. | `apps/docs/scripts/check.mjs` | 2026-11-11 |
-| Docs site primary nav | `.agents/atlas/docs-site.md` | Shared primary list; docs desktop header above the shell. | `apps/docs/components/site-chrome/docs-container.tsx` | 2026-11-13 |
+| Docs site primary nav | `.agents/atlas/docs-site.md` | Shared primary list; docs/catalog icon search below lg so 809 fits. | `apps/docs/components/site-chrome/docs-container.tsx` | 2026-11-13 |
 | Docs site chrome copy | `.agents/atlas/docs-site.md` | Icon Search uses `search.triggerAriaLabel`; full Search has no `aria-label`. | `apps/docs/components/site-chrome/mobile-header.tsx` | 2026-11-13 |
 | Home hero lead | `.agents/atlas/home.md` | Copy in the hero module; right column is a live active-run card after mount. | `home-hero-active-run.test.mjs` | 2026-11-13 |
 | Home hero motion | `.agents/atlas/home.md` | Lead rise is transform-only; `HomeHero` does not use `motion-settle`. | `home-motion-gate.test.mjs` | 2026-11-13 |
@@ -92,6 +92,8 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP; label is `Started (UTC)`. | `agent-console.test.tsx` | 2026-11-13 |
+| Persistent shell and page transition | `packages/ui/src/layout/persistent-shell.tsx` | Slot host in a layout ancestor; trap: do not wrap fumadocs `DocsLayout` children. `PageTransition` uses named motions. | `@zedtech/zedkit-ui` | 2026-11-13 |
+| Route skeletons | `packages/ui/src/layout/route-skeletons.tsx` | Composed wait shapes; trap: forward `label` to nested `CardSkeleton` / `DetailPanelSkeleton`. Catalog Status starts at `alpha`. | `@zedtech/zedkit-ui` | 2026-11-14 |
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |

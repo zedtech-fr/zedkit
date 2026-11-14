@@ -31,6 +31,13 @@
   }
 }
 
+/* Dense looks (Press 0.2rem, Volt 0.225rem) shrink fumadocs copy (`p-1` +
+ * `size-4`) under the 24px evidence floor. Phone/touch still use 44px below. */
+figure.shiki button {
+  min-width: max(24px, var(--zk-tap-min, 0px));
+  min-height: max(24px, var(--zk-tap-min, 0px));
+}
+
 /* Phones and touch: fumadocs' own tabs, copy buttons and props rows reach the 44px target. */
 @media (pointer: coarse), (max-width: 40rem) {
   [role="tablist"] > [role="tab"] {

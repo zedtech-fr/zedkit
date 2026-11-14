@@ -126,6 +126,8 @@ import { EmptyStateDemo } from "./empty-state-demo";
 import { ErrorStateDemo } from "./error-state-demo";
 import { ErrorStateRetryDemo } from "./error-state-retry-demo";
 import { OfflineNoteDemo, OfflineNoteWiredDemo, OfflineNoteWordingDemo } from "./offline-note-demo";
+import { PageTransitionDemo } from "./page-transition-demo";
+import { RouteSkeletonsDemo } from "./route-skeletons-demo";
 import { SpinnerDemo } from "./spinner-demo";
 import { SpinnerNamedDemo } from "./spinner-named-demo";
 import { SurfaceDemo } from "./surface-demo";
@@ -207,6 +209,8 @@ export const demoRegistry = {
   OfflineNoteDemo: { Demo: OfflineNoteDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWiredDemo: { Demo: OfflineNoteWiredDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWordingDemo: { Demo: OfflineNoteWordingDemo, file: "offline-note-demo.tsx" },
+  PageTransitionDemo: { Demo: PageTransitionDemo, file: "page-transition-demo.tsx" },
+  RouteSkeletonsDemo: { Demo: RouteSkeletonsDemo, file: "route-skeletons-demo.tsx" },
   ThemeDemo: { Demo: ThemeDemo, file: "theme-demo.tsx" },
   ThemeTokensDemo: { Demo: ThemeTokensDemo, file: "theme-demo.tsx" },
   ThemeToggleDemo: { Demo: ThemeToggleDemo, file: "theme-demo.tsx" },
