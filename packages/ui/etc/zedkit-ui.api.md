@@ -2319,6 +2319,7 @@ export type ZedkitUiMessages = {
         duration: string;
         toolCalls: string;
         tools: string;
+        toolsOne: string;
         tokens: string;
         tokensInOut: string;
         lastActivity: string;

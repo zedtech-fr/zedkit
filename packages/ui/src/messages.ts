@@ -94,6 +94,8 @@ export type ZedkitUiMessages = {
     toolCalls: string;
     /** Template with `{n}`. */
     tools: string;
+    /** Singular of `tools`. Template with `{n}`. */
+    toolsOne: string;
     tokens: string;
     /** Template with `{in}` and `{out}`. */
     tokensInOut: string;
@@ -174,7 +176,7 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
     decided: "Decided",
     summary: "Summary",
     mustChange: "Must change",
-    mustChangeEmpty: "Nothing must change before merge",
+    mustChangeEmpty: "Nothing to change before merge",
     notes: "Notes",
     dismissed: "Dismissed",
     kept: "Kept",
@@ -190,6 +192,7 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
     duration: "Duration",
     toolCalls: "Tool calls",
     tools: "{n} tools",
+    toolsOne: "{n} tool",
     tokens: "Tokens",
     tokensInOut: "{in} in / {out} out",
     lastActivity: "Last activity",
@@ -284,6 +287,7 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
     duration: "Durée",
     toolCalls: "Appels d'outils",
     tools: "{n} outils",
+    toolsOne: "{n} outil",
     tokens: "Jetons",
     tokensInOut: "{in} entrants / {out} sortants",
     lastActivity: "Dernière activité",

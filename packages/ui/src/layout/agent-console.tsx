@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 import { Button } from "../button/button.js";
 import { Text } from "../typography/typography.js";
@@ -29,6 +29,21 @@ function ConsoleTopbarName({ name }: { name: string }) {
   );
 }
 
+function useResetSettledScroll(
+  scroller: RefObject<HTMLElement | null>,
+  selectedId: string | undefined,
+  selectedRunning: boolean,
+) {
+  const prevSelectedId = useRef(selectedId);
+  useLayoutEffect(() => {
+    const idChanged = prevSelectedId.current !== selectedId;
+    prevSelectedId.current = selectedId;
+    if (!idChanged || selectedRunning) return;
+    const el = scroller.current;
+    if (el) el.scrollTop = 0;
+  }, [scroller, selectedId, selectedRunning]);
+}
+
 export function AgentConsole({
   run,
   items,
@@ -48,6 +63,7 @@ export function AgentConsole({
   const requestedId = selectedIdProp ?? uncontrolledId ?? fallbackId;
   const selected = items.find((item) => item.id === requestedId) ?? items.find((item) => item.id === fallbackId);
   const { isStuck, jumpToLatest } = useStickToBottom(mainRef, { enabled: selected?.running ?? false });
+  useResetSettledScroll(mainRef, selected?.id, selected?.running ?? false);
 
   const select = (id: string) => {
     onSelectedIdChange?.(id);
@@ -70,11 +86,7 @@ export function AgentConsole({
             onSelect={select}
           />
         }
-        sidebarTrigger={
-          <Button type="button" variant="outline" size="sm">
-            {copy.sidebarTrigger}
-          </Button>
-        }
+        sidebarTrigger={<Button type="button" variant="outline" size="sm">{copy.sidebarTrigger}</Button>}
         topbar={selected ? <ConsoleTopbarName name={selected.name} /> : undefined}
       >
         <ConsoleMain

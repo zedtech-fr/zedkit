@@ -10,7 +10,7 @@ import {
   type ReviewScopeAppearance,
 } from "../model/review-appearance";
 
-/** Pin identity+mode only when the share URL has appearance keys; else inherit `html`. */
+/** List pages inherit `html` unless the share URL pins; pass `consoleScopeAppearance` to default mode to dark. */
 export function useReviewAppearanceScope(
   resolve: (search: string) => ReviewScopeAppearance = listScopeAppearance,
 ) {

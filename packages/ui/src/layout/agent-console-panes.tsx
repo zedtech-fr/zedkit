@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { formatMessage } from "@zedtech/zedkit-i18n";
 
 import { Badge } from "../feedback/badge.js";
@@ -63,16 +64,19 @@ export function ItemHeader({
   headingLevel?: 1 | 2;
 }) {
   const engine = item.engineLabel?.trim() ? item.engineLabel : item.model;
+  const status = item.status.trim();
   return (
     <header className="flex flex-col gap-stack-sm">
       <div className="flex flex-wrap items-center gap-stack-sm">
         <Text typeRole="label" className="text-muted-foreground uppercase">
           {groupLabel(item.kind, copy)}
         </Text>
-        <Badge variant="outline" className="gap-stack-tight">
-          <StatusDot tone={statusTone(item.status, item.running)} pulse={item.running} />
-          {statusLabel(item.status)}
-        </Badge>
+        {status ? (
+          <Badge variant="outline" className="gap-stack-tight">
+            <StatusDot tone={statusTone(item.status, item.running)} pulse={item.running} />
+            {statusLabel(item.status)}
+          </Badge>
+        ) : null}
         <Badge variant="outline" className="font-mono font-normal">
           {engine}
         </Badge>
@@ -93,9 +97,10 @@ function TranscriptSection({
   copy: AgentConsoleCopy;
   locale: string;
 }) {
+  const headingId = useId();
   return (
-    <section aria-label={copy.transcript} className="flex flex-col gap-stack-sm">
-      <Heading level={2} typeRole="label" className="uppercase">
+    <section aria-labelledby={headingId} className="flex flex-col gap-stack-sm">
+      <Heading level={2} typeRole="label" className="uppercase" id={headingId}>
         {copy.transcript}
       </Heading>
       {entries.length > 0 ? (
@@ -126,7 +131,10 @@ export function ItemDetail({
   copy: AgentConsoleCopy;
   locale: string;
 }) {
-  const showTokens = item.tokensIn !== 0 || item.tokensOut !== 0;
+  const showTokens =
+    Number.isFinite(item.tokensIn) &&
+    Number.isFinite(item.tokensOut) &&
+    (item.tokensIn !== 0 || item.tokensOut !== 0);
   return (
     <Stack gap="md">
       {item.running ? (
@@ -139,6 +147,7 @@ export function ItemDetail({
         <CardContent>
           <DetailPanel
             variant="grid"
+            className="grid-pair"
             items={[
               { label: copy.started, value: formatStarted(item.startedAt, locale) },
               { label: copy.duration, value: durationText(item.durationMs, locale) },
@@ -163,25 +172,6 @@ export function ItemDetail({
         </CardContent>
       </Card>
       <TranscriptSection entries={item.entries} copy={copy} locale={locale} />
-    </Stack>
-  );
-}
-
-export function ItemPane({
-  item,
-  copy,
-  locale,
-  headingLevel,
-}: {
-  item: AgentConsoleItem;
-  copy: AgentConsoleCopy;
-  locale: string;
-  headingLevel?: 1 | 2;
-}) {
-  return (
-    <Stack gap="md">
-      <ItemHeader item={item} copy={copy} {...(headingLevel === undefined ? {} : { headingLevel })} />
-      <ItemDetail item={item} copy={copy} locale={locale} />
     </Stack>
   );
 }

@@ -103,10 +103,10 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
           </ul>
         </Stack>
       ) : (
-        <p className="flex items-center gap-stack-sm text-dense text-muted-foreground">
+        <Text variant="muted" className="flex items-center gap-stack-sm">
           <CircleCheck aria-hidden="true" className="size-icon shrink-0 text-success" />
           {copy.mustChangeEmpty}
-        </p>
+        </Text>
       )}
       {decision.notes.length > 0 ? (
         <Stack gap="tight">
@@ -126,7 +126,7 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
       ) : null}
       {decision.dismissed.length > 0 ? (
         <details className="flex flex-col gap-stack-sm">
-          <summary className="cursor-pointer text-dense text-muted-foreground focus-ring-control hover:text-foreground">
+          <summary className="flex min-h-target cursor-pointer list-none items-center text-dense text-muted-foreground focus-ring-control hover:text-foreground [&::-webkit-details-marker]:hidden">
             {copy.dismissed} ({decision.dismissed.length})
           </summary>
           <ul className="flex list-none flex-col gap-stack-tight">
@@ -145,7 +145,6 @@ function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; cop
 }
 
 function DecisionFlow({ decision, copy }: { decision: AgentConsoleDecision; copy: AgentConsoleCopy }) {
-  const verdict = verdictLabel(decision.verdict);
   const firstVerdict = decision.firstPass ? verdictLabel(decision.firstPass.verdict) : null;
   const secondModel = decision.secondPass?.model?.trim() ? decision.secondPass.model : null;
   const secondBlocks = decision.secondPass?.blocksMerge ?? null;
@@ -177,10 +176,6 @@ function DecisionFlow({ decision, copy }: { decision: AgentConsoleDecision; copy
         </>
       ) : null}
       <span>{decision.posted ? copy.posted : copy.decided}</span>
-      {verdict ? <Badge variant="meta">{verdict}</Badge> : null}
-      {decision.confidence != null ? (
-        <Badge variant="meta">{formatMessage(copy.confidence, { n: decision.confidence })}</Badge>
-      ) : null}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AgentConsole,
   ZedkitUiProvider,
+  zedkitUiMessagesEn,
   zedkitUiMessagesFr,
   type AgentConsoleDecision,
   type AgentConsoleItem,
@@ -17,6 +18,7 @@ import {
 import {
   compactTokenCount,
   formatStarted,
+  groupLabel,
   statusLabel,
   statusTone,
   verdictLabel,
@@ -213,6 +215,9 @@ describe("AgentConsole", () => {
     expect(scoped.getByText("docs")).not.toBeNull();
     expect(scoped.getByText("6m 17s")).not.toBeNull();
     expect(scoped.getByText("4 tools")).not.toBeNull();
+    expect(within(asideOf(container)).getByRole("button", { name: "Merge gate" }).textContent).toContain(
+      "1 tool",
+    );
     expect(row.getAttribute("aria-current")).toBe("true");
   });
 
@@ -271,6 +276,7 @@ describe("AgentConsole", () => {
     expect(screen.getByText("Kept")).not.toBeNull();
     expect(screen.getAllByText("Downgraded").length).toBeGreaterThan(0);
     expect(screen.getByText("Dismissed (1)")).not.toBeNull();
+    expect(screen.getByText("Dismissed (1)").classList.contains("min-h-target")).toBe(true);
     const firstPass = screen.getByText(/Superseded/).closest("details");
     expect(firstPass).toBeInstanceOf(HTMLDetailsElement);
     expect((firstPass as HTMLDetailsElement).open).toBe(false);
@@ -328,7 +334,7 @@ describe("AgentConsole", () => {
 
   it("names the empty must-change state instead of hiding the section", () => {
     renderConsole({ decision: { ...DECISION, mustChange: [] } });
-    expect(screen.getByText("Nothing must change before merge")).not.toBeNull();
+    expect(screen.getByText("Nothing to change before merge")).not.toBeNull();
   });
 
   it("folds dismissed findings behind a count", () => {
@@ -384,6 +390,10 @@ describe("AgentConsole", () => {
     await user.click(within(asideOf(container)).getByRole("button", { name: "Merge gate" }));
     expect(screen.getByText("No transcript")).not.toBeNull();
     expect(screen.getByText("This step left no readable transcript.")).not.toBeNull();
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    expect(within(main).getByText("Review lenses")).not.toBeNull();
+    expect(within(main).queryByText("gate")).toBeNull();
   });
 
   it("compacts large token counts and hides a zero row", () => {
@@ -408,6 +418,22 @@ describe("AgentConsole", () => {
       />,
     );
     expect(container.querySelector("[data-slot='detail-panel']")?.textContent).not.toContain("Tokens");
+    rerender(
+      <AgentConsole
+        run={RUN}
+        items={[
+          item({
+            id: "main-1",
+            name: "Coordinator",
+            kind: "main",
+            tokensIn: Number.NaN,
+            tokensOut: 20,
+          }),
+        ]}
+        decision={null}
+      />,
+    );
+    expect(container.querySelector("[data-slot='detail-panel']")?.textContent).not.toContain("Tokens");
   });
 
   it("boxes the stat grid in a card", () => {
@@ -415,6 +441,7 @@ describe("AgentConsole", () => {
     const panel = container.querySelector("[data-slot='detail-panel']");
     if (!(panel instanceof HTMLElement)) throw new Error("missing detail panel");
     expect(panel.closest("[data-slot='card']")).not.toBeNull();
+    expect(panel.classList.contains("grid-pair")).toBe(true);
   });
 
   it("shows stats and a tool burst on the selected item", () => {
@@ -473,6 +500,17 @@ describe("AgentConsole", () => {
     });
     expect(main.scrollTop).toBe(100);
     expect(screen.queryByRole("button", { name: "Jump to latest" })).toBeNull();
+  });
+
+  it("resets a settled item to the top after leaving a running scroller", async () => {
+    const user = userEvent.setup();
+    const { container } = renderConsole({ defaultSelectedId: "lens-1" });
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    const metrics = mockMainScroller(main);
+    metrics.scrollTop = 100;
+    await user.click(within(asideOf(container)).getByRole("button", { name: "Coordinator" }));
+    expect(metrics.scrollTop).toBe(0);
   });
 
   it("opens the same sidebar list from a labelled drawer trigger", async () => {
@@ -570,6 +608,22 @@ describe("AgentConsole", () => {
     expect(asideOf(container).innerHTML).toContain("bg-destructive");
   });
 
+  it("hides an empty status badge and a whitespace verdict", () => {
+    const { container } = renderConsole({
+      run: { ...RUN, verdict: "   " },
+      items: [item({ id: "main-1", name: "Coordinator", kind: "main", status: "  " })],
+      decision: { ...DECISION, verdict: "\t" },
+    });
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    expect(within(main).queryByText("Done")).toBeNull();
+    expect(asideOf(container).querySelectorAll("[data-slot='badge']").length).toBeGreaterThan(0);
+    expect(within(asideOf(container)).queryByText("APPROVE")).toBeNull();
+    const card = container.querySelector("[data-slot='agent-console-decision']");
+    if (!(card instanceof HTMLElement)) throw new Error("missing decision card");
+    expect(within(card).queryByText("APPROVE")).toBeNull();
+  });
+
   it("uses French chrome and keeps fixture item names", () => {
     render(
       <ZedkitUiProvider messages={zedkitUiMessagesFr}>
@@ -580,6 +634,7 @@ describe("AgentConsole", () => {
     expect(screen.getByText("Décision finale")).not.toBeNull();
     expect(screen.getAllByText("Coordinator").length).toBeGreaterThan(0);
     expect(screen.queryByText("Final decision")).toBeNull();
+    expect(screen.getByText("1 outil")).not.toBeNull();
   });
 });
 
@@ -632,6 +687,21 @@ describe("formatStarted", () => {
   });
 });
 
+describe("groupLabel", () => {
+  const copy = zedkitUiMessagesEn.agentConsole;
+
+  it("aliases gate and subagent kinds to their bucket labels", () => {
+    expect(groupLabel("gate", copy)).toBe("Review lenses");
+    expect(groupLabel("subagent", copy)).toBe("Helpers");
+    expect(groupLabel("lens", copy)).toBe("Review lenses");
+    expect(groupLabel("helper", copy)).toBe("Helpers");
+  });
+
+  it("keeps unknown kinds as the raw label", () => {
+    expect(groupLabel("mystery", copy)).toBe("mystery");
+  });
+});
+
 describe("statusLabel", () => {
   it("capitalizes a lowercase live status", () => {
     expect(statusLabel("done")).toBe("Done");
@@ -640,6 +710,7 @@ describe("statusLabel", () => {
 
   it("leaves empty and already-capitalized statuses alone", () => {
     expect(statusLabel("")).toBe("");
+    expect(statusLabel("   ")).toBe("");
     expect(statusLabel("Done")).toBe("Done");
     expect(statusLabel("INTERRUPTED")).toBe("INTERRUPTED");
   });
@@ -654,6 +725,8 @@ describe("verdictLabel", () => {
 
   it("keeps a missing verdict missing", () => {
     expect(verdictLabel(null)).toBeNull();
+    expect(verdictLabel("")).toBeNull();
+    expect(verdictLabel("  ")).toBeNull();
   });
 });
 
@@ -688,6 +761,7 @@ describe("compactTokenCount", () => {
     expect(compactTokenCount(1000, "en")).toBe("1k");
     expect(compactTokenCount(20_200, "en")).toBe("20.2k");
     expect(compactTokenCount(868_000, "en")).toBe("868k");
+    expect(compactTokenCount(999_999, "en")).toBe("1M");
     expect(compactTokenCount(1_000_000, "en")).toBe("1M");
     expect(compactTokenCount(20_200_000, "en")).toBe("20M");
   });

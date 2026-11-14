@@ -56,6 +56,12 @@ function ConsoleRunMeta({
   );
 }
 
+function toolsCountLabel(n: number, copy: AgentConsoleCopy, locale: string): string {
+  const french = locale.toLowerCase().startsWith("fr");
+  const one = n === 1 || (french && n === 0);
+  return formatMessage(one ? copy.toolsOne : copy.tools, { n });
+}
+
 function ConsoleRow({
   row,
   active,
@@ -92,7 +98,7 @@ function ConsoleRow({
           {row.model}
         </span>
         <span className="shrink-0 text-caption text-muted-foreground tabular-nums">
-          {formatMessage(copy.tools, { n: row.toolCount })}
+          {toolsCountLabel(row.toolCount, copy, locale)}
         </span>
       </span>
       <span aria-hidden="true" className="truncate pl-list text-caption text-muted-foreground">

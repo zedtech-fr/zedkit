@@ -133,7 +133,8 @@ export function defaultConsoleSelectedId(
 }
 
 export function groupLabel(kind: string, copy: AgentConsoleCopy): string {
-  const key = GROUP_LABEL[kind as keyof typeof GROUP_LABEL];
+  const bucket = KIND_ALIAS[kind] ?? kind;
+  const key = GROUP_LABEL[bucket as keyof typeof GROUP_LABEL];
   return key ? copy[key] : kind;
 }
 
@@ -177,8 +178,9 @@ export function dispositionLabel(
 
 /** Live statuses arrive lowercase (`done`); badges read capitalized (`Done`). */
 export function statusLabel(status: string): string {
-  if (status === "") return status;
-  return status.charAt(0).toUpperCase() + status.slice(1);
+  const trimmed = status.trim();
+  if (trimmed === "") return "";
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
 /** Dot tone for a console status: live pulses, done succeeds, failures warn. */
@@ -207,7 +209,9 @@ export function statusTone(status: string, running: boolean): StatusDotTone {
 /** Live verdicts read uppercase with words split (`REQUEST CHANGES`). */
 export function verdictLabel(verdict: string | null): string | null {
   if (verdict === null) return null;
-  return verdict.toUpperCase().replaceAll("_", " ");
+  const trimmed = verdict.trim();
+  if (trimmed === "") return null;
+  return trimmed.toUpperCase().replaceAll("_", " ");
 }
 
 /** Compact token counts (`868k`, `20.2k`, `1M`); bad values clamp to `0`. */
@@ -218,8 +222,12 @@ export function compactTokenCount(value: number, locale: string): string {
     return `${new Intl.NumberFormat(locale, { maximumFractionDigits: value >= 10_000_000 ? 0 : 1 }).format(scaled)}M`;
   }
   if (value >= 1000) {
+    const digits = value >= 100_000 ? 0 : 1;
     const scaled = value / 1000;
-    return `${new Intl.NumberFormat(locale, { maximumFractionDigits: value >= 100_000 ? 0 : 1 }).format(scaled)}k`;
+    if (Number(scaled.toFixed(digits)) >= 1000) {
+      return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value / 1_000_000)}M`;
+    }
+    return `${new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(scaled)}k`;
   }
   return new Intl.NumberFormat(locale, { useGrouping: false }).format(value);
 }
