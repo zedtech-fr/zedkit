@@ -220,6 +220,10 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   const customize = read("features/identity/dock/ui/identity-dock-customize.tsx");
   assert.match(widget, /IdentityDockAssistantPanel/);
   assert.match(widget, /modal=\{false\}/);
+  assert.match(widget, /DrawerHandle/);
+  assert.match(widget, /data-slot="identity-dock-panel"/);
+  assert.match(widget, /overflow-hidden/);
+  assert.doesNotMatch(widget, /DrawerHeader/);
   assert.doesNotMatch(widget, /handleOnly/);
   assert.doesNotMatch(widget, /noBodyStyles/);
   assert.match(panel, /IdentityDockCustomize/);
