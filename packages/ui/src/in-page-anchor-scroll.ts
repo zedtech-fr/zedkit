@@ -88,7 +88,8 @@ export function useInPageAnchorScroll(): void {
 }
 
 /** Component form of `useInPageAnchorScroll`: renders nothing. */
-export function InPageAnchorScroll(_props?: InPageAnchorScrollProps): null {
+export function InPageAnchorScroll(props?: InPageAnchorScrollProps): null {
+  void props;
   useInPageAnchorScroll();
   return null;
 }
