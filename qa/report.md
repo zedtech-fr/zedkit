@@ -99,6 +99,63 @@ rendered evidence below was collected by the caller)
   canonical omission on 404s (kit API); a11y gate-coverage extensions
   (no new E2E per constraints); inert-sweep narrowing (no coverage).
 
+## Final verification (2026-11-14, after all batches)
+
+- `typecheck` + `lint` (incl. `check-native-controls`,
+  `check-raw-css-values`, `module-placement --check`) green;
+  47 unit tests pass (note-list 14 new, catalog 33 incl. 3 new pins).
+- `evidence` full matrix 17 routes × 390/809/1440 × light/dark
+  (`/tmp/qa-final/`): overflow ok in all 102 cells; hit gate ok in
+  all cells (heading-anchor fix confirmed); 0 new serious axe;
+  h1=1 on every real page. Overall verdict still `fail` ONLY on the
+  dev-server 500s for unbaked `/issues/[n]` URLs (Next dev
+  export-mode strictness; production host 404s) plus the axe flags
+  on the dev 500 page itself. Contact sheets opened and described:
+  catalog violet parity, component-page stage parity, fixed guide
+  route at all widths × both modes.
+- Observation (unfixed, owner call): the floating identity dock
+  pill overlaps body copy at 390 until dragged. Non-modal +
+  draggable by design; consider defaulting to collapsed on small
+  screens.
+
+## Summary
+
+- Fixed: heading-anchor 24px hits + keyboard-visible copy button;
+  placeholder/missing issue metadata (single noindex + self
+  canonical); catalog counter honesty, settled live-region
+  announcements, 320px grid floor, shared preview-stage token;
+  note-list error/retry/pending/disabled states + 14 tests;
+  reviews recovery action, deep-route DetailMeta reuse, empty-state
+  link; skip-link 44px on focus, dead observer branch removal;
+  single `@graph` JSON-LD, demo-page noindex, two copy fixes.
+- 9 local commits, all checks green. No PNGs committed, no
+  push/PR/merge, no CI/config changes.
+- Remains: FR parity (architectural, epic-scale); canonical omission
+  (needs kit API); gate-coverage extensions (need new E2E);
+  inert-sweep narrowing (needs coverage first).
+
+## Top 5 systemic improvements for the design system
+
+1. One shared token per shared value, enforced by a same-value
+   lint: the preview-stage fork survived because nothing flags
+   identical literals in two page CSS files (`check-raw-css-values`
+   only sees raw colors, not duplicated variables).
+2. Heading anchors are interactive targets: any component that
+   wraps headings in links (fumadocs or kit) must ship ≥24px boxes
+   and a visible `:focus-within` reveal by default, not per-page CSS.
+3. Static-export dev parity: `dynamicParams: false` + unbaked URLs
+   500 in dev but 404 in production — every dynamic segment needs a
+   documented host-404 contract so audits stop filing dev-only
+   crashes.
+4. Placeholder params must be noindex by construction: any
+   `orPlaceholder` bake should pair with missing-metadata, not rely
+   on per-page follow-ups.
+5. Gate coverage must match the invariant list: 44px, focus-ring,
+   and shell-drawer assertions lag the documented contract —
+   promote the strictSemantics/a11y rows to CI-blocking or downgrade
+   the contract language; a gate that does not test the claim
+   teaches contributors the claim is decorative.
+
 ## Outstanding findings (not yet fixed)
 
 - Catalog: HSL literals, 320px grid floor, counter scope, live-region
