@@ -8,9 +8,9 @@ test("starting-points copy frames the six looks as not starting from zero (#441)
   assert.equal(identityDockCopy.startingPointsTitle, "Don't start from zero");
   assert.equal(
     identityDockCopy.startingPointsHint,
-    "Pick a look as your starting point, then adjust the fields below.",
+    "Pick a stock look, then fine-tune colors and rhythm in Customize.",
   );
-  assert.equal(identityDockCopy.startingPointsLabel, "Starting looks");
+  assert.equal(identityDockCopy.startingPointsLabel, "Starting look");
   assert.equal(identityDockCopy.defaultNote, "(default)");
 });
 
@@ -19,6 +19,7 @@ test("starting-points copy names no preview, no count, and US spelling (#441)", 
     identityDockCopy.startingPointsTitle,
     identityDockCopy.startingPointsHint,
     identityDockCopy.startingPointsLabel,
+    identityDockCopy.startingPointsCustomHint,
   ].join("\n");
   assert.doesNotMatch(copy, /preview/i);
   assert.doesNotMatch(copy, /6|\bsix\b/i);

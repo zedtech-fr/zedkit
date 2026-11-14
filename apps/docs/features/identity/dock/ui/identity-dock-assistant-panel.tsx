@@ -63,7 +63,7 @@ export function IdentityDockAssistantPanel({
   return (
     <Stack className="pane-shrink flex-1 gap-flush overflow-hidden" data-slot="identity-dock-body">
       <Tabs defaultValue="simple" className="flex pane-shrink flex-1 flex-col overflow-hidden">
-        <Stack className="shrink-0 border-b border-border">
+        <Stack className="shrink-0 border-b border-border bg-background">
           <IdentityDockPanelToolbar onClose={() => setExpanded(false)} />
           <Stack className="pad-row">
             <TabsList aria-label={modes.label} className="flex w-full">
@@ -76,7 +76,7 @@ export function IdentityDockAssistantPanel({
             </TabsList>
           </Stack>
         </Stack>
-        <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-start">
+        <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain bg-background px-control-inline pt-start">
           <IdentityDockStartingPoints onPick={applyStartingIdentity} />
           <IdentityDockCustomize
             tokens={tokens}

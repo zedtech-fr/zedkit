@@ -268,8 +268,12 @@
 }
 
 /* One-off insets. The step matches another role; the job does not, so the number stays a literal here. */
+[data-slot="identity-dock-panel"] {
+  background-color: hsl(var(--background));
+}
+
 [data-dock-scroll] {
-  padding-bottom: calc(var(--spacing) * 2);
+  padding-bottom: calc(var(--spacing) * 4);
 }
 
 /* A menu link that leaves the site. Quieter than the label, not the dialog close. */

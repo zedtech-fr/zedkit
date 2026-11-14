@@ -123,7 +123,7 @@ function IdentityDockWidget() {
           aria-label={identityDockCopy.panelTitle}
           data-slot="identity-dock-panel"
           data-state={expanded ? "open" : "closed"}
-          className="flex pane-shrink flex-col gap-flush flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-flush"
+          className="flex pane-shrink flex-col gap-flush bg-background flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-flush"
         >
           <DrawerHandle data-dock-handle="" className="trim-bottom shrink-0" />
           <Stack data-state="open" className="pane-shrink flex-1 gap-flush overflow-hidden">

@@ -13,6 +13,7 @@ type PatchPreview = (key: string, value: string, palette?: "light" | "dark") => 
 function DockContrastChecker(props: { tokens: IdentityTokens; onPatchPreview: PatchPreview }) {
   const warnings = identityContrastWarnings(props.tokens);
   const simple = identityEditorCopy.simple;
+  if (warnings.length === 0) return null;
   return (
     <Stack gap="sm" data-dock-contrast="">
       <Stack gap="tight">
@@ -23,13 +24,7 @@ function DockContrastChecker(props: { tokens: IdentityTokens; onPatchPreview: Pa
           {simple.contrastHint}
         </Text>
       </Stack>
-      {warnings.length > 0 ? (
-        <ContrastChips warnings={warnings} onFix={(warning) => props.onPatchPreview(warning.token, warning.suggestedForeground, warning.scheme)} />
-      ) : (
-        <Text variant="muted" typeRole="label">
-          {simple.contrastOk}
-        </Text>
-      )}
+      <ContrastChips warnings={warnings} onFix={(warning) => props.onPatchPreview(warning.token, warning.suggestedForeground, warning.scheme)} />
     </Stack>
   );
 }
@@ -41,7 +36,7 @@ function IdentityDockCustomize(props: {
   onPatchPreviewMany: (entries: readonly (readonly [string, string])[]) => void;
 }) {
   return (
-    <Stack gap="md" data-dock-customize="">
+    <Stack gap="md" data-dock-customize="" className="bg-background">
       <Stack gap="tight">
         <Text typeRole="label" className="font-medium text-foreground">
           {copy.views.customize}

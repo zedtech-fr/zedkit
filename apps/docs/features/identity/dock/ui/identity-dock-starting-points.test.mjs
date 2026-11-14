@@ -27,14 +27,16 @@ test("starting points map the kit identity registry, with no second list (#441)"
   assert.doesNotMatch(src, /\b(Mist|Press|Tide|Volt|Maison|Glass)\b/);
 });
 
-test("starting points are native radio cards in one named group (#441)", () => {
-  assert.match(src, /OptionCard.*from "@zedtech\/zedkit-ui"/s);
-  assert.match(src, /role="radiogroup"/);
+test("starting points use one compact select with a labeled control (#441)", () => {
+  assert.doesNotMatch(src, /OptionCard/s);
+  assert.doesNotMatch(src, /<select[\s/>]/);
+  assert.match(src, /SelectTrigger/);
+  assert.match(src, /SelectContent/);
+  assert.match(src, /FieldLabel htmlFor=\{controlId\}/);
   assert.match(src, /aria-label=\{copy\.startingPointsLabel\}/);
-  assert.match(src, /type="radio"/);
-  assert.match(src, /name=\{name\}/);
-  assert.match(src, /checked=\{current === option\.id\}/);
-  assert.match(src, /onPick\(option\.id\)/);
+  assert.match(src, /data-dock-starting-look/);
+  assert.match(src, /onPick\(value\)/);
+  assert.match(src, /isPresetId\(current\)/);
   assert.match(src, /useIdentity\(DEFAULT_IDENTITY\)/);
 });
 
@@ -42,6 +44,7 @@ test("starting points copy comes from the dock copy module, with the default mar
   assert.match(src, /copy\.startingPointsTitle/);
   assert.match(src, /copy\.startingPointsHint/);
   assert.match(src, /copy\.defaultNote/);
+  assert.match(src, /copy\.startingPointsCustom/);
   assert.match(src, /option\.id === DEFAULT_IDENTITY/);
   assert.doesNotMatch(src, /Don't start from zero/);
 });
