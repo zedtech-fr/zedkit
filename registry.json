@@ -836,6 +836,8 @@
           },
           "a[class*=\"px-badge-inline\"]": {
             "position": "relative",
+            "min-width": "24px",
+            "min-height": "24px",
             "&::after": {
               "content": "\"\"",
               "position": "absolute",
