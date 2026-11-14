@@ -8,10 +8,14 @@ import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
 
-export const metadata = docsPageMetadata("/features/identity-editor", {
-  title: identityEditorCopy.metadata.title,
-  description: identityEditorCopy.metadata.description,
-});
+export const metadata = docsPageMetadata(
+  "/features/identity-editor",
+  {
+    title: identityEditorCopy.metadata.title,
+    description: identityEditorCopy.metadata.description,
+  },
+  { index: false },
+);
 
 export default function IdentityEditorFeaturePage() {
   return (

@@ -33,9 +33,12 @@ export default function Home() {
   });
   return (
     <>
-      <JsonLd data={jsonLd} />
-      <JsonLd data={organizationJsonLd} />
-      <JsonLd data={softwareJsonLd} />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [jsonLd, organizationJsonLd, softwareJsonLd],
+        }}
+      />
       <HomeView uiGalleryStats={uiGalleryStats} />
     </>
   );
