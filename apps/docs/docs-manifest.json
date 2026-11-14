@@ -29,6 +29,20 @@
         "stagger"
       ]
     },
+    "Keep chrome mounted across client navigations": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "PageTransition",
+      "props": "PageTransitionProps",
+      "source": "motion/page-transition.tsx",
+      "demo": "PageTransitionDemo",
+      "examples": {
+        "With a route key": "PageTransitionDemo"
+      },
+      "propsPriority": [
+        "routeKey",
+        "preset"
+      ]
+    },
     "Trigger actions with buttons": {
       "package": "@zedtech/zedkit-ui",
       "component": "Button",
@@ -113,6 +127,17 @@
       "demo": "LoadingZonesDemo",
       "examples": {
         "Standalone": "CardSkeletonStandaloneDemo"
+      }
+    },
+    "Show a route-shaped skeleton while the next page loads": {
+      "package": "@zedtech/zedkit-ui",
+      "component": "DocsPageSkeleton",
+      "props": "DocsPageSkeletonProps",
+      "source": "layout/route-skeletons.tsx",
+      "demo": "RouteSkeletonsDemo",
+      "examples": {
+        "List page": "RouteSkeletonsDemo",
+        "Detail page": "RouteSkeletonsDemo"
       }
     },
     "Open modal dialogs": {

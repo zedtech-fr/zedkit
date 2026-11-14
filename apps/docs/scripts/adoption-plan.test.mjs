@@ -163,6 +163,7 @@ test("Drawer manual copy lists every companion file, dependency and token", () =
       "src/components/ui/drawer-non-modal.tsx",
       "src/components/ui/drawer-panel-classes.ts",
       "src/components/ui/drawer-non-modal-effects.ts",
+      "src/components/ui/motion-preference.ts",
       "src/components/ui/drawer-parts.tsx",
       "src/components/ui/drawer-non-modal-context.tsx",
       "src/components/ui/drawer-portal.tsx",

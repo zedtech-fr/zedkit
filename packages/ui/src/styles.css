@@ -907,9 +907,12 @@ section[data-gallery-section].border-b:last-child {
     translate: -50% -50%;
     width: max(100%, 24px);
     height: max(100%, 24px);
-  }
-  @media (pointer: coarse), (max-width: 40rem) {
-    &::before {
+    /*
+     * Nest `@media` inside `&::before`. A sibling `@media` + `&::before`
+     * inside `@utility` compiles to `@media (pointer::before: coarse)`.
+     * A components-layer override loses to this utility.
+     */
+    @media (pointer: coarse), (max-width: 40rem) {
       width: var(--spacing-tap);
       height: var(--spacing-tap);
     }
@@ -1310,9 +1313,11 @@ section[data-gallery-section].border-b:last-child {
 }
 
 /*
- * Vaul paints its own light-grey handle (5px x 32px, 70% opacity): it
- * vanishes on dark and tinted identities. Draw it from the kit tokens
- * so it reads on every surface. The 44px hit area is vaul's own.
+ * Drawer handles: Vaul paints a light-grey 5×32px bar at 70% opacity that
+ * vanishes on dark and tinted identities. Draw modal (Vaul) and non-modal
+ * kit handles from the kit tokens so they read on every surface.
+ * `touch-action: none` applies to both, so the browser does not steal the
+ * drag for scroll. Modal 44px hit area is Vaul's; non-modal adds `hit-target`.
  * The whole vaul block below stays deliberately unlayered: vaul injects
  * unlayered styles, and layered CSS would lose to them.
  */
@@ -1321,6 +1326,7 @@ html [data-vaul-handle] {
   height: var(--spacing-drawer-handle-height);
   background-color: hsl(var(--muted-foreground) / 0.5);
   opacity: 1;
+  touch-action: none;
 }
 
 /* Side drawers close by dragging the panel itself: no handle (vaul sets display: block unlayered). */
@@ -1681,8 +1687,9 @@ html [data-vaul-drawer-direction="right"] [data-vaul-handle] {
 @utility min-h-aside {
   min-height: calc(var(--spacing) * 80);
 }
+/* Compact desktop segment. Floor at 24px so dense looks stay above the CSS target. */
 @utility min-h-segment {
-  min-height: calc(var(--spacing) * 7);
+  min-height: max(24px, calc(var(--spacing) * 7));
 }
 /* Pulls a back link up into the page inset. */
 @utility pull-back {

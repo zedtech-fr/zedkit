@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-import { identityPresets } from "@zedtech/zedkit-ui";
+import { identityContrastWarnings, identityPresets } from "@zedtech/zedkit-ui";
 
 import { registerDocsAlias } from "#scripts/register-docs-alias.mjs";
 
@@ -63,6 +63,20 @@ test("docsSiteDefaultTokens overlays every Classic field the docs shell pins, an
   assert.equal(docs.headingTracking, glass.headingTracking);
   assert.equal(docs.labelTracking, glass.labelTracking);
   assert.deepEqual(docs.dark, glass.dark);
+});
+
+test("docs defaults yield no contrast warnings, so the dock footer stays quiet", () => {
+  assert.deepEqual(identityContrastWarnings(docsSiteDefaultTokens()), []);
+});
+
+test("a user edit that matches text to the background still warns", () => {
+  const docs = docsSiteDefaultTokens();
+  const broken = { ...docs, light: { ...docs.light, foreground: docs.light.background } };
+  const warnings = identityContrastWarnings(broken).filter(
+    (warning) => warning.token === "foreground" && warning.scheme === "light",
+  );
+  assert.equal(warnings.length, 1);
+  assert.equal(warnings[0]?.min, 4.5);
 });
 
 test("Classic colour defaults match the measured site hexes", () => {

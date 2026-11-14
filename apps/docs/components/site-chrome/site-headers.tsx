@@ -96,7 +96,10 @@ function HomeDesktopHeader() {
 
 /**
  * Customer personas: hunting a component on `/catalog`, often at 1440, hurried.
- * UI decisions: catalog header is brand + primary nav + search + GitHub text, because the customer is already in the kit and needs find-in-docs, not Get started. Icon search below lg so the bar fits 809.
+ * UI decisions: catalog/docs bar is brand + primary nav + search + GitHub text
+ * (no Get started), because the customer is already in the kit and needs
+ * find-in-docs. Icon search below `lg`, Search ⌘K from `lg`, so the bar
+ * fits 809 with roomy looks — same recompose as FoundationsDesktopHeader.
  */
 function SearchGitHubDesktopHeader({ mark }: { mark: "catalog" | "docs" }) {
   return (
@@ -163,7 +166,9 @@ export function MarketingSiteHeader() {
 
 /**
  * Customer personas: integrating developer on a docs page at 1440, hurried.
- * UI decisions: docs header is brand + primary nav + search + GitHub text, because the customer already uses that bar on Catalog. Icon search below lg, Search ⌘K from lg, so the five-item row fits 809 under Tide.
+ * UI decisions: docs header is the same SearchGitHubDesktopHeader as Catalog
+ * (icon search below `lg`, Search ⌘K from `lg`, so the five-item row fits 809
+ * under Tide).
  */
 export function DocsDesktopHeader() {
   return <SearchGitHubDesktopHeader mark="docs" />;

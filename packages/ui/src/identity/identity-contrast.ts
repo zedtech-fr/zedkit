@@ -4,6 +4,7 @@ const AA_BODY = 4.5;
 const AA_UI = 3;
 
 type Hsl = { h: number; s: number; l: number };
+/** `border` stays on the public warning type for labels; the checker does not emit it (decorative separator). */
 type ContrastToken = "foreground" | "primaryForeground" | "mutedForeground" | "accent" | "border";
 type IdentityContrastWarning = {
   scheme: "light" | "dark";
@@ -57,6 +58,14 @@ function nudgeForeground(fg: Hsl, bg: Hsl, min: number): string {
   return formatHsl(best);
 }
 
+function ensureContrast(colour: string, background: string, min: number): { ratio: number; value: string } | undefined {
+  const parsed = parseHsl(colour);
+  const bg = parseHsl(background);
+  if (!parsed || !bg) return undefined;
+  const ratio = contrastRatio(parsed, bg);
+  return { ratio, value: ratio >= min ? colour : nudgeForeground(parsed, bg, min) };
+}
+
 function warningFor(
   scheme: "light" | "dark",
   token: ContrastToken,
@@ -64,17 +73,14 @@ function warningFor(
   bg: string,
   min: number,
 ): IdentityContrastWarning | undefined {
-  const value = parseHsl(colour);
-  const background = parseHsl(bg);
-  if (!value || !background) return undefined;
-  const ratio = contrastRatio(value, background);
-  if (ratio >= min) return undefined;
+  const ensured = ensureContrast(colour, bg, min);
+  if (!ensured || ensured.ratio >= min) return undefined;
   return {
     scheme,
     token,
-    ratio: Number(ratio.toFixed(2)),
+    ratio: Number(ensured.ratio.toFixed(2)),
     min,
-    suggestedForeground: nudgeForeground(value, background, min),
+    suggestedForeground: ensured.value,
   };
 }
 
@@ -84,8 +90,14 @@ function pairWarnings(scheme: "light" | "dark", pair: IdentityTokens["light"]): 
     warningFor(scheme, "primaryForeground", pair.primaryForeground, pair.primary, AA_BODY),
     warningFor(scheme, "mutedForeground", pair.mutedForeground, pair.background, AA_BODY),
     warningFor(scheme, "accent", pair.accent, pair.background, AA_UI),
-    warningFor(scheme, "border", pair.border, pair.background, AA_UI),
+    // --border is a decorative separator; WCAG 1.4.11 does not require 3:1.
+    // Compact export splits --input and nudges it to 3:1 in colourCssVars.
   ];
+}
+
+/** Resting field border: keep 3:1 against the surface, even when `--border` is a hairline. */
+function fieldBorderFor(border: string, background: string): string {
+  return ensureContrast(border, background, AA_UI)?.value ?? border;
 }
 
 function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[] {
@@ -125,13 +137,12 @@ function darkPairFromLight(light: IdentityTokens["light"]): IdentityTokens["dark
   const bgHsl = parseHsl(background);
   if (!bgHsl) return { ...inverted, background };
   const next = { ...inverted, background };
-  for (const token of ["foreground", "primaryForeground", "mutedForeground", "accent", "border"] as const) {
+  for (const token of ["foreground", "primaryForeground", "mutedForeground", "accent"] as const) {
     const colour = parseHsl(next[token]);
     if (!colour) continue;
-    const background =
-      token === "primaryForeground" ? parseHsl(next.primary) : token === "mutedForeground" ? bgHsl : bgHsl;
+    const background = token === "primaryForeground" ? parseHsl(next.primary) : bgHsl;
     if (!background) continue;
-    const min = token === "accent" || token === "border" ? AA_UI : AA_BODY;
+    const min = token === "accent" ? AA_UI : AA_BODY;
     if (contrastRatio(colour, background) < min) next[token] = nudgeForeground(colour, background, min);
   }
   return next;
@@ -171,6 +182,7 @@ function identityContrastTokenLabel(token: IdentityContrastWarning["token"]): st
 }
 
 export {
+  fieldBorderFor,
   identityContrastTokenLabel,
   identityContrastWarnings,
   keepIdentityDarkKeys,

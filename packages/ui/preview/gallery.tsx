@@ -22,8 +22,10 @@ import {
   DataTable,
   DataTableSkeleton,
   DatePicker,
+  DetailPageSkeleton,
   DetailPanel,
   DetailPanelSkeleton,
+  DocsPageSkeleton,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -45,6 +47,7 @@ import {
   Markdown,
   Input,
   Label,
+  ListPageSkeleton,
   LivePulse,
   Section,
   Stack,
@@ -628,6 +631,9 @@ const wrap = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           </div>
           <DetailPanelSkeleton label="Loading details" rows={2} />
           <DataTableSkeleton label="Loading table" columns={3} rows={2} />
+          <DocsPageSkeleton label="Loading guide" />
+          <ListPageSkeleton label="Loading catalog" cards={2} />
+          <DetailPageSkeleton label="Loading item" rows={2} />
         </GallerySection>
 
         <GallerySection id="forms" title="Forms">

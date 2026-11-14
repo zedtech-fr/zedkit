@@ -212,3 +212,11 @@ test("fumadocs heading copy buttons keep a 24px floor under dense looks", () => 
   assert.match(rule[1], /min-width:\s*max\(24px,\s*var\(--zk-tap-min,\s*0px\)\)/);
   assert.match(rule[1], /min-height:\s*max\(24px,\s*var\(--zk-tap-min,\s*0px\)\)/);
 });
+
+test("fumadocs code-well copy buttons keep a 24px floor under dense looks", () => {
+  const css = read("app/globals.css");
+  assert.match(
+    css,
+    /figure\.shiki button \{\s*min-width:\s*max\(24px,\s*var\(--zk-tap-min,\s*0px\)\);\s*min-height:\s*max\(24px,\s*var\(--zk-tap-min,\s*0px\)\);/u,
+  );
+});

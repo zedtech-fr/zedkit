@@ -249,13 +249,14 @@ test("drawer copy source lists the namespace step, every companion file and the 
   await adoption.getByRole("tab", { name: "Paste the files" }).click();
   await expect(adoption.locator('[data-adoption-step="dependencies"]')).toContainText("vaul");
   const files = adoption.locator('[data-adoption-step="files"]');
-  await expect(files).toContainText("18 companion files");
+  await expect(files).toContainText("19 companion files");
   await files.locator("summary").click();
   for (const name of [
     "drawer",
     "drawer-non-modal",
     "drawer-panel-classes",
     "drawer-non-modal-effects",
+    "motion-preference",
     "drawer-parts",
     "drawer-non-modal-context",
     "drawer-portal",
