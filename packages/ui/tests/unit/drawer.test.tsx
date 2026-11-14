@@ -790,16 +790,17 @@ describe("drawer", () => {
       });
     }
 
-    function swipe(target: Element, fromY: number, toY: number) {
+    function swipe(target: Element, fromY: number, toY: number, pointerType = "") {
       fireEvent.pointerDown(target, {
         pointerId: 1,
         isPrimary: true,
         button: 0,
+        pointerType,
         clientX: 80,
         clientY: fromY,
       });
-      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: toY });
-      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: toY });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, pointerType, clientX: 80, clientY: toY });
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, pointerType, clientX: 80, clientY: toY });
     }
 
     afterEach(() => {
@@ -882,6 +883,18 @@ describe("drawer", () => {
     it("closes when the body is dragged down at rest", () => {
       const { body } = renderBottomSheet();
       swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when a touch pointer drags the body", () => {
+      const { body } = renderBottomSheet();
+      swipe(body, 40, 40 + DISMISS_DRAG, "touch");
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("closes when a touch pointer drags the handle", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 10, 10 + DISMISS_DRAG, "touch");
       expect(screen.queryByRole("dialog")).toBeNull();
     });
 

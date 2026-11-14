@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  fieldBorderFor,
   identityContrastTokenLabel,
   identityContrastWarnings,
   keepIdentityDarkKeys,
@@ -235,5 +236,43 @@ describe("unreadable colours and labels", () => {
   it("leaves the primary text alone when the primary fill is unreadable", () => {
     const next = withIdentityDarkPair(loose({ primary: "nope" }));
     expect(next.dark.primary).toBe("nope");
+  });
+});
+
+function hslContrast(a: string, b: string): number {
+  const parse = (value: string) => {
+    const match = value.trim().match(/^([\d.]+)\s+([\d.]+)%\s+([\d.]+)%$/);
+    if (!match) return undefined;
+    return { h: Number(match[1]), s: Number(match[2]), l: Number(match[3]) };
+  };
+  const luminance = (hsl: { h: number; s: number; l: number }) => {
+    const sat = hsl.s / 100;
+    const light = hsl.l / 100;
+    const k = (n: number) => (n + hsl.h / 30) % 12;
+    const chroma = sat * Math.min(light, 1 - light);
+    const f = (n: number) => light - chroma * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    const linear = [f(0), f(8), f(4)].map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * linear[0]! + 0.7152 * linear[1]! + 0.0722 * linear[2]!;
+  };
+  const left = parse(a);
+  const right = parse(b);
+  if (!left || !right) return 0;
+  const L1 = luminance(left);
+  const L2 = luminance(right);
+  return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+}
+
+describe("fieldBorderFor", () => {
+  it("nudges a hairline --input to at least 3:1 against the surface", () => {
+    const hairline = "240 5.9% 90%";
+    const background = "0 0% 100%";
+    expect(hslContrast(hairline, background)).toBeLessThan(3);
+    const input = fieldBorderFor(hairline, background);
+    expect(input).not.toBe(hairline);
+    expect(hslContrast(input, background)).toBeGreaterThanOrEqual(3);
+  });
+
+  it("keeps a border that already meets 3:1", () => {
+    expect(fieldBorderFor("240 10% 3.9%", "0 0% 100%")).toBe("240 10% 3.9%");
   });
 });

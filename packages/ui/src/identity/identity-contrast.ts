@@ -58,6 +58,14 @@ function nudgeForeground(fg: Hsl, bg: Hsl, min: number): string {
   return formatHsl(best);
 }
 
+function ensureContrast(colour: string, background: string, min: number): { ratio: number; value: string } | undefined {
+  const parsed = parseHsl(colour);
+  const bg = parseHsl(background);
+  if (!parsed || !bg) return undefined;
+  const ratio = contrastRatio(parsed, bg);
+  return { ratio, value: ratio >= min ? colour : nudgeForeground(parsed, bg, min) };
+}
+
 function warningFor(
   scheme: "light" | "dark",
   token: ContrastToken,
@@ -65,17 +73,14 @@ function warningFor(
   bg: string,
   min: number,
 ): IdentityContrastWarning | undefined {
-  const value = parseHsl(colour);
-  const background = parseHsl(bg);
-  if (!value || !background) return undefined;
-  const ratio = contrastRatio(value, background);
-  if (ratio >= min) return undefined;
+  const ensured = ensureContrast(colour, bg, min);
+  if (!ensured || ensured.ratio >= min) return undefined;
   return {
     scheme,
     token,
-    ratio: Number(ratio.toFixed(2)),
+    ratio: Number(ensured.ratio.toFixed(2)),
     min,
-    suggestedForeground: nudgeForeground(value, background, min),
+    suggestedForeground: ensured.value,
   };
 }
 
@@ -92,11 +97,7 @@ function pairWarnings(scheme: "light" | "dark", pair: IdentityTokens["light"]): 
 
 /** Resting field border: keep 3:1 against the surface, even when `--border` is a hairline. */
 function fieldBorderFor(border: string, background: string): string {
-  const value = parseHsl(border);
-  const bg = parseHsl(background);
-  if (!value || !bg) return border;
-  if (contrastRatio(value, bg) >= AA_UI) return border;
-  return nudgeForeground(value, bg, AA_UI);
+  return ensureContrast(border, background, AA_UI)?.value ?? border;
 }
 
 function identityContrastWarnings(tokens: IdentityTokens): IdentityContrastWarning[] {

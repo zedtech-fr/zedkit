@@ -86,7 +86,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Identity contrast repair | `.agents/atlas/identity.md` | Bounded three-pass AA nudge; public `repairContrast`. | `identity-contrast-repair.test.ts` | 2026-11-13 |
 | SSE frame parser | `.agents/atlas/ui-primitives.md` | Blank line is two WHATWG endings; CRLF tried first. | `consumeSseStream` | 2026-11-11 |
 | AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. Sidebar mounts twice: no ids in demo sidebars. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-13 |
-| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Handle 8px slop; defer capture; ignore `a`/`option`/`menuitem`; `hit-target` coarse size is `@layer` not `@utility`; `afterEach` not `try/finally`. | `drawer.test.tsx` | 2026-11-13 |
+| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Handle 8px slop; body swipe `pointerType !== "touch"`; nest `hit-target` coarse `@media` inside `&::before` (`@layer` loses to `@utility`); `afterEach` not `try/finally`. | `drawer.test.tsx` | 2026-11-13 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP; label is `Started (UTC)`. | `agent-console.test.tsx` | 2026-11-13 |

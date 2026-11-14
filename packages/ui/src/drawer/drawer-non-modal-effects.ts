@@ -85,6 +85,7 @@ function startNonModalDrawerDismiss({
   if (direction !== "bottom" && direction !== "top") return;
   if (event.isPrimary === false || event.button !== 0) return;
   if (event.defaultPrevented) return;
+  if (kind === "body" && event.pointerType === "touch") return;
 
   const panel =
     kind === "body"

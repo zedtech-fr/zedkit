@@ -213,12 +213,12 @@ describe("layout job classes", () => {
     const utility = css.slice(utilityStart, css.indexOf("@layer components", utilityStart));
     expect(utility).toContain("width: max(100%, 24px);");
     expect(utility).toContain("height: max(100%, 24px);");
-    expect(utility).not.toMatch(/@media \(pointer: coarse\)/);
-
-    const layer = css.slice(css.indexOf("@layer components"));
-    const hitTap = layer.slice(layer.indexOf(".hit-target::before"), layer.indexOf("}", layer.indexOf(".hit-target::before")));
-    expect(hitTap).toContain("width: var(--spacing-tap);");
-    expect(hitTap).toContain("height: var(--spacing-tap);");
+    expect(utility).toContain("width: var(--spacing-tap);");
+    expect(utility).toContain("height: var(--spacing-tap);");
+    // Sibling `@media` + `&::before` inside `@utility` compiles to pointer::before.
+    expect(utility).not.toMatch(/@utility hit-target \{[\s\S]*@media \(pointer: coarse\)[\s\S]*&::before/);
+    expect(utility).toMatch(/&::before \{[\s\S]*@media \(pointer: coarse\)/);
+    expect(css.slice(css.indexOf("@layer components"))).not.toContain(".hit-target::before");
   });
 
   it("keeps the chosen select value on one line", () => {
