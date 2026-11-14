@@ -46,7 +46,7 @@ Each setup file's Preserve and Idempotent sections apply to that package. Combin
 After every requested setup file has finished:
 
 1. Run each requested package's own **Done-check** from its setup.md.
-2. If AI was requested, run `npx @zedtech/zedkit-ai@1.2.0 validate` once as the process-wide gate (the command in https://zedkit.app/ai/setup.md). UI-only and Nest-only runs skip that CLI.
+2. If AI was requested, run `npx @zedtech/zedkit-ai@1.3.0 validate` once as the process-wide gate (the command in https://zedkit.app/ai/setup.md). UI-only and Nest-only runs skip that CLI.
 3. Print **one combined** report: requested set, files written / skipped / preserved per package, each done-check result, and the AI validate stdout (`ok`) when AI was requested.
 
 Do not emit a separate final report per package.

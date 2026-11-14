@@ -1,5 +1,58 @@
 # @zedtech/zedkit-ui
 
+## 2.1.0
+
+### Minor Changes
+
+- 370eee2: AppShell opens the sidebar in a Drawer below md, with an optional fixed-height mode and a ref to the scrolling main.
+
+  Below md the sidebar opens in a Drawer; sidebarTrigger={null} opts out; sidebar mounts twice so keep it presentational.
+
+- 370eee2: Add SidebarNavItem and SidebarNavGroup for sidebar run-list rows with native disclosure.
+- 370eee2: Compose a live agent console from host-mapped run, item, and decision props (`AgentConsole`).
+
+  Migration: custom `ZedkitUiMessages` bundles must add `agentConsole` (`zedkitUiMessagesEn.agentConsole` -> your copy), including `toolsOne`.
+
+- 370eee2: Non-modal bottom and top Drawers swipe shut from the handle (a drag toward the edge, not a tap) and from the sheet body on a fine pointer when it is not scrolled (about 20% of the panel height). Left and right drawers do not swipe. Touch body-drag is not supported; use the handle. Reduced motion skips the slide; Escape and Close still close the sheet.
+
+  `identityContrastWarnings` no longer treats a decorative `--border` separator as a 3:1 failure (WCAG 1.4.11 does not require that). Text pairs still need 4.5:1 and accent (focus ring) still needs 3:1. Compact token export splits `--input` from decorative `--border` and writes a 3:1 field border. Token `border` is no longer emitted by the checker, so hairline `--border` exports that used to fail now pass.
+
+  Non-modal close restored focus to the trigger on every dismiss -> restore only when focus was inside the panel.
+
+  `darkPairFromLight` nudged the inverted dark `--border` to 3:1 -> decorative dark `--border` stays inverted lightness.
+
+- 370eee2: Scroll same-document `#hash` targets on every click, including when the URL already has that hash, with `InPageAnchorScroll`.
+- 370eee2: Bring the live agent console to the hosted reference: item header (kind, status, engine, name), decision flow line, boxed responsive stats, labelled transcript with an empty state, a live pulse on the run header, three-line sidebar rows (name, duration, model, tool count, status), and `subagent`/`gate` grouping. New `agentConsole` chrome keys (`mustChangeEmpty`, `transcript`, `noTranscriptTitle`, `noTranscriptDescription`, `tools`, `toolsOne`) — custom bundles must add them (see `Localize kit chrome in English or French`); `groupGate` is deprecated. `DetailPanel` grid stacks below `sm` (trio from `sm`, quint from `lg`); pass `grid-pair` at a call site that should pair at all widths. `useStickToBottom` takes `enabled` (a settled log starts at the top; selecting a settled item resets scroll).
+- 370eee2: Add a persistent layout slot host, named-motion page wrap, and docs/list/detail route skeletons so chrome can stay mounted across navigations. Floor `min-h-segment` at 24px so dense looks stay above the CSS target.
+- 370eee2: Add a sanitized `Markdown` host wrapping `react-markdown` and `rehype-sanitize`: CommonMark to React, no raw HTML, info-coloured links with `rel="noopener noreferrer"`.
+- 370eee2: Follow a growing log to the latest with `useStickToBottom`, and jump back with the named `JumpToLatest` control.
+
+  Migration: custom `ZedkitUiMessages` bundles must add `jumpToLatest` (`zedkitUiMessagesEn.jumpToLatest` -> your copy).
+
+- 370eee2: `createStoredChoice` remembers a listed localStorage value with an SSR default. `repairContrast` nudges identity colors toward WCAG AA in three bounded passes.
+
+### Patch Changes
+
+- 370eee2: Badge adds five `soft-*` status variants and stock `--info` / `--info-foreground` tokens.
+- 370eee2: DetailPanel adds an optional `variant="grid"` for a stacked-on-mobile stat layout (trio from `sm`, quint from `lg`).
+- 370eee2: Give `hover-lift` the same lift, shadow and primary-tinted border on keyboard focus as on hover, and keep that border/shadow when motion is reduced.
+- 370eee2: `LivePulse` accepts `inactiveLabel` for idle copy. `formatDuration` formats a millisecond span as `6m 17s` / `1h 02m`.
+- 370eee2: PromptInput enables Send for the documented starter (`defaultValue`, no `value`) from the live field text.
+- 370eee2: Keep the SecretField copy control at the 44px phone target in a flex row.
+- 370eee2: Soft-warning badges use `--warning` ink on the 15% wash so 12px caption text stays 4.5:1. On Mist (the default look), filled warning pills in light mode get a darker fill with light ink, and in dark mode a lighter fill with dark ink. Light `--success` and `--destructive` step darker, and dark `--destructive` steps lighter, so soft-success and soft-danger stay 4.5:1 on that same wash. Glass, Press, Tide, Volt, and Maison light `--warning` moves the same way. DataTable shrinks inside a flex parent so nowrap columns scroll in the table instead of stretching the page, and pagination wraps when the row is too narrow.
+- 370eee2: `pullSseFrames` and `consumeSseStream` yield the same named SSE frames for LF, CRLF, and CR, including when a chunk splits a CRLF blank line.
+- 370eee2: Stagger-pending children follow the host appear preset and stay out of the tab order until revealed.
+- 370eee2: Identities troubleshooting matches the shipped ThemeScope portal split (dropdowns in the scope; dialog/drawer body + mirror).
+- 370eee2: `AgentConsole` Started stamps format in UTC with ordinary spaces so server HTML matches the browser on first paint. The chrome label is `Started (UTC)` / `Début (UTC)` so the zone is visible without `timeZoneName` (hydrate-safe).
+- 370eee2: `readAssistantStreamEvent` and `isAssistantStreamStage` take an optional `stages` allow-list so a generic run can keep its own in-progress names; omitted still drops `"writing"`.
+- 370eee2: Non-modal handle swipe still closes the sheet when `DrawerContent` sets a custom `data-slot` (for example the docs identity dock). Lookup falls back to `role="dialog"`. Touch body-drag stays unsupported; use the handle.
+- 370eee2: Link badges (`asChild` on an `<a>`) keep a 24px min box so evidence hit-target and WCAG 2.5.8 pass without relying on a 50%-positioned pseudo.
+- 370eee2: README names the UI agent setup prompt and `/ui/setup.md` so npm readers can paste the same walkthrough the docs site already shows.
+- 370eee2: Document that `SectionScroll` is page-wide on `html` via `:has`, so sites that want native document scroll must not mount it.
+- 370eee2: Add transcript rows: collapsed native tool-call disclosure, thinking via StreamText, finished assistant markdown, and grouping of consecutive tool calls.
+- 370eee2: `UpdatedAgo` hydrates when the browser clock is not the build clock: first paint is a UTC date, then the live relative time after mount.
+- 370eee2: Glass and the service-booking specimen use US English (`color`) in visitor-facing copy.
+
 ## 2.0.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @zedtech/zedkit-nest
 
+## 1.1.2
+
+### Patch Changes
+
+- 370eee2: README names the Nest agent setup prompt and `/nest/setup.md` so npm readers can paste the same walkthrough the docs site already shows.
+
 ## 1.1.1
 
 ### Patch Changes
