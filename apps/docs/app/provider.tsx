@@ -9,6 +9,7 @@ import { IdentityDockGate } from "@/features/identity/dock/ui/identity-dock-gate
 import { IdentityAssistantStoreProvider } from "@/features/identity/ui/identity-assistant-store";
 import { DOCS_SITE_IDENTITY_STORAGE_KEY, purgeLegacyIdentityStorage } from "@/features/identity/ui/site-identity-storage";
 import { SiteChromeA11yPatch } from "@/components/site-chrome/site-chrome-a11y";
+import { SitePersistentChrome } from "@/components/site-chrome/site-persistent-chrome";
 import { ThemeColorMeta } from "@/components/site-chrome/theme-color-meta";
 import { RouteScrollReset } from "@/components/site-chrome/route-scroll-reset";
 import { DocsAppLink } from "@/components/site-chrome/docs-app-link";
@@ -40,7 +41,7 @@ export function Provider({ children }: { children: ReactNode }) {
       <CustomIdentityBar />
       <IdentityAssistantStoreProvider>
         <IdentityDockGate />
-        {children}
+        <SitePersistentChrome>{children}</SitePersistentChrome>
       </IdentityAssistantStoreProvider>
     </RootProvider>
   );

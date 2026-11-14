@@ -17,7 +17,7 @@ const HEADER_MARK = {
   docs: { "data-docs-header": "" },
 } as const;
 
-function MarketingDesktopNav({
+export function MarketingDesktopNav({
   mark,
   actions,
   className,
@@ -174,7 +174,7 @@ export function DocsDesktopHeader() {
   return <SearchGitHubDesktopHeader mark="docs" />;
 }
 
-/** Docs layout phone header. Desktop docs chrome is DocsDesktopHeader above the shell, except foundations. */
+/** Docs layout phone header. Desktop docs chrome is the root persistent host, except foundations. */
 export function DocsSiteHeader() {
   const foundations = isFoundationsPath(usePathname());
   return (

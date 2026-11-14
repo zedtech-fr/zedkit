@@ -4,19 +4,13 @@ import { SiteBrand } from "@/components/site-chrome/site-brand";
 import { siteHeaderLinks } from "@/lib/site-header-links";
 import { SitePageShell } from "@/components/site-chrome/site-page-shell";
 import { siteChromeSlots } from "@/components/site-chrome/site-chrome-slots";
-import { MarketingSiteHeader } from "@/components/site-chrome/site-headers";
 
-/** Shared marketing shell: nav, search, GitHub link. Theme and version live off this header. */
-export function SiteLayout({
-  children,
-  header = MarketingSiteHeader,
-}: {
-  children: ReactNode;
-  header?: typeof MarketingSiteHeader;
-}) {
+/** Shared marketing page grid and footer. Desktop site header lives on the root persistent host. */
+export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <HomeLayout
       nav={{
+        enabled: false,
         title: <SiteBrand />,
         url: "/",
       }}
@@ -24,7 +18,7 @@ export function SiteLayout({
       links={siteHeaderLinks()}
       searchToggle={{ enabled: true }}
       themeSwitch={{ enabled: false }}
-      slots={{ ...siteChromeSlots, header }}
+      slots={siteChromeSlots}
     >
       <SitePageShell>{children}</SitePageShell>
     </HomeLayout>
