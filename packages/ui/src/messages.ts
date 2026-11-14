@@ -60,6 +60,7 @@ export type ZedkitUiMessages = {
     groupWorkflow: string;
     groupHelper: string;
     groupObserver: string;
+    /** @deprecated Gates fold into Review lenses; kept for custom bundles. */
     groupGate: string;
     emptyTitle: string;
     emptyDescription: string;
@@ -74,11 +75,15 @@ export type ZedkitUiMessages = {
     decided: string;
     summary: string;
     mustChange: string;
+    mustChangeEmpty: string;
     notes: string;
     dismissed: string;
     kept: string;
     downgraded: string;
     approved: string;
+    transcript: string;
+    noTranscriptTitle: string;
+    noTranscriptDescription: string;
     /** Template with `{n}`. */
     confidence: string;
     postedReview: string;
@@ -87,6 +92,8 @@ export type ZedkitUiMessages = {
     started: string;
     duration: string;
     toolCalls: string;
+    /** Template with `{n}`. */
+    tools: string;
     tokens: string;
     /** Template with `{in}` and `{out}`. */
     tokensInOut: string;
@@ -167,17 +174,22 @@ export const zedkitUiMessagesEn: ZedkitUiMessages = {
     decided: "Decided",
     summary: "Summary",
     mustChange: "Must change",
+    mustChangeEmpty: "Nothing must change before merge",
     notes: "Notes",
     dismissed: "Dismissed",
     kept: "Kept",
     downgraded: "Downgraded",
     approved: "Approved",
+    transcript: "Transcript",
+    noTranscriptTitle: "No transcript",
+    noTranscriptDescription: "This step left no readable transcript.",
     confidence: "{n}/10",
     postedReview: "Posted review",
     pr: "PR {n}",
     started: "Started (UTC)",
     duration: "Duration",
     toolCalls: "Tool calls",
+    tools: "{n} tools",
     tokens: "Tokens",
     tokensInOut: "{in} in / {out} out",
     lastActivity: "Last activity",
@@ -256,17 +268,22 @@ export const zedkitUiMessagesFr: ZedkitUiMessages = {
     decided: "Décidé",
     summary: "Résumé",
     mustChange: "À changer",
+    mustChangeEmpty: "Rien à changer avant la fusion",
     notes: "Notes",
     dismissed: "Écarté",
     kept: "Conservé",
     downgraded: "Rétrogradé",
     approved: "Approuvé",
+    transcript: "Transcription",
+    noTranscriptTitle: "Aucune transcription",
+    noTranscriptDescription: "Cette étape n'a laissé aucune transcription lisible.",
     confidence: "{n}/10",
     postedReview: "Revue publiée",
     pr: "PR {n}",
     started: "Début (UTC)",
     duration: "Durée",
     toolCalls: "Appels d'outils",
+    tools: "{n} outils",
     tokens: "Jetons",
     tokensInOut: "{in} entrants / {out} sortants",
     lastActivity: "Dernière activité",

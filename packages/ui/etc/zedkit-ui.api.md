@@ -111,6 +111,7 @@ export type AgentConsoleItem = {
     kind: string;
     status: string;
     model: string;
+    engineLabel?: string | null;
     durationMs: number | null;
     toolCount: number;
     startedAt: number | null;
@@ -131,6 +132,7 @@ export type AgentConsoleProps = {
     defaultSelectedId?: string;
     onSelectedIdChange?: (id: string) => void;
     className?: string;
+    headingLevel?: 1 | 2;
 };
 
 // @public (undocumented)
@@ -143,6 +145,7 @@ export type AgentConsoleRun = {
     verdict: string | null;
     confidence: number | null;
     postedReviewHref: string | null;
+    running?: boolean;
 };
 
 // @public (undocumented)
@@ -1248,7 +1251,7 @@ export const identityTokenSchema: z.ZodObject<{
 }, z.core.$strip>;
 
 // @public
-export function InPageAnchorScroll(_props?: InPageAnchorScrollProps): null;
+export function InPageAnchorScroll(props?: InPageAnchorScrollProps): null;
 
 // @public
 export type InPageAnchorScrollProps = Record<string, never>;
@@ -1849,6 +1852,7 @@ export type StatusLabelTone = "loading" | "updating" | "syncing" | "saved" | "re
 // @public (undocumented)
 export interface StickToBottomOptions {
     behavior?: "auto" | "smooth";
+    enabled?: boolean;
     offset?: number;
 }
 
@@ -2299,17 +2303,22 @@ export type ZedkitUiMessages = {
         decided: string;
         summary: string;
         mustChange: string;
+        mustChangeEmpty: string;
         notes: string;
         dismissed: string;
         kept: string;
         downgraded: string;
         approved: string;
+        transcript: string;
+        noTranscriptTitle: string;
+        noTranscriptDescription: string;
         confidence: string;
         postedReview: string;
         pr: string;
         started: string;
         duration: string;
         toolCalls: string;
+        tools: string;
         tokens: string;
         tokensInOut: string;
         lastActivity: string;

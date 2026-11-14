@@ -39,7 +39,9 @@ export function DetailPanel({ items, className, variant = "list" }: DetailPanelP
       data-slot="detail-panel"
       data-variant={variant}
       className={cn(
-        isGrid ? "grid content-shrink gap-stack-md sm:grid-pair" : "divide-y divide-border rounded-lg border",
+        isGrid
+          ? "grid content-shrink grid-pair gap-stack-md sm:grid-trio lg:grid-quint"
+          : "divide-y divide-border rounded-lg border",
         className,
       )}
     >

@@ -21,6 +21,14 @@ export type {
   AgentConsoleRun,
 } from "./agent-console-model.js";
 
+function ConsoleTopbarName({ name }: { name: string }) {
+  return (
+    <div className="flex items-center surface-pad-md">
+      <Text typeRole="small">{name}</Text>
+    </div>
+  );
+}
+
 export function AgentConsole({
   run,
   items,
@@ -29,16 +37,17 @@ export function AgentConsole({
   defaultSelectedId,
   onSelectedIdChange,
   className,
+  headingLevel,
 }: AgentConsoleProps) {
   const messages = useUiMessages();
   const copy = messages.agentConsole;
   const locale = messages.locale;
   const mainRef = useRef<HTMLElement | null>(null);
-  const { isStuck, jumpToLatest } = useStickToBottom(mainRef);
   const fallbackId = defaultConsoleSelectedId(items, defaultSelectedId);
   const [uncontrolledId, setUncontrolledId] = useState(fallbackId);
   const requestedId = selectedIdProp ?? uncontrolledId ?? fallbackId;
   const selected = items.find((item) => item.id === requestedId) ?? items.find((item) => item.id === fallbackId);
+  const { isStuck, jumpToLatest } = useStickToBottom(mainRef, { enabled: selected?.running ?? false });
 
   const select = (id: string) => {
     onSelectedIdChange?.(id);
@@ -66,15 +75,15 @@ export function AgentConsole({
             {copy.sidebarTrigger}
           </Button>
         }
-        topbar={
-          selected ? (
-            <div className="flex items-center surface-pad-md">
-              <Text typeRole="small">{selected.name}</Text>
-            </div>
-          ) : undefined
-        }
+        topbar={selected ? <ConsoleTopbarName name={selected.name} /> : undefined}
       >
-        <ConsoleMain selected={selected} decision={decision} copy={copy} locale={locale} />
+        <ConsoleMain
+          selected={selected}
+          decision={decision}
+          copy={copy}
+          locale={locale}
+          {...(headingLevel === undefined ? {} : { headingLevel })}
+        />
       </AppShell>
       <JumpOverlay stuck={isStuck} onJump={jumpToLatest} />
     </div>

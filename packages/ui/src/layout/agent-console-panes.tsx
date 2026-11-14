@@ -1,15 +1,13 @@
-import { ChevronDown } from "lucide-react";
-
 import { formatMessage } from "@zedtech/zedkit-i18n";
 
-import { Button } from "../button/button.js";
 import { Badge } from "../feedback/badge.js";
 import { EmptyState } from "../feedback/empty-state.js";
 import { formatDuration } from "../feedback/format-duration.js";
 import { LivePulse } from "../feedback/live-pulse.js";
+import { StatusDot } from "../feedback/status-dot.js";
 import { StreamStatus } from "../feedback/stream-status.js";
 import { UpdatedAgo } from "../feedback/updated-ago.js";
-import { Card, CardContent, CardHeader } from "../surfaces/card.js";
+import { Card, CardContent } from "../surfaces/card.js";
 import {
   AssistantMessage,
   ThinkingRow,
@@ -21,12 +19,15 @@ import { Heading, Text } from "../typography/typography.js";
 import { DetailPanel } from "./detail-panel.js";
 import { Stack } from "./layout.js";
 import { JumpToLatest } from "./stick-to-bottom.js";
+import { DecisionCard } from "./agent-console-decision.js";
 import {
   MISSING,
-  dispositionLabel,
+  compactTokenCount,
   durationText,
   formatStarted,
-  httpHref,
+  groupLabel,
+  statusLabel,
+  statusTone,
   type AgentConsoleCopy,
   type AgentConsoleDecision,
   type AgentConsoleEntry,
@@ -52,167 +53,71 @@ function renderEntry(entry: AgentConsoleEntry, locale: string) {
   return <AssistantMessage key={entry.id}>{entry.text}</AssistantMessage>;
 }
 
-function FirstPass({
-  firstPass,
+export function ItemHeader({
+  item,
   copy,
+  headingLevel = 2,
 }: {
-  firstPass: NonNullable<AgentConsoleDecision["firstPass"]>;
+  item: AgentConsoleItem;
   copy: AgentConsoleCopy;
+  headingLevel?: 1 | 2;
 }) {
+  const engine = item.engineLabel?.trim() ? item.engineLabel : item.model;
   return (
-    <details className="group">
-      <summary className="flex min-h-target cursor-pointer list-none items-center gap-stack-sm text-dense focus-ring-control [&::-webkit-details-marker]:hidden">
-        <span className="content-shrink flex-1">
-          {copy.firstPass} · {copy.superseded} · {copy.outdated}
-        </span>
-        <ChevronDown
-          aria-hidden="true"
-          className="size-icon shrink-0 text-muted-foreground group-open:rotate-180 motion-safe:transition-transform"
-        />
-      </summary>
-      <Stack gap="sm">
-        {firstPass.verdict ? <Text>{firstPass.verdict}</Text> : null}
-        {firstPass.confidence != null ? (
-          <Text>{formatMessage(copy.confidence, { n: firstPass.confidence })}</Text>
-        ) : null}
-        <ul className="flex list-none flex-col gap-stack-sm">
-          {firstPass.findings.map((finding) => (
-            <li key={finding.id} className="flex flex-wrap items-center gap-stack-sm">
-              <Badge
-                variant={
-                  finding.disposition === "kept"
-                    ? "soft-success"
-                    : finding.disposition === "downgraded"
-                      ? "soft-warning"
-                      : "soft-neutral"
-                }
-              >
-                {dispositionLabel(finding.disposition, copy)}
-              </Badge>
-              <Text as="span">{finding.text}</Text>
-            </li>
-          ))}
-        </ul>
-      </Stack>
-    </details>
-  );
-}
-
-function SecondPass({
-  secondPass,
-  copy,
-}: {
-  secondPass: NonNullable<AgentConsoleDecision["secondPass"]>;
-  copy: AgentConsoleCopy;
-}) {
-  return (
-    <Stack gap="tight">
-      <Heading level={3} typeRole="small">
-        {copy.secondPass}
+    <header className="flex flex-col gap-stack-sm">
+      <div className="flex flex-wrap items-center gap-stack-sm">
+        <Text typeRole="label" className="text-muted-foreground uppercase">
+          {groupLabel(item.kind, copy)}
+        </Text>
+        <Badge variant="outline" className="gap-stack-tight">
+          <StatusDot tone={statusTone(item.status, item.running)} pulse={item.running} />
+          {statusLabel(item.status)}
+        </Badge>
+        <Badge variant="outline" className="font-mono font-normal">
+          {engine}
+        </Badge>
+      </div>
+      <Heading level={headingLevel} typeRole="title">
+        {item.name}
       </Heading>
-      {secondPass.model ? <Text>{secondPass.model}</Text> : null}
-      {secondPass.blocksMerge != null ? (
-        <Badge variant={secondPass.blocksMerge ? "soft-danger" : "soft-success"}>
-          {secondPass.blocksMerge ? copy.blocksMerge : copy.allowsMerge}
-        </Badge>
-      ) : null}
-      {secondPass.summary ? <Text>{secondPass.summary}</Text> : null}
-    </Stack>
+    </header>
   );
 }
 
-function DecisionLists({ decision, copy }: { decision: AgentConsoleDecision; copy: AgentConsoleCopy }) {
+function TranscriptSection({
+  entries,
+  copy,
+  locale,
+}: {
+  entries: readonly AgentConsoleEntry[];
+  copy: AgentConsoleCopy;
+  locale: string;
+}) {
   return (
-    <>
-      {decision.mustChange.length > 0 ? (
-        <Stack gap="tight">
-          <Heading level={3} typeRole="small">
-            {copy.mustChange}
-          </Heading>
-          <ul className="flex list-none flex-col gap-stack-tight">
-            {decision.mustChange.map((row, index) => (
-              <li key={`${index}-${row.text}`}>
-                <Text as="span">{row.text}</Text>
-              </li>
-            ))}
-          </ul>
+    <section aria-label={copy.transcript} className="flex flex-col gap-stack-sm">
+      <Heading level={2} typeRole="label" className="uppercase">
+        {copy.transcript}
+      </Heading>
+      {entries.length > 0 ? (
+        <Stack gap="sm">
+          {groupToolCallBursts(entries).map((group) =>
+            group.type === "burst" ? (
+              <TranscriptBurst key={group.items.map((row) => row.id).join("-")} aria-label={copy.toolBurst}>
+                {group.items.map((row) => renderEntry(row, locale))}
+              </TranscriptBurst>
+            ) : (
+              renderEntry(group.item, locale)
+            ),
+          )}
         </Stack>
-      ) : null}
-      {decision.notes.length > 0 ? (
-        <Stack gap="tight">
-          <Heading level={3} typeRole="small">
-            {copy.notes}
-          </Heading>
-          <ul className="flex list-none flex-col gap-stack-tight">
-            {decision.notes.map((note, index) => (
-              <li key={`${index}-${note.text}`} className="flex flex-wrap items-center gap-stack-sm">
-                {note.tag === "downgraded" ? <Badge variant="soft-warning">{copy.downgraded}</Badge> : null}
-                {note.tag === "approved" ? <Badge variant="soft-success">{copy.approved}</Badge> : null}
-                <Text as="span">{note.text}</Text>
-              </li>
-            ))}
-          </ul>
-        </Stack>
-      ) : null}
-      {decision.dismissed.length > 0 ? (
-        <Stack gap="tight">
-          <Heading level={3} typeRole="small">
-            {copy.dismissed}
-          </Heading>
-          <ul className="flex list-none flex-col gap-stack-tight">
-            {decision.dismissed.map((row, index) => (
-              <li key={`${index}-${row}`}>
-                <Text as="span">{row}</Text>
-              </li>
-            ))}
-          </ul>
-        </Stack>
-      ) : null}
-    </>
+      ) : (
+        <EmptyState title={copy.noTranscriptTitle} description={copy.noTranscriptDescription} />
+      )}
+    </section>
   );
 }
 
-export function DecisionCard({ decision, copy }: { decision: AgentConsoleDecision; copy: AgentConsoleCopy }) {
-  const reviewHref = httpHref(decision.postedReviewHref);
-  return (
-    <Card data-slot="agent-console-decision">
-      <CardHeader className="flex flex-row flex-wrap items-center gap-stack-sm">
-        <Heading level={2} typeRole="cardTitle">
-          {copy.finalDecision}
-        </Heading>
-        {decision.confidence != null ? (
-          <Badge variant="meta">{formatMessage(copy.confidence, { n: decision.confidence })}</Badge>
-        ) : null}
-        {decision.verdict ? <Badge variant="meta">{decision.verdict}</Badge> : null}
-        <Badge variant={decision.posted ? "soft-success" : "soft-neutral"}>
-          {decision.posted ? copy.posted : copy.decided}
-        </Badge>
-        {reviewHref ? (
-          <Button variant="link" size="sm" asChild>
-            <a href={reviewHref}>{copy.postedReview}</a>
-          </Button>
-        ) : null}
-      </CardHeader>
-      <CardContent>
-        <Stack gap="md">
-          {decision.firstPass ? <FirstPass firstPass={decision.firstPass} copy={copy} /> : null}
-          {decision.secondPass ? <SecondPass secondPass={decision.secondPass} copy={copy} /> : null}
-          {decision.summary ? (
-            <Stack gap="tight">
-              <Heading level={3} typeRole="small">
-                {copy.summary}
-              </Heading>
-              <Text>{decision.summary}</Text>
-            </Stack>
-          ) : null}
-          <DecisionLists decision={decision} copy={copy} />
-        </Stack>
-      </CardContent>
-    </Card>
-  );
-}
-
-export function ItemPane({
+export function ItemDetail({
   item,
   copy,
   locale,
@@ -221,7 +126,7 @@ export function ItemPane({
   copy: AgentConsoleCopy;
   locale: string;
 }) {
-  const number = new Intl.NumberFormat(locale, { useGrouping: false });
+  const showTokens = item.tokensIn !== 0 || item.tokensOut !== 0;
   return (
     <Stack gap="md">
       {item.running ? (
@@ -230,36 +135,53 @@ export function ItemPane({
           {item.streamLabel ? <StreamStatus label={item.streamLabel} /> : null}
         </div>
       ) : null}
-      <DetailPanel
-        variant="grid"
-        items={[
-          { label: copy.started, value: formatStarted(item.startedAt, locale) },
-          { label: copy.duration, value: durationText(item.durationMs, locale) },
-          { label: copy.toolCalls, value: String(item.toolCount) },
-          {
-            label: copy.tokens,
-            value: formatMessage(copy.tokensInOut, {
-              in: number.format(item.tokensIn),
-              out: number.format(item.tokensOut),
-            }),
-          },
-          {
-            label: copy.lastActivity,
-            value: item.lastActivityAt != null ? <UpdatedAgo date={item.lastActivityAt} /> : MISSING,
-          },
-        ]}
-      />
-      <Stack gap="sm">
-        {groupToolCallBursts(item.entries).map((group) =>
-          group.type === "burst" ? (
-            <TranscriptBurst key={group.items.map((row) => row.id).join("-")} aria-label={copy.toolBurst}>
-              {group.items.map((row) => renderEntry(row, locale))}
-            </TranscriptBurst>
-          ) : (
-            renderEntry(group.item, locale)
-          ),
-        )}
-      </Stack>
+      <Card>
+        <CardContent>
+          <DetailPanel
+            variant="grid"
+            items={[
+              { label: copy.started, value: formatStarted(item.startedAt, locale) },
+              { label: copy.duration, value: durationText(item.durationMs, locale) },
+              { label: copy.toolCalls, value: String(item.toolCount) },
+              ...(showTokens
+                ? [
+                    {
+                      label: copy.tokens,
+                      value: formatMessage(copy.tokensInOut, {
+                        in: compactTokenCount(item.tokensIn, locale),
+                        out: compactTokenCount(item.tokensOut, locale),
+                      }),
+                    },
+                  ]
+                : []),
+              {
+                label: copy.lastActivity,
+                value: item.lastActivityAt != null ? <UpdatedAgo date={item.lastActivityAt} /> : MISSING,
+              },
+            ]}
+          />
+        </CardContent>
+      </Card>
+      <TranscriptSection entries={item.entries} copy={copy} locale={locale} />
+    </Stack>
+  );
+}
+
+export function ItemPane({
+  item,
+  copy,
+  locale,
+  headingLevel,
+}: {
+  item: AgentConsoleItem;
+  copy: AgentConsoleCopy;
+  locale: string;
+  headingLevel?: 1 | 2;
+}) {
+  return (
+    <Stack gap="md">
+      <ItemHeader item={item} copy={copy} {...(headingLevel === undefined ? {} : { headingLevel })} />
+      <ItemDetail item={item} copy={copy} locale={locale} />
     </Stack>
   );
 }
@@ -269,17 +191,20 @@ export function ConsoleMain({
   decision,
   copy,
   locale,
+  headingLevel,
 }: {
   selected: AgentConsoleItem | undefined;
   decision: AgentConsoleDecision | null;
   copy: AgentConsoleCopy;
   locale: string;
+  headingLevel?: 1 | 2;
 }) {
   if (!selected) return <EmptyState title={copy.emptyTitle} description={copy.emptyDescription} />;
   return (
     <Stack gap="md">
+      <ItemHeader item={selected} copy={copy} {...(headingLevel === undefined ? {} : { headingLevel })} />
       {selected.kind === "main" && decision ? <DecisionCard decision={decision} copy={copy} /> : null}
-      <ItemPane item={selected} copy={copy} locale={locale} />
+      <ItemDetail item={selected} copy={copy} locale={locale} />
     </Stack>
   );
 }

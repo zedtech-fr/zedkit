@@ -55,7 +55,9 @@ describe("DetailPanel", () => {
     );
     const panel = container.querySelector("dl");
     expect(panel?.tagName).toBe("DL");
-    expect(panel?.classList.contains("sm:grid-pair")).toBe(true);
+    expect(panel?.classList.contains("grid-pair")).toBe(true);
+    expect(panel?.classList.contains("sm:grid-trio")).toBe(true);
+    expect(panel?.classList.contains("lg:grid-quint")).toBe(true);
     expect(panel?.classList.contains("gap-stack-md")).toBe(true);
     expect(panel?.classList.contains("divide-y")).toBe(false);
     expect(panel?.classList.contains("border")).toBe(false);

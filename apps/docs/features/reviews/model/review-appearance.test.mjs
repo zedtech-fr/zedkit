@@ -17,7 +17,9 @@ register(
 const {
   DEFAULT_REVIEW_APPEARANCE,
   compactPreviewSpacing,
+  consoleScopeAppearance,
   hasReviewAppearanceQuery,
+  listScopeAppearance,
   parseReviewAppearance,
   serializeReviewAppearance,
 } = await import("./review-appearance.ts");
@@ -91,4 +93,47 @@ test("compactPreviewSpacing scales Nunit tokens and keeps unparsed input", () =>
   assert.equal(compactPreviewSpacing("0.25rem"), `${0.25 * 0.85}rem`);
   assert.equal(compactPreviewSpacing("var(--spacing)"), "var(--spacing)");
   assert.equal(compactPreviewSpacing("1"), "1");
+});
+
+test("list scope inherits the site look unless the share URL pins", () => {
+  assert.deepEqual(listScopeAppearance(""), { identity: undefined, mode: undefined, density: "default" });
+  assert.deepEqual(listScopeAppearance("item=agent-review"), {
+    identity: undefined,
+    mode: undefined,
+    density: "default",
+  });
+  assert.deepEqual(listScopeAppearance("identity=tide"), {
+    identity: "tide",
+    mode: "light",
+    density: "default",
+  });
+});
+
+test("console scope defaults to a dark preview that share pins override", () => {
+  assert.deepEqual(consoleScopeAppearance(""), { identity: undefined, mode: "dark", density: "default" });
+  assert.deepEqual(consoleScopeAppearance("item=agent-review"), {
+    identity: undefined,
+    mode: "dark",
+    density: "default",
+  });
+  assert.deepEqual(consoleScopeAppearance("identity=tide"), {
+    identity: "tide",
+    mode: "light",
+    density: "default",
+  });
+  assert.deepEqual(consoleScopeAppearance("identity=volt&preview=dark&density=compact"), {
+    identity: "volt",
+    mode: "dark",
+    density: "compact",
+  });
+  assert.deepEqual(consoleScopeAppearance("theme=dark"), {
+    identity: "glass",
+    mode: "dark",
+    density: "default",
+  });
+  assert.deepEqual(consoleScopeAppearance("density=compact"), {
+    identity: "glass",
+    mode: "light",
+    density: "compact",
+  });
 });

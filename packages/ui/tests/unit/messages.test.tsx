@@ -66,6 +66,11 @@ const KIT_ENGLISH = [
   '"First pass"',
   '"This run has no items yet."',
   '"Jump to latest"',
+  '"Nothing must change before merge"',
+  '"Transcript"',
+  '"No transcript"',
+  '"This step left no readable transcript."',
+  '"{n} tools"',
 ];
 
 function walk(dir: string): string[] {

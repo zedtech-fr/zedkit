@@ -3,24 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import { identityPresets } from "@zedtech/zedkit-ui";
 
+import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 import {
   compactPreviewSpacing,
-  hasReviewAppearanceQuery,
-  parseReviewAppearance,
+  listScopeAppearance,
+  type ReviewScopeAppearance,
 } from "../model/review-appearance";
 
 /** Pin identity+mode only when the share URL has appearance keys; else inherit `html`. */
-export function useReviewAppearanceScope() {
+export function useReviewAppearanceScope(
+  resolve: (search: string) => ReviewScopeAppearance = listScopeAppearance,
+) {
   const scopeRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState("");
   useEffect(() => {
     setSearch(window.location.search);
   }, []);
-  const appearance = parseReviewAppearance(search);
-  const pin = hasReviewAppearanceQuery(search);
-  const tokens = identityPresets[appearance.identity] ?? identityPresets.glass;
+  const scope = resolve(search);
+  const tokens = identityPresets[scope.identity ?? DEFAULT_IDENTITY] ?? identityPresets.glass;
   const compact =
-    appearance.density === "compact" ? compactPreviewSpacing(tokens.spacing) : undefined;
+    scope.density === "compact" ? compactPreviewSpacing(tokens.spacing) : undefined;
   useEffect(() => {
     const node = scopeRef.current;
     if (!node) return;
@@ -29,7 +31,7 @@ export function useReviewAppearanceScope() {
   }, [compact]);
   return {
     scopeRef,
-    identity: pin ? appearance.identity : undefined,
-    mode: pin ? appearance.mode : undefined,
+    identity: scope.identity,
+    mode: scope.mode,
   };
 }

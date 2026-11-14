@@ -266,7 +266,7 @@ Path segments, spaces, and `..` fail closed.
 
 ## Share URL (site, not merge)
 
-Issue pages and the live console pin a local `ThemeScope` from these query keys. The merge does not emit them. An empty query inherits the site look (`html` `data-identity` from IdentityScript, `.dark` from the theme provider; the identity dock is enough). The live console has no look-control strip. Do not restore an inline preview form.
+Issue pages and the live console pin a local `ThemeScope` from these query keys. The merge does not emit them. An empty query inherits the site identity (`html` `data-identity` from IdentityScript; the identity dock is enough); issue pages also inherit the site mode, while the live console defaults to a dark preview. The live console has no look-control strip. Do not restore an inline preview form.
 
 | Key | Pins |
 | --- | --- |
