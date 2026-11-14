@@ -816,11 +816,16 @@ describe("drawer", () => {
       withField?: boolean;
       withLink?: boolean;
       withOption?: boolean;
+      dataSlot?: string;
       onPointerDown?: (event: { preventDefault(): void }) => void;
     }) {
       render(
         <Drawer defaultOpen modal={false} direction={props?.direction ?? "bottom"} dismissible={props?.dismissible ?? true}>
-          <DrawerContent modal={false} onPointerDown={props?.onPointerDown}>
+          <DrawerContent
+            modal={false}
+            onPointerDown={props?.onPointerDown}
+            {...(props?.dataSlot ? { "data-slot": props.dataSlot } : {})}
+          >
             <DrawerHandle data-testid="handle" />
             <DrawerTitle>Delivery details</DrawerTitle>
             <DrawerBody data-testid="body">
@@ -859,6 +864,20 @@ describe("drawer", () => {
     it("closes when the handle is dragged down", () => {
       const { handle } = renderBottomSheet();
       swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when the handle is dragged down on a customized data-slot panel", () => {
+      const { handle, dialog } = renderSheet({ dataSlot: "identity-dock-panel" });
+      expect(dialog.getAttribute("data-slot")).toBe("identity-dock-panel");
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when a touch pointer drags the handle on a customized data-slot panel", () => {
+      const { handle, dialog } = renderSheet({ dataSlot: "identity-dock-panel" });
+      expect(dialog.getAttribute("data-slot")).toBe("identity-dock-panel");
+      swipe(handle, 10, 10 + DISMISS_DRAG, "touch");
       expect(screen.queryByRole("dialog")).toBeNull();
     });
 
