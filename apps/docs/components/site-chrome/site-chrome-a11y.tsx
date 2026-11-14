@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
 
 const INERT_MARK = "data-zk-inert";
 
@@ -21,12 +20,11 @@ function syncAriaHiddenInert(root: ParentNode): void {
 
 /** Adds native tooltips where Fumadocs chrome only sets `aria-label` (#396).
  * Also sets `inert` when an overlay marks a node `aria-hidden`, so axe
- * aria-hidden-focus does not fire on header and skip-link. */
+ * aria-hidden-focus does not fire on header and skip-link.
+ * The GitHub link name is SSR (OffPathLink sr-only text); no patch here. */
 export function SiteChromeA11yPatch() {
   useEffect(() => {
-    const opens = siteChromeCopy.nav.opensInNewTab;
     const titles: Record<string, string> = {
-      GitHub: `View zedkit repository on GitHub (${opens})`,
       "Toggle Menu": "Open site menu",
       "Open Sidebar": "Open navigation sidebar",
       "Close Sidebar": "Close navigation sidebar",
@@ -35,7 +33,6 @@ export function SiteChromeA11yPatch() {
     for (const [ariaLabel, title] of Object.entries(titles)) {
       for (const el of document.querySelectorAll(`[aria-label="${ariaLabel}"]`)) {
         if (!el.getAttribute("title")) el.setAttribute("title", title);
-        if (ariaLabel === "GitHub") el.setAttribute("aria-label", `GitHub (${opens})`);
       }
     }
     const root = document.body;

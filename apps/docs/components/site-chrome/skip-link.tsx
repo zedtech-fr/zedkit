@@ -9,11 +9,11 @@ import { siteChromeCopy } from "@/components/site-chrome/i18n/site-chrome-copy";
  * and focuses it so browsers that do not move focus on fragment navigation
  * still land in the content.
  *
- * Parked above the viewport with a real 24px box (not 1px `sr-only`) so
+ * Parked above the viewport with a real 44px box (not 1px `sr-only`) so
  * evidence hit/clip measures pass and Tab does not insert an in-flow
  * row. Unfocused it stays pointer-events-none so a pointer hit check
- * does not treat the hidden skip as a 24px target; focus restores
- * pointer events.
+ * does not treat the hidden skip as a target; focus restores pointer
+ * events and pins the revealed box to the 44px touch target.
  */
 export function SkipLink() {
   return (
@@ -29,7 +29,7 @@ export function SkipLink() {
           target.focus();
         }
       }}
-      className="pointer-events-none fixed left-float z-overlay inline-flex min-h-overlay-touch-target items-center rounded-md px-touch focus:pointer-events-auto focus:top-float focus:bg-foreground focus:text-background"
+      className="pointer-events-none fixed left-float z-overlay inline-flex min-h-overlay-touch-target items-center rounded-md px-touch focus:pointer-events-auto focus:top-float focus:bg-foreground focus:text-background focus-visible:min-h-overlay-touch-target focus-visible:min-w-overlay-touch-target"
     >
       {siteChromeCopy.skipToContent}
     </a>
