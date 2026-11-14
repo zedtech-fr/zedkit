@@ -703,6 +703,22 @@ test("admin dashboard guide demo wires save and delete to state", () => {
   assert.doesNotMatch(src, /h-96 min-h-0 overflow-hidden/);
 });
 
+test("admin dashboard guide demo fills the frame without an unlabeled clip box", () => {
+  const src = readFileSync(join(app, "components/demos/admin-dashboard-guide-demo.tsx"), "utf8");
+  assert.match(src, /h-full pane-shrink content-shrink/);
+  assert.doesNotMatch(src, /data-demo-frame="" className="[^"]*overflow-hidden/);
+  assert.doesNotMatch(src, /fixedHeight/);
+  assert.doesNotMatch(src, /data-allow-clip/);
+});
+
+test("app-shell catalog demo fills the frame without an unlabeled clip box", () => {
+  const src = readFileSync(join(app, "components/project-tracker-demo-app.tsx"), "utf8");
+  assert.match(src, /h-full pane-shrink content-shrink/);
+  assert.doesNotMatch(src, /data-demo-frame="" className="[^"]*overflow-hidden/);
+  assert.doesNotMatch(src, /fixedHeight/);
+  assert.doesNotMatch(src, /data-allow-clip/);
+});
+
 test("docs phone chrome keeps search; home chrome does not", () => {
   const header = readFileSync(join(app, "components/site-chrome/mobile-header.tsx"), "utf8");
   const siteHeaders = readFileSync(join(app, "components/site-chrome/site-headers.tsx"), "utf8");

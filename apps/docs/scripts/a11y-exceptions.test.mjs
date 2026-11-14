@@ -43,13 +43,13 @@ test("data-allow-clip producers are registered in CLIP_EXCEPTIONS", () => {
   }).trim();
   const allow = new Set([
     "apps/docs/tests/a11y-exceptions.mjs",
-    "apps/docs/tests/all-routes-fit.spec.ts",
-    "apps/docs/scripts/a11y-exceptions.test.mjs",
     "apps/docs/scripts/clipped-text.mjs",
-    "apps/docs/scripts/clipped-text.test.mjs",
     "apps/docs/AGENTS.md",
   ]);
-  const producers = raw ? raw.split("\n").filter((file) => !allow.has(file)) : [];
+  const isTestFile = (file) => /\.(?:test|spec)\.[^./]+$/u.test(file);
+  const producers = raw
+    ? raw.split("\n").filter((file) => !allow.has(file) && !isTestFile(file))
+    : [];
   const registered = new Set(CLIP_EXCEPTIONS.map((entry) => entry.file));
   assert.deepEqual(
     producers.filter((file) => !registered.has(file)),
