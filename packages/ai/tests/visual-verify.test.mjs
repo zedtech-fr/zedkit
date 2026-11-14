@@ -372,6 +372,28 @@ describe("visual-verify helpers", () => {
     expect(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"])).toEqual([]);
   });
 
+  it("maps docs catalog private-folder files to /catalog when there is no page.tsx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/app/(site)/catalog/_catalog/catalog-results.tsx",
+        "apps/docs/app/(site)/catalog/_catalog/catalog-shell.css",
+        "apps/docs/app/(site)/catalog/_catalog/catalog-filter.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/catalog"]);
+    expect(
+      routesFromFiles(["apps\\docs\\app\\(site)\\catalog\\_catalog\\catalog-results.tsx"]),
+    ).toEqual(["/catalog"]);
+    expect(
+      routesFromFiles(["apps/docs/app/(site)/catalog/_catalog/catalog-filter.test.mjs"]),
+    ).toEqual([]);
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("apps/docs/app/(site)/catalog/**");
+  });
+
   it("maps catalog demo files and kit source-family files from the docs manifest", () => {
     const catalog = {
       rich: {
