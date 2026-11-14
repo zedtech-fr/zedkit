@@ -16,7 +16,7 @@ export function IdentityDockPanelToolbar({ onClose }: { onClose: () => void }) {
   const { setExpanded } = useIdentityAssistantStore();
   return (
     <Stack direction="horizontal" gap="sm" className="items-center pad-row">
-      <DrawerTitle className="content-shrink flex-1 text-dense font-medium leading-none">
+      <DrawerTitle className="content-shrink flex-1 text-dense leading-none font-medium">
         {identityDockCopy.panelTitle}
       </DrawerTitle>
       {pathname === IDENTITY_EDITOR_HREF ? null : (
