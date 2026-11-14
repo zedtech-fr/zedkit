@@ -3,6 +3,7 @@ import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
 import { JsonLd } from "@zedtech/zedkit-seo/react";
 
 import "./_catalog/catalog-shell.css";
+import { ListPageSkeleton } from "@zedtech/zedkit-ui";
 import { catalogCopy } from "./_catalog/i18n/catalog-copy";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
@@ -25,13 +26,7 @@ export default function CatalogPage() {
   return (
     <div data-catalog-shell>
       <JsonLd data={jsonLd} />
-      <Suspense
-        fallback={
-          <div data-catalog-shell className="py-section-lg">
-            {catalogCopy.loading}
-          </div>
-        }
-      >
+      <Suspense fallback={<ListPageSkeleton label={catalogCopy.loading} />}>
         <CatalogViewFromUrl entries={catalogIndex} />
       </Suspense>
     </div>

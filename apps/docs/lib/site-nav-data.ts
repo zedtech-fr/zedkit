@@ -19,6 +19,27 @@ export function isCatalogPath(pathname: string): boolean {
   return pathname === "/catalog";
 }
 
+export function isDocsPath(pathname: string): boolean {
+  return pathname === "/docs" || pathname.startsWith("/docs/");
+}
+
+/** Full-viewport live console routes. The public run history list stays on marketing chrome. */
+export function isLiveConsolePath(pathname: string): boolean {
+  const path = pathname.split("?")[0] ?? pathname;
+  if (path === "/issues/run" || path.startsWith("/issues/run/")) return true;
+  return /^\/issues\/(?:pr\/)?[^/]+\/runs\//.test(path);
+}
+
+export type SiteDesktopHeaderKind = "home" | "catalog" | "docs" | "none";
+
+/** Which desktop `#nd-nav` mark the persistent host should keep mounted. */
+export function siteDesktopHeaderKind(pathname: string): SiteDesktopHeaderKind {
+  if (isLiveConsolePath(pathname) || isFoundationsPath(pathname)) return "none";
+  if (isHomePath(pathname)) return "home";
+  if (isDocsPath(pathname)) return "docs";
+  return "catalog";
+}
+
 /**
  * Phone (and policy) chrome: which actions a path may mount.
  * GitHub is always mounted: desktop bar, and the phone site menu (not a second header row).
