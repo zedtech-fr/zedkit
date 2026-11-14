@@ -162,6 +162,9 @@ export function routesFromFiles(files, manifest) {
     if (/(?:^|\/)apps\/docs\/app\/\(site\)\/catalog\//u.test(n) && !skipTest) {
       routes.add("/catalog");
     }
+    if (/(?:^|\/)apps\/docs\/components\/site-chrome\//u.test(n) && !skipTest) {
+      routes.add("/");
+    }
   }
   return [...routes];
 }

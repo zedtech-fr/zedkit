@@ -344,6 +344,28 @@ describe("visual-verify helpers", () => {
     expect(skill).toContain("apps/docs/app/(site)/catalog/**");
   });
 
+  it("maps docs site-chrome files to / when there is no page.tsx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/components/site-chrome/route-scroll-reset.tsx",
+        "apps/docs/components/site-chrome/site-layout.tsx",
+        "apps/docs/components/site-chrome/route-scroll-reset.test.tsx",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/"]);
+    expect(
+      routesFromFiles(["apps\\docs\\components\\site-chrome\\route-scroll-reset.tsx"]),
+    ).toEqual(["/"]);
+    expect(
+      routesFromFiles(["apps/docs/components/site-chrome/route-scroll-reset.test.tsx"]),
+    ).toEqual([]);
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("apps/docs/components/site-chrome/**");
+  });
+
   it("maps catalog demo files and kit source-family files from the docs manifest", () => {
     const catalog = {
       rich: {
