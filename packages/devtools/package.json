@@ -1,6 +1,6 @@
 {
   "name": "@zedtech/zedkit-devtools",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

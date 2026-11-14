@@ -1,5 +1,11 @@
 # @zedtech/zedkit-live
 
+## 0.2.0
+
+### Minor Changes
+
+- 370eee2: Add `fetchJson`: GET JSON with timeout, retry, and `Retry-After`, returning a `Result`.
+
 ## 0.1.1
 
 ### Patch Changes

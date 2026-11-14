@@ -1,5 +1,40 @@
 # @zedtech/zedkit-ai
 
+## 1.3.0
+
+### Minor Changes
+
+- 370eee2: Add `--states` and `--mockup` to `zedkit-ai evidence` and `zedkit-ai visual-verify` (one parser), fail hit targets under 24px, and treat `identities/<id>.css` as the touched look. The stdout table gains `state` and `hit` columns (positional parsers must shift).
+- 370eee2: Add `zedkit-ai evidence` as the public name for the visual-verify crawl: flag aliases (`--base-url`, `--routes auto`, `--widths`, `--modes`), a clipped-text fail, and `summary.md` next to the run record.
+- 370eee2: Install only the `/zedkit-ai` command on every preset. Leftover command files stay until `npx @zedtech/zedkit-ai sync --prune --provider …`. Migration: `/<old-command> -> /zedkit-ai <request>`.
+- 370eee2: UI Definition of Done v2: rendering checks on UI surfaces, 375/809/1440 CSS px × light and dark evidence, blocking measures, and an `evidence` review lens (when triggered) that caps Confidence at 6 on UNSEEN required screenshots.
+- 370eee2: Add `zedkit-ai visual-verify` and the `visual-verify` skill: render touched routes at 375/809/1440 × light/dark, write a run record and contact sheets, and fail closed on collection failure, overflow, or a new serious axe violation.
+- 370eee2: Add the `/zedkit-ai` entry command: classify a request, print a Route card, then reuse the existing orchestrate skill and tokenomics policy for every current kit command.
+
+### Patch Changes
+
+- 370eee2: Point `test-runner` at a host compact gate runner when AGENTS.md Commands names one, so transcripts stay a summary and gitignored logs are not treated as project edits.
+- 370eee2: Warn on leftover kit command stubs (exit 0) and let `npx @zedtech/zedkit-ai sync --prune --provider …` remove those whose bytes still match the current kit file, without deleting user-edited provider copies.
+- 370eee2: Map docs `app/(site)/catalog/` files to `/catalog` so `zedkit-ai evidence --changed` has a route when catalog private-folder modules change without a `page.tsx`.
+- 370eee2: Skip visually hidden nodes and native inputs in evidence clipped-text, matching the docs clipped-text helper.
+- 370eee2: Map catalog demo files and kit source-family files through the host docs-manifest so `zedkit-ai evidence --changed` has a route when those files change.
+- 370eee2: Map docs guide feature modules to `/docs/<slug>` so `zedkit-ai evidence --changed` has a route when those files move without the MDX.
+- 370eee2: Map docs `app/(home)/` files to `/` so `zedkit-ai evidence --changed` has a route when home private-folder modules move without a `page.tsx`.
+- 370eee2: Map docs identity feature modules to `/features/identity-editor` so `zedkit-ai evidence --changed` has a route when those files move without a `page.tsx`.
+- 370eee2: Map docs `components/site-chrome/` files to `/` so `zedkit-ai evidence --changed` has a route when site chrome changes without a `page.tsx`.
+- 370eee2: Add `--kit <dir>` to setup, init, sync and validate so a local kit directory is used instead of the bundled kit.
+- 370eee2: Leftover kit command files are forwarding stubs: they tell the agent to use `/zedkit-ai <request>` and still run the original skill. `/zedkit-ai` is unchanged.
+- 370eee2: Require a `## Evidence` section when any non-test `*.tsx` / `*.jsx` / `*.css` changed (mixed PRs include it; omit on test-only and non-UI). Paste the visual-verify table and attach contact-sheet PNGs (`evidence/` is gitignored). Setup ships `pr` with `implement`.
+- 370eee2: Document that Muse does not scan `.agents/commands`; invoke the `zedkit-ai` skill by name. `setup --kit` installs `routes.md` from the kit you point it at. `zedkit-ai evidence --changed` maps AI setup sources to `/docs/ai/setup` and guides MDX to `/docs/<slug>` (`index` → `/docs`).
+- 370eee2: `checkAtlas` warns (validate exit 0) when `.agents/atlas.md` exceeds 24 KB or a Where row exceeds 280 characters, and follows linked `.agents/atlas/<topic>.md` files so extracted traps keep path checks. The 150-line cap is still a failure.
+- 370eee2: `checkAtlas` accepts Next.js `(route-group)` and `_private` folder segments as real entry paths instead of treating parentheses as placeholder markup.
+- 370eee2: Tell compose-ui to follow the host visual contract: page and text roles for fill and body, not accent, unless that contract says so.
+- 370eee2: Map docs reviews feature files, dynamic issue App Router paths, and public review evidence files to `/issues`, treat omitted `--routes` as `--changed`, and skip `aria-hidden` tabindex -1 hit targets so `zedkit-ai evidence --changed` can finish on the issues pages.
+- 370eee2: Keep host numeric / default-scale class conventions during setup unless the owner records a yes for the semantic-only migration.
+- 370eee2: After the independent second pass, agents write one labelled final-decision record; that record is the posted / default-view outcome, and dropped findings are superseded.
+- 370eee2: Install the triage skill and `/triage` command with the setup and core presets, not only full.
+- 370eee2: Validate requires the ponytail ladder only on kit-owned copies (including a `zk-<name>` sidecar), so a preserved custom review skill no longer fails setup.
+
 ## 1.2.0
 
 ### Minor Changes
