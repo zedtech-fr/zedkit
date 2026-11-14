@@ -6,9 +6,12 @@ import test from "node:test";
 
 import {
   isCatalogPath,
+  isDocsPath,
   isFoundationsPath,
   isHomePath,
+  isLiveConsolePath,
   isSiteNavLinkActive,
+  siteDesktopHeaderKind,
   siteHeaderChrome,
   siteHeaderLinks,
   sitePrimaryNavLinks,
@@ -162,6 +165,44 @@ test("isCatalogPath is only the catalog route", () => {
   assert.equal(isCatalogPath("/docs"), false);
   assert.equal(isCatalogPath("/catalog/nope"), false);
   assert.equal(isCatalogPath("/catalog/"), false);
+});
+
+test("isDocsPath is the docs tree including the index", () => {
+  assert.equal(isDocsPath("/docs"), true);
+  assert.equal(isDocsPath("/docs/"), true);
+  assert.equal(isDocsPath("/docs/getting-started"), true);
+  assert.equal(isDocsPath("/docs/foundations"), true);
+  assert.equal(isDocsPath("/"), false);
+  assert.equal(isDocsPath("/catalog"), false);
+  assert.equal(isDocsPath("/documentation"), false);
+  assert.equal(isDocsPath("/docs-extra"), false);
+});
+
+test("isLiveConsolePath is the full-viewport console, not the public run history list", () => {
+  assert.equal(isLiveConsolePath("/issues/run"), true);
+  assert.equal(isLiveConsolePath("/issues/run/"), true);
+  assert.equal(isLiveConsolePath("/issues/108/runs/abc"), true);
+  assert.equal(isLiveConsolePath("/issues/pr/54/runs/xyz"), true);
+  assert.equal(isLiveConsolePath("/issues"), false);
+  assert.equal(isLiveConsolePath("/issues/108"), false);
+  assert.equal(isLiveConsolePath("/issues/pr/54"), false);
+  assert.equal(isLiveConsolePath("/issues/runtime"), false);
+  assert.equal(isLiveConsolePath("/issues/108/runs"), false);
+  assert.equal(isLiveConsolePath("/catalog"), false);
+});
+
+test("siteDesktopHeaderKind picks one desktop bar and hides it on console and foundations", () => {
+  assert.equal(siteDesktopHeaderKind("/"), "home");
+  assert.equal(siteDesktopHeaderKind(""), "home");
+  assert.equal(siteDesktopHeaderKind("/catalog"), "catalog");
+  assert.equal(siteDesktopHeaderKind("/issues"), "catalog");
+  assert.equal(siteDesktopHeaderKind("/issues/108"), "catalog");
+  assert.equal(siteDesktopHeaderKind("/docs"), "docs");
+  assert.equal(siteDesktopHeaderKind("/docs/getting-started"), "docs");
+  assert.equal(siteDesktopHeaderKind("/docs/foundations"), "none");
+  assert.equal(siteDesktopHeaderKind("/docs/foundations/"), "none");
+  assert.equal(siteDesktopHeaderKind("/issues/run"), "none");
+  assert.equal(siteDesktopHeaderKind("/issues/108/runs/abc"), "none");
 });
 
 test("exact url matching does not current-state Docs on an AI or UI page", () => {

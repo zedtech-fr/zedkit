@@ -223,7 +223,14 @@ omit when unknown):
 
 - `issue` — GitHub issue number. When it is a safe integer, the mapper
   builds an issue row. When it is missing or null, the PR stays
-  unlinked (`/issues/pr/:n`).
+  unlinked (`/issues/pr/:n`). Ticket runs (`run.kind` `ticket`) set
+  `issue` and leave `pr` unset until a pull request exists. `pr` is a
+  GitHub pull number only — never an issue number. `pr_url` is the
+  GitHub issue or pull URL for that number. The live search console
+  (`/issues/run?id=`) parents Back from these fields (`liveRunParent`):
+  an issue number or a `pr_url` whose path is `/{owner}/{repo}/issues/{n}`
+  goes to `/issues/:n`. `/issues/pr/:n` is only for an unlinked pull
+  request.
 - `live_url` — hosted live console URL. Ingest allowlists
   `HOSTED_LIVE_HREF_PREFIX` plus a path-safe run id. The public index
   stores the in-site console href (`/issues/run?id=<runId>`) so timeline

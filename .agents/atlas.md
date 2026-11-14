@@ -22,7 +22,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Installer, sync, validate, route, scan CLI | `.agents/atlas/ai-kit.md` | `cli.ts` parses flags; one concern per other module. | `src/index.ts` | 2026-11-13 |
 | zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. Guide UI folders map to `/docs/<slug>`. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Evidence --changed catalog demos | `.agents/atlas/visual-verify.md` | Demo files and kit source-family files need the host docs-manifest or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-13 |
-| Evidence --changed /catalog page | `.agents/atlas/visual-verify.md` | Private `_catalog/` files need the `(site)/catalog` map or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-14 |
+| Evidence --changed /catalog page | `.agents/atlas/visual-verify.md` | Private `_catalog/` files need the `(site)/catalog` map. Omitted `--routes` implies `--changed` (`base...HEAD`); a CI-only commit is still `no routes`. | `@zedtech/zedkit-ai` | 2026-11-14 |
 | Evidence --changed site chrome | `.agents/atlas/visual-verify.md` | `components/site-chrome/` (non-test) needs the `/` map or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-14 |
 | Kit tests | `.agents/atlas/ai-kit.md` | One file per behavior; `helpers.ts` has `put`, `tempDir`, `run`. | `pnpm --filter @zedtech/zedkit-ai test` | 2026-11-13 |
 | Slash commands | `.agents/atlas/ai-kit.md` | A command only names a skill; procedure lives in SKILL.md. | `command-shape.test.ts` | 2026-11-13 |
@@ -35,7 +35,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Compact agent gates | `.agents/atlas/ci-gates.md` | Summaries on stdout; full logs in gitignored `.agent-logs/`. | root `AGENTS.md` Commands | 2026-11-13 |
 | CI scope and branch rules | `.agents/atlas/ci-gates.md` | PRs into `dev` are affected-only; `main` is full CI. | which CI jobs run for a PR | 2026-11-07 |
 | CI registry-deps for test:registry | `.agents/atlas/ci-gates.md` | Unconditional dist build for registry-imported packages. | `scripts/ci-hygiene.test.mjs` | 2026-11-13 |
-| docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-13 |
+| docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-14 |
 | AppShell catalog framed demo | `.agents/atlas/docs-render.md` | `/docs/ui/lay-out-an-admin-page-sidebar-topbar-header` is `project-tracker-demo-app`, not the tutorial demo. | `all-routes-fit.spec.ts` | 2026-11-13 |
 | actionlint CI installer | `.agents/atlas/ci-gates.md` | workflow-lint pins v1.7.10; SHA-256 fail-closed. | `install-actionlint.test.mjs` | 2026-11-08 |
 | Dev static publish (staging + epic-73 preview) | `.agents/atlas/publishing.md` | Allowlisted dest keys; rsync only, never production `deploy.sh`. File-serving Caddy sites rewrite 404 to `/404.html`. | `deploy-dev-workflow.test.mjs` | 2026-11-13 |
@@ -66,7 +66,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs AGENTS.md path and symbol citations | `.agents/atlas/docs-site.md` | Backtick paths and PascalCase names must still exist. | `agents-paths.test.mjs` | 2026-11-13 |
 | Docs node-test `@/` alias | `.agents/atlas/docs-site.md` | `node --test` ignores tsconfig `@/`; register then `await import()`. | `register-docs-alias.test.mjs` | 2026-11-13 |
 | Global not-found screen | `.agents/atlas/docs-site.md` | Route-private `_not-found/`; never a `not-found/` folder beside the file. | `*-copy.ts` | 2026-11-12 |
-| Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
+| Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-14 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | In-page fragment clicks | `.agents/atlas/ui-primitives.md` | Repeat hash does not no-op; mount `InPageAnchorScroll` beside `ScrollReset`. | `in-page-anchor-scroll.test.tsx` | 2026-11-14 |
 | Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`; `defaultMode` is owned-tabs only. | `identity-look-form.test.mjs` | 2026-11-13 |
@@ -90,11 +90,11 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Identity contrast repair | `.agents/atlas/identity.md` | Bounded three-pass AA nudge; public `repairContrast`. | `identity-contrast-repair.test.ts` | 2026-11-13 |
 | SSE frame parser | `.agents/atlas/ui-primitives.md` | Blank line is two WHATWG endings; CRLF tried first. | `consumeSseStream` | 2026-11-11 |
 | AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. Sidebar mounts twice: no ids in demo sidebars. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-13 |
-| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Handle 8px slop; body swipe `pointerType !== "touch"`; nest `hit-target` coarse `@media` inside `&::before` (`@layer` loses to `@utility`); `afterEach` not `try/finally`. | `drawer.test.tsx` | 2026-11-13 |
+| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Handle 8px slop; lookup survives a consumer `data-slot` via `role=dialog`; body swipe `pointerType !== "touch"`; nest `hit-target` coarse `@media` inside `&::before`. | `drawer.test.tsx` | 2026-11-14 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP; label is `Started (UTC)`. | `agent-console.test.tsx` | 2026-11-13 |
-| Persistent shell and page transition | `packages/ui/src/layout/persistent-shell.tsx` | Slot host in a layout ancestor; trap: do not wrap fumadocs `DocsLayout` children. `PageTransition` uses named motions. | `@zedtech/zedkit-ui` | 2026-11-13 |
+| Persistent shell and page transition | `packages/ui/src/layout/persistent-shell.tsx`; live host `apps/docs/components/site-chrome/site-persistent-chrome.tsx` | Slot host in a layout ancestor; trap: do not wrap fumadocs `DocsLayout` children. `PageTransition` lives in `DocsMainContent` (`[grid-area:main]`). | `@zedtech/zedkit-ui`; `@zedtech/zedkit-docs` | 2026-11-14 |
 | Route skeletons | `packages/ui/src/layout/route-skeletons.tsx` | Composed wait shapes; trap: forward `label` to nested `CardSkeleton` / `DetailPanelSkeleton`. Catalog Status starts at `alpha`. | `@zedtech/zedkit-ui` | 2026-11-14 |
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |

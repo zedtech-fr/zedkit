@@ -27,6 +27,11 @@ export const siteChromeCopy = {
     releasesAriaLabel: (version: string) => `v${version} (releases)`,
     shell: (version: string) => `v${version}`,
   },
+  loading: {
+    page: "Loading page",
+    issues: "Loading issues",
+    issue: "Loading issue",
+  },
 } as const;
 
 export type SiteChromeCopy = typeof siteChromeCopy;

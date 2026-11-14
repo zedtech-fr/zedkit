@@ -17,7 +17,7 @@ function CatalogCell({ entry }: { entry: CatalogIndexEntry }) {
         </Link>
         <MaturityBadge status={entry.status} />
       </Stack>
-      <Text variant="muted">{entry.need}</Text>
+      <Text variant="muted" className="wrap-anywhere">{entry.need}</Text>
     </Stack>
   );
 }

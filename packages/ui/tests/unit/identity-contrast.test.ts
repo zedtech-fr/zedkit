@@ -26,7 +26,7 @@ describe("identityContrastWarnings", () => {
     }
   });
 
-  it("does not warn on the default white / near-black text pair", () => {
+  it("does not warn on the default white / near-black text pair (#FFFFFF / #09090B)", () => {
     const tokens = identityTokenSchema.parse({
       ...identityPresets.glass,
       light: {
@@ -35,6 +35,7 @@ describe("identityContrastWarnings", () => {
         foreground: "240 10% 3.9%",
       },
     });
+    expect(identityContrastWarnings(tokens)).toEqual([]);
     expect(ofToken(tokens, "foreground", "light")).toEqual([]);
   });
 

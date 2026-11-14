@@ -58,17 +58,21 @@ test("issues and other marketing routes use the shared marketing desktop bar, no
   assert.match(compact, /#nd-nav \{[^}]*--fd-layout-width:\s*var\(--zk-header-max-width\)/);
 });
 
-test("home desktop header is the home layout slot, not an isHomePath branch", () => {
+test("home desktop header composition stays in site-headers; the persistent host mounts it", () => {
   const headers = read("components/site-chrome/site-headers.tsx");
   const homeHeader = functionSource(headers, "HomeMarketingHeader");
   assert.match(homeHeader, /MobileHeader/);
   assert.match(homeHeader, /HomeDesktopHeader/);
+  assert.doesNotMatch(headers, /isHomePath/);
   const homeLayout = read("app/(home)/layout.tsx");
-  assert.match(homeLayout, /header=\{HomeMarketingHeader\}/);
+  assert.doesNotMatch(homeLayout, /header=\{HomeMarketingHeader\}/);
   const siteLayout = read("components/site-chrome/site-layout.tsx");
-  assert.match(siteLayout, /header = MarketingSiteHeader/);
+  assert.doesNotMatch(siteLayout, /header = MarketingSiteHeader/);
+  assert.match(siteLayout, /enabled:\s*false/);
   const siteGroup = read("app/(site)/layout.tsx");
   assert.doesNotMatch(siteGroup, /header=\{/);
+  const host = read("components/site-chrome/site-persistent-chrome.tsx");
+  assert.match(host, /MarketingDesktopNav/);
 });
 
 test("docs desktop header is the marketing pattern: search and GitHub, no version, theme, or Get started", () => {

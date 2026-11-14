@@ -90,7 +90,8 @@ function startNonModalDrawerDismiss({
   const panel =
     kind === "body"
       ? event.currentTarget
-      : (event.currentTarget.closest("[data-slot='drawer-content']") as HTMLElement | null);
+      : ((event.currentTarget.closest("[data-slot='drawer-content']") ??
+          event.currentTarget.closest("[role='dialog']")) as HTMLElement | null);
   if (!panel) return;
   if (kind === "body" && shouldIgnoreBodyTarget(event.target, panel)) return;
 

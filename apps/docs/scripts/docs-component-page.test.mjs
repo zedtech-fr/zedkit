@@ -301,7 +301,7 @@ test("desktop docs chrome has search and GitHub and no version or theme toggle",
   assert.doesNotMatch(source, /links=\{/);
   assert.match(source, /themeSwitch=\{\{\s*enabled:\s*false/);
   assert.match(source, /collapsible:\s*false/);
-  assert.match(source, /DocsDesktopHeader/);
+  assert.doesNotMatch(source, /DocsDesktopHeader/);
   assert.match(source, /DocsSiteHeader/);
   assert.doesNotMatch(source, /KitVersionLabel/);
   assert.doesNotMatch(source, /data-kit-version/);

@@ -68,7 +68,9 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   assert.doesNotMatch(homeLead, /SetupEntryPrompt/);
   assert.equal((homeLead.match(/data-home-hero-prompt/g) ?? []).length, 1);
   assert.doesNotMatch(homeBand, /SetupEntryPrompt|SecretField|data-setup-entry/);
-  assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bMAP_AI_UI_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+  assert.match(homeBand, /HomeCopyCommandField/);
+  assert.match(homeBand, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
   assert.doesNotMatch(homeClosing, /SetupEntryPrompt|data-setup-entry/);
   assert.match(homeClosing, /HomeCopyCommandField/);
   assert.doesNotMatch(homeClosing, /SecretField/);
@@ -77,6 +79,7 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
 
   for (const [label, source] of [
     ["home lead", homeLead],
+    ["home paste", homeBand],
     ["home closing", homeClosing],
     ["home smoke", read("tests/home.spec.ts")],
     ["home paste smoke", read("tests/home-ai-setup.spec.ts")],

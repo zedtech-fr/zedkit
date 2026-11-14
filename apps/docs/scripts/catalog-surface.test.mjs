@@ -177,6 +177,9 @@ test("catalog title row wraps and shrinks so the badge stays in the card", () =>
   assert.match(titleClass[1], /hit-target/);
   assert.match(titleClass[1], /wrap-anywhere/);
   assert.doesNotMatch(titleClass[1], /content-shrink/);
+  const needClass = cell.match(/<Text variant="muted"([^>]*)>/);
+  assert.equal(needClass !== null, true);
+  assert.match(needClass[1], /wrap-anywhere/);
   const badgeStart = css.indexOf("[data-catalog-cell] [data-badge-link]");
   assert.notEqual(badgeStart, -1, "missing badge shrink rule");
   const badgeOpen = css.indexOf("{", badgeStart);
@@ -220,6 +223,10 @@ test("the dock drawer is the customize form, with no Conversation tab or AI inpu
   const customize = read("features/identity/dock/ui/identity-dock-customize.tsx");
   assert.match(widget, /IdentityDockAssistantPanel/);
   assert.match(widget, /modal=\{false\}/);
+  assert.match(widget, /DrawerHandle/);
+  assert.match(widget, /data-slot="identity-dock-panel"/);
+  assert.match(widget, /overflow-hidden/);
+  assert.doesNotMatch(widget, /DrawerHeader/);
   assert.doesNotMatch(widget, /handleOnly/);
   assert.doesNotMatch(widget, /noBodyStyles/);
   assert.match(panel, /IdentityDockCustomize/);

@@ -757,9 +757,15 @@ jobs:
               echo "DOCS_LOOKS=$DOCS_LOOKS"
             fi
           fi
-          pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
-          echo $! > /tmp/docs.pid
-          trap 'kill "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
+          (
+            while :; do
+              pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
+              echo $! > /tmp/docs.pid
+              wait "$(cat /tmp/docs.pid)" || true
+            done
+          ) &
+          echo $! > /tmp/docs.loop.pid
+          trap 'kill "$(cat /tmp/docs.loop.pid)" "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
           code=""
           for _ in $(seq 1 24); do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
@@ -772,7 +778,17 @@ jobs:
             exit 1
           fi
           curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
-          pnpm --filter @zedtech/zedkit-docs run e2e:routes
+          if ! pnpm --filter @zedtech/zedkit-docs run e2e:routes; then
+            echo "docs-render: e2e:routes failed" >&2
+            cat /tmp/docs-start.log >&2 || true
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
+            if [ -z "$code" ] || [ "$code" = "000" ]; then
+              echo "docs-render: port 3100 refused" >&2
+            else
+              echo "docs-render: port 3100 answered HTTP $code" >&2
+            fi
+            exit 1
+          fi
         env:
           EVENT: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
