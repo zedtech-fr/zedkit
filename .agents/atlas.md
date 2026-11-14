@@ -22,6 +22,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Installer, sync, validate, route, scan CLI | `.agents/atlas/ai-kit.md` | `cli.ts` parses flags; one concern per other module. | `src/index.ts` | 2026-11-13 |
 | zedkit-ai visual-verify | `.agents/atlas/visual-verify.md` | Host command for DoD Visual work; gitignore evidence PNGs. Guide UI folders map to `/docs/<slug>`. | `@zedtech/zedkit-ai` | 2026-11-13 |
 | Evidence --changed catalog demos | `.agents/atlas/visual-verify.md` | Demo files and kit source-family files need the host docs-manifest or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-13 |
+| Evidence --changed /catalog page | `.agents/atlas/visual-verify.md` | Private `_catalog/` files need the `(site)/catalog` map or `--changed` has no routes. | `@zedtech/zedkit-ai` | 2026-11-14 |
 | Kit tests | `.agents/atlas/ai-kit.md` | One file per behavior; `helpers.ts` has `put`, `tempDir`, `run`. | `pnpm --filter @zedtech/zedkit-ai test` | 2026-11-13 |
 | Slash commands | `.agents/atlas/ai-kit.md` | A command only names a skill; procedure lives in SKILL.md. | `command-shape.test.ts` | 2026-11-13 |
 | Entry command `/zedkit-ai` | `.agents/atlas/ai-kit.md` | Classifier then Route card then `orchestrate`; not CLI `route`. | `@zedtech/zedkit-ai` | 2026-11-13 |
