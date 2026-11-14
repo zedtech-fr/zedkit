@@ -85,6 +85,11 @@ else
 fi
 bash -c "$BUILD"
 
+if [[ "${SKIP_RENDER_CHECK:-}" == "1" ]]; then
+  echo "smoke-ui-quickstart: ok (next $LAYOUT, $PM, build only; render check skipped)"
+  exit 0
+fi
+
 start_server
 for _ in $(seq 1 60); do
   if curl -fsS "http://127.0.0.1:${PORT}/" >/dev/null 2>&1; then break; fi

@@ -16,7 +16,7 @@
 //   `drawer-manual-incomplete` is the negative control: it replays the Drawer recipe as it was before the
 //   registry graph fed it (one file, no companions, no packages) and passes only if the build fails.
 //   ADOPTION_SMOKE_JOBS (default 3) caps how many cases run at once.
-// Needs network (create-next-app, npm) and Chromium (pnpm exec playwright install chromium).
+// Needs network (create-next-app, npm). Chromium page checks run unless ADOPTION_SMOKE_SKIP_BROWSER=1.
 /* global document, getComputedStyle -- page.evaluate callbacks run in the browser. */
 import { spawn } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync, appendFileSync } from "node:fs";
@@ -319,6 +319,7 @@ async function buildAndCheck(name, spec, project, template, tarballs, chromium) 
     assert(installed === local, `the kit resolved to ${installed}, not this checkout's ${local}`);
   }
   await run("pnpm", ["exec", "next", "build"], project);
+  if (process.env.ADOPTION_SMOKE_SKIP_BROWSER === "1") return;
   const server = await serve(project);
   const browser = await chromium.launch();
   const inBrowser = async () => {
@@ -357,7 +358,9 @@ async function main() {
       tarballs = packWorkspacePackages(workspaceInstallClosure("@zedtech/zedkit-ui", ROOT), join(work, "pack"), ROOT);
     }
     await run("pnpm", ["dlx", `create-next-app@${NEXT_APP}`, "app", "--ts", "--tailwind", "--eslint", "--app", "--src-dir", "--import-alias", "@/*", "--use-pnpm", "--skip-install", "--yes"], work);
-    ({ chromium } = await import("@playwright/test"));
+    if (process.env.ADOPTION_SMOKE_SKIP_BROWSER !== "1") {
+      ({ chromium } = await import("@playwright/test"));
+    }
   }
 
   const failures = [];

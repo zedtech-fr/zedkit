@@ -65,139 +65,39 @@ describe("ci-required aggregate", () => {
     assert.match(required, /ADOPTION_SMOKE/);
   });
 
-  it("needs docs-render and passes DOCS_RENDER in", () => {
+  it("does not require browser E2E jobs", () => {
     const required = workflow.split(/^ {2}ci-required:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.notEqual(required, "", "ci-required job block not found");
-    assert.match(required, /docs-render/);
-    assert.match(required, /DOCS_RENDER/);
+    assert.doesNotMatch(required, /docs-render/);
+    assert.doesNotMatch(required, /docs-smoke/);
+    assert.doesNotMatch(required, /ui-smoke/);
+    assert.doesNotMatch(required, /DOCS_RENDER/);
+    assert.doesNotMatch(required, /DOCS_SMOKE/);
+    assert.doesNotMatch(required, /UI_SMOKE/);
+    assert.match(required, /docs-build/);
+    assert.match(required, /DOCS_BUILD/);
   });
 });
 
-describe("changes job docs_looks", () => {
-  const changes = workflow.split(/^ {2}changes:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+describe("CI does not run browser E2E", () => {
+  it("has no docs-render, docs-smoke, or ui-smoke jobs", () => {
+    assert.doesNotMatch(workflow, /^ {2}docs-render:/m);
+    assert.doesNotMatch(workflow, /^ {2}docs-smoke:/m);
+    assert.doesNotMatch(workflow, /^ {2}ui-smoke:/m);
+  });
 
-  it("exports docs_looks from --looks on the same file list as ci-affected", () => {
+  it("does not compute docs_looks in the changes job", () => {
+    const changes = workflow.split(/^ {2}changes:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.notEqual(changes, "", "changes job block not found");
-    assert.ok(
-      changes.includes("docs_looks: ${{ steps.detect.outputs.docs_looks }}"),
-      "changes job must map docs_looks from the detect step",
+    assert.doesNotMatch(changes, /docs_looks/);
+    assert.doesNotMatch(changes, /docs-render-routes\.mjs/);
+  });
+
+  it("does not ship a nightly docs cross-browser workflow", () => {
+    assert.equal(
+      existsSync(join(root, ".github/workflows/nightly-docs-cross-browser.yml")),
+      false,
     );
-    assert.match(changes, /files=\$\(git diff --name-only --no-renames "\$base"\.\.\.HEAD\)/);
-    assert.match(changes, /files=\$\(git ls-tree -r --name-only HEAD\)/);
-    assert.match(changes, /printf '%s\\n' "\$files" \|\s*\n\s*node scripts\/ci-affected\.mjs/);
-    assert.match(changes, /docs_looks="\$\(printf '%s\\n' "\$files" \| node scripts\/docs-render-routes\.mjs --looks\)"/);
-    assert.match(changes, /echo "docs_looks=\$docs_looks" >> "\$GITHUB_OUTPUT"/);
-  });
-});
-
-describe("docs-render job", () => {
-  const job = workflow.split(/^ {2}docs-render:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
-
-  it("reuses docs-out, sets DOCS_ROUTES, and runs e2e:routes", () => {
-    assert.notEqual(job, "", "docs-render job block not found");
-    assert.match(job, /needs: \[changes, docs-build\]/);
-    assert.match(job, /e2e:routes/);
-    assert.match(job, /DOCS_ROUTES/);
-    assert.match(job, /DOCS_LOOKS/);
-    assert.match(job, /--looks/);
-    assert.match(job, /docs-render-routes\.mjs/);
-    assert.match(job, /playwright install chromium/);
-    assert.match(job, /serve@14\.2\.6/);
-    assert.ok(job.includes("EVENT: ${{ github.event_name }}"));
-    assert.ok(job.includes("BASE_REF: ${{ github.base_ref }}"));
-    assert.ok(job.includes("BEFORE: ${{ github.event.before }}"));
-    assert.ok(!job.includes('git fetch origin "${{ github.base_ref }}"'));
-    assert.match(job, /serve never became ready/);
-    assert.match(job, /docs-start\.log/);
-    assert.match(job, /docs-render-results/);
-    assert.match(job, /if: failure\(\)/);
-    assert.match(job, /apps\/docs\/test-results\//);
-  });
-
-  it("chooses full vs touched via --mode and HEAD_REF", () => {
-    assert.notEqual(job, "", "docs-render job block not found");
-    assert.match(job, /--mode/);
-    assert.ok(job.includes("HEAD_REF: ${{ github.head_ref }}"));
-    assert.match(job, /\[ "\$MODE" = "full" \]/);
-    assert.match(job, /unset DOCS_ROUTES/);
-    assert.match(job, /unset DOCS_LOOKS/);
-  });
-
-  it("times out at 25 minutes on full sweep or looks grid, else 6", () => {
-    assert.notEqual(job, "", "docs-render job block not found");
-    assert.ok(
-      job.includes(
-        "timeout-minutes: ${{ (github.event_name == 'push' || github.base_ref == 'main' || (github.base_ref == 'dev' && startsWith(github.head_ref, 'epic/')) || needs.changes.outputs.docs_looks != '') && 25 || 6 }}",
-      ),
-      "docs-render timeout must be 25 when sweep is full or docs_looks is set, else 6",
-    );
-  });
-
-  it("skips unless the docs detector is true and the diff is not workflow-only", () => {
-    assert.notEqual(job, "", "docs-render job block not found");
-    // Exact-line pin, same form as the other job `if:`s; a semantic YAML reflow still fails.
-    assert.match(
-      job,
-      /^ {4}if: needs\.changes\.outputs\.docs == 'true' && needs\.changes\.outputs\.workflow_only != 'true'\s*$/m,
-    );
-  });
-
-  it("dumps serve log and curls port 3100 after e2e:routes fails", () => {
-    assert.notEqual(job, "", "docs-render job block not found");
-    const afterRoutes = job.split("run e2e:routes")[1] ?? "";
-    assert.notEqual(afterRoutes, "", "docs-render lost e2e:routes");
-    assert.match(afterRoutes, /docs-start\.log/);
-    assert.match(afterRoutes, /127\.0\.0\.1:3100/);
-    assert.match(afterRoutes, /port 3100 refused/);
-    assert.match(afterRoutes, /port 3100 answered HTTP/);
-  });
-
-  it("restarts serve on exit until the EXIT trap kills the loop and the child", () => {
-    assert.notEqual(job, "", "docs-render job block not found");
-    const loop = job.match(/while\s+:;[\s\S]*?done/);
-    assert.equal(loop !== null, true, "docs-render must wrap serve in while :; ... done");
-    assert.match(loop[0], /serve@14\.2\.6/);
-    assert.match(job, /wait "\$\(cat \/tmp\/docs\.pid\)" \|\| true/);
-    assert.match(job, /\/tmp\/docs\.loop\.pid/);
-    assert.match(
-      job,
-      /trap 'kill "\$\(cat \/tmp\/docs\.loop\.pid\)" "\$\(cat \/tmp\/docs\.pid\)"/,
-    );
-  });
-});
-
-describe("nightly Chromium sitemap", () => {
-  const nightly = readFileSync(join(root, ".github/workflows/nightly-docs-cross-browser.yml"), "utf8");
-
-  it("runs e2e:routes without DOCS_ROUTES on a 25-minute Chromium job", () => {
-    const job =
-      nightly.split(/^ {2}docs-render-chromium:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
-    assert.notEqual(job, "", "docs-render-chromium job block not found");
-    assert.match(job, /timeout-minutes: 25/);
-    assert.match(job, /e2e:routes/);
-    assert.match(job, /DOCS_E2E_PROJECT: chromium/);
-    assert.doesNotMatch(job, /DOCS_ROUTES/);
-    assert.doesNotMatch(job, /DOCS_LOOKS/);
-    assert.match(job, /serve@14\.2\.6/);
-    const afterRoutes = job.split("run e2e:routes")[1] ?? "";
-    assert.notEqual(afterRoutes, "", "docs-render-chromium lost e2e:routes");
-    assert.match(afterRoutes, /docs-start\.log/);
-    assert.match(afterRoutes, /127\.0\.0\.1:3100/);
-    assert.match(afterRoutes, /port 3100 refused/);
-    assert.match(afterRoutes, /port 3100 answered HTTP/);
-    const loop = job.match(/while\s+:;[\s\S]*?done/);
-    assert.equal(loop !== null, true, "docs-render-chromium must wrap serve in while :; ... done");
-    assert.match(loop[0], /serve@14\.2\.6/);
-    assert.match(job, /wait "\$\(cat \/tmp\/docs\.pid\)" \|\| true/);
-    assert.match(job, /\/tmp\/docs\.loop\.pid/);
-    assert.match(
-      job,
-      /trap 'kill "\$\(cat \/tmp\/docs\.loop\.pid\)" "\$\(cat \/tmp\/docs\.pid\)"/,
-    );
-    const smoke = nightly.split(/^ {2}docs-smoke-cross-browser:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
-    assert.match(smoke, /firefox/);
-    assert.match(smoke, /webkit/);
-    assert.doesNotMatch(smoke, /e2e:routes/);
   });
 });
 
@@ -295,15 +195,14 @@ describe("knip ignore paths", () => {
   });
 });
 
-describe("AGENTS.md docs-render truth", () => {
+describe("AGENTS.md browser E2E truth", () => {
   for (const rel of ["AGENTS.md", "apps/docs/AGENTS.md"]) {
-    it(`${rel} names docs-render and local e2e, and does not claim CI owns e2e`, () => {
+    it(`${rel} keeps Playwright local and does not claim CI runs browser E2E`, () => {
       const text = readFileSync(join(root, rel), "utf8");
-      // Merge-gate claim is "CI owns … e2e" in one sentence. "stays local"
-      // after a period must still be allowed.
       assert.doesNotMatch(text, /CI owns[^.]*\be2e\b/u);
-      assert.match(text, /docs-render/);
-      assert.match(text, /(?:stays local|local-only)/u);
+      assert.doesNotMatch(text, /Docs browser gates are `docs-smoke` and `docs-render`/);
+      assert.doesNotMatch(text, /merge-gate browsers are/);
+      assert.match(text, /(?:stays local|local-only|stay local)/u);
     });
   }
 });

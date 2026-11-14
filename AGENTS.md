@@ -54,7 +54,7 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
 - After an edit, run that area's **Local loop** (its AGENTS.md) with
   `pnpm agent typecheck|lint|test|node-test` (or the `pnpm --filter <pkg> …`
   forms). Full logs land in `.agent-logs/`; keep the transcript as the summary.
-  CI owns full-repo test, static-export smoke (`docs-smoke`), and on UI/docs/token diffs a static-export render check (`docs-render`: overflow, axe, clipped text on mapped routes, or the whole sitemap on `epic/*` → `dev`, into `main`, and nightly; looks grid when a shared token, primitive, or identity sheet changes on the touched-route path; unmapped diffs use five fallback routes). The Playwright `e2e` script stays local.
+  CI owns full-repo test, lint, typecheck, `docs-build` (static export, SEO, first-load budget, and export presence checks), and consumer install/build smokes. Playwright `smoke`, `e2e`, and `e2e:routes` stay local — CI does not run browser E2E.
 - Small PRs from fresh `main`, never stacked. One package per PR. Never
   commit on `dev` or `main`: open a work branch, then `gh pr create --base
   dev`.
@@ -138,7 +138,7 @@ bash scripts/check-tone.sh
 
 CI runs the commands above plus the rest of
 [ci.yml](.github/workflows/ci.yml) (`pnpm exec eslint .`, API reports,
-registry smoke). Docs browser gates are `docs-smoke` and `docs-render` (mapped routes or the host fallback set on ordinary PRs into `dev`; full sitemap on `epic/*` → `dev`, into `main`, and nightly), not `pnpm e2e` —
+registry smoke). Playwright docs `smoke`, `e2e`, and `e2e:routes` stay local, never a merge gate —
 [apps/docs/AGENTS.md](apps/docs/AGENTS.md). A fresh clone has no
 `dist/`: `pnpm --filter <pkg> test|typecheck` and `pnpm catalog:check`
 fail until sibling packages are built. Build once

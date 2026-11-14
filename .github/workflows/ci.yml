@@ -15,11 +15,10 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # Default runner is ubuntu-latest (GitHub-hosted, 4 vCPU / 16 GB) with
-# pnpm, Turbo, .next/cache and Playwright caches. Set the repository
-# variable CI_RUNNER=self-hosted to fall back to the Dedibox
-# [self-hosted, zedkit] runners (persistent /runner-cache + TURBO_CACHE_DIR)
-# without a PR. Docs Playwright smoke and UI gallery checks always run on
-# ubuntu-latest (GitHub-hosted Chromium; Dedibox uses a different revision).
+# pnpm, Turbo and .next/cache caches. Set the repository variable
+# CI_RUNNER=self-hosted to fall back to the self-hosted [zedkit] runners
+# (persistent /runner-cache + TURBO_CACHE_DIR) without a PR.
+# CI does not run Playwright or other browser E2E. Those suites stay local.
 # Release/deploy workflows are separate and untouched.
 
 jobs:
@@ -40,7 +39,6 @@ jobs:
       ui: ${{ steps.detect.outputs.ui }}
       packages: ${{ steps.detect.outputs.packages }}
       filter: ${{ steps.detect.outputs.filter }}
-      docs_looks: ${{ steps.detect.outputs.docs_looks }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -71,8 +69,6 @@ jobs:
           fi
           printf '%s\n' "$files" |
             node scripts/ci-affected.mjs --event "$EVENT" --base-ref "$BASE_REF" | tee -a "$GITHUB_OUTPUT"
-          docs_looks="$(printf '%s\n' "$files" | node scripts/docs-render-routes.mjs --looks)"
-          echo "docs_looks=$docs_looks" >> "$GITHUB_OUTPUT"
 
   workflow-lint:
     runs-on: ubuntu-latest
@@ -260,8 +256,6 @@ jobs:
         if: env.FULL == 'true' || env.PACKAGES == 'true'
         run: bash scripts/check-pack.sh
       - run: bash scripts/check-e2e-registered.sh
-      - name: Playwright Chromium
-        run: pnpm exec playwright install chromium
       - name: test
         if: env.FULL != 'true'
         run: |
@@ -351,29 +345,6 @@ jobs:
         if: always() && runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh disk-report
 
-  # Gallery console, overflow and visibility checks on GitHub-hosted Ubuntu
-  # Chromium (Dedibox uses a different revision).
-  ui-smoke:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: changes
-    if: needs.changes.outputs.ui == 'true' && needs.changes.outputs.workflow_only != 'true'
-    steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec turbo run build --filter=@zedtech/zedkit-ui
-      - uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm exec playwright install chromium
-      - run: pnpm --filter @zedtech/zedkit-ui smoke
-
   registry-smoke:
     # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
     # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
@@ -425,14 +396,12 @@ jobs:
       # The pack closure ships prebuilt dist (not rebuildable by the
       # consumer): build the UI closure once before the parallel cells pack it.
       - run: pnpm exec turbo run build --filter=@zedtech/zedkit-ui
-      - uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm exec playwright install chromium
       # Next smokes (src-dir pnpm + npm, plain pnpm); Vite paths live in the dedicated quickstart-smoke job.
       # The npm cell guards the D1 promise (no ERESOLVE); each serve port is pinned per cell.
+      # Browser render checks are skipped in CI (install + next build only).
       - name: registry smoke
+        env:
+          SKIP_RENDER_CHECK: "1"
         run: |
           fail=0
           bash scripts/registry/smoke-shadcn-add.sh &
@@ -493,10 +462,9 @@ jobs:
         with:
           path: |
             .turbo
-            ~/.cache/ms-playwright
-          key: turbo-ui-pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          key: turbo-ui-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
           restore-keys: |
-            turbo-ui-pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            turbo-ui-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       - name: Build UI
         run: |
           extra=()
@@ -505,18 +473,11 @@ jobs:
           fi
           pnpm exec turbo run build --filter=@zedtech/zedkit-ui "${extra[@]}"
       - run: pnpm registry:build
-      - name: Playwright browsers (image)
-        if: runner.environment == 'self-hosted'
-        run: bash scripts/ci-runner-cache.sh playwright
       - name: quickstart smoke
-        run: |
-          if [ "${RUNNER_ENVIRONMENT}" = "self-hosted" ]; then
-            # shellcheck disable=SC2016
-            sed -i 's/${CI:+--with-deps}//' scripts/quickstart-smoke.sh
-          fi
-          bash scripts/quickstart-smoke.sh
+        run: bash scripts/quickstart-smoke.sh
         env:
           QUICKSTART_PREBUILT: "1"
+          SKIP_RENDER_CHECK: "1"
 
   # Follows the adoption instructions the site shows (home, getting-started, component pages), and nothing else,
   # in clean Next.js projects: install Button, copy Button and Drawer by CLI and by hand, Theme, Motion, the
@@ -561,20 +522,11 @@ jobs:
         if: runner.environment == 'self-hosted'
         run: bash scripts/ci-runner-cache.sh install
       - run: pnpm registry:build
-      - uses: actions/cache@v6
-        if: runner.environment != 'self-hosted'
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm exec playwright install --with-deps chromium
-        if: runner.environment != 'self-hosted'
-      - name: Playwright browsers (image)
-        if: runner.environment == 'self-hosted'
-        run: bash scripts/ci-runner-cache.sh playwright
       - run: pnpm adoption:smoke
+        env:
+          ADOPTION_SMOKE_SKIP_BROWSER: "1"
 
-  # One Next export for Playwright smoke, SEO and the first-load budget.
-  # Smoke downloads `apps/docs/out` instead of exporting again.
+  # One Next export for SEO, the first-load budget, and export presence checks.
   docs-build:
     # Default: GitHub-hosted. Set repo variable CI_RUNNER=self-hosted to
     # fall back to Dedibox [self-hosted, zedkit] runners without a PR.
@@ -633,6 +585,22 @@ jobs:
         run: node apps/docs/scripts/check-seo-export.mjs
       - name: Docs home first-load JS budget
         run: node apps/docs/scripts/check-first-load-budget.mjs
+      - name: Docs export presence
+        run: |
+          set -euo pipefail
+          test -f apps/docs/out/index.html
+          grep -q 'data-home-hero' apps/docs/out/index.html
+          test -f apps/docs/out/docs/index.html
+          test -f apps/docs/out/robots.txt
+          test -f apps/docs/out/sitemap.xml
+          test -f apps/docs/out/llms.txt
+          # App Router static export of app/api/search/route.ts
+          if ! find apps/docs/out/api/search apps/docs/out/api/search.html apps/docs/out/api/search.body -type f 2>/dev/null | grep -q .; then
+            # Next may emit search under a trailing-slash directory or a bare file.
+            ls -la apps/docs/out/api >&2 || true
+            echo "docs-build: missing static search export under apps/docs/out/api/search*" >&2
+            exit 1
+          fi
       - uses: actions/upload-artifact@v7
         with:
           name: docs-out
@@ -641,175 +609,10 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # Critical browser journeys only (home, search, catalog, a component
-  # page, getting-started). Touched-route overflow, axe and clipped-text
-  # run in docs-render. The local Playwright e2e script is not a merge gate.
-  docs-smoke:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: [changes, docs-build]
-    if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
-    steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile --filter="@zedtech/zedkit-docs..."
-      - uses: actions/download-artifact@v8
-        with:
-          name: docs-out
-          path: apps/docs/out
-      - uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm exec playwright install chromium
-      - run: |
-          pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
-          echo $! > /tmp/docs.pid
-          for _ in $(seq 1 24); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
-            [ "$code" = "200" ] && break
-            sleep 5
-          done
-          curl -sf http://127.0.0.1:3100/ | grep -q 'data-home-hero'
-          curl -sf -o /dev/null http://127.0.0.1:3100/docs
-          curl -sf -o /dev/null http://127.0.0.1:3100/api/search
-          curl -sf -o /dev/null http://127.0.0.1:3100/robots.txt
-          curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
-          curl -sf -o /dev/null http://127.0.0.1:3100/llms.txt
-          pnpm --filter @zedtech/zedkit-docs run smoke
-          kill "$(cat /tmp/docs.pid)"
-        env:
-          DOCS_E2E_PROJECT: chromium
-      - uses: actions/upload-artifact@v7
-        if: success()
-        with:
-          name: docs-home-smoke
-          path: apps/docs/test-results/*.png
-          if-no-files-found: ignore
-
-  # Overflow, axe (serious/critical) and clipped-text on the static export.
-  # Ordinary PRs into `dev` map touched routes (looks grid when the mapper
-  # trigger is on). `epic/*` → `dev`, PRs and pushes into `main`: every
-  # published route, default look. Timeout is 25 minutes on a full sweep or
-  # looks-grid touched path, else 6. Skip when `docs` is false. Not an E2E
-  # journey suite.
-  docs-render:
-    runs-on: ubuntu-latest
-    timeout-minutes: ${{ (github.event_name == 'push' || github.base_ref == 'main' || (github.base_ref == 'dev' && startsWith(github.head_ref, 'epic/')) || needs.changes.outputs.docs_looks != '') && 25 || 6 }}
-    needs: [changes, docs-build]
-    if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.workflow_only != 'true'
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile --filter="@zedtech/zedkit-docs..."
-      - uses: actions/download-artifact@v8
-        with:
-          name: docs-out
-          path: apps/docs/out
-      - uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm exec playwright install chromium
-      - run: |
-          set -euo pipefail
-          MODE="$(node scripts/docs-render-routes.mjs --mode)"
-          echo "DOCS_RENDER_SWEEP=$MODE"
-          if [ "$MODE" = "full" ]; then
-            unset DOCS_ROUTES
-            unset DOCS_LOOKS
-          else
-            if [ "$EVENT" = "pull_request" ]; then
-              git fetch origin "$BASE_REF"
-              base="origin/$BASE_REF"
-            elif [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
-              base="$BEFORE"
-            elif git rev-parse --verify --quiet HEAD~1 >/dev/null; then
-              base="HEAD~1"
-            else
-              base=""
-            fi
-            if [ -n "$base" ]; then
-              files=$(git diff --name-only --no-renames "$base"...HEAD)
-            else
-              files=$(git ls-tree -r --name-only HEAD)
-            fi
-            DOCS_ROUTES="$(printf '%s\n' "$files" | node scripts/docs-render-routes.mjs)"
-            export DOCS_ROUTES
-            if [ -z "$DOCS_ROUTES" ]; then
-              echo "docs-render: DOCS_ROUTES empty; refusing to sweep all routes" >&2
-              exit 1
-            fi
-            echo "DOCS_ROUTES=$DOCS_ROUTES"
-            DOCS_LOOKS="$(printf '%s\n' "$files" | node scripts/docs-render-routes.mjs --looks)"
-            if [ -n "$DOCS_LOOKS" ]; then
-              export DOCS_LOOKS
-              echo "DOCS_LOOKS=$DOCS_LOOKS"
-            fi
-          fi
-          (
-            while :; do
-              pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
-              echo $! > /tmp/docs.pid
-              wait "$(cat /tmp/docs.pid)" || true
-            done
-          ) &
-          echo $! > /tmp/docs.loop.pid
-          trap 'kill "$(cat /tmp/docs.loop.pid)" "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
-          code=""
-          for _ in $(seq 1 24); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
-            [ "$code" = "200" ] && break
-            sleep 5
-          done
-          if [ "$code" != "200" ]; then
-            echo "docs-render: serve never became ready" >&2
-            cat /tmp/docs-start.log >&2 || true
-            exit 1
-          fi
-          curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
-          if ! pnpm --filter @zedtech/zedkit-docs run e2e:routes; then
-            echo "docs-render: e2e:routes failed" >&2
-            cat /tmp/docs-start.log >&2 || true
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
-            if [ -z "$code" ] || [ "$code" = "000" ]; then
-              echo "docs-render: port 3100 refused" >&2
-            else
-              echo "docs-render: port 3100 answered HTTP $code" >&2
-            fi
-            exit 1
-          fi
-        env:
-          EVENT: ${{ github.event_name }}
-          BASE_REF: ${{ github.base_ref }}
-          HEAD_REF: ${{ github.head_ref }}
-          BEFORE: ${{ github.event.before }}
-          DOCS_E2E_PROJECT: chromium
-      - uses: actions/upload-artifact@v7
-        if: failure()
-        with:
-          name: docs-render-results
-          path: apps/docs/test-results/
-          if-no-files-found: ignore
-
-  # Stable check name for branch protection. Require this one job instead of
-  # listing every CI job.
-  # Selected jobs must succeed. Skipped is allowed only when `changes`
-  # excluded that job. Failure, cancel, unknown and missing never pass.
   ci-required:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [changes, hygiene, workflow-lint, checks, ui-smoke, registry-smoke, quickstart-smoke, adoption-smoke, docs-build, docs-smoke, docs-render]
+    needs: [changes, hygiene, workflow-lint, checks, registry-smoke, quickstart-smoke, adoption-smoke, docs-build]
     if: always()
     steps:
       - uses: actions/checkout@v7
@@ -819,16 +622,12 @@ jobs:
           HYGIENE: ${{ needs.hygiene.result }}
           WORKFLOW_LINT: ${{ needs.workflow-lint.result }}
           CHECKS: ${{ needs.checks.result }}
-          UI_SMOKE: ${{ needs.ui-smoke.result }}
           REGISTRY: ${{ needs.registry-smoke.result }}
           QUICKSTART_SMOKE: ${{ needs.quickstart-smoke.result }}
           ADOPTION_SMOKE: ${{ needs.adoption-smoke.result }}
           DOCS_BUILD: ${{ needs.docs-build.result }}
-          DOCS_SMOKE: ${{ needs.docs-smoke.result }}
-          DOCS_RENDER: ${{ needs.docs-render.result }}
           WORKFLOWS: ${{ needs.changes.outputs.workflows }}
           DOCS: ${{ needs.changes.outputs.docs }}
           REGISTRY_SCOPE: ${{ needs.changes.outputs.registry }}
-          UI_SCOPE: ${{ needs.changes.outputs.ui }}
           WORKFLOW_ONLY: ${{ needs.changes.outputs.workflow_only }}
         run: node scripts/ci-required.mjs

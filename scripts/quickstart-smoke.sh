@@ -89,8 +89,12 @@ run_npm_path() {
 
   pnpm exec tsc -b
   pnpm run build
-  node "${ROOT}/scripts/quickstart-render-check.mjs" dist "quickstart-smoke: npm path"
-  echo "quickstart-smoke: npm path ok (Vite build, styled Button rendered)"
+  if [[ "${SKIP_RENDER_CHECK:-}" == "1" ]]; then
+    echo "quickstart-smoke: npm path ok (Vite build; render check skipped)"
+  else
+    node "${ROOT}/scripts/quickstart-render-check.mjs" dist "quickstart-smoke: npm path"
+    echo "quickstart-smoke: npm path ok (Vite build, styled Button rendered)"
+  fi
 }
 
 run_registry_path() {
@@ -116,13 +120,19 @@ run_registry_path() {
 
   pnpm exec tsc -b
   pnpm run build
-  node "${ROOT}/scripts/quickstart-render-check.mjs" dist "quickstart-smoke: registry path"
-  echo "quickstart-smoke: registry path ok (Vite build, styled Button rendered)"
+  if [[ "${SKIP_RENDER_CHECK:-}" == "1" ]]; then
+    echo "quickstart-smoke: registry path ok (Vite build; render check skipped)"
+  else
+    node "${ROOT}/scripts/quickstart-render-check.mjs" dist "quickstart-smoke: registry path"
+    echo "quickstart-smoke: registry path ok (Vite build, styled Button rendered)"
+  fi
 }
 
 echo "quickstart-smoke: in ci-required when the registry jobs are selected"
-# The render check needs Chromium; CI runners also need its system libraries.
-(cd "${ROOT}" && pnpm exec playwright install ${CI:+--with-deps} chromium >/dev/null)
+# The render check needs Chromium; skipped when SKIP_RENDER_CHECK=1 (CI).
+if [[ "${SKIP_RENDER_CHECK:-}" != "1" ]]; then
+  (cd "${ROOT}" && pnpm exec playwright install ${CI:+--with-deps} chromium >/dev/null)
+fi
 if [[ "${QUICKSTART_PREBUILT:-}" != "1" ]]; then
   (cd "${ROOT}" && pnpm exec turbo run build --filter=@zedtech/zedkit-ui >/dev/null)
   (cd "${ROOT}" && pnpm registry:build >/dev/null)

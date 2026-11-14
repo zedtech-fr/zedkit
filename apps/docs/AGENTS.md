@@ -137,20 +137,10 @@ reject dead `/r/<name>.json` links.
   `pnpm --filter @zedtech/zedkit-docs visual:verify` (alias of
   `zedkit-ai visual-verify`; the script already passes `--changed` and the
   fixed route set). Needs `@zedtech/zedkit-ai` built (`dist/bin.js`).
-- **PR / CI:** merge-gate browsers are `smoke` (home, search, catalog, a
-  component page, getting-started) plus `docs-render` (load-time overflow,
-  axe serious/critical, clipped text). Ordinary PRs into `dev` run the
-  mapper: touched routes, or the five host fallbacks (`visual:verify
-  --routes`) when the diff is unmapped chrome, `[[...slug]]` content, or
-  a deleted page. Empty `DOCS_ROUTES` fails closed. A shared token,
-  primitive, or identity sheet sets `DOCS_LOOKS` and rotates mist, press,
-  tide, volt, maison, and glass at 375/809/1440 × light/dark; other docs
-  diffs keep the default site look. `epic/*` PRs into `dev`, PRs and
-  pushes into `main`, and nightly Chromium walk every published route
-  (default look, `DOCS_ROUTES` unset). Keyboard, motion and interaction
-  stay in the sampled `smoke` / `e2e` suites. Unit tests, `catalog:check`,
-  the SEO export check and the first-load budget cover the rest. `pnpm e2e`
-  is local-only, never a merge gate. A new spec must be listed in the
+- **PR / CI:** merge gates are unit/integration tests, `catalog:check`,
+  the SEO export check, the first-load budget, and export presence
+  checks in `docs-build`. Playwright `smoke`, `e2e`, and `e2e:routes`
+  stay local, never a merge gate. A new spec must be listed in the
   `smoke`, `e2e`, or `e2e:routes` script; specs must not embed `127.0.0.1`
   or `localhost:` (`scripts/check-e2e-registered.sh`). Screenshots land in
   `test-results/`. Generated evidence PNGs under `tests/evidence/` are
@@ -164,9 +154,8 @@ reject dead `/r/<name>.json` links.
   Home smoke exact-text must quote a string from
   `app/(home)/_home/i18n/*-copy.ts` or `components/site-chrome/i18n/site-chrome-copy.ts`; do not
   invent a sentence in the spec.
-- **Reproducing a failed `docs-smoke` job:** CI already built `out/`
-  (`docs-build`). Locally, only when :3100 is free — or set
-  `DOCS_E2E_BASE_URL` to the port `serve` actually bound:
+- **Running `smoke` locally:** build `out/` first. Only when :3100 is
+  free — or set `DOCS_E2E_BASE_URL` to the port `serve` actually bound:
 
   ```sh
   pnpm exec turbo run build --filter=@zedtech/zedkit-docs   # writes apps/docs/out
@@ -174,10 +163,9 @@ reject dead `/r/<name>.json` links.
   pnpm exec playwright install chromium
   pnpm --filter @zedtech/zedkit-docs run smoke
   ```
-- **Reproducing a failed `docs-render` job:** same `out/` as docs-smoke.
-  Pin routes with `DOCS_ROUTES` (comma-separated). Unmapped / deleted-page
-  green path is the host fallback set. Full sitemap (`epic/*` → `dev`,
-  into `main`, nightly Chromium): unset `DOCS_ROUTES` and `DOCS_LOOKS`.
+- **Running `e2e:routes` locally:** same `out/` as smoke. Pin routes with
+  `DOCS_ROUTES` (comma-separated). Unmapped / deleted-page path is the
+  host fallback set. Full sitemap: unset `DOCS_ROUTES` and `DOCS_LOOKS`.
 
   ```sh
   pnpm exec turbo run build --filter=@zedtech/zedkit-docs
