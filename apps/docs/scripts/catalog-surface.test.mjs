@@ -177,6 +177,9 @@ test("catalog title row wraps and shrinks so the badge stays in the card", () =>
   assert.match(titleClass[1], /hit-target/);
   assert.match(titleClass[1], /wrap-anywhere/);
   assert.doesNotMatch(titleClass[1], /content-shrink/);
+  const needClass = cell.match(/<Text variant="muted"([^>]*)>/);
+  assert.equal(needClass !== null, true);
+  assert.match(needClass[1], /wrap-anywhere/);
   const badgeStart = css.indexOf("[data-catalog-cell] [data-badge-link]");
   assert.notEqual(badgeStart, -1, "missing badge shrink rule");
   const badgeOpen = css.indexOf("{", badgeStart);
