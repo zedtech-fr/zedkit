@@ -4,7 +4,6 @@ import {
   applyCustomIdentity,
   applyIdentity,
   discardCustomIdentity,
-  identityPresets,
   isNamedIdentityId,
   isPresetId,
   parseIdentityTokens,
@@ -12,7 +11,7 @@ import {
 } from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
-import { docsSiteDefaultTokens, docsSiteTokensEqual } from "./docs-site-default-tokens.ts";
+import { docsSiteDefaultTokens, docsSiteTokensEqual, docsSiteTokensFor } from "./docs-site-default-tokens.ts";
 import { readNamedIdentities } from "./named-identities.ts";
 import {
   clearDocsSiteIdentity,
@@ -24,7 +23,7 @@ import {
 function readDockSiteTokens(identityId: string): IdentityTokens {
   const stored = readDocsSiteTokens();
   if (stored) return stored;
-  if (isPresetId(identityId) && identityId !== DEFAULT_IDENTITY) return identityPresets[identityId];
+  if (isPresetId(identityId)) return docsSiteTokensFor(identityId);
   if (isNamedIdentityId(identityId)) {
     const saved = readNamedIdentities().find((item) => item.id === identityId);
     if (saved) return saved.tokens;
@@ -38,6 +37,23 @@ function resetDocsSiteLook(): void {
   applyIdentity(DEFAULT_IDENTITY, DOCS_SITE_IDENTITY_STORAGE_KEY);
 }
 
+/**
+ * Applies a built-in look as the dock's starting point: like Reset, but lands
+ * on the picked preset instead of the site default. Parked custom work is
+ * cleared, same as Reset. Refuses anything but a preset id: clearing first
+ * and then activating `custom` would strand the page without its sheet.
+ */
+function applyStartingIdentity(id: string): boolean {
+  if (!isPresetId(id)) return false;
+  if (id === DEFAULT_IDENTITY) {
+    resetDocsSiteLook();
+    return true;
+  }
+  clearDocsSiteIdentity();
+  applyIdentity(id, DOCS_SITE_IDENTITY_STORAGE_KEY);
+  return true;
+}
+
 function applyDocsSiteLook(tokens: IdentityTokens): boolean {
   const parsed = parseIdentityTokens(tokens);
   if (!parsed.success) return false;
@@ -49,4 +65,4 @@ function applyDocsSiteLook(tokens: IdentityTokens): boolean {
   return applyCustomIdentity(parsed.data, DOCS_SITE_IDENTITY_STORAGE_KEY);
 }
 
-export { applyDocsSiteLook, readDockSiteTokens, resetDocsSiteLook };
+export { applyDocsSiteLook, applyStartingIdentity, readDockSiteTokens, resetDocsSiteLook };

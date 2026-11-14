@@ -6,10 +6,11 @@ import { identityContrastWarnings, Stack, Tabs, TabsList, TabsTrigger, type Iden
 import { IdentityDockActionBar } from "@/features/identity/dock/ui/identity-dock-action-bar";
 import { IdentityDockCustomize } from "@/features/identity/dock/ui/identity-dock-customize";
 import { IdentityDockPanelToolbar } from "@/features/identity/dock/ui/identity-dock-panel-toolbar";
+import { IdentityDockStartingPoints } from "@/features/identity/dock/ui/identity-dock-starting-points";
 import { identityDockCopy } from "@/features/identity/dock/i18n/identity-dock-copy";
 import { identityEditorCopy } from "@/features/identity/editor/i18n/identity-editor-copy";
 import { docsSiteDefaultTokens } from "@/features/identity/ui/docs-site-default-tokens";
-import { applyDocsSiteLook, resetDocsSiteLook } from "@/features/identity/ui/docs-site-look";
+import { applyDocsSiteLook, applyStartingIdentity, resetDocsSiteLook } from "@/features/identity/ui/docs-site-look";
 import { dispatchIdentityEditorDraftApply } from "@/features/identity/ui/identity-editor-draft-apply";
 import { patchTokens } from "@/features/identity/ui/identity-editor-patch";
 import { useIdentityAssistantStore } from "@/features/identity/ui/identity-assistant-store";
@@ -33,8 +34,9 @@ function patchDockLook(
 }
 
 /**
- * The "Make it yours" drawer: a manual customize form (Classic by default, Expert behind its tab),
- * a colour checker, and Reset. There is no AI conversation or text input here.
+ * The "Make it yours" drawer: starting-point looks, then a manual customize form
+ * (Classic by default, Expert behind its tab), a colour checker, and Reset.
+ * There is no AI conversation or text input here.
  */
 export function IdentityDockAssistantPanel({
   tokens,
@@ -75,6 +77,7 @@ export function IdentityDockAssistantPanel({
           </Stack>
         </Stack>
         <Stack gap="md" data-dock-scroll="" className="pane-shrink flex-1 overflow-y-auto overscroll-y-contain px-control-inline pt-start">
+          <IdentityDockStartingPoints onPick={applyStartingIdentity} />
           <IdentityDockCustomize
             tokens={tokens}
             onPatchPreview={(key, value, palette) => patchDockLook(tokens, onTokens, [[key, value]], palette)}

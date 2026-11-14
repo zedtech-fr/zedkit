@@ -13,9 +13,10 @@ registerDocsAlias(import.meta.url);
 const { DEFAULT_IDENTITY } = await import("@/lib/default-identity");
 const { LIBRARY_KEY } = await import("@/features/identity/ui/identity-library");
 const { restoreNamedIdentity } = await import("./named-identities.ts");
-const { docsSiteDefaultTokens } = await import("./docs-site-default-tokens.ts");
+const { docsSiteDefaultTokens, docsSiteTokensFor } = await import("./docs-site-default-tokens.ts");
 const {
   applyDocsSiteLook,
+  applyStartingIdentity,
   readDockSiteTokens,
   resetDocsSiteLook,
 } = await import("./docs-site-look.ts");
@@ -259,7 +260,8 @@ test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, 
   assert.equal(readDockSiteTokens(DEFAULT_IDENTITY).radius, "1.25rem");
 
   clearDocsSiteIdentity();
-  assert.equal(readDockSiteTokens("press").radius, identityPresets.press.radius);
+  // #441: the shell pins radius for presets, so the reader returns the remapped value, not the raw preset.
+  assert.equal(readDockSiteTokens("press").radius, "0.5rem");
 
   const named = { ...defaults, radius: "2rem" };
   seedNamedLibrary(browser, named);
@@ -267,6 +269,90 @@ test("readDockSiteTokens prefers stored JSON, then a preset, then named tokens, 
 
   assert.deepEqual(readDockSiteTokens(DEFAULT_IDENTITY), defaults);
   assert.deepEqual(readDockSiteTokens("n-missing"), defaults);
+  browser.restore();
+});
+
+test("readDockSiteTokens returns shell-remapped tokens for a preset, not the raw kit preset (#441)", () => {
+  const browser = installBrowser();
+  const tide = readDockSiteTokens("tide");
+  assert.equal(tide.radius, "0.5rem");
+  assert.equal(tide.borderWidth, "1px");
+  assert.equal(tide.spacing, identityPresets.tide.spacing);
+  assert.equal(tide.light.background, "0 0% 100%");
+  assert.equal(tide.light.foreground, "240 10% 3.9%");
+  assert.equal(tide.light.mutedForeground, "240 5% 32%");
+  assert.equal(tide.light.border, "240 5.9% 90%");
+  assert.deepEqual(tide.dark, identityPresets.tide.dark);
+  browser.restore();
+});
+
+test("docsSiteTokensFor falls back to the site default for an unknown id", () => {
+  assert.deepEqual(docsSiteTokensFor("not-a-look"), docsSiteDefaultTokens());
+});
+
+test("applyStartingIdentity applies a preset and clears parked custom work (#441)", () => {
+  const browser = installBrowser();
+  assert.equal(applyDocsSiteLook({ ...docsSiteDefaultTokens(), radius: "2rem" }), true);
+  assert.equal(browser.html.getAttribute("data-identity"), "custom");
+  assert.equal(applyStartingIdentity("tide"), true);
+  assert.equal(browser.html.getAttribute("data-identity"), "tide");
+  assert.equal(browser.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY), "tide");
+  assert.equal(browser.localStorage.getItem(docsSiteTokensStorageKey()), null);
+  assert.equal(browser.localStorage.getItem(docsSiteCustomStorageKey()), null);
+  assert.equal(browser.getSheet().textContent, "");
+  assert.equal(docsSiteLookDiffersFromDefaults(), true);
+  browser.restore();
+});
+
+test("customize starts from the picked preset: the first patch writes preset-derived tokens (#441)", () => {
+  const browser = installBrowser();
+  assert.equal(applyStartingIdentity("tide"), true);
+  assert.equal(readDockSiteTokens("tide").radius, "0.5rem");
+  assert.equal(applyDocsSiteLook({ ...readDockSiteTokens("tide"), radius: "2rem" }), true);
+  assert.equal(readDocsSiteTokens("custom").radius, "2rem");
+  assert.equal(readDocsSiteTokens("custom").spacing, identityPresets.tide.spacing);
+  assert.equal(browser.html.getAttribute("data-identity"), "custom");
+  browser.restore();
+});
+
+test("applyStartingIdentity with the default look resets to the site default (#441)", () => {
+  const browser = installBrowser();
+  assert.equal(applyDocsSiteLook({ ...docsSiteDefaultTokens(), radius: "2rem" }), true);
+  assert.equal(applyStartingIdentity(DEFAULT_IDENTITY), true);
+  assert.equal(browser.html.getAttribute("data-identity"), DEFAULT_IDENTITY);
+  assert.equal(browser.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY), DEFAULT_IDENTITY);
+  assert.equal(browser.localStorage.getItem(docsSiteTokensStorageKey()), null);
+  assert.equal(browser.localStorage.getItem(docsSiteCustomStorageKey()), null);
+  assert.equal(browser.getSheet().textContent, "");
+  assert.equal(docsSiteLookDiffersFromDefaults(), false);
+  assert.deepEqual(readDockSiteTokens(DEFAULT_IDENTITY), docsSiteDefaultTokens());
+  browser.restore();
+});
+
+test("applyStartingIdentity twice is harmless (#441)", () => {
+  const browser = installBrowser();
+  assert.equal(applyStartingIdentity("tide"), true);
+  assert.equal(applyStartingIdentity("tide"), true);
+  assert.equal(browser.html.getAttribute("data-identity"), "tide");
+  assert.equal(browser.localStorage.getItem(DOCS_SITE_IDENTITY_STORAGE_KEY), "tide");
+  browser.restore();
+});
+
+test("applyStartingIdentity ignores an unknown id and leaves state untouched (#441)", () => {
+  const browser = installBrowser();
+  assert.equal(applyDocsSiteLook({ ...docsSiteDefaultTokens(), radius: "2rem" }), true);
+  assert.equal(applyStartingIdentity("not-a-look"), false);
+  assert.equal(browser.html.getAttribute("data-identity"), "custom");
+  assert.equal(readDocsSiteTokens("custom").radius, "2rem");
+  browser.restore();
+});
+
+test("applyStartingIdentity refuses the custom id so a pick never strands the page without a sheet (#441)", () => {
+  const browser = installBrowser();
+  assert.equal(applyDocsSiteLook({ ...docsSiteDefaultTokens(), radius: "2rem" }), true);
+  assert.equal(applyStartingIdentity("custom"), false);
+  assert.equal(browser.html.getAttribute("data-identity"), "custom");
+  assert.notEqual(browser.localStorage.getItem(docsSiteCustomStorageKey()), null);
   browser.restore();
 });
 

@@ -1,4 +1,4 @@
-import { identityPresets, parseIdentityTokens, type IdentityTokens } from "@zedtech/zedkit-ui";
+import { identityPresets, isPresetId, parseIdentityTokens, type IdentityTokens } from "@zedtech/zedkit-ui";
 
 import { DEFAULT_IDENTITY } from "@/lib/default-identity";
 
@@ -17,14 +17,16 @@ const DOCS_SITE_SHADOW_MD = "0 2px 6px hsl(var(--zk-shadow-color) / 0.08)";
 const DOCS_SITE_SPACING = "0.26rem";
 
 /**
- * Kit Glass as the docs chrome wears it: shell remaps for the fields the
- * site actually pins, everything else the Glass preset.
+ * A kit preset as the docs chrome wears it: shell remaps for the fields the
+ * site actually pins (`docs-shell-tokens.css`, `site-compact.css`), everything
+ * else the preset. Unknown ids fall back to the site default look.
  */
-function docsSiteDefaultTokens(): IdentityTokens {
-  const base = identityPresets[DEFAULT_IDENTITY];
+function docsSiteTokensFor(id: string): IdentityTokens {
+  const look = isPresetId(id) ? id : DEFAULT_IDENTITY;
+  const base = identityPresets[look];
   const parsed = parseIdentityTokens({
     ...base,
-    spacing: DOCS_SITE_SPACING,
+    spacing: look === DEFAULT_IDENTITY ? DOCS_SITE_SPACING : base.spacing,
     borderWidth: DOCS_SITE_BORDER_WIDTH,
     radius: DOCS_SITE_RADIUS,
     shadowSm: DOCS_SITE_SHADOW_SM,
@@ -40,8 +42,13 @@ function docsSiteDefaultTokens(): IdentityTokens {
   return parsed.success ? parsed.data : base;
 }
 
+/** Kit Glass as the docs chrome wears it (see `docsSiteTokensFor`). */
+function docsSiteDefaultTokens(): IdentityTokens {
+  return docsSiteTokensFor(DEFAULT_IDENTITY);
+}
+
 function docsSiteTokensEqual(a: IdentityTokens, b: IdentityTokens): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-export { docsSiteDefaultTokens, docsSiteTokensEqual };
+export { docsSiteDefaultTokens, docsSiteTokensEqual, docsSiteTokensFor };

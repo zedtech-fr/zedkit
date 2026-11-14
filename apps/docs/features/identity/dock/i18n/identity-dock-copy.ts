@@ -5,4 +5,8 @@ export const identityDockCopy = {
   closeLabel: "Close identity assistant",
   shortcutHint: "Open the identity assistant (Ctrl+I or ⌘I)",
   statusRestored: "Site look restored to the default.",
+  startingPointsTitle: "Don't start from zero",
+  startingPointsHint: "Pick a look as your starting point, then adjust the fields below.",
+  startingPointsLabel: "Starting looks",
+  defaultNote: "(default)",
 } as const;

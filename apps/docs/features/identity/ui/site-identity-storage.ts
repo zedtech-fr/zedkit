@@ -31,6 +31,10 @@ function readStored(key: string): string | null {
   return raw.value;
 }
 
+function readDocsSiteIdentityId(): string | null {
+  return readStored(DOCS_SITE_IDENTITY_STORAGE_KEY);
+}
+
 function readDocsSiteTokens(): IdentityTokens | null {
   const stored = readStored(docsSiteTokensStorageKey());
   if (!stored) return null;
@@ -82,6 +86,7 @@ export {
   docsSiteLookDiffersFromDefaults,
   docsSiteTokensStorageKey,
   purgeLegacyIdentityStorage,
+  readDocsSiteIdentityId,
   readDocsSiteTokens,
   writeDocsSiteTokens,
 };
