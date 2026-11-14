@@ -87,9 +87,18 @@ _git_grep_ere() {
   fi
 }
 
+# Public live-service slug is the same token as an internal actor name.
+# Allow it as a quoted string or URL path; prose still fails.
+_filter_public_live_slug() {
+  local slug
+  slug=$(printf '%s' "${TOOLS_ENCODED[8]}" | _tone_b64decode)
+  grep -vE "/${slug}/|\"${slug}\"" || true
+}
+
 # Scan every surface for one pattern. $1 = ERE, $2 = i or empty, $3 = label.
+# $4 = public-slug to allowlist the hosted live-service path/string.
 _scan() {
-  local pattern="$1" iflag="$2" label="$3"
+  local pattern="$1" iflag="$2" label="$3" allow="${4:-}"
   if [ "${GITHUB_EVENT_NAME:-}" = "pull_request" ] && [ -n "${GITHUB_REF:-}" ]; then
     local pr="${GITHUB_REF#refs/pull/}"
     pr="${pr%/merge}"
@@ -106,6 +115,9 @@ _scan() {
 
   local hits
   hits=$(_git_grep_ere "$iflag" -e "$pattern" -- . || true)
+  if [ "$allow" = "public-slug" ] && [ -n "$hits" ]; then
+    hits=$(printf '%s\n' "$hits" | _filter_public_live_slug)
+  fi
   if [ -n "$hits" ]; then
     echo "$label in tracked contents:"
     echo "$hits"
@@ -114,6 +126,9 @@ _scan() {
 
   local paths
   paths=$(git ls-files | _grep_ere "$iflag" -e "$pattern" || true)
+  if [ "$allow" = "public-slug" ] && [ -n "$paths" ]; then
+    paths=$(printf '%s\n' "$paths" | _filter_public_live_slug)
+  fi
   if [ -n "$paths" ]; then
     echo "$label in tracked paths:"
     echo "$paths"
@@ -129,6 +144,9 @@ _scan() {
     else
       uhits=$(printf '%s\n' "$untracked" | xargs grep -HnE -e "$pattern" -- 2>/dev/null || true)
     fi
+    if [ "$allow" = "public-slug" ] && [ -n "$uhits" ]; then
+      uhits=$(printf '%s\n' "$uhits" | _filter_public_live_slug)
+    fi
     if [ -n "$uhits" ]; then
       echo "$label in untracked contents:"
       echo "$uhits"
@@ -138,7 +156,7 @@ _scan() {
 }
 
 _scan "$terms" "i" "banned marketing terms"
-_scan "$tools" "" "internal review actor/tool names"
+_scan "$tools" "" "internal review actor/tool names" "public-slug"
 _scan "$lanes" "i" "internal review lane ids"
 _scan "$phrasing" "i" "banned phrasing"
 

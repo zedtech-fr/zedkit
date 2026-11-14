@@ -32,11 +32,11 @@ const ENTRY_STATUSES = new Set<TimelineEntryStatus>(["running", "completed", "fa
 const VERDICTS = new Set<ReviewVerdict>(["approve", "request-changes", "comment"]);
 
 export function liveServiceName(): string {
-  return [["ze", "dos"].join(""), "bot"].join("-");
+  return "zedos-bot";
 }
 
 export function runsApiBaseEnvName(): string {
-  return ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
+  return "NEXT_PUBLIC_ZEDOS_RUNS_API_BASE";
 }
 
 export function runsListUrl(base: string, cursor: string | null): string {
@@ -180,6 +180,11 @@ function request(options: RunsFetchOptions): FetchJsonOptions {
   };
 }
 
+/**
+ * GET pages of the hosted runs list. Caps at `PAGE_CAP` × `LIMIT` (2000).
+ * A leftover `nextCursor` is dropped and the Result stays ok (partial list;
+ * same contract as DATA-SOURCES.md Caps).
+ */
 export async function fetchRunsIndex(
   options: RunsFetchOptions,
 ): Promise<Result<RunsApiRun[], Error>> {

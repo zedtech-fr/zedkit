@@ -79,8 +79,8 @@ const stop = events.subscribe((event) => refresh(event));
 - Short name: fetchJson
 - Audience: Apps that GET JSON from the browser or Node 22 and need a Result, not a thrown stack.
 - Purpose: GET JSON with timeout, retry transient failures, honor Retry-After, and return a Result without echoing request headers.
-- When to use: One-shot or build-time JSON GETs that must survive 429, 403, 5xx, and timeouts.
-- When not to use: A repeating live feed; use pollingSource.
+- When to use: One-shot or build-time JSON GETs that must survive 429, 403 (rate-limit stand-in on some hosts), 5xx, and timeouts.
+- When not to use: A repeating live feed; use pollingSource. Invalid `timeoutMs` / `retries` / `intervalMs` throw `RangeError` (caller bug), not a Result.
 - See also: `Poll an endpoint as a live source`
 
 ```ts

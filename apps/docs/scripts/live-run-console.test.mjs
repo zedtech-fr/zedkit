@@ -210,7 +210,7 @@ test("liveRunApiUrl uses the assembled service path and never a token", () => {
 });
 
 test("liveRunsApiBase prefers the env origin and defaults to the hosted origin", () => {
-  const name = ["NEXT_PUBLIC_", ["ZE", "DOS"].join(""), "_RUNS_API_BASE"].join("");
+  const name = "NEXT_PUBLIC_ZEDOS_RUNS_API_BASE";
   assert.equal(liveRunsApiBase({ [name]: "https://example.com/runs/" }), "https://example.com/runs");
   assert.equal(liveRunsApiBase({}), "https://dev.zedkit.app");
   assert.match(
@@ -457,6 +457,28 @@ test("subscribeLiveRun sends v= after the first version and skips 204 emits", as
   assert.match(calls[0] ?? "", /\/api\/run$/);
   assert.match(calls[1] ?? "", /[?&]v=v1/);
   assert.ok(calls.every((url) => !/[?&]t=/.test(url)));
+});
+
+test("fetchLiveRunApi times out a hung request per attempt", async () => {
+  const result = await fetchLiveRunApi({
+    runId: "20261113T145002Z-45319b18",
+    timeoutMs: 20,
+    base: "https://dev.zedkit.app",
+    fetch: (_input, init) =>
+      new Promise((_, reject) => {
+        const signal = init?.signal;
+        const fail = () => {
+          reject(signal?.reason instanceof Error ? signal.reason : new Error("aborted"));
+        };
+        if (signal?.aborted) {
+          fail();
+          return;
+        }
+        signal?.addEventListener("abort", fail, { once: true });
+      }),
+  });
+  assert.equal(result.kind, "error");
+  assert.equal(result.retryable, true);
 });
 
 test("fetchLiveRunApi rejects an invalid run id before fetch", async () => {

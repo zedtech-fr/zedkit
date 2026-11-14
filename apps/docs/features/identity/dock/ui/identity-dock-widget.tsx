@@ -107,7 +107,6 @@ function IdentityDockWidget() {
           aria-label={identityDockCopy.pillLabel}
           aria-keyshortcuts="Control+I Meta+I"
           title={identityDockCopy.shortcutHint}
-          tabIndex={expanded ? -1 : undefined}
           onClick={() => setExpanded(true)}
         >
           <IdentityDockSwatch />

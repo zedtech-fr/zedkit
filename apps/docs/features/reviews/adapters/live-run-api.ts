@@ -47,7 +47,10 @@ export type FetchLiveRunApiOptions = {
   base?: string | undefined;
   fetch?: typeof globalThis.fetch | undefined;
   signal?: AbortSignal | undefined;
+  timeoutMs?: number | undefined;
 };
+
+const LIVE_RUN_TIMEOUT_MS = 10_000;
 
 export function liveRunsApiBase(env: Record<string, string | undefined> = process.env): string {
   const fromEnv = env[runsApiBaseEnvName()]?.trim() ?? "";
@@ -427,12 +430,21 @@ export async function fetchLiveRunApi(options: FetchLiveRunApiOptions): Promise<
     return { kind: "invalid", error: new PermanentError("live run: invalid run id") };
   }
   const fetchImpl = options.fetch ?? globalThis.fetch;
+  const timeoutMs = options.timeoutMs ?? LIVE_RUN_TIMEOUT_MS;
+  const timeout = Number.isFinite(timeoutMs) && timeoutMs > 0 ? AbortSignal.timeout(timeoutMs) : undefined;
+  const caller = options.signal;
+  const signal =
+    timeout === undefined
+      ? caller
+      : caller === undefined
+        ? timeout
+        : AbortSignal.any([caller, timeout]);
   const init: RequestInit = {
     method: "GET",
     credentials: "omit",
     cache: "no-store",
   };
-  if (options.signal !== undefined) init.signal = options.signal;
+  if (signal !== undefined) init.signal = signal;
   const fetched = await tryCatchAsync(() => fetchImpl(url, init));
   if (!fetched.ok) {
     if (options.signal?.aborted) return { kind: "aborted" };

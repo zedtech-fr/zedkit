@@ -1036,8 +1036,8 @@
           "shortName": "fetchJson",
           "audience": "Apps that GET JSON from the browser or Node 22 and need a Result, not a thrown stack.",
           "purpose": "GET JSON with timeout, retry transient failures, honor Retry-After, and return a Result without echoing request headers.",
-          "whenToUse": "One-shot or build-time JSON GETs that must survive 429, 403, 5xx, and timeouts.",
-          "whenNotToUse": "A repeating live feed; use pollingSource.",
+          "whenToUse": "One-shot or build-time JSON GETs that must survive 429, 403 (rate-limit stand-in on some hosts), 5xx, and timeouts.",
+          "whenNotToUse": "A repeating live feed; use pollingSource. Invalid `timeoutMs` / `retries` / `intervalMs` throw `RangeError` (caller bug), not a Result.",
           "derivedFrom": null,
           "example": "import { fetchJson } from \"@zedtech/zedkit-live\";\n\nconst result = await fetchJson(\"https://example.com/api/runs\", {\n  timeoutMs: 10_000,\n  retries: 2,\n});\nif (!result.ok) throw result.error;",
           "examples": [
@@ -3741,8 +3741,8 @@
               }
             ]
           },
-          "a11y": "Each composed zone takes `label` (`role=\"status\"`, default `messages.loading`). Nested `CardSkeleton` / `DetailPanelSkeleton` receive the same `label`. The label is not shown visually.",
-          "troubleshooting": "Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only.",
+          "a11y": "One wrapper `role=\"status\"` with `label` (default `messages.loading`). Nested `CardSkeleton` / `PageHeaderSkeleton` / `DetailPanelSkeleton` are `aria-hidden` so the wait is announced once (WCAG 4.1.3). The label is not shown visually.",
+          "troubleshooting": "Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only. `cards` clamps to 0–8.",
           "seeAlso": [
             "Load each zone with a faithful skeleton",
             "Keep chrome mounted across client navigations"

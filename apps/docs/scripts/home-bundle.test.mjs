@@ -102,7 +102,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(lead, /\bTabs\b|TabsList|TabsTrigger|TabsContent|useState|HeroKitId|isHeroKit|heroKits/);
   assert.match(lead, /data-home-hero=/);
   assert.match(lead, /<HomeHeroIllustration\s*\/>/);
-  assert.match(copy, /title: "Want your next build twice as fast\? Build something with zedkit\."/);
+  assert.match(copy, /title: "Want your next build to go faster\? Build something with zedkit\."/);
   assert.match(
     copy,
     /sub: "The second time is faster, easier and better than the first\."/,
@@ -133,7 +133,7 @@ test("home hero first screen is the mockup lead and glass illustration, not the 
   assert.doesNotMatch(lead, /text-balance/);
   assert.doesNotMatch(
     lead,
-    /Can zedkit save you half your grey hairs|Want your next build twice as fast|Could zedkit spare you half the rework|Code that.?s checked|Try it yourself/,
+    /Can zedkit save you half your grey hairs|Want your next build twice as fast|Want your next build to go faster|Could zedkit spare you half the rework|Code that.?s checked|Try it yourself/,
   );
   assert.doesNotMatch(lead, /homeHeroCopy\.hero\.titleClause|titleClause/);
   assert.doesNotMatch(lead, /^["']use client["']/m);
@@ -532,10 +532,10 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
     pasteCopy,
     /Name the kits\. The agent follows the map, installs them in order and validates once at the end\./,
   );
-  assert.match(pasteCopy, /"2 seconds"/);
+  assert.match(pasteCopy, /"Right away"/);
   assert.match(pasteCopy, /The agent has the kits you named and starts the map\./);
   assert.doesNotMatch(pasteCopy, /land in your repo/);
-  assert.match(pasteCopy, /"15 to 45 min"/);
+  assert.match(pasteCopy, /"Same sitting"/);
   assert.match(pasteCopy, /"Same run"/);
   assert.match(pasteCopy, /"Any time after"/);
   assert.doesNotMatch(pasteCopy, /landsHeading|nestLands|fullSteps/);

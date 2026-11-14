@@ -245,4 +245,25 @@ describe("fetchJson", () => {
     expect(serialized).not.toContain(TOKEN);
     expect(serialized).not.toContain("test-token-do-not-leak-9f3a");
   });
+
+  it("stops backoff sleep when the caller aborts", async () => {
+    const controller = new AbortController();
+    const fetchImpl = vi.fn(async () => textResponse("down", 500));
+    const sleep = vi.fn(() => new Promise<void>(() => {}));
+    const pending = fetchJson(url, {
+      fetch: fetchImpl,
+      sleep,
+      retries: 2,
+      intervalMs: 50,
+      signal: controller.signal,
+    });
+    await vi.waitFor(() => expect(sleep).toHaveBeenCalled());
+    controller.abort();
+    const result = await pending;
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error).toBeInstanceOf(TransientError);
+    expect(result.error.message).toBe("fetchJson: aborted");
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
 });

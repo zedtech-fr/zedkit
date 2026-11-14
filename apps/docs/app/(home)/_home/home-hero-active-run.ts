@@ -37,9 +37,8 @@ const STAGING_RUNS_ORIGIN = "https://dev.zedkit.app";
 const TITLE_MAX = 160;
 const SUMMARY_MAX = 160;
 
-/** Split so the public-hygiene denylist does not match a contiguous live-service token. */
 function liveServiceName(): string {
-  return [["ze", "dos"].join(""), "bot"].join("-");
+  return "zedos-bot";
 }
 
 /** Same allowlist as reviews `sanitizeLiveUrl` (host + `/live/` + run id). */

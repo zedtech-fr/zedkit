@@ -238,8 +238,9 @@ second fonts `pnpm add` next to that snippet.
 - Simple and Expert share `IdentityLookForm`. Simple colour fields read and
   patch `tokens[scheme]` (the preview), never always-light. Expert color
   fields pass `scheme` on patch, not the host default. A Radix
-  `SelectTrigger` is a button: `htmlFor` cannot name it — set `aria-label`
-  (Classic ChoiceSelect and catalog filters). After deleting a look, focus
+  `SelectTrigger` or `Checkbox` is a button: `htmlFor` cannot name it — set
+  `aria-label` or `aria-labelledby` (Classic ChoiceSelect and catalog
+  filters). After deleting a look, focus
   `[data-identity-look-control]`. User-facing editor copy is US spelling
   (`color`, not `colour`); `scripts/spelling.test.mjs` covers
   `features/identity/editor/i18n/identity-editor-copy.ts`.

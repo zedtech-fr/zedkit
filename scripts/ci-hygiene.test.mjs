@@ -37,6 +37,15 @@ describe("ci hygiene job", () => {
     assert.match(src, /git ls-files -z --others --exclude-standard/);
     assert.match(src, /xargs -0 grep -IHinE/);
   });
+
+  it("allowlists the public live-service slug so callers write it in full", () => {
+    const src = readFileSync(join(root, "scripts/denylist-patterns.sh"), "utf8");
+    const tone = readFileSync(join(root, "scripts/check-tone.sh"), "utf8");
+    assert.match(src, /\$\{frag\}-bot/);
+    assert.match(src, /do not split them to dodge the scan/);
+    assert.match(tone, /_filter_public_live_slug/);
+    assert.match(tone, /public-slug/);
+  });
 });
 
 describe("ci-required aggregate", () => {

@@ -60,6 +60,8 @@ Public TypeScript monorepo (pnpm workspaces): small generic packages. See
   dev`.
   File budget (exclude generated and lockfiles): green ≤20, orange 21–30
   (warn and offer a split), red >30 (warn, propose seams, do not stop).
+  `epic/*` into `dev` may exceed the file budget and the one-package rule
+  (warn and propose seams, do not stop).
 - List assumptions before code or a plan. A missing assumptions table
   is a blocking challenge.
 - **Depth first, then route by shape.** On every user message, before an

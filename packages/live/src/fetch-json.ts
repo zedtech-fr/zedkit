@@ -32,7 +32,30 @@ function defaultSleep(ms: number): Promise<void> {
   });
 }
 
+function sleepOrAbort(
+  sleep: (ms: number) => Promise<void>,
+  ms: number,
+  callerSignal: AbortSignal | undefined,
+): Promise<"slept" | "aborted"> {
+  if (callerSignal === undefined) {
+    return sleep(ms).then(() => "slept" as const);
+  }
+  if (callerSignal.aborted) return Promise.resolve("aborted");
+  return new Promise((resolve) => {
+    const onAbort = () => {
+      resolve("aborted");
+    };
+    callerSignal.addEventListener("abort", onAbort, { once: true });
+    void sleep(ms).then(() => {
+      callerSignal.removeEventListener("abort", onAbort);
+      resolve("slept");
+    });
+  });
+}
+
 function isTransientStatus(status: number): boolean {
+  // 403 is intentional: some hosts (GitHub raw, CDNs) emit 403 as a
+  // rate-limit stand-in. Treat it like 429, not a permanent deny.
   return status >= 500 || status === 408 || status === 403 || status === 429;
 }
 
@@ -131,7 +154,9 @@ function delayMs(
 /**
  * GET JSON with a timeout, retry transient HTTP and network failures, honor
  * `Retry-After` on 429, and return a `Result`. Request header values never
- * appear in `error.message`.
+ * appear in `error.message`. Invalid `timeoutMs` / `retries` / `intervalMs`
+ * throw `RangeError` (caller bug), not a Result. Caller abort unblocks
+ * backoff sleep.
  */
 export async function fetchJson(
   input: RequestInfo | URL,
@@ -170,7 +195,14 @@ export async function fetchJson(
     if (giveUp) {
       return { ok: false, error: lastError };
     }
-    await sleep(delayMs(outcome, attempt + 1, intervalMs, maxBackoffMs));
+    const waited = await sleepOrAbort(
+      sleep,
+      delayMs(outcome, attempt + 1, intervalMs, maxBackoffMs),
+      callerSignal,
+    );
+    if (waited === "aborted") {
+      return { ok: false, error: new TransientError("fetchJson: aborted") };
+    }
   }
   return { ok: false, error: lastError };
 }

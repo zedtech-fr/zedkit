@@ -31,7 +31,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Model per kind × stakes | `.agents/atlas/ai-kit.md` | The only home of model ids: base model + effort. | `route` | 2026-11-07 |
 | Rules with IDs, tests and checkers | `.agents/atlas/ai-kit.md` | A-xx, H-xx, P-xx, S-xx live under `.agents/domain/`. | `AGENTS.md` | 2026-11-07 |
 | Evidence of the last setup run | `.agents/atlas/setup-ai.md` | One-shot reading log; not maintained. | nothing: read-only history | 2026-11-07 |
-| Public hygiene checks | `.agents/atlas/ci-gates.md` | CI `hygiene` runs the three scripts; skip `*.png`; never spell a banned term. | `hygiene` | 2026-11-13 |
+| Public hygiene checks | `.agents/atlas/ci-gates.md` | CI `hygiene` runs the three scripts; skip `*.png`; never spell a banned term. Public live-service slug is quoted/URL-path allowlisted in both checkers. | `hygiene` | 2026-11-14 |
 | Compact agent gates | `.agents/atlas/ci-gates.md` | Summaries on stdout; full logs in gitignored `.agent-logs/`. | root `AGENTS.md` Commands | 2026-11-13 |
 | CI scope and branch rules | `.agents/atlas/ci-gates.md` | PRs into `dev` are affected-only; `main` is full CI. | which CI jobs run for a PR | 2026-11-07 |
 | CI registry-deps for test:registry | `.agents/atlas/ci-gates.md` | Unconditional dist build for registry-imported packages. | `scripts/ci-hygiene.test.mjs` | 2026-11-13 |
@@ -96,7 +96,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP; label is `Started (UTC)`. `groupLabel` aliases `gate`/`subagent`. | `agent-console.test.tsx` | 2026-11-14 |
 | DetailPanel grid columns | `.agents/atlas/ui-primitives.md` | Stacked below `sm`; unprefixed `grid-pair` pairs at 375 and breaks `/issues`. Pass columns at the call site. | `detail.test.tsx` | 2026-11-14 |
 | Persistent shell and page transition | `.agents/atlas/ui-primitives.md` | Slot host in a layout ancestor; trap: do not wrap fumadocs `DocsLayout` children. | `@zedtech/zedkit-ui` | 2026-11-14 |
-| Route skeletons | `packages/ui/src/layout/route-skeletons.tsx` | Composed wait shapes; trap: forward `label` to nested `CardSkeleton` / `DetailPanelSkeleton`. Catalog Status starts at `alpha`. | `@zedtech/zedkit-ui` | 2026-11-14 |
+| Route skeletons | `packages/ui/src/layout/route-skeletons.tsx` | Composed wait shapes; trap: nested zone skeletons are `aria-hidden`; one wrapper `role=status`. `cards` clamps to 0–8. Catalog Status starts at `alpha`. | `@zedtech/zedkit-ui` | 2026-11-14 |
 | Docs preview Mobile toggle | `.agents/atlas/docs-site.md` | Demos read `usePreviewMobile`; kit demos must not import a feature. | AppShell / admin-dashboard / project-tracker demos | 2026-11-12 |
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |

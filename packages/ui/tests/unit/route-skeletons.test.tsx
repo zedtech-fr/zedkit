@@ -38,19 +38,37 @@ describe("route skeletons", () => {
     expect(container.querySelector("[data-slot='list-page-skeleton']")).not.toBeNull();
     expect(container.querySelectorAll("[data-slot='card-skeleton']").length).toBe(1);
     expect(container.querySelector("[data-slot='page-header-skeleton']")).not.toBeNull();
-    expect(screen.getAllByRole("status", { name: "Loading catalog" })).toHaveLength(2);
+    expect(screen.getAllByRole("status", { name: "Loading catalog" })).toHaveLength(1);
+    expect(container.querySelector("[data-slot='list-page-skeleton']")?.getAttribute("role")).toBe(
+      "status",
+    );
+    expect(container.querySelector("[data-slot='page-header-skeleton']")?.getAttribute("aria-hidden")).toBe(
+      "true",
+    );
+    expect(container.querySelector("[data-slot='card-skeleton']")?.getAttribute("aria-hidden")).toBe(
+      "true",
+    );
 
     rerender(<ListPageSkeleton cards={0} />);
     expect(container.querySelectorAll("[data-slot='card-skeleton']").length).toBe(0);
 
     rerender(<ListPageSkeleton />);
     expect(container.querySelectorAll("[data-slot='card-skeleton']").length).toBe(3);
+
+    rerender(<ListPageSkeleton cards={99} />);
+    expect(container.querySelectorAll("[data-slot='card-skeleton']").length).toBe(8);
   });
 
   it("sizes the detail skeleton to its rows", () => {
     const { container, rerender } = render(<DetailPageSkeleton label="Loading item" rows={1} />);
     expect(container.querySelector("[data-slot='detail-page-skeleton']")).not.toBeNull();
-    expect(screen.getAllByRole("status", { name: "Loading item" })).toHaveLength(2);
+    expect(screen.getAllByRole("status", { name: "Loading item" })).toHaveLength(1);
+    expect(container.querySelector("[data-slot='page-header-skeleton']")?.getAttribute("aria-hidden")).toBe(
+      "true",
+    );
+    expect(container.querySelector("[data-slot='detail-panel-skeleton']")?.getAttribute("aria-hidden")).toBe(
+      "true",
+    );
     expect(container.querySelector("[data-slot='detail-panel-skeleton']")?.childElementCount).toBe(1);
 
     rerender(<DetailPageSkeleton rows={0} />);

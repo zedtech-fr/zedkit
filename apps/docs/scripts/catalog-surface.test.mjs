@@ -102,7 +102,9 @@ test("Category group holds chips only; toolbar is a labelled group", () => {
   assert.doesNotMatch(chips, /Checkbox/);
   assert.match(stable, /htmlFor="catalog-stable-only"/);
   assert.match(stable, /id="catalog-stable-only"/);
-  assert.doesNotMatch(stable, /aria-label/);
+  assert.match(stable, /aria-labelledby="catalog-stable-only-label"/);
+  assert.match(stable, /id="catalog-stable-only-label"/);
+  assert.doesNotMatch(stable, /aria-label=/);
   assert.match(toolbar, /role="group"/);
   assert.match(toolbar, /toolbarAriaLabel/);
   assert.doesNotMatch(toolbar, /role="toolbar"/);
@@ -321,7 +323,10 @@ test("the dock footer is Reset only, not Apply or Preview", () => {
   assert.doesNotMatch(editorCopy, /applied:/);
   assert.doesNotMatch(bar, /Textarea|PromptInput|BriefForm/);
   const widget = read("features/identity/dock/ui/identity-dock-widget.tsx");
+  const toolbar = read("features/identity/dock/ui/identity-dock-panel-toolbar.tsx");
   assert.match(widget, /panelRef\.current\?\.focus\(\)/);
+  assert.doesNotMatch(widget, /tabIndex=\{expanded \? -1/);
+  assert.match(toolbar, /DrawerTitle/);
   assert.doesNotMatch(widget, /aria-label="Drag to resize"/);
 });
 

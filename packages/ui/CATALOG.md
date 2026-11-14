@@ -679,8 +679,8 @@ import { CardSkeleton } from "@zedtech/zedkit-ui";
 - When not to use: For one card, table, or panel — use `CardSkeleton` / `DataTableSkeleton` / `DetailPanelSkeleton`. For a named operation — use `StatusLabel`.
 - See also: `Load each zone with a faithful skeleton`, `Keep chrome mounted across client navigations`
 - Examples: Docs page, List page, Detail page
-- A11y: Each composed zone takes `label` (`role="status"`, default `messages.loading`). Nested `CardSkeleton` / `DetailPanelSkeleton` receive the same `label`. The label is not shown visually.
-- Troubleshooting: Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only.
+- A11y: One wrapper `role="status"` with `label` (default `messages.loading`). Nested `CardSkeleton` / `PageHeaderSkeleton` / `DetailPanelSkeleton` are `aria-hidden` so the wait is announced once (WCAG 4.1.3). The label is not shown visually.
+- Troubleshooting: Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only. `cards` clamps to 0–8.
 
 ```ts
 import { DocsPageSkeleton } from "@zedtech/zedkit-ui";

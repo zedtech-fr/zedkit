@@ -8,9 +8,9 @@ export const homePasteCopy = {
   promptAriaLabel: "Paste setup prompt",
   promptCopyLabel: "Copy paste prompt",
   timeline: [
-    { label: "2 seconds", body: "The agent has the kits you named and starts the map." },
+    { label: "Right away", body: "The agent has the kits you named and starts the map." },
     {
-      label: "15 to 45 min",
+      label: "Same sitting",
       body: "The agent reads your code, docs and CI, then asks at most eight questions.",
     },
     {

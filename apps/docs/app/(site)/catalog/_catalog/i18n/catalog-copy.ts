@@ -3,7 +3,7 @@ export const catalogCopy = {
   metadata: {
     /** The root layout template adds " · zedkit". */
     title: "Catalog",
-    description: "Browse and filter every zedkit catalog need by area, maturity, and search text.",
+    description: "Browse and filter zedkit catalog needs by area, maturity, and search text.",
   },
   jsonLd: {
     title: "Catalog",

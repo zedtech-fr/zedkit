@@ -226,7 +226,7 @@ test("GitHub review fallback reads Confidence and state from the latest matching
 test("runs list URL assembles the live-service path from the base", () => {
   assert.equal(
     runsListUrl(RUNS_BASE, null),
-    `${RUNS_BASE}/${[["ze", "dos"].join(""), "bot"].join("-")}/api/runs?limit=200`,
+    `${RUNS_BASE}/zedos-bot/api/runs?limit=200`,
   );
 });
 
@@ -571,7 +571,7 @@ test("runs adapter stops after 10 pages with a leftover cursor and still succeed
     retries: 0,
     runsBase: RUNS_BASE,
   });
-  assert.equal(listed.ok, true);
+  assert.equal(listed.ok, true, "hitting PAGE_CAP is success (partial list), not an error");
   assert.equal(listed.value.length, 10);
   assert.equal(calls.length, 10);
 });
@@ -582,14 +582,12 @@ test("readGithubToken prefers the dedicated env and ignores blanks", () => {
   assert.equal(readGithubToken({ ZEDKIT_GITHUB_READ_TOKEN: "  ", GITHUB_TOKEN: "" }), undefined);
 });
 
-test("site factory assembles the runs-API origin env name", () => {
+test("site factory reads the runs-API origin env name from the adapter", () => {
   const live = readFileSync(join(reviewsRoot, "adapters/live.ts"), "utf8");
   const runsApi = readFileSync(join(reviewsRoot, "adapters/runs-api.ts"), "utf8");
   assert.match(live, /runsApiBaseEnvName/);
-  assert.match(runsApi, /_RUNS_API_BASE/);
+  assert.match(runsApi, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
   assert.doesNotMatch(live, /_RUNS_API_BASE/);
-  assert.doesNotMatch(live, new RegExp(["ZE", "DOS"].join("")));
-  assert.doesNotMatch(runsApi, new RegExp(["ZE", "DOS"].join("")));
 });
 
 test("client review files never mention GitHub token env names", () => {

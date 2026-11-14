@@ -23,7 +23,7 @@ const copy = homeHeroCopy.heroIllustration;
 const TITLE = { issueFallback: copy.issueFallback, prFallback: copy.prFallback, untitled: copy.untitled };
 
 function serviceName() {
-  return [["ze", "dos"].join(""), "bot"].join("-");
+  return "zedos-bot";
 }
 
 function hostedLive(runId = "20261113T120000Z-hero1") {

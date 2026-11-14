@@ -23,8 +23,8 @@ const UNSAFE_PATH_PATTERN = /\/home\/|\/Users\/|\\Users\\/;
 /** Path-safe run ids only: no `..`, slashes, or spaces. */
 export const RUN_ID_PATTERN = LIVE_CONSOLE_RUN_ID_PATTERN;
 
-/** Staging hosted-console href prefix. Folder token is assembled (hygiene bans). */
-export const HOSTED_LIVE_HREF_PREFIX = `https://dev.zedkit.app/${[["ze", "dos"].join(""), "bot"].join("-")}/live/`;
+/** Staging hosted-console href prefix (public live-service slug; hygiene-allowlisted). */
+export const HOSTED_LIVE_HREF_PREFIX = "https://dev.zedkit.app/zedos-bot/live/";
 const HOSTED_LIVE_PREFIX_URL = new URL(HOSTED_LIVE_HREF_PREFIX);
 const UNSAFE_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+(?!\[redacted\])[A-Za-z0-9._~+/=-]+/i;
 

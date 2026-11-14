@@ -83,10 +83,13 @@ function CatalogStableOnly({
     <Stack direction="horizontal" gap="sm" className="ms-auto min-h-target items-center">
       <Checkbox
         id="catalog-stable-only"
+        aria-labelledby="catalog-stable-only-label"
         checked={checked}
         onCheckedChange={(value) => onFilters({ status: value === true ? "stable" : "all" })}
       />
-      <Label htmlFor="catalog-stable-only">{catalogCopy.filters.stableOnly}</Label>
+      <Label id="catalog-stable-only-label" htmlFor="catalog-stable-only">
+        {catalogCopy.filters.stableOnly}
+      </Label>
     </Stack>
   );
 }

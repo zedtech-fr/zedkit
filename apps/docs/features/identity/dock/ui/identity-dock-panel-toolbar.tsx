@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconButton, Stack, Text } from "@zedtech/zedkit-ui";
+import { DrawerTitle, IconButton, Stack } from "@zedtech/zedkit-ui";
 
 import { identityAssistantCopy as copy } from "@/features/identity/dock/i18n/identity-assistant-copy";
 import { identityDockCopy } from "@/features/identity/dock/i18n/identity-dock-copy";
@@ -16,9 +16,9 @@ export function IdentityDockPanelToolbar({ onClose }: { onClose: () => void }) {
   const { setExpanded } = useIdentityAssistantStore();
   return (
     <Stack direction="horizontal" gap="sm" className="items-center pad-row">
-      <Text typeRole="label" className="content-shrink flex-1">
+      <DrawerTitle className="content-shrink flex-1 text-dense font-medium leading-none">
         {identityDockCopy.panelTitle}
-      </Text>
+      </DrawerTitle>
       {pathname === IDENTITY_EDITOR_HREF ? null : (
         <Link
           href={IDENTITY_EDITOR_HREF}
