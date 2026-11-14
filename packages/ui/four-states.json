@@ -110,6 +110,7 @@
     "IdentityScript",
     "IdentitySwitcher",
     "IdentityTokens",
+    "InPageAnchorScroll",
     "Input",
     "JumpToLatest",
     "Label",

@@ -270,7 +270,7 @@ export interface BadgeProps extends React_2.ComponentProps<"div">, VariantProps<
 
 // @public (undocumented)
 export const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "meta" | "outline" | "secondary" | "success" | "warning" | "soft-success" | "soft-warning" | "soft-danger" | "soft-info" | "soft-neutral" | null | undefined;
+    variant?: "meta" | "default" | "destructive" | "outline" | "secondary" | "success" | "warning" | "soft-success" | "soft-warning" | "soft-danger" | "soft-info" | "soft-neutral" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -891,7 +891,7 @@ export type HeadingProps = React_2.ComponentProps<"h1"> & VariantProps<typeof he
 
 // @public (undocumented)
 export const headingVariants: (props?: ({
-    typeRole?: "small" | "caption" | "display" | "body" | "label" | "nav" | "section" | "title" | "heading" | "band" | "cardTitle" | "lead" | "prose" | null | undefined;
+    typeRole?: "body" | "caption" | "label" | "nav" | "section" | "small" | "title" | "display" | "heading" | "band" | "cardTitle" | "lead" | "prose" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1246,6 +1246,12 @@ export const identityTokenSchema: z.ZodObject<{
     shadowSm: z.ZodString;
     shadowMd: z.ZodString;
 }, z.core.$strip>;
+
+// @public
+export function InPageAnchorScroll(): null;
+
+// @public
+export type InPageAnchorScrollProps = Record<string, never>;
 
 // @public (undocumented)
 export function Input(input: InputProps): React_2.JSX.Element;
@@ -1661,6 +1667,9 @@ export interface ScrollScenesProps extends Omit<React_2.ComponentProps<"div">, "
 }
 
 // @public
+export function scrollToFragment(target: HTMLElement): void;
+
+// @public
 export function SecretField(input: SecretFieldProps): React_2.JSX.Element;
 
 // @public (undocumented)
@@ -2014,7 +2023,7 @@ export type TextProps = React_2.ComponentProps<"p"> & VariantProps<typeof textVa
 // @public (undocumented)
 export const textVariants: (props?: ({
     variant?: "body" | "muted" | null | undefined;
-    typeRole?: "small" | "caption" | "body" | "label" | "lead" | "prose" | null | undefined;
+    typeRole?: "body" | "caption" | "label" | "small" | "lead" | "prose" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -2138,6 +2147,9 @@ export const useFormField: () => {
 
 // @public
 export function useIdentity(fallback?: string): string;
+
+// @public
+export function useInPageAnchorScroll(): void;
 
 // @public
 export function useMotionPreference(): MotionPreference;
@@ -2326,7 +2338,7 @@ export function ZedkitUiProvider(input: {
 
 // Warnings were encountered during analysis:
 //
-// src/identity/identity-contrast.ts:10:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
+// src/identity/identity-contrast.ts:11:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

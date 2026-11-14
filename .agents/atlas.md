@@ -67,6 +67,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Global not-found screen | `.agents/atlas/docs-site.md` | Route-private `_not-found/`; never a `not-found/` folder beside the file. | `*-copy.ts` | 2026-11-12 |
 | Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
+| In-page fragment clicks | `.agents/atlas/ui-primitives.md` | Repeat hash does not no-op; mount `InPageAnchorScroll` beside `ScrollReset`. | `in-page-anchor-scroll.test.tsx` | 2026-11-14 |
 | Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`; `defaultMode` is owned-tabs only. | `identity-look-form.test.mjs` | 2026-11-13 |
 | Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. Lives in `features/identity/ui/`, not `lib/`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |

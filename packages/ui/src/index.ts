@@ -289,6 +289,12 @@ export {
   type ScrollResetProps,
 } from "./scroll-reset.js";
 export {
+  InPageAnchorScroll,
+  scrollToFragment,
+  useInPageAnchorScroll,
+  type InPageAnchorScrollProps,
+} from "./in-page-anchor-scroll.js";
+export {
   JumpToLatest,
   useStickToBottom,
   type JumpToLatestProps,
