@@ -1122,6 +1122,7 @@ test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API so
   assert.match(contract, /kind: public-github-runs/);
   assert.match(contract, /ErrorState with no Retry/);
   assert.match(contract, /10 pages × 100/);
+  assert.match(contract, /leave `pr` unset until a pull request exists/);
   assert.match(contract, /Join order for the live merge/);
   assert.match(contract, /fills\s+each null field/);
   assert.doesNotMatch(contract, /later client refresh/);
