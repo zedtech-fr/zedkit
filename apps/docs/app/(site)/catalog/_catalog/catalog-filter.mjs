@@ -118,6 +118,10 @@ export function filterCatalogEntries(entries, filters = {}) {
 }
 
 /**
+ * `total` is the count after every active filter (area + status + q), so the
+ * status line denominator never ignores a filter. `areaTotal` keeps the
+ * legacy area-only scope for existing consumers/tests.
+ *
  * @param {CatalogIndexEntry[]} entries
  * @param {{ area?: string; status?: string; q?: string }} [filters]
  */
@@ -126,5 +130,5 @@ export function catalogFilterView(entries, filters = {}) {
   const countsByArea = countCatalogByArea(entries);
   const visible = filterCatalogEntries(entries, { ...filters, area });
   const areaTotal = area !== "all" ? countsByArea[area] : entries.length;
-  return { countsByArea, visible, areaTotal };
+  return { countsByArea, visible, areaTotal, total: visible.length };
 }

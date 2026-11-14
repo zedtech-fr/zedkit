@@ -10,32 +10,16 @@
 /* Title beside the glass card at 1440; stacked under the title at 390. */
 [data-catalog-shell] [data-catalog-intro] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   align-items: center;
   gap: calc(var(--spacing) * 12);
 }
 
 /*
- * High-value purple pad: same --zk-preview-stage-* recipe as the registry
- * primary Preview stage (apps/docs/app/docs-component-page.css). Copied,
- * not retargeted, so component pages stay untouched.
+ * High-value purple pad: consumes the shared --zk-preview-stage-* recipe
+ * (docs-shell-tokens.css). Do not fork the values here.
  */
 [data-catalog-shell] [data-catalog-counters] {
-  --zk-preview-stage-from: 243 63% 24%;
-  --zk-preview-stage-via: 243 70% 46%;
-  --zk-preview-stage-to: 254 71% 58%;
-  --zk-preview-stage-halo: 0 0% 100%;
-  --zk-preview-stage-orb: 262 85% 70%;
-  --zk-preview-stage-fill: linear-gradient(
-    135deg,
-    hsl(var(--zk-preview-stage-from)) 0%,
-    hsl(var(--zk-preview-stage-via)) 55%,
-    hsl(var(--zk-preview-stage-to)) 100%
-  );
-  --zk-preview-stage-halos:
-    radial-gradient(circle at calc(100% + 3rem) -4rem, hsl(var(--zk-preview-stage-halo) / 0.12) 0 7rem, transparent 7.1rem),
-    radial-gradient(ellipse 5.625rem 180% at 18% -40%, hsl(var(--zk-preview-stage-halo) / 0.1), transparent 70%),
-    radial-gradient(circle at -2.5rem calc(100% + 4rem), hsl(var(--zk-preview-stage-orb) / 0.55) 0 5rem, transparent 5.1rem);
   overflow: clip;
   padding: calc(var(--spacing) * 7);
   background-color: hsl(var(--zk-preview-stage-via));

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Button, Checkbox, Input, Label, Stack, Text, cn } from "@zedtech/zedkit-ui";
 import type { CatalogArea } from "@/content/catalog-index";
 import { CATALOG_AREAS } from "./catalog-filter.mjs";
@@ -131,4 +132,34 @@ export function catalogResultsStatusLine(shown: number, total: number) {
       {`${catalogCopy.results.statusLine(shown, total)} ${catalogCopy.results.stableLegend}`}
     </Text>
   );
+}
+
+/** Matches the 120ms URL-commit debounce in catalog-view.tsx. */
+const STATUS_ANNOUNCE_DELAY_MS = 120;
+
+/**
+ * Live region that announces the settled status only: the snapshot is
+ * debounced to the URL-commit point, so a keystroke burst announces once
+ * instead of every keystroke. The live region itself is kept, not removed.
+ */
+export function CatalogResultsStatus({ shown, total }: { shown: number; total: number }) {
+  const [announced, setAnnounced] = useState({ shown, total });
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    const timer = setTimeout(() => {
+      timerRef.current = null;
+      setAnnounced({ shown, total });
+    }, STATUS_ANNOUNCE_DELAY_MS);
+    timerRef.current = timer;
+    return () => {
+      if (timerRef.current === timer) {
+        clearTimeout(timer);
+        timerRef.current = null;
+      }
+    };
+  }, [shown, total]);
+
+  return <>{catalogResultsStatusLine(announced.shown, announced.total)}</>;
 }
