@@ -598,15 +598,12 @@ jobs:
       - name: Docs export presence
         run: |
           set -euo pipefail
-          test -f apps/docs/out/index.html
-          grep -q 'data-home-hero' apps/docs/out/index.html
-          test -f apps/docs/out/docs/index.html
-          test -f apps/docs/out/robots.txt
-          test -f apps/docs/out/sitemap.xml
-          test -f apps/docs/out/llms.txt
-          # App Router static export of app/api/search/route.ts
-          if ! find apps/docs/out/api/search apps/docs/out/api/search.html apps/docs/out/api/search.body -type f 2>/dev/null | grep -q .; then
-            # Next may emit search under a trailing-slash directory or a bare file.
+          # Next static export uses bare .html files (docs.html), not docs/index.html.
+          for f in apps/docs/out/index.html apps/docs/out/docs.html apps/docs/out/robots.txt apps/docs/out/sitemap.xml apps/docs/out/llms.txt; do
+            test -f "$f" || { echo "docs-build: missing $f" >&2; exit 1; }
+          done
+          grep -q 'data-home-hero' apps/docs/out/index.html || { echo "docs-build: index.html missing data-home-hero" >&2; exit 1; }
+          if ! find apps/docs/out/api -name 'search*' \( -type f -o -type d \) 2>/dev/null | grep -q .; then
             ls -la apps/docs/out/api >&2 || true
             echo "docs-build: missing static search export under apps/docs/out/api/search*" >&2
             exit 1
