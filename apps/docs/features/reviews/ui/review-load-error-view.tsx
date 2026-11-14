@@ -9,10 +9,14 @@ export function ReviewLoadErrorView({
   copy,
   title,
   description,
+  recoveryHref = "/issues",
+  recoveryLabel = copy.issue.back,
 }: {
   copy: ReviewsCopy;
   title: string;
   description: string;
+  recoveryHref?: string;
+  recoveryLabel?: string;
 }) {
   return (
     <ReviewAppearanceFrame>
@@ -22,7 +26,7 @@ export function ReviewLoadErrorView({
         description={copy.loadError.description}
         actions={
           <Button asChild variant="outline">
-            <Link href="/issues">{copy.issue.back}</Link>
+            <Link href={recoveryHref}>{recoveryLabel}</Link>
           </Button>
         }
       />

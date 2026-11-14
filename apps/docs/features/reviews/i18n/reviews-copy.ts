@@ -39,6 +39,7 @@ export const reviewsCopy = {
     title: "Issues",
     description: "Public work log of how each issue was planned, built, and reviewed.",
     empty: "No public runs yet",
+    recoveryLabel: "Back to home",
     openList: "Issue list",
     missing: "This issue or pull request is not on the public list.",
     missingNext: "Choose another from the list.",

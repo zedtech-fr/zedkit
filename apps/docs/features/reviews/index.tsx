@@ -57,13 +57,17 @@ import { ReviewPrView, UnlinkedPrView } from "./ui/review-pr-view";
 const port = createSiteReviewPort();
 const runsBase = liveRunsApiBase();
 
-async function reviewLoadErrorView(header: { title: string; description: string }) {
+async function reviewLoadErrorView(
+  header: { title: string; description: string },
+  recovery?: { href: string; label: string },
+) {
   if (await port.hasLoadError()) {
     return (
       <ReviewLoadErrorView
         copy={reviewsCopy}
         title={header.title}
         description={header.description}
+        {...(recovery === undefined ? {} : { recoveryHref: recovery.href, recoveryLabel: recovery.label })}
       />
     );
   }
@@ -89,10 +93,14 @@ export async function issuesIndexRobots() {
 }
 
 export async function ReviewListFeature() {
-  const loadError = await reviewLoadErrorView({
-    title: reviewsCopy.list.title,
-    description: reviewsCopy.list.description,
-  });
+  const loadError = await reviewLoadErrorView(
+    {
+      title: reviewsCopy.list.title,
+      description: reviewsCopy.list.description,
+    },
+    // The list route itself is the dead-end: link off-page to the home page.
+    { href: "/", label: reviewsCopy.list.recoveryLabel },
+  );
   if (loadError !== null) return loadError;
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
