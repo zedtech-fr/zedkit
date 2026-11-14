@@ -1321,18 +1321,19 @@ export function LogPane({ children }: { children: ReactNode }) {
 - Audience: Developers whose client-side navigation keeps the previous page's scroll position.
 - Purpose: Scrolls to the top (or to the `#hash` anchor) when the route key changes, leaving back/forward restoration to the browser.
 - When to use: Once near the root of the app, fed the router pathname (`usePathname()` in Next.js).
-- When not to use: For in-page anchor links or scroll spies — the browser already handles those.
+- When not to use: For in-page fragment clicks — use `Scroll to in-page hash targets on every click`. For scroll spies.
 - Examples: Next.js root, Inner scroll container
 - A11y: Jumps instantly by default and always under `prefers-reduced-motion: reduce`; `behavior="smooth"` only applies when motion is allowed. Does not move focus. Back/forward (popstate) navigations are skipped so the browser restores the previous position.
 - Composition: Renders nothing; `useScrollReset` is the same behaviour as a hook. Router-agnostic — the app passes the route key.
-- See also: `Render a route as a modal over the list`, `Keep chrome mounted across client navigations`
+- See also: `Render a route as a modal over the list`, `Keep chrome mounted across client navigations`, `Scroll to in-page hash targets on every click`
 
 ```ts
 "use client";
 import { ScrollReset } from "@zedtech/zedkit-ui";
 import { usePathname } from "next/navigation";
 export function RouteScroll() {
-  return <ScrollReset routeKey={usePathname()} />;
+  const pathname = usePathname();
+  return <ScrollReset routeKey={pathname} />;
 }
 ```
 
@@ -1340,6 +1341,42 @@ export function RouteScroll() {
 import { useScrollReset } from "@zedtech/zedkit-ui";
 const getMain = useCallback(() => document.querySelector<HTMLElement>("main"), []);
 useScrollReset(pathname, { target: getMain });
+```
+
+## Scroll to in-page hash targets on every click
+
+- Import: `@zedtech/zedkit-ui` — `InPageAnchorScroll`, `InPageAnchorScrollProps`, `useInPageAnchorScroll`, `scrollToFragment`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: InPageAnchorScroll
+- Audience: Developers whose in-page `#hash` links go dead when the URL already has that hash.
+- Purpose: Scrolls and focuses same-document `#hash` targets on every click, including when the URL hash is already set.
+- When to use: Once near the root, next to `ScrollReset`, so every in-page fragment link scrolls again on a repeat click.
+- When not to use: For route-change scroll (including `/docs` → `/#hash`) or a same-path link that also changes the query string — use `Reset scroll on route change` and the router. For scroll spies.
+- Examples: Root mount, Direct scroll
+- A11y: Smooth unless `prefers-reduced-motion` or `data-motion="reduce"`; then instant. Moves focus to the target and sets `tabIndex=-1` only when it is not natively focusable. Give the target an accessible name and a visible focus style. Honours CSS `scroll-margin-top`. Ignores modified clicks, `download`, non-`_self` targets, and query-string mismatches. After `pushState`, dispatches `hashchange` so hash-only listeners still run.
+- Composition: Renders nothing; `useInPageAnchorScroll` is the same listener as a hook. `scrollToFragment` is the scroll-and-focus helper. The component accepts `InPageAnchorScrollProps` (empty).
+- See also: `Reset scroll on route change`
+
+```ts
+"use client";
+import { InPageAnchorScroll, ScrollReset } from "@zedtech/zedkit-ui";
+import { usePathname } from "next/navigation";
+export function RouteScroll() {
+  const pathname = usePathname();
+  return (
+    <>
+      <ScrollReset routeKey={pathname} />
+      <InPageAnchorScroll />
+    </>
+  );
+}
+```
+
+```ts
+import { scrollToFragment } from "@zedtech/zedkit-ui";
+const target = document.getElementById("get-started");
+if (target) scrollToFragment(target);
 ```
 
 ## Keep chrome mounted across client navigations

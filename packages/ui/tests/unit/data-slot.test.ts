@@ -6,8 +6,11 @@ const SKIP = new Set([
   "toast",
   "closeRoute",
   "useScrollReset",
+  "useInPageAnchorScroll",
+  "scrollToFragment",
   "useStickToBottom",
   "ScrollReset",
+  "InPageAnchorScroll",
   "observeAnimate",
   "AnimateObserver",
   // Layout hosts: data-sticky-aside-* is the selector contract, not data-slot.

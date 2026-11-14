@@ -178,6 +178,26 @@ test("docs catalog private-folder files map to /catalog when there is no page.ts
   );
 });
 
+test("docs site-chrome files map to / when there is no page.tsx", () => {
+  assert.deepEqual(
+    routesFromFiles([
+      "apps/docs/components/site-chrome/route-scroll-reset.tsx",
+      "apps/docs/components/site-chrome/site-layout.tsx",
+      "apps/docs/components/site-chrome/route-scroll-reset.test.tsx",
+      ".agents/atlas.md",
+    ]),
+    ["/"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps\\docs\\components\\site-chrome\\route-scroll-reset.tsx"]),
+    ["/"],
+  );
+  assert.deepEqual(
+    routesFromFiles(["apps/docs/components/site-chrome/route-scroll-reset.test.tsx"]),
+    [],
+  );
+});
+
 test("catalog demo files and kit source-family files map from the docs manifest", () => {
   const catalog = {
     rich: {
@@ -225,7 +245,7 @@ test("catalog demo files and kit source-family files map from the docs manifest"
 test("unmapped docs-selected chrome falls back to the host visual:verify routes", () => {
   assert.deepEqual(
     docsRenderRoutes({
-      files: ["apps/docs/app/globals.css", "apps/docs/components/site-chrome/site-layout.tsx"],
+      files: ["apps/docs/app/globals.css"],
       manifest: buttonManifest,
     }),
     DOCS_RENDER_FALLBACK_ROUTES,
