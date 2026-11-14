@@ -610,7 +610,7 @@ test("list view copy and load error are wired through kit states", () => {
   assert.equal(reviewsCopy.list.empty, "No public runs yet");
   assert.equal(
     reviewsCopy.loadError.description,
-    "GitHub or the runs API did not answer. This page updates when the site is next published.",
+    "GitHub or the runs API did not answer. Try again later, or choose another issue.",
   );
   assert.equal("retry" in reviewsCopy.loadError, false);
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");

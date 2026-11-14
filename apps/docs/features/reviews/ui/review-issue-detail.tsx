@@ -26,7 +26,7 @@ import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/r
 import { OutcomeMark } from "./issue-status";
 import { CompactLogLink, TimelineRow } from "./review-timeline-row";
 
-function DetailMeta({
+export function DetailMeta({
   entries,
   links,
   copy,

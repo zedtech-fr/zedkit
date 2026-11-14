@@ -17,6 +17,7 @@ import { issueFullTitle } from "../model/github-hrefs";
 import type { IssueRecord, TimelineEntry, UnlinkedPullRequest } from "../ports/review-port";
 import { ReviewAppearanceFrame } from "./appearance-panel";
 import { TimelineRow } from "./review-timeline-row";
+import { DetailMeta } from "./review-issue-detail";
 
 function Timeline({
   entries,
@@ -75,6 +76,11 @@ export function ReviewPrView({
           </Text>
         ) : null}
       </Stack>
+      <DetailMeta
+        entries={issue.entries}
+        links={[{ kind: "issue", n: issue.number }, ...issue.pullRequests.map((n) => ({ kind: "pr" as const, n }))]}
+        copy={copy}
+      />
       <Timeline entries={issue.entries} copy={copy} empty={copy.issue.timelineEmpty} />
     </ReviewAppearanceFrame>
   );
@@ -96,6 +102,11 @@ export function UnlinkedPrView({
             <Link href="/issues">{copy.unlinked.back}</Link>
           </Button>
         }
+      />
+      <DetailMeta
+        entries={pullRequest.entries}
+        links={[{ kind: "pr", n: pullRequest.number }]}
+        copy={copy}
       />
       <Timeline
         entries={pullRequest.entries}

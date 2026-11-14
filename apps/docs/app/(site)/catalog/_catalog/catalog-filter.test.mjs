@@ -127,6 +127,32 @@ test("area, Stable only, and search compose on the visible list", () => {
   assert.equal(countsByArea.ui, 3);
 });
 
+test("total reflects all active filters (area+status+q), unlike areaTotal", () => {
+  const { visible, total, areaTotal } = catalogFilterView(MIXED, {
+    area: "ui",
+    status: "stable",
+    q: "alert",
+  });
+  assert.deepEqual(
+    visible.map((entry) => entry.title),
+    ["Alert"],
+  );
+  assert.equal(total, 1);
+  assert.equal(total, visible.length);
+  assert.equal(areaTotal, 3);
+});
+
+test("total with no filters is the whole index", () => {
+  const { total } = catalogFilterView(MIXED, { area: "all", status: "all", q: "" });
+  assert.equal(total, MIXED.length);
+});
+
+test("total shrinks with status and search alone, not just area", () => {
+  assert.equal(catalogFilterView(MIXED, { area: "all", status: "stable", q: "" }).total, 3);
+  assert.equal(catalogFilterView(MIXED, { area: "all", status: "all", q: "alert" }).total, 1);
+  assert.equal(catalogFilterView(MIXED, { area: "seo", status: "stable", q: "nope" }).total, 0);
+});
+
 test("areaTotal is the area size before search and before Stable only", () => {
   const { visible, areaTotal } = catalogFilterView(MIXED, {
     area: "ui",

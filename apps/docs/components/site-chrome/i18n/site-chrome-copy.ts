@@ -28,7 +28,7 @@ export const siteChromeCopy = {
     shell: (version: string) => `v${version}`,
   },
   loading: {
-    page: "Loading page",
+    page: "Loading page content",
     issues: "Loading issues",
     issue: "Loading issue",
   },

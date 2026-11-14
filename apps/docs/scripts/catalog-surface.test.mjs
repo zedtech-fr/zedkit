@@ -23,7 +23,9 @@ test("catalog view reads as a catalog: lead, counters, filters, results, no iden
   assert.match(view, /CatalogCounters/);
   assert.match(view, /CatalogFiltersToolbar/);
   assert.match(view, /CatalogResultsBodyLazy/);
-  assert.match(view, /catalogResultsStatusLine\(visible\.length, areaTotal\)/);
+  assert.match(view, /<CatalogResultsStatus/);
+  assert.match(view, /shown=\{visible\.length\}/);
+  assert.match(view, /total=\{areaTotal\}/);
   assert.doesNotMatch(view, /CatalogIdentity/);
   assert.doesNotMatch(view, /IdentityLookForm/);
   assert.doesNotMatch(view, /bindLookLibrary/);
@@ -33,7 +35,7 @@ test("catalog view reads as a catalog: lead, counters, filters, results, no iden
   const countersAt = view.indexOf("<CatalogCounters");
   const toolbarAt = view.indexOf("<CatalogFiltersToolbar");
   const resultsAt = view.indexOf("<CatalogResultsBodyLazy");
-  const statusAt = view.indexOf("catalogResultsStatusLine(visible.length, areaTotal)");
+  const statusAt = view.indexOf("<CatalogResultsStatus");
   assert.equal(
     leadAt >= 0 && countersAt >= 0 && toolbarAt >= 0 && resultsAt >= 0 && statusAt >= 0,
     true,

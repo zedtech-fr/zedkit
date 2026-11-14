@@ -211,6 +211,10 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   min-height: max(24px, var(--zk-tap-min, 0px));
 }
 
+#nd-page :is(h2, h3, h4, h5, h6):focus-within > button {
+  opacity: 1;
+}
+
 @media (width < 48rem) {
   #nd-page {
     --zk-type-doc-h1-leading: 2.125rem;
@@ -241,6 +245,8 @@ html[data-docs-shell] h2:not([data-identity-scope] *) {
   letter-spacing: inherit;
   color: inherit;
   text-decoration: none;
+  min-height: max(24px, var(--zk-tap-min, 0px));
+  align-self: center;
 }
 
 #nd-page .prose > h2 a:hover,

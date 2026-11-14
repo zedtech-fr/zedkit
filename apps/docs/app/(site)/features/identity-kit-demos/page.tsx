@@ -7,10 +7,14 @@ import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
 
-export const metadata = docsPageMetadata("/features/identity-kit-demos", {
-  title: identityKitDemosCopy.metadata.title,
-  description: identityKitDemosCopy.metadata.description,
-});
+export const metadata = docsPageMetadata(
+  "/features/identity-kit-demos",
+  {
+    title: identityKitDemosCopy.metadata.title,
+    description: identityKitDemosCopy.metadata.description,
+  },
+  { index: false },
+);
 
 export default function IdentityKitDemosPage() {
   return (

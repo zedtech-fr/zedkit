@@ -13,7 +13,7 @@ import {
 } from "./catalog-filter.mjs";
 
 import { CatalogCounters } from "./catalog-counters";
-import { CatalogFiltersToolbar, catalogResultsStatusLine } from "./catalog-filters";
+import { CatalogFiltersToolbar, CatalogResultsStatus } from "./catalog-filters";
 import { catalogCopy } from "./i18n/catalog-copy";
 
 const CatalogResultsBodyLazy = dynamic(
@@ -93,7 +93,7 @@ export function CatalogView({
         <Stack gap="md">
           <CatalogResultsBodyLazy filtered={visible} />
           <Stack data-catalog-results-heading="">
-            {catalogResultsStatusLine(visible.length, areaTotal)}
+            <CatalogResultsStatus shown={visible.length} total={areaTotal} />
           </Stack>
         </Stack>
       </Container>

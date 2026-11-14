@@ -30,7 +30,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
         {filtered.length === 0 ? (
           <Stack gap="sm">
             <Text variant="muted">{catalogCopy.results.empty}</Text>
-            <Link href="/catalog" className="text-dense text-primary link-offset hover:underline">
+            <Link href="/catalog" className="hit-target text-dense text-primary link-offset hover:underline">
               {catalogCopy.results.clearFiltersLink}
             </Link>
           </Stack>

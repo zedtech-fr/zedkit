@@ -15,14 +15,15 @@ test("quota copy is a neutral limit, not a daily allowance", () => {
 });
 
 test("a retry later today names the clock time, never earlier than Retry-After", () => {
-  assert.equal(retryText(2 * 3_600, now), "Try again after 12:00.");
-  assert.equal(retryText(2 * 3_600 + 1, now), "Try again after 12:01.");
+  assert.equal(retryText(2 * 3_600, now), "Try again after 12:00 PM.");
+  assert.equal(retryText(2 * 3_600 + 1, now), "Try again after 12:01 PM.");
+  assert.equal(retryText(4.5 * 3_600, now), "Try again after 2:30 PM.");
   assert.doesNotMatch(retryText(2 * 3_600 + 1, now), /tomorrow/i);
 });
 
 test("a retry tomorrow says tomorrow and the clock time", () => {
   const evening = new Date("2026-11-03T22:00:00.000Z");
-  assert.equal(retryText(5 * 3_600, evening), "Try again tomorrow after 03:00.");
+  assert.equal(retryText(5 * 3_600, evening), "Try again tomorrow after 3:00 AM.");
   assert.doesNotMatch(retryText(5 * 3_600, evening), /November|December|\d{4}/);
 });
 
@@ -36,7 +37,7 @@ test("customize hint points at the page, not a preview above the fields", () => 
 
 test("a retry next month names the explicit date, not tomorrow", () => {
   const nextMonth = Math.round((Date.parse("2026-12-15T09:30:00.000Z") - now.getTime()) / 1000);
-  assert.equal(retryText(nextMonth, now), "Try again after 15 December 2026, 09:30.");
+  assert.equal(retryText(nextMonth, now), "Try again after December 15, 2026, 9:30 AM.");
   assert.doesNotMatch(retryText(nextMonth, now), /tomorrow/i);
   assert.doesNotMatch(identityAssistantCopy.failure.quota(nextMonth), /daily|tomorrow/i);
 });

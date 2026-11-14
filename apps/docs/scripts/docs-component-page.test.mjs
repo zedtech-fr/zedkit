@@ -147,12 +147,14 @@ function colourCounts(colours) {
 
 test("primary preview stage uses pinned gradient tokens", () => {
   const css = stripComments(read("app/docs-component-page.css"));
+  const shell = stripComments(read("app/docs-shell-tokens.css"));
   assert.match(css, /\[data-component-preview="primary"\]/);
   assert.match(css, /\[data-preview-stage\]/);
-  assert.match(css, /--zk-preview-stage-from:/);
-  assert.match(css, /--zk-preview-stage-via:/);
-  assert.match(css, /--zk-preview-stage-to:/);
-  assert.match(css, /linear-gradient/);
+  assert.match(shell, /--zk-preview-stage-from:/);
+  assert.match(shell, /--zk-preview-stage-via:/);
+  assert.match(shell, /--zk-preview-stage-to:/);
+  assert.match(shell, /linear-gradient/);
+  assert.match(css, /var\(--zk-preview-stage-fill\)/);
   assert.match(css, /\[data-component-page\]/);
   assert.doesNotMatch(css, /#[0-9A-Fa-f]{3,8}\b/);
 

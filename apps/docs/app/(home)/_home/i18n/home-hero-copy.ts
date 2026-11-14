@@ -44,7 +44,7 @@ export const homeHeroCopy = {
     statusSkipped: "Skipped",
     stepStatusWithSummary: (status: string, summary: string | null) =>
       summary === null ? status : `${status} · ${summary}`,
-    issueBadge: ({ count }: { count: number }) => `${count} issue`,
+    issueBadge: ({ count }: { count: number }) => `${count} ${count === 1 ? "issue" : "issues"}`,
     emptyStateTitle: "Add an empty state to the tasks list",
     stepPlan: "Plan",
     stepBuild: "Build",

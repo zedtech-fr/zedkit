@@ -1,6 +1,9 @@
 export const noteListCopy = {
   title: "Notes",
   loading: "Loading notes",
+  loadError: "Notes failed to load.",
+  retry: "Retry",
+  addError: "Could not add that note. Try again.",
   empty: "No notes yet. Add one to try the fixture adapter.",
   label: "Title",
   add: "Add note",

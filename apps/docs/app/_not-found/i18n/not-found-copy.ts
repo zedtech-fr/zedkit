@@ -6,7 +6,7 @@ export const notFoundCopy = {
   },
   title: "Page not found",
   body: "The page you asked for does not exist or was moved.",
-  backLink: "Back to zedkit",
+  backLink: "Back to home",
 } as const;
 
 export type NotFoundCopy = typeof notFoundCopy;

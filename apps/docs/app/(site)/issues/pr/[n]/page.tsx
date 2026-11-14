@@ -5,6 +5,7 @@ import {
   ReviewUnlinkedFeature,
   reviewsCopy,
 } from "@/features/reviews";
+import { createSiteReviewPort } from "@/features/reviews/adapters/live";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
@@ -17,6 +18,14 @@ export async function generateMetadata({ params }: { params: Promise<{ n: string
   const number = parsePrNumber(n);
   if (number === null) {
     return docsPageMetadata("/issues", reviewsCopy.metadata.unlinkedMissing, { index: false });
+  }
+  const pullRequest = await createSiteReviewPort().getUnlinkedPullRequest(number);
+  if (pullRequest === null) {
+    return docsPageMetadata(
+      `/issues/pr/${number}`,
+      reviewsCopy.metadata.unlinkedMissing,
+      { index: false },
+    );
   }
   return docsPageMetadata(
     `/issues/pr/${number}`,

@@ -292,6 +292,8 @@ test("live status copy names the active or failed step", () => {
   assert.ok(copy.playMotion.includes(copy.play));
   assert.ok(copy.pauseMotion.includes(copy.pause));
   assert.equal(copy.issueBadge({ count: 1 }), "1 issue");
+  assert.equal(copy.issueBadge({ count: 0 }), "0 issues");
+  assert.equal(copy.issueBadge({ count: 2 }), "2 issues");
   assert.equal(copy.stepStatusWithSummary("Failed", "hand-made button"), "Failed · hand-made button");
   assert.equal(copy.stepStatusWithSummary("Finished", null), "Finished");
 });

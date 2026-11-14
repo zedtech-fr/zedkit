@@ -30,7 +30,7 @@ describe("route skeletons", () => {
 
   it("defaults the docs zone label", () => {
     render(<DocsPageSkeleton />);
-    expect(screen.getByRole("status", { name: "Loading" })).not.toBeNull();
+    expect(screen.getByRole("status", { name: "Loading content" })).not.toBeNull();
   });
 
   it("sizes the list skeleton to its cards", () => {

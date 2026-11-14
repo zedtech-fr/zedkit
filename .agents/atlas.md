@@ -54,26 +54,26 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs maturity-and-compatibility guide | `.agents/atlas/docs-site.md` | L7 folder shape; prose imports the view (knip entry). | `pnpm catalog:check` | 2026-11-12 |
 | Docs raw-layout and spelling guards | `.agents/atlas/docs-site.md` | Whole-file regex on components/features; do not import `check.mjs`. | `apps/docs/scripts/check.mjs` | 2026-11-11 |
 | Docs site primary nav | `.agents/atlas/docs-site.md` | Shared primary list; docs/catalog icon search below lg so 809 fits. | `apps/docs/components/site-chrome/docs-container.tsx` | 2026-11-13 |
-| Docs site chrome copy | `.agents/atlas/docs-site.md` | Icon Search uses `search.triggerAriaLabel`; full Search has no `aria-label`. | `apps/docs/components/site-chrome/mobile-header.tsx` | 2026-11-13 |
+| Docs site chrome copy | `.agents/atlas/docs-site.md` | Icon Search uses `search.triggerAriaLabel`; full Search has no `aria-label`. | `apps/docs/components/site-chrome/mobile-header.tsx` | 2026-11-14 |
 | Home hero lead | `.agents/atlas/home.md` | Copy in the hero module; right column is a live active-run card after mount. | `home-hero-active-run.test.mjs` | 2026-11-13 |
 | Home hero motion | `.agents/atlas/home.md` | Lead rise is transform-only; `HomeHero` does not use `motion-settle`. | `home-motion-gate.test.mjs` | 2026-11-13 |
 | Home/catalog card hover and per-band appear | `.agents/atlas/home.md` | Kit `hover-lift` owns lift/shadow; title links keep `hit-target`. | `motion-toggle-css.test.ts` | 2026-11-13 |
 | Catalog demo hrefs | `.agents/atlas/docs-site.md` | Hashes use `COMPONENT_PAGE_SECTION_IDS`; `href={var}` fails closed; no `id=` in AppShell sidebars. | `demo-hrefs.test.mjs` | 2026-11-13 |
-| Registry component page order | `.agents/atlas/docs-site.md` | Example, Use it, install-or-copy, guidance; Preview is the violet stage. | `ComponentPage` | 2026-11-13 |
+| Registry component page order | `.agents/atlas/docs-site.md` | Example, Use it, install-or-copy, guidance; Preview stage tokens live in `docs-shell-tokens.css`. | `ComponentPage` | 2026-11-14 |
 | Docs UI sidebar groups | `.agents/atlas/docs-site.md` | Job headings are Fumadocs separators, not nested `ui/<group>/` dirs. | `check.mjs` | 2026-11-12 |
 | Docs App Router files | `.agents/atlas/docs-site.md` | `/` is `(home)`; catch-all folder must be the last segment. | `apps/docs/app/` | 2026-11-13 |
 | Docs home first-load budget | `.agents/atlas/ci-gates.md` | Runs on `apps/docs/out/` after a docs build. No repo-root script. | `check-first-load-budget.mjs` | 2026-11-13 |
 | Docs AGENTS.md path and symbol citations | `.agents/atlas/docs-site.md` | Backtick paths and PascalCase names must still exist. | `agents-paths.test.mjs` | 2026-11-13 |
 | Docs node-test `@/` alias | `.agents/atlas/docs-site.md` | `node --test` ignores tsconfig `@/`; register then `await import()`. | `register-docs-alias.test.mjs` | 2026-11-13 |
-| Global not-found screen | `.agents/atlas/docs-site.md` | Route-private `_not-found/`; never a `not-found/` folder beside the file. | `*-copy.ts` | 2026-11-12 |
+| Global not-found screen | `.agents/atlas/docs-site.md` | Route-private `_not-found/`; never a `not-found/` folder beside the file. | `*-copy.ts` | 2026-11-14 |
 | Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-14 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | In-page fragment clicks | `.agents/atlas/ui-primitives.md` | Repeat hash does not no-op; mount `InPageAnchorScroll` beside `ScrollReset`. | `in-page-anchor-scroll.test.tsx` | 2026-11-14 |
 | Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`; `defaultMode` is owned-tabs only. | `identity-look-form.test.mjs` | 2026-11-13 |
 | Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. Lives in `features/identity/ui/`, not `lib/`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |
-| Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/dock/ui/`; persist key `zk-identity-dock-v2`; footer counts checker warnings (not decorative border). | `*.test.mjs` | 2026-11-13 |
-| Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
+| Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/dock/ui/`; persist key `zk-identity-dock-v2`; footer counts checker warnings (not decorative border). | `*.test.mjs` | 2026-11-14 |
+| Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-14 |
 | UI tokens, scales, container sizing | `.agents/atlas/ui-primitives.md` | Declared scales; new `:root` colour roles must copy into the mist reset. | `packages/ui/CATALOG.md` | 2026-11-11 |
 | Registry copy theme (shadcn path) | `.agents/atlas/registry.md` | cssVars are colour HSL roles only; do not double-wrap `color-*`. | `scripts/registry/theme-tokens.mjs` | 2026-11-11 |
 | Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. A new relative import from a staged brick must be staged too. | `resolve-ui-source.mjs` | 2026-11-13 |
@@ -82,7 +82,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Transcript rows and burst grouping | `.agents/atlas/ui-primitives.md` | Native `<details>`; do not import `Stack` (pulls `layout.tsx`). | `Render a live assistant transcript from rows` | 2026-11-11 |
 | ThemeScope nested portal split | `.agents/atlas/ui-primitives.md` | Dropdowns portal into the scope; dialog/drawer mount on `document.body`. | `packages/ui/README.md` | 2026-11-11 |
 | PromptInput empty/send | `.agents/atlas/ui-primitives.md` | Empty follows live text; trap is `"value" in props`, not `value ?? defaultValue`. | `prompt-input.test.tsx` | 2026-11-11 |
-| SecretField copy in a flex row | `.agents/atlas/ui-primitives.md` | `shrink-0` keeps the 44px phone Copy target. | `packages/ui/tests/unit/overlays.test.tsx` | 2026-11-11 |
+| SecretField copy in a flex row | `.agents/atlas/ui-primitives.md` | `shrink-0` keeps the 44px phone Copy target. | `packages/ui/tests/unit/overlays.test.tsx` | 2026-11-14 |
 | Docs fenced and setup-prompt Copy | `.agents/atlas/docs-site.md` | No kit CodeBlock; fenced Copy is Fumadocs via `MdxPre`. | `apps/docs/scripts/ai-setup-copy.test.mjs` | 2026-11-13 |
 | LivePulse idle copy | `.agents/atlas/ui-primitives.md` | `label` overrides `messages.live` only; idle is `inactiveLabel`. | `packages/ui/tests/unit/detail.test.tsx` | 2026-11-11 |
 | Compact duration formatter | `.agents/atlas/ui-primitives.md` | Public two-unit `6m 17s`; not `Intl.DurationFormat`. | `format-duration.test.ts` | 2026-11-12 |
@@ -101,7 +101,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Docs leftover layout tags | `.agents/atlas/ci-gates.md` | Whole-file scan; `check.mjs` line scanner misses a multiline `<div>`. | `kit-layout-leftovers.test.mjs` | 2026-11-11 |
 | Docs static search | `.agents/atlas/docs-site.md` | Ranking behind the hook behind the dialog; hook lives in `ui/`. | `docs-search-ranking.test.mjs` | 2026-11-12 |
 | Docs module-placement ratchet | `.agents/atlas/ci-gates.md` | Empty baseline is the success state; `--write-baseline` may write empty arrays and still refuses growth. | `module-placement.test.mjs` | 2026-11-13 |
-| Catalog page filters and results | `.agents/atlas/docs-site.md` | Default area is UI; results 1-col/`80rem` 3-col and gap hairlines live in `catalog-shell.css` (never `overflow: hidden|clip` on the results Surface). | `catalog-surface.test.mjs` | 2026-11-14 |
+| Catalog page filters and results | `.agents/atlas/docs-site.md` | Default area is UI; status denominator is `areaTotal` (`CatalogResultsStatus`); results 1-col/`80rem` 3-col live in `catalog-shell.css`. | `catalog-surface.test.mjs` | 2026-11-14 |
 | Site-only text roles | `.agents/atlas/design-system.md` | Specimen/demo/home roles live with the site, not in the package. | `apps/docs/` | 2026-11-08 |
 | Adoption smoke dev server port | `.agents/atlas/setup-ai.md` | Next.js refuses 3659 inside 3400–3799. | `pnpm adoption:smoke` | 2026-11-13 |
 | UI npm install + Glass fonts | `.agents/atlas/home.md` | Install is fonts-inclusive (`GLASS_FONTS`); layout imports fonts. | `install.sh` | 2026-11-10 |

@@ -15,7 +15,7 @@ const compactLinkClass =
   "hit-target inline-flex w-fit shrink-0 items-center gap-icon text-dense text-info link-offset hover:underline focus-ring";
 
 const logCellClass =
-  "block py-row text-foreground no-underline hover:bg-muted hover:no-underline focus-ring-control active:bg-secondary active:text-secondary-foreground";
+  "hit-target block py-row text-foreground no-underline hover:bg-muted hover:no-underline focus-ring-control active:bg-secondary active:text-secondary-foreground";
 
 const rowLayout =
   "items-start justify-between py-row max-md:flex-col max-md:items-stretch";

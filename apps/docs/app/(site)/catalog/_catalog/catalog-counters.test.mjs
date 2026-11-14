@@ -90,7 +90,7 @@ test("the view wraps title and card; CSS owns 1440 beside / 390 stacked", () => 
   assert.match(card, /variant="glass"/);
   assert.match(card, /text-stat/);
   assert.match(css, /\[data-catalog-intro\]/);
-  assert.match(css, /repeat\(auto-fit,\s*minmax\(20rem,\s*1fr\)\)/);
+  assert.match(css, /repeat\(auto-fit,\s*minmax\(min\(100%,\s*20rem\),\s*1fr\)\)/);
   assert.match(css, /\[data-catalog-counters\]/);
   assert.match(css, /--zk-preview-stage-fill/);
   assert.match(css, /prefers-reduced-transparency:\s*reduce/);

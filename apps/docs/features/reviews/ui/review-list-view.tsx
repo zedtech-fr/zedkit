@@ -288,7 +288,12 @@ export function ReviewListView({
     <ReviewAppearanceFrame layout={empty ? "page" : "workspace"}>
       <PageHeader title={copy.list.title} description={copy.list.description} />
       {empty ? (
-        <EmptyState description={copy.list.empty} />
+        // Empty state still needs a next step: nothing is selectable, so link home.
+        <EmptyState description={copy.list.empty} actions={
+          <Button asChild variant="outline">
+            <a href="/">{copy.list.recoveryLabel}</a>
+          </Button>
+        } />
       ) : (
         <IssuesWorkspace issues={issues} unlinked={unlinked} selected={selected} copy={copy} />
       )}
