@@ -67,6 +67,13 @@
 [data-catalog-shell] [data-catalog-results] {
   overflow: hidden;
   border-color: hsl(var(--border));
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (width >= 80rem) {
+  [data-catalog-shell] [data-catalog-results] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 [data-catalog-shell] [data-catalog-cell] {
@@ -79,4 +86,8 @@
 /* Two-letter titles (`cn`) are ~19px wide as a flex item. Floor is the 24px evidence hit target. */
 [data-catalog-shell] [data-catalog-title] {
   min-width: 24px;
+}
+
+[data-catalog-shell] [data-catalog-cell] [data-badge-link] {
+  flex-shrink: 0;
 }
