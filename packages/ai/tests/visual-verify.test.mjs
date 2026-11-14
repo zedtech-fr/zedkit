@@ -24,7 +24,6 @@ import {
   parseStatesFile,
   parseVisualVerifyArgs,
   peerHint,
-  resolveDocsManifest,
   resolveManifestPath,
   resolveMockupForWidth,
   resolveStaticFile,
@@ -281,9 +280,6 @@ describe("visual-verify helpers", () => {
     ]);
     expect(routesFromFiles(["apps/docs/app/docs/[[...slug]]/page.tsx"])).toEqual([]);
     expect(
-      routesFromFiles(["packages/ui/src/motion/page-transition.tsx"], undefined),
-    ).toEqual([]);
-    expect(
       routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"]).sort(),
     ).toEqual(["/issues"]);
     expect(routesFromFiles(["apps/docs/app/(run-console)/issues/[n]/runs/[id]/page.tsx"])).toEqual([
@@ -295,52 +291,6 @@ describe("visual-verify helpers", () => {
     expect(routesFromFiles(["apps/docs/scripts/issues-evidence-artifacts.test.mjs"])).toEqual([
       "/issues",
     ]);
-  });
-
-  it("loads apps/docs/docs-manifest.json when --changed and --manifest are omitted", () => {
-    const dir = mkdtempSync(join(tmpdir(), "visual-verify-manifest-"));
-    expect(resolveDocsManifest(dir, { changed: true })).toBeUndefined();
-    expect(resolveDocsManifest(dir, { changed: false })).toBeUndefined();
-
-    mkdirSync(join(dir, "apps/docs"), { recursive: true });
-    writeFileSync(
-      join(dir, "apps/docs/docs-manifest.json"),
-      `${JSON.stringify({
-        rich: { "Keep chrome mounted across client navigations": { source: "motion/page-transition.tsx" } },
-      })}\n`,
-    );
-    expect(resolveDocsManifest(dir, { changed: false })).toBeUndefined();
-    expect(resolveDocsManifest(dir, { changed: true })).toEqual({
-      rich: { "Keep chrome mounted across client navigations": { source: "motion/page-transition.tsx" } },
-    });
-    expect(
-      routesFromFiles(["packages/ui/src/motion/page-transition.tsx"], resolveDocsManifest(dir, { changed: true })),
-    ).toEqual(["/docs/ui/keep-chrome-mounted-across-client-navigations"]);
-
-    writeFileSync(join(dir, "other.json"), `${JSON.stringify({ rich: { "Other need": { source: "other.tsx" } } })}\n`);
-    expect(resolveDocsManifest(dir, { changed: true, manifest: "other.json" })).toEqual({
-      rich: { "Other need": { source: "other.tsx" } },
-    });
-  });
-
-  it("documents the host default docs-manifest load", () => {
-    const skill = readFileSync(
-      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
-      "utf8",
-    );
-    expect(skill).toContain("apps/docs/docs-manifest.json");
-    const usage = readFileSync(
-      join(dirname(fileURLToPath(import.meta.url)), "../kit/usage.txt"),
-      "utf8",
-    );
-    expect(usage).toContain("apps/docs/docs-manifest.json");
-    const atlas = readFileSync(
-      join(dirname(fileURLToPath(import.meta.url)), "../../../.agents/atlas/visual-verify.md"),
-      "utf8",
-    );
-    const row = atlas.split("\n").find((line) => line.includes("zedkit-ai visual-verify"));
-    expect(row).toBeDefined();
-    expect(row).toContain("apps/docs/docs-manifest.json");
   });
 
   it("maps docs identity feature modules to the editor route", () => {

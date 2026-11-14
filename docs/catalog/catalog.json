@@ -3703,7 +3703,7 @@
           "need": "Show a route-shaped skeleton while the next page loads",
           "import": "`@zedtech/zedkit-ui` — `DocsPageSkeleton`, `DocsPageSkeletonProps`, `ListPageSkeleton`, `ListPageSkeletonProps`, `DetailPageSkeleton`, `DetailPageSkeletonProps`",
           "wraps": "`(none)`",
-          "status": "beta",
+          "status": "alpha",
           "shortName": "Route skeletons",
           "audience": "Developers replacing a spinner or generic loader between pages.",
           "purpose": "Docs, list, and detail page skeletons composed from existing zone skeletons so the wait matches the page that lands.",
@@ -3741,7 +3741,7 @@
               }
             ]
           },
-          "a11y": "Each composed zone is `role=\"status\"` with `aria-label` from `label` (default `messages.loading`). Nested zone skeletons keep their own names. The label is not shown visually.",
+          "a11y": "Each composed zone takes `label` (`role=\"status\"`, default `messages.loading`). Nested `CardSkeleton` / `DetailPanelSkeleton` receive the same `label`. The label is not shown visually.",
           "troubleshooting": "Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only.",
           "seeAlso": [
             "Load each zone with a faithful skeleton",

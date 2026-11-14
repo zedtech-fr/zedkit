@@ -30,8 +30,7 @@ measures, `UNSEEN` / `UNVERIFIED`). This file is the command.
   (`source` → `/docs/ui/<slug>`, `demo`/`examples` →
   `apps/docs/components/demos/<kebab>.tsx`, kit files that share that
   source stem). Omitted `--manifest` loads `apps/docs/docs-manifest.json`
-  when present (with `--changed`, UI `packages/ui/src` diffs map through
-  `source`). Union `--routes`. Omitted `--routes` implies `--changed`.
+  when present. Union `--routes`. Omitted `--routes` implies `--changed`.
   Unknown files add no extra route. A host fixed set is passed by the host
   `visual:verify` script (or equivalent), not invented here.
 - **Matrix:** `--widths` default 375, 809, 1440 × `--modes` default light,

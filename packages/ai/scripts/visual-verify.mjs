@@ -535,17 +535,6 @@ function loadManifestFile(path) {
   return raw.ok ? raw.value : undefined;
 }
 
-/** Host docs-manifest. Omitted `--manifest` with `--changed` loads this file when it exists. */
-export const DEFAULT_DOCS_MANIFEST = "apps/docs/docs-manifest.json";
-
-export function resolveDocsManifest(cwd, options = {}) {
-  if (options.manifest) return loadManifestFile(resolve(cwd, options.manifest));
-  if (!options.changed) return undefined;
-  const fallback = join(cwd, DEFAULT_DOCS_MANIFEST);
-  if (!existsSync(fallback)) return undefined;
-  return loadManifestFile(fallback);
-}
-
 function serveDir(root) {
   const server = createServer((req, res) => {
     const url = tryCatch(() => new URL(req.url ?? "/", "http://127.0.0.1"));

@@ -40,7 +40,7 @@ export function DocsPageSkeleton({ label, className }: DocsPageSkeletonProps) {
       <Skeleton className="h-skeleton-line w-full" />
       <Skeleton className="h-skeleton-line w-skeleton-wide" />
       <Skeleton className="h-skeleton-line w-skeleton-body" />
-      <div className="flex flex-col gap-stack-sm rounded-lg bg-muted p-card-padding">
+      <div className="flex flex-col gap-stack-sm rounded-lg border bg-card p-card-padding">
         <Skeleton className="h-skeleton-line w-skeleton-wide" />
         <Skeleton className="h-skeleton-line w-full" />
         <Skeleton className="h-skeleton-line w-skeleton-body" />
@@ -59,7 +59,7 @@ export function ListPageSkeleton({
     <div data-slot="list-page-skeleton" className={cn("flex flex-col gap-stack-lg", className)}>
       <PageHeaderSkeleton {...(label === undefined ? {} : { label })} />
       {Array.from({ length: cards }, (_, index) => (
-        <CardSkeleton key={index} />
+        <CardSkeleton key={index} {...(label === undefined ? {} : { label })} />
       ))}
     </div>
   );
@@ -70,7 +70,10 @@ export function DetailPageSkeleton({ label, rows, className }: DetailPageSkeleto
   return (
     <div data-slot="detail-page-skeleton" className={cn("flex flex-col gap-stack-lg", className)}>
       <PageHeaderSkeleton {...(label === undefined ? {} : { label })} />
-      <DetailPanelSkeleton {...(rows === undefined ? {} : { rows })} />
+      <DetailPanelSkeleton
+        {...(label === undefined ? {} : { label })}
+        {...(rows === undefined ? {} : { rows })}
+      />
     </div>
   );
 }
