@@ -20,7 +20,7 @@ describe("skeletons", () => {
 
   it("defaults the zone label", () => {
     render(<CardSkeleton />);
-    expect(screen.getByRole("status", { name: "Loading" })).not.toBeNull();
+    expect(screen.getByRole("status", { name: "Loading content" })).not.toBeNull();
   });
 
   it("shares the page-header chrome tokens so content lands without shifting", () => {

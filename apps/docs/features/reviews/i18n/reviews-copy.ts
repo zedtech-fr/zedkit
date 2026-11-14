@@ -62,7 +62,7 @@ export const reviewsCopy = {
     back: "All issues",
     timeline: "Timeline",
     replaced: "Replaced by newer run",
-    failedReplaced: "Didn't finish — replaced by a newer run",
+    failedReplaced: "Failed — replaced by a newer run",
     viewLog: "View log",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
@@ -79,7 +79,7 @@ export const reviewsCopy = {
   loadError: {
     title: "Could not load public runs",
     description:
-      "GitHub or the runs API did not answer. This page updates when the site is next published.",
+      "GitHub or the runs API did not answer. Try again later, or choose another issue.",
   },
   run: {
     backToIssue: "Back to the issue",
@@ -100,7 +100,7 @@ export const reviewsCopy = {
   status: {
     running: "Running",
     completed: "Completed",
-    failed: "Didn't finish",
+    failed: "Failed",
   },
   verdict: {
     approve: "Approved",

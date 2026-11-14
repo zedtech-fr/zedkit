@@ -57,7 +57,7 @@ test("site chrome catalog keeps today's English wording", () => {
   assert.equal(siteChromeCopy.version.latest, "Latest");
   assert.equal(siteChromeCopy.version.releasesAriaLabel("1.2.3"), "v1.2.3 (releases)");
   assert.equal(siteChromeCopy.version.shell("1.2.3"), "v1.2.3");
-  assert.equal(siteChromeCopy.loading.page, "Loading page");
+  assert.equal(siteChromeCopy.loading.page, "Loading page content");
   assert.equal(siteChromeCopy.loading.issues, "Loading issues");
   assert.equal(siteChromeCopy.loading.issue, "Loading issue");
 });

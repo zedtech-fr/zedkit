@@ -434,7 +434,7 @@ describe("overlays", () => {
       vi.stubGlobal("navigator", {});
       render(<SecretField id="key" value="zbk_secret" />);
       await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
-      expect(screen.getByRole("status").textContent).toBe("Could not copy");
+      expect(screen.getByRole("status").textContent).toBe("Could not copy. Select the text instead.");
     });
 
     it("announces when writing to the clipboard is rejected", async () => {
@@ -443,7 +443,7 @@ describe("overlays", () => {
       vi.stubGlobal("navigator", { clipboard: { writeText } });
       render(<SecretField id="key" value="zbk_secret" />);
       await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
-      expect(screen.getByRole("status").textContent).toBe("Could not copy");
+      expect(screen.getByRole("status").textContent).toBe("Could not copy. Select the text instead.");
     });
 
     it("keeps the single-line input by default", () => {

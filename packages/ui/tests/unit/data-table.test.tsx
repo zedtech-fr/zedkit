@@ -140,7 +140,7 @@ describe("DataTable", () => {
   it("shows loading placeholders while loading", () => {
     const { container } = render(<DataTable columns={columns} data={data} loading />);
     expect(screen.getByRole("table").getAttribute("aria-busy")).toBe("true");
-    expect(screen.getByRole("status", { name: "Loading" })).toBeTruthy();
+    expect(screen.getByRole("status", { name: "Loading content" })).toBeTruthy();
     expect(container.querySelectorAll('[data-slot="data-table-loading"] .motion-safe\\:animate-pulse')).toHaveLength(3);
     expect(screen.queryByText("Ada")).toBeNull();
   });

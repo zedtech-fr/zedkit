@@ -11,14 +11,16 @@ function ceilToMinute(at: Date): Date {
 }
 
 function clock(at: Date): string {
-  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(at);
+  return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" })
+    .format(at)
+    .replace(/[\u00A0\u202F]/g, " ");
 }
 
 function calendarDay(at: Date): number {
   return Date.UTC(at.getFullYear(), at.getMonth(), at.getDate());
 }
 
-/** "in 5 minutes", "after 14:30" today, "tomorrow after 09:00", or an explicit date further out. */
+/** "in 5 minutes", "after 2:30 PM" today, "tomorrow after 9:00 AM", or an explicit date further out. */
 export function retryText(seconds: number | undefined, now: Date = new Date()): string {
   if (!seconds) return "Try again a little later.";
   if (seconds < 3_600) return `Try again in ${minutes(seconds)} ${minutes(seconds) === 1 ? "minute" : "minutes"}.`;
@@ -27,7 +29,9 @@ export function retryText(seconds: number | undefined, now: Date = new Date()): 
   const dayDelta = (calendarDay(at) - calendarDay(now)) / 86_400_000;
   if (dayDelta <= 0) return `Try again after ${time}.`;
   if (dayDelta === 1) return `Try again tomorrow after ${time}.`;
-  const date = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(at);
+  const date = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" })
+    .format(at)
+    .replace(/[\u00A0\u202F]/g, " ");
   return `Try again after ${date}, ${time}.`;
 }
 

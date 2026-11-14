@@ -1509,9 +1509,9 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.type.implement, "Implementation");
   assert.equal(reviewsCopy.verdict.approve, "Approved");
   assert.equal(reviewsCopy.verdict["request-changes"], "Changes requested");
-  assert.equal(reviewsCopy.status.failed, "Didn't finish");
+  assert.equal(reviewsCopy.status.failed, "Failed");
   assert.equal(reviewsCopy.issue.replaced, "Replaced by newer run");
-  assert.equal(reviewsCopy.issue.failedReplaced, "Didn't finish — replaced by a newer run");
+  assert.equal(reviewsCopy.issue.failedReplaced, "Failed — replaced by a newer run");
   assert.equal(reviewsCopy.issue.viewLog, "View log");
   assert.equal(reviewsCopy.list.took, "Took");
   assert.equal(reviewsCopy.list.duration, "Duration");
@@ -1543,7 +1543,7 @@ test("copy names empty list, timeline types, and the hosted-console placeholder"
   assert.equal(reviewsCopy.list.githubPull, "PR");
   assert.equal(
     reviewsCopy.loadError.description,
-    "GitHub or the runs API did not answer. This page updates when the site is next published.",
+    "GitHub or the runs API did not answer. Try again later, or choose another issue.",
   );
   assert.equal("retry" in reviewsCopy.loadError, false);
   assert.equal("openUnlinked" in reviewsCopy.list, false);

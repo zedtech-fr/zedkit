@@ -650,9 +650,9 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - When not to use: For freeform blocks — use a plain `Skeleton`; for named operations — use `StatusLabel`.
 - See also: `Show loading placeholder blocks`, `Show a route-shaped skeleton while the next page loads`
 - Examples: In Suspense, Standalone
-- A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
+- A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading content") — screen readers announce the zone; the label is never shown visually.
 - Registry: card-skeleton
-- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
+- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading content"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
 
 ```ts
 import { Suspense } from "react";
@@ -928,7 +928,7 @@ import { Button, ErrorState } from "@zedtech/zedkit-ui";
 - Examples: Default name, Named wait
 - A11y: `role="status"` plus `aria-label`. The icon is `aria-hidden`. Keep visible text next to it that names the wait; a `label` prop overrides the kit `loading` string. The spin uses `motion-safe:animate-spin`.
 - Registry: spinner
-- Troubleshooting: Screen readers say only "Loading" — pass `label` that names the operation, or keep visible text beside the spinner. The icon does not spin — `motion-safe:animate-spin` is static under reduced motion. Used as a full-page placeholder — prefer Skeleton so layout does not jump.
+- Troubleshooting: Screen readers say only "Loading content" — pass `label` that names the operation, or keep visible text beside the spinner. The icon does not spin — `motion-safe:animate-spin` is static under reduced motion. Used as a full-page placeholder — prefer Skeleton so layout does not jump.
 
 ```ts
 import { Spinner } from "@zedtech/zedkit-ui";
