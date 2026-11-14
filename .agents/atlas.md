@@ -34,7 +34,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Compact agent gates | `.agents/atlas/ci-gates.md` | Summaries on stdout; full logs in gitignored `.agent-logs/`. | root `AGENTS.md` Commands | 2026-11-13 |
 | CI scope and branch rules | `.agents/atlas/ci-gates.md` | PRs into `dev` are affected-only; `main` is full CI. | which CI jobs run for a PR | 2026-11-07 |
 | CI registry-deps for test:registry | `.agents/atlas/ci-gates.md` | Unconditional dist build for registry-imported packages. | `scripts/ci-hygiene.test.mjs` | 2026-11-13 |
-| docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-13 |
+| docs-render (touched-route a11y + overflow) | `.agents/atlas/docs-render.md` | Merge-gate load-time overflow/axe/clip on docs-out. | `ci-required` | 2026-11-14 |
 | AppShell catalog framed demo | `.agents/atlas/docs-render.md` | `/docs/ui/lay-out-an-admin-page-sidebar-topbar-header` is `project-tracker-demo-app`, not the tutorial demo. | `all-routes-fit.spec.ts` | 2026-11-13 |
 | actionlint CI installer | `.agents/atlas/ci-gates.md` | workflow-lint pins v1.7.10; SHA-256 fail-closed. | `install-actionlint.test.mjs` | 2026-11-08 |
 | Dev static publish (staging + epic-73 preview) | `.agents/atlas/publishing.md` | Allowlisted dest keys; rsync only, never production `deploy.sh`. File-serving Caddy sites rewrite 404 to `/404.html`. | `deploy-dev-workflow.test.mjs` | 2026-11-13 |

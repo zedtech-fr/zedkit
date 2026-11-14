@@ -132,6 +132,16 @@ describe("docs-render job", () => {
       /^ {4}if: needs\.changes\.outputs\.docs == 'true' && needs\.changes\.outputs\.workflow_only != 'true'\s*$/m,
     );
   });
+
+  it("dumps serve log and curls port 3100 after e2e:routes fails", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    const afterRoutes = job.split("run e2e:routes")[1] ?? "";
+    assert.notEqual(afterRoutes, "", "docs-render lost e2e:routes");
+    assert.match(afterRoutes, /docs-start\.log/);
+    assert.match(afterRoutes, /127\.0\.0\.1:3100/);
+    assert.match(afterRoutes, /port 3100 refused/);
+    assert.match(afterRoutes, /port 3100 answered HTTP/);
+  });
 });
 
 describe("nightly Chromium sitemap", () => {
@@ -146,6 +156,13 @@ describe("nightly Chromium sitemap", () => {
     assert.match(job, /DOCS_E2E_PROJECT: chromium/);
     assert.doesNotMatch(job, /DOCS_ROUTES/);
     assert.doesNotMatch(job, /DOCS_LOOKS/);
+    assert.match(job, /serve@14\.2\.6/);
+    const afterRoutes = job.split("run e2e:routes")[1] ?? "";
+    assert.notEqual(afterRoutes, "", "docs-render-chromium lost e2e:routes");
+    assert.match(afterRoutes, /docs-start\.log/);
+    assert.match(afterRoutes, /127\.0\.0\.1:3100/);
+    assert.match(afterRoutes, /port 3100 refused/);
+    assert.match(afterRoutes, /port 3100 answered HTTP/);
     const smoke = nightly.split(/^ {2}docs-smoke-cross-browser:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.match(smoke, /firefox/);
     assert.match(smoke, /webkit/);
