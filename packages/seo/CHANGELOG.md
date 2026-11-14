@@ -1,5 +1,11 @@
 # @zedtech/zedkit-seo
 
+## 1.2.0
+
+### Minor Changes
+
+- 370eee2: Add `JsonLd` on `@zedtech/zedkit-seo/react` so React apps can emit the JSON-LD script tag without writing it by hand. The main entry has no React dependency.
+
 ## 1.1.0
 
 ### Minor Changes
