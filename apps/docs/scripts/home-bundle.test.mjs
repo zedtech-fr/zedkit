@@ -552,7 +552,8 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(pasteCopy, /its rules/);
   assert.match(pasteCopy, /\.agents\/skills\//);
   assert.match(pasteCopy, /skillsAgents: \(skills: number, agents: number\) =>/);
-  assert.match(pasteCopy, /\$\{skills\} · agents\/ \$\{agents\}/);
+  assert.match(pasteCopy, /\$\{skills\} skills · \$\{agents\} agents/);
+  assert.doesNotMatch(pasteCopy, /agents\/ \$\{agents\}/);
   assert.match(pasteCopy, /package\.json/);
   assert.match(pasteCopy, /@zedtech\/zedkit-ui/);
   assert.match(pasteCopy, /src\/app\/globals\.css/);
@@ -662,7 +663,8 @@ test("same-idea lands counts match kit dirs, gallery components, and six identit
   assert.doesNotMatch(sameIdeaCopy, /30 skills|13 agents|68 components/);
   assert.match(paste, /homeSameIdeaCopy\.kitCounts/);
   assert.match(paste, /homePasteCopy\.skillsAgents/);
-  assert.doesNotMatch(pasteCopy, new RegExp(`${skills} · agents/ ${agents}`));
+  assert.match(pasteCopy, new RegExp(`\\$\\{skills\\} skills · \\$\\{agents\\} agents`));
+  assert.doesNotMatch(pasteCopy, /agents\/ \$\{agents\}/);
   assert.doesNotMatch(pasteCopy, /30 · agents\/ 13/);
 });
 

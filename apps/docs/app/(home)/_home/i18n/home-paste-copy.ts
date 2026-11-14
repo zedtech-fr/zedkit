@@ -19,7 +19,7 @@ export const homePasteCopy = {
     },
     { label: "Any time after", body: "Run the prompt again to add a kit. It is safe to repeat." },
   ],
-  skillsAgents: (skills: number, agents: number) => `${skills} · agents/ ${agents}`,
+  skillsAgents: (skills: number, agents: number) => `${skills} skills · ${agents} agents`,
   lands: {
     ai: {
       kit: "AI",
