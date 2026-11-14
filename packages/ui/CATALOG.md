@@ -1332,7 +1332,8 @@ export function LogPane({ children }: { children: ReactNode }) {
 import { ScrollReset } from "@zedtech/zedkit-ui";
 import { usePathname } from "next/navigation";
 export function RouteScroll() {
-  return <ScrollReset routeKey={usePathname()} />;
+  const pathname = usePathname();
+  return <ScrollReset routeKey={pathname} />;
 }
 ```
 
@@ -1351,10 +1352,10 @@ useScrollReset(pathname, { target: getMain });
 - Audience: Developers whose in-page `#hash` links go dead when the URL already has that hash.
 - Purpose: Scrolls and focuses same-document `#hash` targets on every click, including when the URL hash is already set.
 - When to use: Once near the root, next to `ScrollReset`, so every in-page fragment link scrolls again on a repeat click.
-- When not to use: For route-change scroll (including `/docs` → `/#hash`) — use `Reset scroll on route change`. For scroll spies.
+- When not to use: For route-change scroll (including `/docs` → `/#hash`) or a same-path link that also changes the query string — use `Reset scroll on route change` and the router. For scroll spies.
 - Examples: Root mount, Direct scroll
-- A11y: Smooth unless `prefers-reduced-motion` or `data-motion="reduce"`; then instant. Moves focus to the target and sets `tabIndex=-1` when missing. Honours CSS `scroll-margin-top`. Ignores modified clicks, `download`, and non-`_self` targets.
-- Composition: Renders nothing; `useInPageAnchorScroll` is the same listener as a hook. `scrollToFragment` is the scroll-and-focus helper.
+- A11y: Smooth unless `prefers-reduced-motion` or `data-motion="reduce"`; then instant. Moves focus to the target and sets `tabIndex=-1` only when it is not natively focusable. Give the target an accessible name and a visible focus style. Honours CSS `scroll-margin-top`. Ignores modified clicks, `download`, non-`_self` targets, and query-string mismatches. After `pushState`, dispatches `hashchange` so hash-only listeners still run.
+- Composition: Renders nothing; `useInPageAnchorScroll` is the same listener as a hook. `scrollToFragment` is the scroll-and-focus helper. The component accepts `InPageAnchorScrollProps` (empty).
 - See also: `Reset scroll on route change`
 
 ```ts
@@ -1362,9 +1363,10 @@ useScrollReset(pathname, { target: getMain });
 import { InPageAnchorScroll, ScrollReset } from "@zedtech/zedkit-ui";
 import { usePathname } from "next/navigation";
 export function RouteScroll() {
+  const pathname = usePathname();
   return (
     <>
-      <ScrollReset routeKey={usePathname()} />
+      <ScrollReset routeKey={pathname} />
       <InPageAnchorScroll />
     </>
   );

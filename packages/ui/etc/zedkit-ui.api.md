@@ -1248,7 +1248,7 @@ export const identityTokenSchema: z.ZodObject<{
 }, z.core.$strip>;
 
 // @public
-export function InPageAnchorScroll(): null;
+export function InPageAnchorScroll(_props?: InPageAnchorScrollProps): null;
 
 // @public
 export type InPageAnchorScrollProps = Record<string, never>;

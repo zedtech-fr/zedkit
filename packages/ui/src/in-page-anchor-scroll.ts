@@ -28,7 +28,9 @@ function fragmentTarget(raw: string): HTMLElement | null {
 
 /** Scroll a hash target into view and move focus. Instant when motion is reduced. */
 export function scrollToFragment(target: HTMLElement): void {
-  if (!target.hasAttribute("tabindex")) target.tabIndex = -1;
+  // Native focusables already participate in tab order (`tabIndex >= 0`
+  // without an attribute). Stamping -1 would drop them from the tab sequence.
+  if (!target.hasAttribute("tabindex") && target.tabIndex < 0) target.tabIndex = -1;
   target.focus({ preventScroll: true });
   const behavior: ScrollBehavior = isMotionReduced() ? "instant" : "smooth";
   target.scrollIntoView({ behavior, block: "start" });
@@ -44,11 +46,22 @@ function sameDocumentFragment(anchor: HTMLAnchorElement): string | null {
   const url = new URL(href, location.href);
   if (url.origin !== location.origin) return null;
   if (url.pathname !== location.pathname) return null;
+  if (url.search !== location.search) return null;
   const raw = url.hash.slice(1);
   return raw === "" ? null : raw;
 }
 
+function syncHash(next: string): void {
+  if (location.hash === next) return;
+  const oldURL = location.href;
+  history.pushState(null, "", next);
+  // pushState never fires hashchange; hash-only listeners (in-page
+  // selection) would otherwise go stale.
+  window.dispatchEvent(new HashChangeEvent("hashchange", { oldURL, newURL: location.href }));
+}
+
 function onDocumentClick(event: MouseEvent): void {
+  if (event.defaultPrevented) return;
   if (event.button !== 0) return;
   if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
   const raw = event.target;
@@ -62,8 +75,7 @@ function onDocumentClick(event: MouseEvent): void {
   const node = fragmentTarget(id);
   if (node === null) return;
   event.preventDefault();
-  const next = `#${id}`;
-  if (location.hash !== next) history.pushState(null, "", next);
+  syncHash(`#${id}`);
   scrollToFragment(node);
 }
 
@@ -76,7 +88,7 @@ export function useInPageAnchorScroll(): void {
 }
 
 /** Component form of `useInPageAnchorScroll`: renders nothing. */
-export function InPageAnchorScroll(): null {
+export function InPageAnchorScroll(_props?: InPageAnchorScrollProps): null {
   useInPageAnchorScroll();
   return null;
 }

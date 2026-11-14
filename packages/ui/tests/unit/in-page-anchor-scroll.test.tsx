@@ -43,6 +43,7 @@ describe("InPageAnchorScroll", () => {
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
     document.documentElement.removeAttribute("data-motion");
     document.body.replaceChildren();
     window.history.replaceState(null, "", "/");
@@ -52,22 +53,31 @@ describe("InPageAnchorScroll", () => {
     window.history.replaceState(null, "", "/#get-started");
     const { target, link } = fixture();
     const pushState = vi.spyOn(history, "pushState");
+    const onHash = vi.fn();
+    window.addEventListener("hashchange", onHash);
     render(<InPageAnchorScroll />);
     const prevented = click(link);
     expect(prevented()).toBe(true);
     expect(pushState).not.toHaveBeenCalled();
+    expect(onHash).not.toHaveBeenCalled();
     expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
     expect(document.activeElement).toBe(target);
+    window.removeEventListener("hashchange", onHash);
   });
 
   it("pushes the hash then scrolls on a first same-page click", () => {
     const { target, link } = fixture();
+    const onHash = vi.fn();
+    window.addEventListener("hashchange", onHash);
     render(<InPageAnchorScroll />);
     const prevented = click(link);
     expect(prevented()).toBe(true);
     expect(window.location.hash).toBe("#get-started");
+    expect(onHash).toHaveBeenCalledTimes(1);
+    expect(onHash.mock.calls[0]?.[0]).toBeInstanceOf(HashChangeEvent);
     expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
     expect(document.activeElement).toBe(target);
+    window.removeEventListener("hashchange", onHash);
   });
 
   it("jumps instantly when data-motion is reduce", () => {
@@ -91,8 +101,40 @@ describe("InPageAnchorScroll", () => {
     render(<InPageAnchorScroll />);
     expect(click(link, { metaKey: true })()).toBe(false);
     expect(click(link, { ctrlKey: true })()).toBe(false);
+    expect(click(link, { altKey: true })()).toBe(false);
+    expect(click(link, { shiftKey: true })()).toBe(false);
     expect(click(link, { button: 1 })()).toBe(false);
     expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("leaves non-_self targets to the browser", () => {
+    const { target, link } = fixture();
+    link.setAttribute("target", "_blank");
+    render(<InPageAnchorScroll />);
+    expect(click(link)()).toBe(false);
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("leaves a bare hash to the browser", () => {
+    const { target } = fixture();
+    const link = document.createElement("a");
+    link.setAttribute("href", "#");
+    document.body.append(link);
+    render(<InPageAnchorScroll />);
+    expect(click(link)()).toBe(false);
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("does not override an already-prevented click", () => {
+    const { target, link } = fixture();
+    const stop = (event: Event) => {
+      event.preventDefault();
+    };
+    document.addEventListener("click", stop, true);
+    render(<InPageAnchorScroll />);
+    click(link);
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+    document.removeEventListener("click", stop, true);
   });
 
   it("leaves other-pathname fragment links to the router", () => {
@@ -104,6 +146,27 @@ describe("InPageAnchorScroll", () => {
     render(<InPageAnchorScroll />);
     expect(click(link)()).toBe(false);
     expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("leaves same-path links with a different query string to the router", () => {
+    const { target } = fixture();
+    const link = document.createElement("a");
+    link.setAttribute("href", "?q=1#get-started");
+    document.body.append(link);
+    render(<InPageAnchorScroll />);
+    expect(click(link)()).toBe(false);
+    expect(target.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("still intercepts when the query string matches", () => {
+    window.history.replaceState(null, "", "/?q=1");
+    const { target } = fixture();
+    const link = document.createElement("a");
+    link.setAttribute("href", "?q=1#get-started");
+    document.body.append(link);
+    render(<InPageAnchorScroll />);
+    expect(click(link)()).toBe(true);
+    expect(target.scrollIntoView).toHaveBeenCalled();
   });
 
   it("does not intercept a missing id or a download link", () => {
@@ -146,6 +209,20 @@ describe("InPageAnchorScroll", () => {
     expect(other.getAttribute("tabindex")).toBe("-1");
   });
 
+  it("does not stamp tabindex on a natively focusable target", () => {
+    const row = document.createElement("a");
+    row.id = "issue-1";
+    row.href = "#issue-1";
+    row.textContent = "Issue 1";
+    row.scrollIntoView = vi.fn();
+    document.body.append(row);
+    render(<InPageAnchorScroll />);
+    click(row);
+    expect(row.hasAttribute("tabindex")).toBe(false);
+    expect(document.activeElement).toBe(row);
+    expect(row.scrollIntoView).toHaveBeenCalled();
+  });
+
   it("does not scroll after unmount", () => {
     const { target, link } = fixture();
     const { unmount } = render(<InPageAnchorScroll />);
@@ -175,5 +252,17 @@ describe("scrollToFragment", () => {
     expect(target.getAttribute("tabindex")).toBe("-1");
     expect(document.activeElement).toBe(target);
     expect(target.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
+  });
+
+  it("does not stamp tabindex on a natively focusable element", () => {
+    const target = document.createElement("a");
+    target.href = "/issues";
+    target.id = "row";
+    target.textContent = "Row";
+    target.scrollIntoView = vi.fn();
+    document.body.append(target);
+    scrollToFragment(target);
+    expect(target.hasAttribute("tabindex")).toBe(false);
+    expect(document.activeElement).toBe(target);
   });
 });

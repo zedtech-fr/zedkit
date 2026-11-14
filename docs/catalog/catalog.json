@@ -4626,11 +4626,11 @@
           "whenToUse": "Once near the root of the app, fed the router pathname (`usePathname()` in Next.js).",
           "whenNotToUse": "For in-page fragment clicks — use `Scroll to in-page hash targets on every click`. For scroll spies.",
           "derivedFrom": null,
-          "example": "\"use client\";\nimport { ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  return <ScrollReset routeKey={usePathname()} />;\n}",
+          "example": "\"use client\";\nimport { ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  const pathname = usePathname();\n  return <ScrollReset routeKey={pathname} />;\n}",
           "examples": [
             {
               "title": "Next.js root",
-              "code": "\"use client\";\nimport { ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  return <ScrollReset routeKey={usePathname()} />;\n}"
+              "code": "\"use client\";\nimport { ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  const pathname = usePathname();\n  return <ScrollReset routeKey={pathname} />;\n}"
             },
             {
               "title": "Inner scroll container",
@@ -4667,13 +4667,13 @@
           "audience": "Developers whose in-page `#hash` links go dead when the URL already has that hash.",
           "purpose": "Scrolls and focuses same-document `#hash` targets on every click, including when the URL hash is already set.",
           "whenToUse": "Once near the root, next to `ScrollReset`, so every in-page fragment link scrolls again on a repeat click.",
-          "whenNotToUse": "For route-change scroll (including `/docs` → `/#hash`) — use `Reset scroll on route change`. For scroll spies.",
+          "whenNotToUse": "For route-change scroll (including `/docs` → `/#hash`) or a same-path link that also changes the query string — use `Reset scroll on route change` and the router. For scroll spies.",
           "derivedFrom": null,
-          "example": "\"use client\";\nimport { InPageAnchorScroll, ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  return (\n    <>\n      <ScrollReset routeKey={usePathname()} />\n      <InPageAnchorScroll />\n    </>\n  );\n}",
+          "example": "\"use client\";\nimport { InPageAnchorScroll, ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  const pathname = usePathname();\n  return (\n    <>\n      <ScrollReset routeKey={pathname} />\n      <InPageAnchorScroll />\n    </>\n  );\n}",
           "examples": [
             {
               "title": "Root mount",
-              "code": "\"use client\";\nimport { InPageAnchorScroll, ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  return (\n    <>\n      <ScrollReset routeKey={usePathname()} />\n      <InPageAnchorScroll />\n    </>\n  );\n}"
+              "code": "\"use client\";\nimport { InPageAnchorScroll, ScrollReset } from \"@zedtech/zedkit-ui\";\nimport { usePathname } from \"next/navigation\";\nexport function RouteScroll() {\n  const pathname = usePathname();\n  return (\n    <>\n      <ScrollReset routeKey={pathname} />\n      <InPageAnchorScroll />\n    </>\n  );\n}"
             },
             {
               "title": "Direct scroll",
@@ -4694,7 +4694,7 @@
               }
             ]
           },
-          "a11y": "Smooth unless `prefers-reduced-motion` or `data-motion=\"reduce\"`; then instant. Moves focus to the target and sets `tabIndex=-1` when missing. Honours CSS `scroll-margin-top`. Ignores modified clicks, `download`, and non-`_self` targets.",
+          "a11y": "Smooth unless `prefers-reduced-motion` or `data-motion=\"reduce\"`; then instant. Moves focus to the target and sets `tabIndex=-1` only when it is not natively focusable. Give the target an accessible name and a visible focus style. Honours CSS `scroll-margin-top`. Ignores modified clicks, `download`, non-`_self` targets, and query-string mismatches. After `pushState`, dispatches `hashchange` so hash-only listeners still run.",
           "seeAlso": [
             "Reset scroll on route change"
           ]
