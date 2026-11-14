@@ -142,6 +142,19 @@ describe("docs-render job", () => {
     assert.match(afterRoutes, /port 3100 refused/);
     assert.match(afterRoutes, /port 3100 answered HTTP/);
   });
+
+  it("restarts serve on exit until the EXIT trap kills the loop and the child", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    const loop = job.match(/while\s+:;[\s\S]*?done/);
+    assert.equal(loop !== null, true, "docs-render must wrap serve in while :; ... done");
+    assert.match(loop[0], /serve@14\.2\.6/);
+    assert.match(job, /wait "\$\(cat \/tmp\/docs\.pid\)" \|\| true/);
+    assert.match(job, /\/tmp\/docs\.loop\.pid/);
+    assert.match(
+      job,
+      /trap 'kill "\$\(cat \/tmp\/docs\.loop\.pid\)" "\$\(cat \/tmp\/docs\.pid\)"/,
+    );
+  });
 });
 
 describe("nightly Chromium sitemap", () => {
@@ -163,6 +176,15 @@ describe("nightly Chromium sitemap", () => {
     assert.match(afterRoutes, /127\.0\.0\.1:3100/);
     assert.match(afterRoutes, /port 3100 refused/);
     assert.match(afterRoutes, /port 3100 answered HTTP/);
+    const loop = job.match(/while\s+:;[\s\S]*?done/);
+    assert.equal(loop !== null, true, "docs-render-chromium must wrap serve in while :; ... done");
+    assert.match(loop[0], /serve@14\.2\.6/);
+    assert.match(job, /wait "\$\(cat \/tmp\/docs\.pid\)" \|\| true/);
+    assert.match(job, /\/tmp\/docs\.loop\.pid/);
+    assert.match(
+      job,
+      /trap 'kill "\$\(cat \/tmp\/docs\.loop\.pid\)" "\$\(cat \/tmp\/docs\.pid\)"/,
+    );
     const smoke = nightly.split(/^ {2}docs-smoke-cross-browser:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.match(smoke, /firefox/);
     assert.match(smoke, /webkit/);
