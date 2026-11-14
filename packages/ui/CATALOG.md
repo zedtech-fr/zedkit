@@ -144,7 +144,7 @@ cn("px-4", "px-2"); // "px-2" — last conflicting utility wins
 - When not to use: For gesture or layout animation (drag, shared-element transitions) — use a motion library instead.
 - See also: `Theme an admin app (dark/light included)`, `Group content in a card section`, `Reveal and react with motion on any element`
 - Examples: Entrance with stagger, Hover feedback, Staggered children
-- A11y: Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. Hover lift only applies on devices that hover, so it never sticks after a tap.
+- A11y: Every utility and attribute is switched off under `prefers-reduced-motion: reduce`, with content left visible and in place. The `:hover` lift only applies on devices that hover, so hover never sticks after a tap; `:focus-within` lift stays until blur. Put `hover-lift` on the bordered host (`Card`/`Surface`) — a borderless wrapper never paints the primary-tinted border. `hover-lift` uses the same lift, shadow and primary-tinted border on `:hover`, `:focus-visible` and `:focus-within`; reduced motion keeps the border and shadow and kills the translate.
 - Troubleshooting: Nothing animates — check the OS reduced-motion setting first. Content stays hidden — `data-reveal="pending"` and `data-stagger="pending"` hide content until your code sets them to `"in"`. Stagger has no delay — `stagger-*` delays an animation class (`animate-fade-up stagger-2`), not a transition. Parallax travel follows `--zk-motion-intensity` (default 1, `0` = no shift) times `--zk-motion-mobile` (`0.5` under 40rem); override on a subtree (`.hero { --zk-motion-intensity: 0.3 }`), not as an identity token. Derived amplitude is `min(calc(var(--zk-reveal-distance) * 8), var(--zk-parallax-max-shift, 120px))` (x-axis cap `12vw`). Sticky offset is `--zk-pin-top` (`calc(var(--zk-header-height) + 1rem)`).
 
 ```ts
@@ -155,7 +155,7 @@ import { Card } from "@zedtech/zedkit-ui";
 ```
 
 ```ts
-<Card className="hover-lift">Lifts on hover (devices that hover)</Card>
+<Card className="hover-lift">Lifts on hover and keyboard focus</Card>
 <Button className="hover-press">Presses down on click</Button>
 ```
 
@@ -178,10 +178,10 @@ import { Card } from "@zedtech/zedkit-ui";
 - Audience: Developers adding appear, scroll, press, longpress, hover or focus motion to any kit element.
 - Purpose: One typed attribute and wrapper API for identity-token motion, with a tiny SSR-safe runtime.
 - When to use: When a card, section or control should move on appear, scroll progress, press, longpress, hover or focus.
-- When not to use: For pinned scene crossfades use `ScrollScenes`. For section snap/smooth-scroll use `SectionScroll`. For first-paint class utilities see `Animate entrances and hover feedback with CSS utilities`. For section-shared parallax layers use `ParallaxSection` from `@zedtech/zedkit-ui/motion`.
+- When not to use: For pinned scene crossfades use `ScrollScenes`. For section snap/smooth-scroll use `SectionScroll` (styles `html` via `:has`; skip on a native-scrolling page). For first-paint class utilities see `Animate entrances and hover feedback with CSS utilities`. For section-shared parallax layers use `ParallaxSection` from `@zedtech/zedkit-ui/motion`.
 - See also: `Animate entrances and hover feedback with CSS utilities`, `Add depth with parallax layers`, `Pin a stage and change scene as the page scrolls`, `Stack content and group titled sections`
 - Examples: Attribute on a card, Wrapper with several triggers, Stagger children
-- A11y: `prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`.
+- A11y: `prefers-reduced-motion: reduce` leaves content visible and in place. Hover is gated to hover-capable pointers. Focus uses `:focus-visible`. Press ignores disabled. Longpress is decorative, never the only action. Appear does not set `aria-hidden`. Stagger-pending children are `visibility: hidden` (out of the tab order) until `in`.
 - Troubleshooting: Nothing appears to move — mount `<AnimateObserver />` once near the app root (or call `observeAnimate()`), then check reduced motion and `data-motion` on `<html>`. Content stays visible without JS by design. Scroll parallax needs `animation-timeline: view()` or the runtime fallback. In-app reduce flashes on load — render `<MotionScript />` in `<head>` (same pattern as `IdentityScript`) so `data-motion="reduce"` is set before paint; `useMotionPreference()` is `"reduce"` on the server.
 
 ```ts
@@ -324,7 +324,7 @@ import { IconButton } from "@zedtech/zedkit-ui";
 - When not to use: For long text or actions — use Text or Button instead.
 - See also: `Indicate status with a dot`
 - Examples: Simple, Variants, In a table row, As a link (asChild), Soft status
-- A11y: Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. Keep labels short. Corners follow identity `--radius-md` via `rounded-md`; identity label tracking already keys off `px-badge-inline`.
+- A11y: Default badge is a `div` (not a live region). Use `asChild` with an anchor or button for links; `focus-ring` applies on keyboard focus. An `asChild` link keeps a 24px min box (`a[class*="px-badge-inline"]`). Keep labels short. Corners follow identity `--radius-md` via `rounded-md`; identity label tracking already keys off `px-badge-inline`.
 - Troubleshooting: Wrong colors in dark mode — ensure `.dark` is on the document root. `BadgeProps` is defined in `badge.tsx` for typing; import types from the same module when using the registry copy.
 
 ```ts
@@ -648,11 +648,11 @@ import { Checkmark } from "@zedtech/zedkit-ui";
 - Purpose: One faithful loading skeleton per kit component shape, each a named live zone.
 - When to use: As a `Suspense` fallback matching the component that will land.
 - When not to use: For freeform blocks — use a plain `Skeleton`; for named operations — use `StatusLabel`.
-- See also: `Show loading placeholder blocks`
+- See also: `Show loading placeholder blocks`, `Show a route-shaped skeleton while the next page loads`
 - Examples: In Suspense, Standalone
-- A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading") — screen readers announce the zone; the label is never shown visually.
+- A11y: `role="status"` with `aria-label` from the `label` prop (default "Loading content") — screen readers announce the zone; the label is never shown visually.
 - Registry: card-skeleton
-- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
+- Troubleshooting: Generic announcement — pass a specific `label` per zone (default is "Loading content"). Layout shifts when content lands — the skeleton mirrors card padding/stack tokens, but a mismatched container width still shifts. DetailPanelSkeleton is the boxed-list shape only — it does not follow `variant="grid"`.
 
 ```ts
 import { Suspense } from "react";
@@ -665,6 +665,38 @@ import { Card, CardContent, CardSkeleton } from "@zedtech/zedkit-ui";
 ```ts
 import { CardSkeleton } from "@zedtech/zedkit-ui";
 {loading ? <CardSkeleton label="Loading report" /> : <ReportCard />}
+```
+
+## Show a route-shaped skeleton while the next page loads
+
+- Import: `@zedtech/zedkit-ui` — `DocsPageSkeleton`, `DocsPageSkeletonProps`, `ListPageSkeleton`, `ListPageSkeletonProps`, `DetailPageSkeleton`, `DetailPageSkeletonProps`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: Route skeletons
+- Audience: Developers replacing a spinner or generic loader between pages.
+- Purpose: Docs, list, and detail page skeletons composed from existing zone skeletons so the wait matches the page that lands.
+- When to use: As `loading.tsx` or a `Suspense` fallback for a whole page, not a single card.
+- When not to use: For one card, table, or panel — use `CardSkeleton` / `DataTableSkeleton` / `DetailPanelSkeleton`. For a named operation — use `StatusLabel`.
+- See also: `Load each zone with a faithful skeleton`, `Keep chrome mounted across client navigations`
+- Examples: Docs page, List page, Detail page
+- A11y: One wrapper `role="status"` with `label` (default `messages.loading`). Nested `CardSkeleton` / `PageHeaderSkeleton` / `DetailPanelSkeleton` are `aria-hidden` so the wait is announced once (WCAG 4.1.3). The label is not shown visually.
+- Troubleshooting: Layout shift on arrival — keep the skeleton in the same column width as the page. Empty `cards` or `rows` is allowed and renders the header only. `cards` clamps to 0–8.
+
+```ts
+import { DocsPageSkeleton } from "@zedtech/zedkit-ui";
+export default function Loading() {
+  return <DocsPageSkeleton label="Loading page" />;
+}
+```
+
+```ts
+import { ListPageSkeleton } from "@zedtech/zedkit-ui";
+<ListPageSkeleton label="Loading catalog" cards={3} />
+```
+
+```ts
+import { DetailPageSkeleton } from "@zedtech/zedkit-ui";
+<DetailPageSkeleton label="Loading item" rows={4} />
 ```
 
 ## Name an operation in progress
@@ -709,11 +741,11 @@ import { StatusLabel } from "@zedtech/zedkit-ui";
 - Purpose: A relative "Updated N minutes ago" stamp via `Intl.RelativeTimeFormat`, no date library.
 - When to use: Under data that refreshes (polling, SWR, manual refetch).
 - When not to use: For absolute timestamps — render a `<time dateTime>` instead.
-- A11y: Static text (not a live region) — screen readers meet it while reading; re-render when the data refreshes. Styled with `text-caption text-muted-foreground` only.
+- A11y: Static text (not a live region) — screen readers meet it while reading; the post-mount swap is not announced as a status update. Re-render when the data refreshes. Styled with `text-caption text-muted-foreground` only.
 - See also: `Name an operation in progress`
 - Examples: Simple, Custom prefix
 - Registry: updated-ago
-- Troubleshooting: Stamp never changes — it renders once per render; re-render from your polling tick or SWR refresh. Future dates read as “just now” (clamped, never “in 5 minutes”).
+- Troubleshooting: First paint is a UTC medium date (`timeZone: "UTC"`) so static HTML hydrates; after mount the stamp becomes the live relative string. Stamp never ticks on its own — re-render from your polling tick or SWR refresh. Future dates read as “just now” (clamped, never “in 5 minutes”).
 
 ```ts
 import { UpdatedAgo } from "@zedtech/zedkit-ui";
@@ -744,6 +776,31 @@ import { formatDuration } from "@zedtech/zedkit-ui";
 formatDuration(377_000); // "6m 17s"
 formatDuration(3_720_000); // "1h 02m"
 formatDuration({ start: 0, end: 377_000 }, "fr"); // "6m 17s"
+```
+
+## Remember a listed choice across visits
+
+- Import: `@zedtech/zedkit-ui` — `createStoredChoice`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: createStoredChoice
+- Audience: Developers persisting a tab or similar listed choice in the browser.
+- Purpose: Keep a listed localStorage choice that hydrates with the default so server HTML and the first paint always agree.
+- When to use: For a fixed list of strings shared by every control that reads the same key (package manager, install path).
+- When not to use: For identity look persistence — use `IdentityScript`. For motion — use `useMotionPreference`.
+- See also: `Flag offline state with a live note`
+- A11y: Returns a tuple. The caller owns the control; persist only listed values so a tab cannot store an unnamed option.
+- Troubleshooting: First paint is the default even when storage holds another allowed value — that is hydration, not a bug. Blocked storage still follows `set` for the session. Create one factory per key at module scope; two factories on the same key split in-memory state.
+
+```ts
+import { createStoredChoice } from "@zedtech/zedkit-ui";
+
+const colorScheme = createStoredChoice("color-scheme", ["light", "dark"] as const);
+
+export function SchemeToggle() {
+  const [scheme, setScheme] = colorScheme.useChoice();
+  return <button type="button" onClick={() => setScheme("dark")}>{scheme}</button>;
+}
 ```
 
 ## Flag offline state with a live note
@@ -871,7 +928,7 @@ import { Button, ErrorState } from "@zedtech/zedkit-ui";
 - Examples: Default name, Named wait
 - A11y: `role="status"` plus `aria-label`. The icon is `aria-hidden`. Keep visible text next to it that names the wait; a `label` prop overrides the kit `loading` string. The spin uses `motion-safe:animate-spin`.
 - Registry: spinner
-- Troubleshooting: Screen readers say only "Loading" — pass `label` that names the operation, or keep visible text beside the spinner. The icon does not spin — `motion-safe:animate-spin` is static under reduced motion. Used as a full-page placeholder — prefer Skeleton so layout does not jump.
+- Troubleshooting: Screen readers say only "Loading content" — pass `label` that names the operation, or keep visible text beside the spinner. The icon does not spin — `motion-safe:animate-spin` is static under reduced motion. Used as a full-page placeholder — prefer Skeleton so layout does not jump.
 
 ```ts
 import { Spinner } from "@zedtech/zedkit-ui";
@@ -1015,7 +1072,7 @@ import { Button, ConfirmDialog } from "@zedtech/zedkit-ui";
 - When not to use: For multi-step flows — use a full page or wizard instead.
 - See also: `Open modal dialogs`, `Show key-value details and a live indicator`
 - Examples: Right detail panel, Bottom sheet, Side panel on every screen
-- A11y: Modal drawers use Vaul / Radix Dialog: focus lands on the panel itself on open (never a field, never a text selection) so the focus trap engages; `initialFocus` (a ref or a selector) opts a field in, with the caret at the end. Escape to close and focus returns to the trigger; rest of the page is hidden from assistive tech while open (`role="dialog"`). `modal={false}` (and matching `DrawerContent`) renders a kit inline panel with Surface styling—not Vaul/Radix—so the page stays pointer- and keyboard-reachable, without `aria-hidden` on siblings; mount autofocus stays off, Escape still closes and returns focus to the trigger. Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Use `DrawerCloseButton` (44px touch target) plus `DrawerHandle` for swipe-down; the handle hides itself on left and right drawers and moves to the bottom edge of a top drawer. Every direction closes by dragging toward its edge, tapping the dimmed area, or pressing Escape on modal drawers. Safe-area insets are respected, and fields inside a drawer stay at 16px on touch screens. Sticky `DrawerHeader` / `DrawerFooter` keep title and actions visible; `DrawerBody` scrolls with `overscroll-behavior: contain`.
+- A11y: Modal drawers use Vaul / Radix Dialog: focus lands on the panel itself on open (never a field, never a text selection) so the focus trap engages; `initialFocus` (a ref or a selector) opts a field in, with the caret at the end. Escape to close and focus returns to the trigger; rest of the page is hidden from assistive tech while open (`role="dialog"`). `modal={false}` (and matching `DrawerContent`) renders a kit inline panel with Surface styling—not Vaul/Radix—so the page stays pointer- and keyboard-reachable, without `aria-hidden` on siblings; mount autofocus stays off, Escape still closes, and focus returns to the trigger only when it was inside the panel. Provide `DrawerTitle` (and `DrawerDescription` when the panel needs context). Use `DrawerCloseButton` (44px touch target) plus `DrawerHandle` for a drag toward the closing edge (down on a bottom sheet, up on a top sheet); the handle hides itself on left and right drawers and moves to the bottom edge of a top drawer. Modal drawers close by dragging the panel off the edge it opened from, tapping the dimmed area, or pressing Escape. `modal={false}` has no overlay. Escape and Close still close it. A bottom or top sheet also closes from a handle drag toward the edge (a tap does not close), or from a fine-pointer drag on the sheet body when that body is not scrolled (about 20% of the panel height). Touch body-drag is not supported; use the handle. Handle dismiss finds the dialog even when `data-slot` on `DrawerContent` is customized. Text-heavy sheets can opt out of body-drag with consumer `onPointerDown` + `preventDefault`. Reduced motion skips the slide; the sheet still closes. Left and right non-modal drawers do not swipe shut. Safe-area insets are respected, and fields inside a drawer stay at 16px on touch screens. Sticky `DrawerHeader` / `DrawerFooter` keep title and actions visible; `DrawerBody` scrolls with `overscroll-behavior: contain`.
 - Troubleshooting: Dim overlay missing after `shadcn add` — install the drawer registry item (it injects the `--overlay` token) or add the token to your theme. `direction="right"` with default `mobile="sheet"` becomes a bottom sheet under 640px; pass `mobile="side"` to keep a full-height side panel on phones (up to 90% of the width, so the dimmed page stays tappable).
 
 ```ts
@@ -1228,7 +1285,7 @@ import { RouteModal, closeRoute } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: JumpToLatest
 - Audience: Developers building a chat, log, or console that grows while the reader watches.
-- Purpose: Follow the newest line until the reader scrolls up; a named button jumps back and resumes following. `offset` defaults to 8px; `behavior` defaults to `"auto"` (instant jump).
+- Purpose: Follow the newest line until the reader scrolls up; a named button jumps back and resumes following. `offset` defaults to 8px; `behavior` defaults to `"auto"` (instant jump); `enabled: false` leaves the scroller alone and reads stuck.
 - When to use: On any overflowing scroll parent (`AppShell` `mainRef` or a custom pane) with content that appends.
 - When not to use: For route-change scroll-to-top — use `Reset scroll on route change`. CSS `overflow-anchor` cannot expose a latch for the button.
 - Examples: Log pane with jump control
@@ -1264,18 +1321,19 @@ export function LogPane({ children }: { children: ReactNode }) {
 - Audience: Developers whose client-side navigation keeps the previous page's scroll position.
 - Purpose: Scrolls to the top (or to the `#hash` anchor) when the route key changes, leaving back/forward restoration to the browser.
 - When to use: Once near the root of the app, fed the router pathname (`usePathname()` in Next.js).
-- When not to use: For in-page anchor links or scroll spies — the browser already handles those.
+- When not to use: For in-page fragment clicks — use `Scroll to in-page hash targets on every click`. For scroll spies.
 - Examples: Next.js root, Inner scroll container
 - A11y: Jumps instantly by default and always under `prefers-reduced-motion: reduce`; `behavior="smooth"` only applies when motion is allowed. Does not move focus. Back/forward (popstate) navigations are skipped so the browser restores the previous position.
 - Composition: Renders nothing; `useScrollReset` is the same behaviour as a hook. Router-agnostic — the app passes the route key.
-- See also: `Render a route as a modal over the list`
+- See also: `Render a route as a modal over the list`, `Keep chrome mounted across client navigations`, `Scroll to in-page hash targets on every click`
 
 ```ts
 "use client";
 import { ScrollReset } from "@zedtech/zedkit-ui";
 import { usePathname } from "next/navigation";
 export function RouteScroll() {
-  return <ScrollReset routeKey={usePathname()} />;
+  const pathname = usePathname();
+  return <ScrollReset routeKey={pathname} />;
 }
 ```
 
@@ -1283,6 +1341,75 @@ export function RouteScroll() {
 import { useScrollReset } from "@zedtech/zedkit-ui";
 const getMain = useCallback(() => document.querySelector<HTMLElement>("main"), []);
 useScrollReset(pathname, { target: getMain });
+```
+
+## Scroll to in-page hash targets on every click
+
+- Import: `@zedtech/zedkit-ui` — `InPageAnchorScroll`, `InPageAnchorScrollProps`, `useInPageAnchorScroll`, `scrollToFragment`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: InPageAnchorScroll
+- Audience: Developers whose in-page `#hash` links go dead when the URL already has that hash.
+- Purpose: Scrolls and focuses same-document `#hash` targets on every click, including when the URL hash is already set.
+- When to use: Once near the root, next to `ScrollReset`, so every in-page fragment link scrolls again on a repeat click.
+- When not to use: For route-change scroll (including `/docs` → `/#hash`) or a same-path link that also changes the query string — use `Reset scroll on route change` and the router. For scroll spies.
+- Examples: Root mount, Direct scroll
+- A11y: Smooth unless `prefers-reduced-motion` or `data-motion="reduce"`; then instant. Moves focus to the target and sets `tabIndex=-1` only when it is not natively focusable. Give the target an accessible name and a visible focus style. Honours CSS `scroll-margin-top`. Ignores modified clicks, `download`, non-`_self` targets, and query-string mismatches. After `pushState`, dispatches `hashchange` so hash-only listeners still run.
+- Composition: Renders nothing; `useInPageAnchorScroll` is the same listener as a hook. `scrollToFragment` is the scroll-and-focus helper. The component accepts `InPageAnchorScrollProps` (empty).
+- See also: `Reset scroll on route change`
+
+```ts
+"use client";
+import { InPageAnchorScroll, ScrollReset } from "@zedtech/zedkit-ui";
+import { usePathname } from "next/navigation";
+export function RouteScroll() {
+  const pathname = usePathname();
+  return (
+    <>
+      <ScrollReset routeKey={pathname} />
+      <InPageAnchorScroll />
+    </>
+  );
+}
+```
+
+```ts
+import { scrollToFragment } from "@zedtech/zedkit-ui";
+const target = document.getElementById("get-started");
+if (target) scrollToFragment(target);
+```
+
+## Keep chrome mounted across client navigations
+
+- Import: `@zedtech/zedkit-ui` — `PersistentShell`, `PersistentShellProps`, `PageTransition`, `PageTransitionProps`, `PageTransitionPreset`
+- Wraps: `(none)`
+- Status: alpha
+- Short name: PersistentShell
+- Audience: Developers whose shared header, sidebar, or docks look like they remount on every click.
+- Purpose: Slot host and named-motion wrap so header, sidebar, and docks stay mounted while only the article fades.
+- When to use: In a layout that is a common ancestor of the routes that must share chrome. Pass `routeKey` (pathname) the same way as `ScrollReset`.
+- When not to use: For an admin sidebar and topbar — use `AppShell`. Do not wrap fumadocs `DocsLayout` children (that steals grid areas). Do not pass `routeKey` and also remount via Next `template.tsx`.
+- See also: `Reveal and react with motion on any element`, `Lay out an admin page (sidebar + topbar + header)`, `Reset scroll on route change`, `Show a route-shaped skeleton while the next page loads`
+- Examples: Layout ancestor, With a route key
+- A11y: `motion-settle` / `motion-reveal` already stop under `prefers-reduced-motion` and `data-motion="reduce"`, leaving content visible in place. The shell adds no landmarks; keep skip-link and `#main-content` on the article.
+- Troubleshooting: Chrome remounts — the shell is not in a layout ancestor of both routes. The fade plays twice — use `routeKey` or a remounting `template.tsx`, not both. Nothing fades — check reduced motion and `data-motion`.
+
+```ts
+import { PersistentShell } from "@zedtech/zedkit-ui";
+export default function DocsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <PersistentShell header={<SiteHeader />} sidebar={<DocsNav />}>
+      {children}
+    </PersistentShell>
+  );
+}
+```
+
+```ts
+"use client";
+import { PageTransition } from "@zedtech/zedkit-ui";
+import { usePathname } from "next/navigation";
+<PageTransition routeKey={usePathname()} preset="settle">{article}</PageTransition>
 ```
 
 ## Show toast notifications
@@ -1428,13 +1555,13 @@ import { AppShell } from "@zedtech/zedkit-ui";
 - Status: alpha
 - Short name: AgentConsole
 - Audience: Developers mounting a live agent run (sidebar of items plus one transcript) from host-mapped props.
-- Purpose: Compose a live agent console (sidebar, decision card, transcript) from host-mapped props. Mobile drawer and stick-to-bottom; no fetch.
+- Purpose: Compose a live agent console (sidebar, decision, transcript) from host-mapped props. Item header, flow, stats; mobile drawer; no fetch.
 - When to use: When the host already has a run, items, and an optional decision and needs the kit shell, grouping, and transcript wiring.
 - When not to use: For polling or snapshot parsing — keep those in the host. For a page frame only — use AppShell. For a registry copy of this screen — there is none; import from npm.
 - See also: `Lay out an admin page (sidebar + topbar + header)`, `List sidebar rows with status, title, meta, and count`, `Follow a growing log to the latest`, `Render a live assistant transcript from rows`, `Render Markdown without raw HTML`, `Show key-value details and a live indicator`, `Show an empty zone with a next step`, `Localize kit chrome in English or French`
 - Examples: Simple
-- A11y: Labelled mobile drawer trigger (not the icon-only menu). Sidebar is presentational (no ids; AppShell mounts it twice). Rows are buttons; groups are native `details` and start open. First pass is a folded native `details`. Jump to latest overlays the main pane and is hidden while latched. EmptyState when `items` is empty. Confidence is announced as n/10.
-- Troubleshooting: Pass milliseconds for duration fields. Confidence is already /10 (do not multiply). Unknown item kinds still render, after the ticket groups. Custom `messages` bundles must add `agentConsole` — see `Localize kit chrome in English or French`. Host owns loading and error; this module does not fetch. The decision card renders only while the selected item is `kind: "main"` — a passed `decision` is ignored on lens and other views. Do not mount until the first `items` payload exists, or EmptyState flashes. `postedReviewHref` (run and decision) must be `http:` or `https:`; other schemes are omitted. Agent message entries render Markdown, including remote `http(s)` images (`referrerPolicy=no-referrer`); strip images in the host if that is too much trust.
+- A11y: Labelled mobile drawer trigger (not the icon-only menu). Sidebar is presentational (no ids; AppShell mounts it twice). Rows are buttons; groups are native `details` and start open. The selected item leads with its name (`headingLevel`, h2 by default; standalone pages pass 1), then the decision card, stats, and transcript. First pass and dismissed findings are folded native `details`. The transcript is a labelled section (`aria-labelledby` the heading) with an empty state. Jump to latest overlays the main pane and is hidden while latched. EmptyState when `items` is empty. Confidence is announced as n/10.
+- Troubleshooting: Pass milliseconds for duration fields. Confidence is already /10 (do not multiply). `kind: "gate"` folds into Review lenses and `kind: "subagent"` into Helpers; other unknown kinds still render, after the named groups. Item header kind uses the same bucket labels as the sidebar. Sidebar rows read name, duration, model, tool count, and status (live activity while running); the name stays the accessible name. `run.running` shows a live pulse on the run header. The main pane follows the end only while the selected item runs; selecting a settled item resets the pane to the top. The tokens row hides when both counts are zero or either is non-finite. Custom `messages` bundles must add `agentConsole` — see `Localize kit chrome in English or French`. New chrome keys: `mustChangeEmpty`, `transcript`, `noTranscriptTitle`, `noTranscriptDescription`, `tools`, `toolsOne`; `groupGate` is deprecated (gates sit with the lenses). Host owns loading and error; this module does not fetch. The decision card renders only while the selected item is `kind: "main"` — a passed `decision` is ignored on lens and other views. Do not mount until the first `items` payload exists, or EmptyState flashes. `postedReviewHref` (run and decision) must be `http:` or `https:`; other schemes are omitted. Agent message entries render Markdown, including remote `http(s)` images (`referrerPolicy=no-referrer`); strip images in the host if that is too much trust.
 
 ```ts
 "use client";
@@ -1547,7 +1674,7 @@ const [delivery, setDelivery] = useState(["standard"]); // always one id
 - Examples: Simple, Composed rows, Stat grid
 - A11y: Native `dl`/`dt`/`dd` semantics; rows read in order. Grid wraps each pair so a two-column layout does not interleave terms and definitions. `LivePulse` is `role="status"` (name from `aria-label`, not contents). `aria-label` is the shown word (`label` when live, `inactiveLabel` when idle, kit idle when the word is hidden) so the `StatusDot` is never unnamed. `inactiveLabel` is caller-localized (no `lang`).
 - Registry: detail-panel
-- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Grid is `items[]` only — there is no composed-cell export. Grid reading order — each item is one wrapped `dt`/`dd` pair, not flattened grid children. Boxed look on a grid — wrap in Card (`<Card><DetailPanel variant="grid" items={items} /></Card>`); `className` also works; grid drops list chrome. Grid loading — `DetailPanelSkeleton` is the boxed-list shape only. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
+- Troubleshooting: Custom row content — compose `DetailPanelRow` inside your own `<dl>` (see Composed rows); `DetailPanel` only covers the plain `items[]` case. Grid is `items[]` only — there is no composed-cell export. Grid reading order — each item is one wrapped `dt`/`dd` pair, not flattened grid children. Grid columns — stacked below `sm`, trio from `sm`, quint from `lg`. Pass `className="grid-pair"` when a call site should pair at all widths. Boxed look on a grid — wrap in Card (`<Card><DetailPanel variant="grid" items={items} /></Card>`); `className` also works; grid drops list chrome. Grid loading — `DetailPanelSkeleton` is the boxed-list shape only. Cramped rows — inline padding is `px-detail-panel-inline`; block padding is `py-detail-panel-block`. Idle word stuck on Idle — pass `inactiveLabel`; `label` is ignored when `active={false}`. Dot-only idle still unnamed — empty `inactiveLabel` hides the visible word; `aria-label` stays the kit idle string. Mixed-language idle copy — localize `inactiveLabel` on the host; LivePulse does not translate it.
 
 ```ts
 import { DetailPanel, LivePulse, PageHeader } from "@zedtech/zedkit-ui";
@@ -1672,14 +1799,15 @@ import { Card, CardContent, CardFooter } from "@zedtech/zedkit-ui";
 - Status: stable
 - Short name: Stack
 - Audience: Developers laying out kit pages without raw divs.
-- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap. Gaps are role-named only.
+- Purpose: Gap-based vertical/horizontal stacks plus titled sections, with optional proximity scroll-snap on html. Gaps are role-named only.
 - When to use: For all kit-page layout instead of hand-written flex. Bleed sections step up one rhythm step in wide `zk-query` slots.
-- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`.
-- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`
-- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap and smooth scrolling apply only when `prefers-reduced-motion` is `no-preference`.
+- When not to use: For complex grids — use CSS grid directly instead. For motion/enter animations, use the motion utilities, not `SectionScroll`. Do not wrap a native-scrolling page: `SectionScroll` applies `scroll-behavior: smooth` and `scroll-snap-type: y proximity` to `html` via `:has`, only when `prefers-reduced-motion` is `no-preference`. For node-scoped scroll-linked effects use `ScrollScenes` or `ParallaxSection`.
+- See also: `Render headings and body text without raw tags`, `Group content in a card section`, `Constrain page width and run sections edge to edge`, `Pin a stage and change scene as the page scrolls`, `Add depth with parallax layers`
+- A11y: `Stack` renders a plain `div` with no role. `Section` renders a `section` landmark named by its string `title`, with that title as a level-2 heading: use one `title` per region, keep heading levels in order, and do not repeat a title that a nearby landmark already uses. `SectionScroll` is a plain `div`; snap (`scroll-snap-type: y proximity`) and smooth scrolling (`scroll-behavior: smooth`) apply to `html` via `:has([data-slot="section-scroll"])` only when `prefers-reduced-motion` is `no-preference`.
 
 ```ts
 import { Section, SectionScroll, Stack } from "@zedtech/zedkit-ui";
+// Page-wide: styles html. Skip on a native-scrolling page.
 <SectionScroll>
   <Section title="Team" description="Who can access.">
     <Stack direction="horizontal" gap="sm">...</Stack>
@@ -2292,7 +2420,7 @@ const plans = [
 
 ## Switch the visual identity with one attribute
 
-- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `IdentityScript`, `IdentityScriptProps`, `IdentitySwitcher`, `IdentitySwitcherProps`, `IdentityPicker`, `IdentityPickerProps`, `IdentityOption`, `identities`, `applyIdentity`, `discardCustomIdentity`, `applyCustomIdentity`, `useIdentity`, `ThemeScope`, `ThemeScopeProps`, `usePortalContainer`, `CUSTOM_IDENTITY_ID`, `IDENTITY_STORAGE_KEY`, `IDENTITY_CUSTOM_STORAGE_KEY`, `IDENTITY_CHANGE_EVENT`, `NAMED_IDENTITY_PREFIX`, `isNamedIdentityId`, `identityTokenSchema`, `IdentityTokens`, `IdentityId`, `identityPresets`, `isPresetId`, `tokensToCss`, `tokensToCssVars`, `parseIdentityTokens`, `suggestIdentityTokens`, `applyIdentityTokenSheet`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`
 - Wraps: `zod` (token schema); CSS variables in `identities.css`
 - Status: beta
 - Short name: Identities
@@ -2372,17 +2500,17 @@ void css;
 
 ## Design your identity
 
-- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`
+- Import: `@zedtech/zedkit-ui` — `applyIdentityTokenSheet`, `applyCustomIdentity`, `identityPresets`, `parseIdentityTokens`, `suggestIdentityTokens`, `IdentityTokens`, `IdentityId`, `isPresetId`, `isNamedIdentityId`, `NAMED_IDENTITY_PREFIX`, `identityContrastWarnings`, `identityContrastTokenLabel`, `withIdentityDarkPair`, `keepIdentityDarkKeys`, `IdentityContrastWarning`, `repairContrast`
 - Wraps: `zod` (token schema); CSS variables from `applyIdentityTokenSheet`
 - Status: beta
 - Short name: Draft look
 - Audience: Teams that want to try spacing, borders, type and colour on a live card before copying tokens.
-- Purpose: Design your own look — colour, radius, spacing, type — on a live card, then apply it to the whole site.
+- Purpose: Design a look on a live card, then apply it. `repairContrast` nudges failing pairs toward AA; `adjusted` is colours moved, `remaining` still miss.
 - When to use: To try a look on one card, with contrast warnings and an automatic AA dark pair, then apply that draft to the whole page identity.
 - When not to use: To switch a published built-in look — use `IdentitySwitcher` or `data-identity` on the root instead.
 - See also: `Switch the visual identity with one attribute`
-- Examples: Write a draft sheet
-- A11y: Every field has a visible label. Reset, Dark, Suggest, Apply, Discard and Apply to the whole site are named buttons (`aria-pressed` on Dark). The draft card is a live preview of the tokens. Colour fields accept HSL channels (`H S% L%`). Each exportable text pair (body, primary, muted) must reach 4.5:1 against its surface; accent and border need 3:1 against the background — warnings show inline with a Fix that nudges lightness. Copy CSS/JSON stays behind an explicit confirm while any pair fails. Suggest never writes tokens until Apply. While a custom identity is active, a status bar offers Reset to default.
+- Examples: Write a draft sheet, Repair contrast
+- A11y: Every field has a visible label. Reset, Dark, Suggest, Apply, Discard and Apply to the whole site are named buttons (`aria-pressed` on Dark). The draft card is a live preview of the tokens. Colour fields accept HSL channels (`H S% L%`). Each exportable text pair (body, primary, muted) must reach 4.5:1 against its surface; accent (focus ring) needs 3:1 against the background. Decorative separators are not a fail. Compact export still writes a 3:1 `--input` field border, split from decorative `--border`. Warnings show inline with a Fix that nudges lightness. Copy CSS/JSON stays behind an explicit confirm while any pair fails. Suggest never writes tokens until Apply. While a custom identity is active, a status bar offers Reset to default.
 - Troubleshooting: The whole docs page changed — Apply to the whole site wrote `:root`; Reset to default clears `IDENTITY_CUSTOM_STORAGE_KEY`; picking a built-in identity only parks the sheet. A field snaps back — the value failed the token schema (HSL, leading, or tracking). A refresh loses the draft — the address bar holds only fields that differ from the chosen look, plus `theme=dark` when the dark preview is on. Suggest shows a keyword match — the HTTP service is off, rate-limited, or the response failed the token schema.
 
 ```ts
@@ -2394,7 +2522,11 @@ applyIdentityTokenSheet(
 );
 ```
 
-
+```ts
+import { repairContrast, identityPresets } from "@zedtech/zedkit-ui";
+const { tokens, adjusted, remaining } = repairContrast(identityPresets.mist);
+void { tokens, adjusted, remaining };
+```
 
 ## Compose a public marketing page
 

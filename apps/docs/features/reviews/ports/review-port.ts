@@ -10,10 +10,13 @@ export type TimelineEntry = {
   readonly type: TimelineEntryType;
   readonly status: TimelineEntryStatus;
   readonly startedAt: string;
+  readonly endedAt?: string | null;
   readonly durationMs: number | null;
   readonly models: readonly string[];
   readonly verdict: ReviewVerdict | null;
   readonly liveUrl: string | null;
+  readonly score?: number | null;
+  readonly superseded?: boolean;
 };
 
 export type IssueRecord = {
@@ -216,4 +219,5 @@ export type ReviewPort = {
   resolvePr(n: number): Promise<PrResolve | null>;
   list(): Promise<PublicLiveRun[]>;
   getByPr(n: number): Promise<PublicLiveRun | null>;
+  hasLoadError(): Promise<boolean>;
 };

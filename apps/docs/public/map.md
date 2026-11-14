@@ -17,6 +17,7 @@ Install only the setup-able packages the user named, in a safe order, and emit o
 Paste prompts:
 
 - Suggest: `Suggest which zedkit setup this repo needs following https://zedkit.app/suggest.md`
+- AI and UI: `Set up zedkit AI and UI on this repo following https://zedkit.app/map.md`
 - Combined (all three): `Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md`
 
 ## Detect requested packages
@@ -24,6 +25,7 @@ Paste prompts:
 Parse the user message for AI, UI, and Nest.
 
 - The combined mini prompt above means all three.
+- The AI and UI prompt means those two only.
 - A message that names a subset installs **only the requested** packages.
 - A message that says only `following https://zedkit.app/map.md` with no package names: follow [https://zedkit.app/suggest.md](https://zedkit.app/suggest.md) and stop. Do not assume all three.
 

@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 
+import { fieldBorderFor } from "#identity/identity-contrast.js";
 import {
   applyCustomIdentitySheet,
   applyIdentityTokenSheet,
@@ -231,6 +232,22 @@ describe("token to CSS var writer", () => {
     expect(css).toContain("--sidebar-accent: 38 45% 48%");
     expect(css).toContain(":root[data-identity=\"mist\"].dark");
     expect(css).toContain("--sidebar: 30 12% 7%");
+  });
+
+  it("splits a 3:1 --input from a decorative hairline --border", () => {
+    const tokens = identityTokenSchema.parse({
+      ...identityPresets.glass,
+      light: {
+        ...identityPresets.glass.light,
+        background: "0 0% 100%",
+        border: "240 5.9% 90%",
+      },
+    });
+    const vars = tokensToCssVars(tokens);
+    expect(vars["--border"]).toBe("240 5.9% 90%");
+    expect(vars["--input"]).toBe(fieldBorderFor("240 5.9% 90%", "0 0% 100%"));
+    expect(vars["--input"]).not.toBe("240 5.9% 90%");
+    expect(vars["--sidebar-border"]).toBe("240 5.9% 90%");
   });
 });
 

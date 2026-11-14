@@ -14,6 +14,11 @@ export interface StickToBottomOptions {
    * `"smooth"` while content keeps growing is a continuous animation.
    */
   behavior?: "auto" | "smooth";
+  /**
+   * Follow the end while true. Defaults to true. When false the scroller is
+   * left alone and the latch reads stuck (a settled log starts at the top).
+   */
+  enabled?: boolean;
 }
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -130,7 +135,7 @@ export function useStickToBottom(
   scroller: RefObject<HTMLElement | null>,
   options: StickToBottomOptions = {},
 ): { isStuck: boolean; jumpToLatest: () => void } {
-  const { behavior = "auto" } = options;
+  const { behavior = "auto", enabled = true } = options;
   const offset = latchOffset(options.offset);
   const [isStuck, setIsStuck] = useState(true);
   const stuckRef = useRef(true);
@@ -164,11 +169,15 @@ export function useStickToBottom(
   });
 
   useEffect(() => {
-    if (!node) return undefined;
+    if (!node || !enabled) return undefined;
     return observeScroller(node, offset, programmaticRef, stuckRef, setStuck, pinToEnd, releaseGuard);
-  }, [node, offset, pinToEnd, setStuck, releaseGuard]);
+  }, [node, offset, pinToEnd, setStuck, releaseGuard, enabled]);
 
-  return { isStuck, jumpToLatest };
+  useEffect(() => {
+    if (!enabled) setStuck(true);
+  }, [enabled, setStuck]);
+
+  return { isStuck: enabled ? isStuck : true, jumpToLatest };
 }
 
 export interface JumpToLatestProps extends Omit<ButtonProps, "children" | "asChild" | "type" | "aria-label"> {

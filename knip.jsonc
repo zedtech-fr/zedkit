@@ -3,10 +3,24 @@
   // Exports used in the same file (slot maps, typed helpers, fixture classes)
   // are live; knip would otherwise list them as unused.
   "ignoreExportsUsedInFile": true,
+  // Shrink-only: a lot that starts using an ignored file or dependency must
+  // drop that ignore in the same PR. `scripts/ci-hygiene.test.mjs` fails when
+  // an ignore path matches no tracked file.
   "ignore": [
     // Copied onto consumer repos by the skill; not executed here.
-    "**/setup-ts-deep-modules/dependency-cruiser.config.cjs"
+    "**/setup-ts-deep-modules/dependency-cruiser.config.cjs",
+    "apps/docs/fixtures/setup-map/host/**",
+    "packages/ai/scripts/legacy-hashes.mjs",
+    "packages/ui/preview/cascade.spec.ts",
+    "packages/ui/preview/parallax.spec.ts",
+    "packages/ui/preview/smoke.spec.ts",
+    "packages/ui/tests/unit/parallax-rsc.test.ts"
   ],
+  // Same-file exports/types stay on via ignoreExportsUsedInFile. Cross-file
+  // unused exports and types are not in this ratchet (files and deps are).
+  "ignoreIssues": {
+    "**": ["exports", "types", "enumMembers", "nsExports", "nsTypes", "duplicates"]
+  },
   "workspaces": {
     ".": {
       // Root scripts. `shadcn` is a CLI (`pnpm exec shadcn`), not an import.
@@ -28,20 +42,32 @@
         "source.config.ts",
         "mdx-components.tsx",
         "scripts/**/*.mjs",
-        "components/component-page.tsx",
-        "components/maturity-compatibility-view.tsx",
+        "features/docs/ui/component-page.tsx",
+        "features/docs/guides/maturity-and-compatibility/ui/maturity-compatibility-view.tsx",
+        // Guide MDX imports these; knip does not follow .mdx.
+        "features/docs/guides/foundations/ui/foundations-color.tsx",
+        "features/docs/guides/foundations/ui/foundations-hero.tsx",
+        "features/docs/guides/foundations/ui/foundations-type.tsx",
+        "features/docs/guides/zedkit-and-shadcn/ui/zedkit-shadcn-faq.tsx",
         "home-quickstart/snippets/**",
         "prose/guides/snippets/**",
         "fixtures/**/*.mjs"
+      ],
+      "ignoreDependencies": [
+        "vaul"
+      ],
+      "ignoreUnresolved": [
+        "@/components/ui/button"
       ]
+    },
+    "packages/ai": {
+      // Shipped CLI script (bin.ts imports the file URL). Vitest already has
+      // tests/visual-verify.test.mjs; this keeps the script an entry without it.
+      "entry": ["scripts/visual-verify.mjs"]
     },
     "packages/ui": {
       // gallery.tsx is compiled by preview/build.mjs (string read, not import).
-      "entry": ["preview/gallery.tsx", "preview/*.mjs"],
-      "ignoreDependencies": [
-        // Wanted by DropdownMenu (#627); not imported yet.
-        "@radix-ui/react-dropdown-menu"
-      ]
+      "entry": ["preview/gallery.tsx", "preview/*.mjs"]
     },
     "packages/quality": {
       // Fixtures compiled by the tsconfig unit test; usage.ts is the typecheck probe.
@@ -49,6 +75,11 @@
     },
     "packages/nest": {
       "entry": ["tests/**/*.ts", "examples/**/*.ts"]
+    },
+    "packages/observability": {
+      "ignoreDependencies": [
+        "posthog-js"
+      ]
     }
   }
 }

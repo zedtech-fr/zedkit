@@ -7,7 +7,6 @@ import { createComposedReviewPort } from "../model/port-from-index.ts";
 import { liveRunsToIndex, toPublicIndex, toPublicReviews } from "../model/public-review.ts";
 import { listIssueSitemapPathsFrom, listReviewSitemapPathsFrom } from "../model/review-routes.ts";
 import type { PublicIssueIndex, PublicLiveRun, ReviewPort } from "../ports/review-port";
-import defaultSnapshot from "./public-reviews.json" with { type: "json" };
 
 function liveRowsFromReviews(reviews: unknown): PublicLiveRun[] {
   const parsed = parsePublicReviewSnapshot({
@@ -54,19 +53,16 @@ function loadPublicParts(snapshotPath: string): { index: PublicIssueIndex; lives
   return partsFromUnknown(json.value);
 }
 
-export function createSnapshotReviewPort(snapshotPath?: string): ReviewPort {
-  // shortcut: Next 16 turbopack fileURLToPath rejects URL objects; keep the
-  // JSON import until that bundler accepts a string path from import.meta.url.
-  // Out-of-repo exporter overwrites this JSON before a staging docs build.
-  const parts =
-    snapshotPath === undefined ? partsFromUnknown(defaultSnapshot) : loadPublicParts(snapshotPath);
+/** Test helper: read a fixture path. Not the production `/issues` feed. */
+export function createSnapshotReviewPort(snapshotPath: string): ReviewPort {
+  const parts = loadPublicParts(snapshotPath);
   return createComposedReviewPort(parts.index, parts.lives);
 }
 
-export function listIssueSitemapPaths(snapshotPath?: string): Promise<string[]> {
+export function listIssueSitemapPaths(snapshotPath: string): Promise<string[]> {
   return listIssueSitemapPathsFrom(createSnapshotReviewPort(snapshotPath));
 }
 
-export function listReviewSitemapPaths(snapshotPath?: string): Promise<string[]> {
+export function listReviewSitemapPaths(snapshotPath: string): Promise<string[]> {
   return listReviewSitemapPathsFrom(createSnapshotReviewPort(snapshotPath));
 }

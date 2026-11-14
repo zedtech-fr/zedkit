@@ -1,27 +1,33 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import {
-  DEFAULT_REVIEW_APPEARANCE,
-  parseReviewAppearance,
-  serializeReviewAppearance,
-} from "../lib/review-appearance.ts";
 import { createFixtureReviewPort } from "../features/reviews/adapters/fixture.ts";
+import { createComposedReviewPort } from "../features/reviews/model/port-from-index.ts";
 import {
   createSnapshotReviewPort,
   listIssueSitemapPaths,
   listReviewSitemapPaths,
 } from "../features/reviews/adapters/snapshot.ts";
 import { reviewsCopy } from "../features/reviews/i18n/reviews-copy.ts";
-import { latestStatus } from "../features/reviews/model/latest-status.ts";
+import { displayModelLabel, displayModelLabels } from "../features/reviews/model/display-model.ts";
+import {
+  entriesNewestFirst,
+  entryUpdatedAt,
+  headlineOutcome,
+  latestEntry,
+  latestFinishedEntry,
+  latestStatus,
+  summedDurationMs,
+} from "../features/reviews/model/latest-status.ts";
 import { parsePublicReviewSnapshot } from "../features/reviews/model/parse-snapshot.ts";
 import { parsePrNumber } from "../features/reviews/model/pr-number.ts";
 import {
   assertPubliclySafe,
+  HOSTED_LIVE_HREF_PREFIX,
   isExportableVisibility,
   liveRunsToIndex,
   sanitizeLiveUrl,
@@ -29,6 +35,9 @@ import {
   toPublicReviews,
 } from "../features/reviews/model/public-review.ts";
 import {
+  issueIndexRobotsFrom,
+  issuePath,
+  issueRunPath,
   linkedPrFallbackPath,
   linkedPrRunFallbackPath,
   listIssueParamsFrom,
@@ -43,10 +52,12 @@ import {
   redirectPathForPr,
   redirectPathForPrRun,
   RETIRED_REVIEW_PR_NUMBERS,
+  unlinkedPrPath,
+  unlinkedRunPath,
 } from "../features/reviews/model/review-routes.ts";
+import { toLiveConsoleHref } from "../features/reviews/model/live-console-href.ts";
 import { toAgentConsole } from "../features/reviews/model/to-agent-console.ts";
 import { mergeReviewShareUrl } from "../features/reviews/model/selection.ts";
-import { copyPublicReviewsSnapshot } from "./copy-public-reviews-snapshot.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const reviewsRoot = join(here, "../features/reviews");
@@ -64,7 +75,7 @@ function entry(overrides = {}) {
     durationMs: 420000,
     models: ["cursor-grok-4.6-high"],
     verdict: null,
-    liveUrl: "https://example.test/live/run-108-impl",
+    liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
     ...overrides,
   };
 }
@@ -94,23 +105,26 @@ function wrapper(issues, pullRequests = [pr()], extra = {}) {
   return { version: 1, kind: "public-stand-in", issues, pullRequests, ...extra };
 }
 
-function collectKeys(value, keys = []) {
-  if (value === null || typeof value !== "object") return keys;
-  if (Array.isArray(value)) {
-    for (const item of value) collectKeys(item, keys);
-    return keys;
-  }
-  for (const [key, child] of Object.entries(value)) {
-    keys.push(key);
-    collectKeys(child, keys);
-  }
-  return keys;
-}
-
 function parsedIndex(issues, pullRequests, extra) {
   const parsed = parsePublicReviewSnapshot(wrapper(issues, pullRequests, extra));
   assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
   return parsed.value;
+}
+
+function exportedAsync(source, name) {
+  const marker = `export async function ${name}`;
+  const start = source.indexOf(marker);
+  assert.notEqual(start, -1, name);
+  const next = source.indexOf("\nexport ", start + marker.length);
+  return source.slice(start, next === -1 ? source.length : next);
+}
+
+function pinsLoadErrorBeforeNotFound(body) {
+  const loadErrorAt = body.search(/reviewLoadErrorView\(/);
+  const notFoundAt = body.search(/\bnotFound\(\)/);
+  assert.notEqual(loadErrorAt, -1, "missing reviewLoadErrorView");
+  assert.notEqual(notFoundAt, -1, "missing notFound");
+  assert.ok(loadErrorAt < notFoundAt, "load error must run before notFound");
 }
 
 test("public-repo visibility: missing, null, and public are exportable; only private is dropped", () => {
@@ -196,17 +210,107 @@ test("secret-like keys, bearer tokens, and home paths do not survive the public 
   assert.doesNotMatch(clean.entries[0].models[1], /\/Users\/alice/);
 });
 
-test("liveUrl with a secret-like query is dropped; https URLs are kept", () => {
-  assert.equal(sanitizeLiveUrl("https://example.test/live/abc"), "https://example.test/live/abc");
-  assert.equal(sanitizeLiveUrl("http://example.test/live/abc"), null);
-  assert.equal(sanitizeLiveUrl("https://example.test/live/abc?token=secret"), null);
-  assert.equal(sanitizeLiveUrl("https://user:pass@example.test/live/abc"), null);
+function hostedLiveHref(runId = "abc") {
+  return `${HOSTED_LIVE_HREF_PREFIX}${runId}`;
+}
+
+test("sanitizeLiveUrl keeps an allowlisted hosted-console href", () => {
+  const specPrefix = `https://dev.zedkit.app/${Buffer.from("emVkb3MtYm90", "base64").toString("utf8")}/live/`;
+  assert.equal(HOSTED_LIVE_HREF_PREFIX, specPrefix);
+  assert.equal(sanitizeLiveUrl(hostedLiveHref()), hostedLiveHref());
+});
+
+test("sanitizeLiveUrl accepts a trailing slash and returns none", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}/`), hostedLiveHref());
+});
+
+test("sanitizeLiveUrl drops a reserved .test host", () => {
+  assert.equal(sanitizeLiveUrl("https://example.test/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops a reserved .example host", () => {
+  assert.equal(sanitizeLiveUrl("https://foo.example/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops a reserved .invalid host", () => {
+  assert.equal(sanitizeLiveUrl("https://foo.invalid/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops localhost", () => {
+  assert.equal(sanitizeLiveUrl("https://localhost/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops example.com", () => {
+  assert.equal(sanitizeLiveUrl("https://example.com/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops example.org", () => {
+  assert.equal(sanitizeLiveUrl("https://example.org/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops example.net", () => {
+  assert.equal(sanitizeLiveUrl("https://example.net/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops another host on the same site family", () => {
+  assert.equal(sanitizeLiveUrl("https://zedkit.app/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops a preview host", () => {
+  assert.equal(
+    sanitizeLiveUrl(hostedLiveHref().replace("https://dev.zedkit.app", "https://epic-73.dev.zedkit.app")),
+    null,
+  );
+});
+
+test("sanitizeLiveUrl drops another path on the allowlisted host", () => {
+  assert.equal(sanitizeLiveUrl("https://dev.zedkit.app/other/live/abc"), null);
+});
+
+test("sanitizeLiveUrl drops http", () => {
+  assert.equal(sanitizeLiveUrl(hostedLiveHref().replace("https:", "http:")), null);
+});
+
+test("sanitizeLiveUrl drops a query", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}?token=secret`), null);
+});
+
+test("sanitizeLiveUrl drops a hash", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}#frag`), null);
+});
+
+test("sanitizeLiveUrl drops userinfo", () => {
+  assert.equal(
+    sanitizeLiveUrl(hostedLiveHref().replace("https://", "https://user:pass@")),
+    null,
+  );
+});
+
+test("sanitizeLiveUrl drops a non-empty port", () => {
+  assert.equal(sanitizeLiveUrl(hostedLiveHref().replace("dev.zedkit.app", "dev.zedkit.app:8443")), null);
+});
+
+test("sanitizeLiveUrl drops empty, null, and blank", () => {
   assert.equal(sanitizeLiveUrl(null), null);
+  assert.equal(sanitizeLiveUrl(""), null);
+  assert.equal(sanitizeLiveUrl("   "), null);
+});
+
+test("sanitizeLiveUrl drops a run id that is not path-safe", () => {
+  assert.equal(sanitizeLiveUrl(`${HOSTED_LIVE_HREF_PREFIX}..`), null);
+  assert.equal(sanitizeLiveUrl(`${HOSTED_LIVE_HREF_PREFIX}has space`), null);
+});
+
+test("sanitizeLiveUrl drops an extra path segment", () => {
+  assert.equal(sanitizeLiveUrl(`${hostedLiveHref()}/extra`), null);
+});
+
+test("toPublicIndex points timeline rows at the in-site live console", () => {
   const gated = toPublicIndex(
     parsedIndex([
       issue({
         entries: [
-          entry({ liveUrl: "https://example.test/live/ok" }),
+          entry({ liveUrl: hostedLiveHref("ok") }),
           entry({
             id: "secret-url",
             liveUrl: "https://example.test/live/no?token=abc",
@@ -215,8 +319,8 @@ test("liveUrl with a secret-like query is dropped; https URLs are kept", () => {
       }),
     ]),
   );
-  assert.equal(gated.issues[0].entries[0].liveUrl, "https://example.test/live/ok");
-  assert.equal(gated.issues[0].entries[1].liveUrl, null);
+  assert.equal(gated.issues[0].entries[0].liveUrl, toLiveConsoleHref("run-108-impl"));
+  assert.equal(gated.issues[0].entries[1].liveUrl, toLiveConsoleHref("run-108-impl"));
 });
 
 test("sanitizeLiveUrl drops home-path URLs on every call", () => {
@@ -452,10 +556,307 @@ test("latest status uses the last entry; a review verdict wins", () => {
     "failed",
   );
   assert.equal(
+    latestStatus([entry({ type: "review", status: "failed", verdict: null })]),
+    "failed",
+  );
+  assert.equal(
     latestStatus([entry({ type: "implement", status: "running", durationMs: null })]),
     "running",
   );
   assert.equal(latestStatus([]), null);
+});
+
+test("latestEntry returns null on empty entries", () => {
+  assert.equal(latestEntry([]), null);
+});
+
+test("summedDurationMs adds known step durations and ignores running nulls", () => {
+  assert.equal(summedDurationMs([]), null);
+  assert.equal(
+    summedDurationMs([
+      entry({ durationMs: 1_200_000 }),
+      entry({ id: "impl", type: "implement", durationMs: 402_000 }),
+      entry({ id: "run", type: "review", status: "running", durationMs: null }),
+    ]),
+    1_602_000,
+  );
+});
+
+test("entryUpdatedAt uses endedAt for completed steps and startedAt while running", () => {
+  assert.equal(
+    entryUpdatedAt(entry({ status: "completed", endedAt: "2026-11-10T16:07:00.000Z" })),
+    "2026-11-10T16:07:00.000Z",
+  );
+  assert.equal(
+    entryUpdatedAt(entry({ status: "completed" })),
+    "2026-11-10T16:00:00.000Z",
+  );
+  assert.equal(
+    entryUpdatedAt(
+      entry({ status: "running", durationMs: null, endedAt: "2026-11-10T16:07:00.000Z" }),
+    ),
+    "2026-11-10T16:00:00.000Z",
+  );
+});
+
+test("latestEntry returns the later startedAt runId when they differ", () => {
+  const last = latestEntry([
+    entry({ runId: "run-early", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "later",
+      runId: "run-late",
+      type: "implement",
+      startedAt: "2026-11-10T17:00:00.000Z",
+    }),
+  ]);
+  assert.equal(last?.runId, "run-late");
+});
+
+test("latestEntry keeps the first entry when startedAt ties", () => {
+  const last = latestEntry([
+    entry({ id: "first", runId: "run-first", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "second",
+      runId: "run-second",
+      type: "implement",
+      startedAt: "2026-11-10T16:00:00.000Z",
+    }),
+  ]);
+  assert.equal(last?.id, "first");
+  assert.equal(last?.runId, "run-first");
+});
+
+test("latestEntry uses one runId when plan and implement share it", () => {
+  const last = latestEntry([
+    entry({ id: "plan", type: "plan", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({
+      id: "implement",
+      type: "implement",
+      startedAt: "2026-11-10T16:10:00.000Z",
+    }),
+  ]);
+  assert.equal(last?.runId, "run-108-impl");
+  assert.equal(last?.type, "implement");
+});
+
+test("entriesNewestFirst returns empty for no steps", () => {
+  assert.deepEqual(entriesNewestFirst([]), []);
+});
+
+test("entriesNewestFirst keeps a single step", () => {
+  const row = entry({ id: "only" });
+  assert.deepEqual(
+    entriesNewestFirst([row]).map((item) => item.id),
+    ["only"],
+  );
+});
+
+test("entriesNewestFirst puts running steps first", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "done", status: "completed", endedAt: "2026-11-10T19:00:00.000Z" }),
+      entry({
+        id: "live",
+        status: "running",
+        startedAt: "2026-11-10T16:00:00.000Z",
+        durationMs: null,
+      }),
+    ]).map((item) => item.id),
+    ["live", "done"],
+  );
+});
+
+test("entriesNewestFirst lists later entryUpdatedAt first", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z", endedAt: "2026-11-10T16:10:00.000Z" }),
+      entry({ id: "late", startedAt: "2026-11-10T17:00:00.000Z", endedAt: "2026-11-10T18:00:00.000Z" }),
+    ]).map((item) => item.id),
+    ["late", "early"],
+  );
+});
+
+test("entriesNewestFirst prefers endedAt over an earlier startedAt", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({
+        id: "long",
+        startedAt: "2026-11-10T16:00:00.000Z",
+        endedAt: "2026-11-10T19:00:00.000Z",
+      }),
+      entry({
+        id: "short",
+        startedAt: "2026-11-10T17:00:00.000Z",
+        endedAt: "2026-11-10T17:10:00.000Z",
+      }),
+    ]).map((item) => item.id),
+    ["long", "short"],
+  );
+});
+
+test("entriesNewestFirst keeps id descending when entryUpdatedAt ties", () => {
+  assert.deepEqual(
+    entriesNewestFirst([
+      entry({ id: "a", startedAt: "2026-11-10T16:00:00.000Z" }),
+      entry({ id: "z", startedAt: "2026-11-10T16:00:00.000Z" }),
+    ]).map((item) => item.id),
+    ["z", "a"],
+  );
+});
+
+test("entriesNewestFirst does not mutate the input array", () => {
+  const rows = [
+    entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+    entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+  ];
+  entriesNewestFirst(rows);
+  assert.deepEqual(
+    rows.map((item) => item.id),
+    ["early", "late"],
+  );
+});
+
+test("listIssues stays oldest-first; entriesNewestFirst of those rows is newest-first", async () => {
+  const port = createFixtureReviewPort(
+    wrapper([
+      issue({
+        entries: [
+          entry({ id: "late", startedAt: "2026-11-10T18:00:00.000Z" }),
+          entry({ id: "early", startedAt: "2026-11-10T16:00:00.000Z" }),
+        ],
+      }),
+    ]),
+  );
+  const listed = await port.listIssues();
+  assert.deepEqual(
+    listed[0].entries.map((item) => item.id),
+    ["early", "late"],
+  );
+  assert.deepEqual(
+    entriesNewestFirst(listed[0].entries).map((item) => item.id),
+    ["late", "early"],
+  );
+});
+
+test("headlineOutcome prefers a review verdict over a later completed follow-up", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+      endedAt: "2026-11-10T17:20:00.000Z",
+    }),
+    entry({
+      id: "improve",
+      type: "improve",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:20:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "verdict");
+  assert.equal(outcome?.verdict, "approve");
+  assert.equal(outcome?.score, 9);
+});
+
+test("headlineOutcome returns running even when an older review exists", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+    }),
+    entry({
+      id: "live",
+      type: "implement",
+      status: "running",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      durationMs: null,
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "running");
+});
+
+test("headlineOutcome is null for completed work with no review", () => {
+  assert.equal(headlineOutcome([entry({ type: "implement" })]), null);
+});
+
+test("headlineOutcome prefers a later failed step over an older review verdict", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "review",
+      type: "review",
+      verdict: "approve",
+      score: 9,
+      startedAt: "2026-11-10T17:00:00.000Z",
+      endedAt: "2026-11-10T17:20:00.000Z",
+    }),
+    entry({
+      id: "failed-later",
+      type: "improve",
+      status: "failed",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:20:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "failed");
+});
+
+test("headlineOutcome badges a failed step that finished after a later-started completed step", () => {
+  const outcome = headlineOutcome([
+    entry({
+      id: "failed-late",
+      type: "implement",
+      status: "failed",
+      startedAt: "2026-11-10T16:00:00.000Z",
+      endedAt: "2026-11-10T19:00:00.000Z",
+    }),
+    entry({
+      id: "done-later-start",
+      type: "plan",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      endedAt: "2026-11-10T18:10:00.000Z",
+    }),
+  ]);
+  assert.equal(outcome?.kind, "status");
+  assert.equal(outcome?.status, "failed");
+});
+
+test("latestFinishedEntry skips running steps and uses endedAt", () => {
+  const finished = latestFinishedEntry([
+    entry({
+      id: "done",
+      endedAt: "2026-11-10T17:00:00.000Z",
+    }),
+    entry({
+      id: "live",
+      status: "running",
+      startedAt: "2026-11-10T18:00:00.000Z",
+      durationMs: null,
+    }),
+  ]);
+  assert.equal(finished?.id, "done");
+  assert.equal(entryUpdatedAt(finished), "2026-11-10T17:00:00.000Z");
+});
+
+test("displayModelLabel shortens stored model ids", () => {
+  assert.equal(displayModelLabel("cursor-grok-4.6-high"), "Grok 4.6");
+  assert.equal(displayModelLabel("muse-wonder-1.0-high"), "Muse");
+  assert.equal(displayModelLabel("claude-sonnet-5-5"), "Claude Sonnet");
+  assert.equal(displayModelLabel("cursor-composer-2.5"), "");
+  assert.equal(displayModelLabels(["cursor-grok-4.6-high", "cursor-grok-4.6-high"]), "Grok 4.6");
+});
+
+test("issue and unlinked run paths format /issues/:n/runs/:id", () => {
+  assert.equal(issueRunPath(108, "run-108-impl"), "/issues/108/runs/run-108-impl");
+  assert.equal(unlinkedRunPath(54, "run-54-review"), "/issues/pr/54/runs/run-54-review");
+  assert.equal(issuePath(108), "/issues/108");
+  assert.equal(unlinkedPrPath(54), "/issues/pr/54");
 });
 
 function writeSnapshot(issues, pullRequests, extra = {}) {
@@ -484,6 +885,26 @@ test("the fixture port lists only exportable copies and isolates mutations", asy
   assert.equal(await port.getRun(99, "run-108-impl"), null);
   const run = await port.getRun(108, "run-108-impl");
   assert.equal(run?.status, "completed");
+});
+
+test("the fixture test double is not a load error", async () => {
+  const port = createFixtureReviewPort();
+  assert.equal(await port.hasLoadError(), false);
+  assert.deepEqual(await issueIndexRobotsFrom(port), undefined);
+  const sitemap = await listIssueSitemapPathsFrom(port);
+  assert.equal(sitemap[0], "/issues");
+  assert.ok(sitemap.includes("/issues/108"));
+});
+
+test("a load-error index is noindex and still lists /issues on the sitemap", async () => {
+  const port = createComposedReviewPort(
+    { version: 1, kind: "public-github-runs", issues: [], pullRequests: [] },
+    [],
+    { loadError: true },
+  );
+  assert.equal(await port.hasLoadError(), true);
+  assert.deepEqual(await issueIndexRobotsFrom(port), { index: false });
+  assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
 });
 
 test("the fixture test double covers linked, unlinked, running, and failed rows", async () => {
@@ -523,7 +944,7 @@ test("the snapshot port lists only exportable copies and isolates mutations", as
   assert.equal(run?.status, "completed");
 });
 
-test("an empty snapshot lists nothing and keeps the sitemap root at /issues", async () => {
+test("an empty snapshot lists nothing and keeps static placeholders", async () => {
   const path = writeSnapshot([], []);
   const port = createSnapshotReviewPort(path);
   assert.deepEqual(await port.listIssues(), []);
@@ -533,8 +954,22 @@ test("an empty snapshot lists nothing and keeps the sitemap root at /issues", as
   assert.deepEqual(await listUnlinkedRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
   assert.deepEqual(await listReviewPrParamsFrom(port), [{ n: "0" }]);
   assert.deepEqual(await listReviewRunParamsFrom(port), [{ n: "0", id: "_placeholder" }]);
-  assert.deepEqual(await listIssueSitemapPathsFrom(port), ["/issues"]);
-  assert.deepEqual(await listIssueSitemapPaths(path), ["/issues"]);
+});
+
+test("an empty snapshot still lists /issues on the sitemap and stays indexable", async () => {
+  const standInPath = writeSnapshot([], []);
+  const standIn = createSnapshotReviewPort(standInPath);
+  assert.equal(await standIn.hasLoadError(), false);
+  assert.deepEqual(await listIssueSitemapPathsFrom(standIn), ["/issues"]);
+  assert.deepEqual(await listIssueSitemapPaths(standInPath), ["/issues"]);
+  assert.equal(await issueIndexRobotsFrom(standIn), undefined);
+
+  const generatedPath = writeSnapshot([], [], { kind: "generated-run-index" });
+  const generated = createSnapshotReviewPort(generatedPath);
+  assert.equal(await generated.hasLoadError(), false);
+  assert.deepEqual(await listIssueSitemapPathsFrom(generated), ["/issues"]);
+  assert.deepEqual(await listIssueSitemapPaths(generatedPath), ["/issues"]);
+  assert.equal(await issueIndexRobotsFrom(generated), undefined);
 });
 
 test("an all-linked snapshot still emits unlinked static placeholders", async () => {
@@ -649,80 +1084,20 @@ test("sitemap lists canonical /issues paths and omits /reviews/pr", async () => 
         entries: [entry({ id: "54-review", runId: "run-54-review", type: "review" })],
       },
     ],
+    { kind: "generated-run-index" },
   );
   const sitemap = await listIssueSitemapPaths(path);
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
-  assert.ok(sitemap.includes("/issues/108/runs/run-108-impl"));
+  assert.equal(sitemap.includes("/issues/108/runs/run-108-impl"), false);
   assert.ok(sitemap.includes("/issues/pr/54"));
-  assert.ok(sitemap.includes("/issues/pr/54/runs/run-54-review"));
+  assert.equal(sitemap.includes("/issues/pr/54/runs/run-54-review"), false);
   assert.ok(!sitemap.some((item) => item.startsWith("/reviews")));
 });
 
-test("the checked-in public snapshot is a version-1 run index with exportable issues and no secrets", async () => {
-  const snapshotPath = join(reviewsRoot, "adapters/public-reviews.json");
-  const raw = JSON.parse(readFileSync(snapshotPath, "utf8"));
-  assert.equal(raw.version, 1);
-  assert.ok(Array.isArray(raw.issues));
-  assert.ok(Array.isArray(raw.pullRequests));
-  assert.equal("reviews" in raw, true);
-  assert.equal(raw.reviews[0].run.run_id, "20261111T065452Z-bc07a1a9");
-  assert.equal(raw.reviews[0].run.issue, 108);
-  const parsed = parsePublicReviewSnapshot(raw);
-  assert.equal(parsed.ok, true, parsed.ok ? "" : parsed.error.message);
-  assert.equal(Array.isArray(parsed.value), false);
-  const keys = collectKeys(raw);
-  assert.equal(keys.includes("prompt"), false);
-  assert.equal(keys.includes("token"), false);
-  assert.equal(keys.includes("token_hash"), false);
-  assertPubliclySafe(raw);
-
-  const port = createSnapshotReviewPort();
-  const issues = await port.listIssues();
-  const unlinked = await port.listUnlinkedPullRequests();
-  assert.ok(issues.length > 0);
-  const issue108 = issues.find((row) => row.number === 108);
-  assert.ok(issue108);
-  assert.equal(issue108.state, "closed");
-  assert.deepEqual(issue108.pullRequests, [133]);
-  const recorded = await port.getRun(108, "20261111T065452Z-bc07a1a9");
-  assert.ok(recorded && "items" in recorded);
-  assert.equal(recorded.items.length > 0, true);
-  assert.ok(
-    (await listIssueRunParamsFrom(port)).some(
-      (row) => row.n === "108" && row.id === "20261111T065452Z-bc07a1a9",
-    ),
-  );
-  const plan = issue108.entries.find((row) => row.type === "plan");
-  const implement = issue108.entries.find((row) => row.type === "implement");
-  assert.ok(plan);
-  assert.ok(implement);
-  assert.equal(plan.runId, implement.runId);
-  assert.ok(issues.some((row) => row.number === 93));
-  assert.ok(issues.some((row) => row.number === 110));
-  assert.ok(!issues.some((row) => row.number === 99));
-  assert.ok(unlinked.some((row) => row.number === 54));
-  assert.ok(!unlinked.some((row) => row.number === 50));
-
-  const redirects = await listReviewRedirectsFrom(port);
-  assert.ok(redirects.some((row) => row.from === "/reviews/pr/133" && row.to === "/issues/108"));
-  assert.ok(
-    redirects.some(
-      (row) =>
-        row.from === "/reviews/pr/133/runs/run-108-impl" && row.to === "/issues/108/runs/run-108-impl",
-    ),
-  );
-  assert.ok(redirects.some((row) => row.from === "/reviews/pr/54" && row.to === "/issues/pr/54"));
-
-  for (const row of [...issues, ...unlinked]) {
-    for (const item of row.entries) {
-      assert.ok(item.liveUrl === null || item.liveUrl.startsWith("https:"));
-    }
-  }
-  const bytes = statSync(snapshotPath).size;
-  assert.ok(bytes < 200 * 1024);
-  const contract = readFileSync(join(reviewsRoot, "SNAPSHOT.md"), "utf8");
-  assert.equal(statSync(join(reviewsRoot, "SNAPSHOT.md")).isFile(), true);
+test("DATA-SOURCES.md keeps the live-shaped parser contract and names the API sources", () => {
+  const contract = readFileSync(join(reviewsRoot, "DATA-SOURCES.md"), "utf8");
+  assert.equal(statSync(join(reviewsRoot, "DATA-SOURCES.md")).isFile(), true);
   assert.match(contract, /`opened_pr_url`/);
   assert.doesNotMatch(contract, /pr_url_opened/);
   assert.match(contract, /index parser does not invent a title/);
@@ -738,13 +1113,25 @@ test("the checked-in public snapshot is a version-1 run index with exportable is
   assert.match(contract, /Plan, implement, and dry-run: engine model/);
   assert.match(contract, /Required array \(may be empty\)/);
   assert.match(contract, /not merged into the issue timeline/);
-  const sitemap = await listIssueSitemapPaths();
-  assert.equal(sitemap[0], "/issues");
-  assert.ok(sitemap.includes("/issues/108"));
-  assert.ok(!sitemap.some((item) => item.startsWith("/reviews/pr/")));
+  assert.match(contract, /HOSTED_LIVE_HREF_PREFIX/);
+  assert.match(contract, /Allowlisted hosted-console href/);
+  assert.match(contract, /GitHub REST/);
+  assert.match(contract, /NEXT_PUBLIC_ZEDOS_RUNS_API_BASE/);
+  assert.match(contract, /active=1&limit=1/);
+  assert.match(contract, /kind` is ignored/);
+  assert.match(contract, /kind: public-github-runs/);
+  assert.match(contract, /ErrorState with no Retry/);
+  assert.match(contract, /10 pages × 100/);
+  assert.match(contract, /leave `pr` unset until a pull request exists/);
+  assert.match(contract, /Join order for the live merge/);
+  assert.match(contract, /fills\s+each null field/);
+  assert.doesNotMatch(contract, /later client refresh/);
+  assert.doesNotMatch(contract, /ingest-public-reviews/);
   const featureIndex = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
-  assert.match(featureIndex, /createSnapshotReviewPort\(\)/);
+  assert.match(featureIndex, /createSiteReviewPort\(\)/);
+  assert.doesNotMatch(featureIndex, /createSnapshotReviewPort/);
   assert.doesNotMatch(featureIndex, /createFixtureReviewPort/);
+  assert.equal(existsSync(join(reviewsRoot, "adapters/public-reviews.json")), false);
 });
 
 const INVENTORY_ISSUES = [
@@ -771,7 +1158,7 @@ function inventoryLinkedPrs(n) {
 
 function inventoryImplEntries(n) {
   const runId = `run-${n}-impl`;
-  const liveUrl = `https://example.test/live/${runId}`;
+  const liveUrl = `${HOSTED_LIVE_HREF_PREFIX}${runId}`;
   const models = ["cursor-grok-4.6-high"];
   const plan = entry({
     id: `${n}-plan`,
@@ -807,7 +1194,7 @@ function inventoryImplEntries(n) {
         durationMs: 3000,
         models: ["lens-model", "second-pass-model"],
         verdict: "approve",
-        liveUrl: `https://example.test/live/run-${n}-review`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-${n}-review`,
       }),
     ];
   }
@@ -821,7 +1208,7 @@ function inventoryImplEntries(n) {
         startedAt: inventoryIso(n, 3),
         durationMs: 4000,
         models: ["improve-model"],
-        liveUrl: `https://example.test/live/run-${n}-improve`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-${n}-improve`,
       }),
       entry({
         id: `${n}-review`,
@@ -832,7 +1219,7 @@ function inventoryImplEntries(n) {
         durationMs: 3000,
         models: ["lens-model", "second-pass-model"],
         verdict: "request-changes",
-        liveUrl: `https://example.test/live/run-${n}-review`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-${n}-review`,
       }),
       implement,
       plan,
@@ -858,7 +1245,7 @@ function inventoryUnlinkedPr(n) {
         durationMs: 1000,
         models: type === "review" ? ["lens-model"] : ["cursor-grok-4.6-high"],
         verdict: type === "review" ? "comment" : null,
-        liveUrl: `https://example.test/live/${runId}`,
+        liveUrl: `${HOSTED_LIVE_HREF_PREFIX}${runId}`,
       }),
     ],
   };
@@ -969,6 +1356,10 @@ test("inventory-scale timeline keeps plan and implement as two rows of one run",
     issue108.entries.map((row) => row.type),
     ["plan", "implement", "review", "improve"],
   );
+  assert.deepEqual(
+    entriesNewestFirst(issue108.entries).map((row) => row.type),
+    ["improve", "review", "implement", "plan"],
+  );
   assert.equal(issue108.entries[0].runId, "run-108-impl");
   assert.equal(issue108.entries[1].runId, "run-108-impl");
   assert.equal(issue108.entries[0].id, "108-plan");
@@ -979,7 +1370,7 @@ test("inventory-scale timeline keeps plan and implement as two rows of one run",
   const run = await port.getRun(108, "run-108-impl");
   assert.equal(run?.runId, "run-108-impl");
   assert.equal(run?.entries.length, 2);
-  assert.equal(run?.liveUrl, "https://example.test/live/run-108-impl");
+  assert.equal(run?.liveUrl, toLiveConsoleHref("run-108-impl"));
   assert.equal(await port.getRun(108, "missing-run"), null);
 });
 
@@ -1088,10 +1479,10 @@ test("inventory-scale static params and sitemap stay on /issues paths", async ()
   const sitemap = await listIssueSitemapPathsFrom(port);
   assert.equal(sitemap[0], "/issues");
   assert.ok(sitemap.includes("/issues/108"));
-  assert.ok(sitemap.includes("/issues/108/runs/run-108-impl"));
+  assert.equal(sitemap.includes("/issues/108/runs/run-108-impl"), false);
   assert.ok(sitemap.includes("/issues/93"));
   assert.ok(sitemap.includes("/issues/pr/64"));
-  assert.ok(sitemap.includes("/issues/pr/64/runs/run-64-review"));
+  assert.equal(sitemap.includes("/issues/pr/64/runs/run-64-review"), false);
   assert.equal(sitemap.includes("/issues/99"), false);
   assert.equal(
     sitemap.some((item) => item.startsWith("/reviews")),
@@ -1112,59 +1503,58 @@ test("inventory-scale generated run index stays under 200KB and extra keys are i
   assert.equal("denseLive" in issue108, false);
 });
 
-test("inventory-scale ingest succeeds; an unredacted home path still fails closed", () => {
-  const { path, dest } = writeInventorySnapshot();
-  writeFileSync(dest, "KEEP");
-  copyPublicReviewsSnapshot(path, dest);
-  const written = JSON.parse(readFileSync(dest, "utf8"));
-  assert.equal(written.kind, "generated-run-index");
-  assert.deepEqual(
-    written.issues.map((row) => row.number).sort((a, b) => a - b),
-    [...INVENTORY_ISSUES],
-  );
-  assert.equal(
-    written.issues.some((row) => row.number === 99),
-    false,
-  );
-  assert.equal(
-    written.pullRequests.some((row) => row.number === 999),
-    false,
-  );
-  assert.ok(statSync(dest).size < 200 * 1024);
-
-  const dirtyDir = mkdtempSync(join(tmpdir(), "public-issues-inventory-dirty-"));
-  const dirtySource = join(dirtyDir, "source.json");
-  const dirtyDest = join(dirtyDir, "dest.json");
-  const dirty = inventoryIndex();
-  dirty.issues = dirty.issues.map((row) =>
-    row.number === 66 ? { ...row, title: "notes from /home/" } : row,
-  );
-  writeFileSync(dirtySource, JSON.stringify(dirty));
-  writeFileSync(dirtyDest, "KEEP");
-  assert.throws(
-    () => copyPublicReviewsSnapshot(dirtySource, dirtyDest),
-    /unredacted token or machine path/,
-  );
-  assert.equal(readFileSync(dirtyDest, "utf8"), "KEEP");
-});
-
 test("copy names empty list, timeline types, and the hosted-console placeholder", () => {
-  assert.equal(
-    reviewsCopy.list.empty,
-    "Public issues will show up here when the first exportable run exists.",
-  );
-  assert.equal(reviewsCopy.type.improve, "Improve from review");
+  assert.equal(reviewsCopy.list.empty, "No public runs yet");
+  assert.equal(reviewsCopy.type.improve, "Follow-up after review");
+  assert.equal(reviewsCopy.type.implement, "Implementation");
+  assert.equal(reviewsCopy.verdict.approve, "Approved");
+  assert.equal(reviewsCopy.verdict["request-changes"], "Changes requested");
+  assert.equal(reviewsCopy.status.failed, "Failed");
+  assert.equal(reviewsCopy.issue.replaced, "Replaced by newer run");
+  assert.equal(reviewsCopy.issue.failedReplaced, "Failed — replaced by a newer run");
+  assert.equal(reviewsCopy.issue.viewLog, "View log");
+  assert.equal(reviewsCopy.list.took, "Took");
+  assert.equal(reviewsCopy.list.duration, "Duration");
+  assert.equal(reviewsCopy.list.finished, "Finished");
+  assert.equal(reviewsCopy.list.started, "Started");
   assert.equal(reviewsCopy.run.openLive, "Open the hosted live console (new tab)");
   assert.equal(reviewsCopy.unlinked.timelineEmpty, "No exportable runs on this pull request.");
   assert.equal(reviewsCopy.list.runs, "runs");
+  assert.equal(reviewsCopy.list.openList, "Issue list");
+  assert.equal(reviewsCopy.list.missing, "This issue or pull request is not on the public list.");
+  assert.equal(reviewsCopy.list.missingNext, "Choose another from the list.");
+  assert.equal(reviewsCopy.issue.missing, "This issue is not on the public list.");
   assert.equal(
     reviewsCopy.unlinked.missing,
     "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
   );
   assert.equal(reviewsCopy.metadata.reviewsMissing.title, "Review page not found");
   assert.equal(reviewsCopy.run.noLive, "No hosted live console URL is available for this run.");
+  assert.equal(
+    reviewsCopy.list.description,
+    "Public work log of how each issue was planned, built, and reviewed.",
+  );
+  assert.equal(
+    reviewsCopy.metadata.list.description,
+    "Public work log of how each issue was planned, built, and reviewed.",
+  );
+  assert.equal(reviewsCopy.issue.timeline, "Timeline");
+  assert.equal(reviewsCopy.list.githubIssue, "Issue");
+  assert.equal(reviewsCopy.list.githubPull, "PR");
+  assert.equal(
+    reviewsCopy.loadError.description,
+    "GitHub or the runs API did not answer. Try again later, or choose another issue.",
+  );
+  assert.equal("retry" in reviewsCopy.loadError, false);
+  assert.equal("openUnlinked" in reviewsCopy.list, false);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /Required actions/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /\/live\//);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /ingest/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Preview look/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Dark preview/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /Advanced token editor/);
+  assert.doesNotMatch(JSON.stringify(reviewsCopy), /preview look/);
+  assert.equal("appearance" in reviewsCopy, false);
 });
 
 test("parsePrNumber accepts decimal integers and rejects the rest", () => {
@@ -1177,73 +1567,61 @@ test("parsePrNumber accepts decimal integers and rejects the rest", () => {
   assert.equal(parsePrNumber("<script>"), null);
 });
 
-test("appearance round-trips identity, dark preview, and compact density", () => {
-  const appearance = { identity: "volt", mode: "dark", density: "compact" };
-  const query = serializeReviewAppearance(appearance);
-  assert.equal(query, "identity=volt&preview=dark&density=compact");
-  assert.deepEqual(parseReviewAppearance(`?${query}`), appearance);
+test("DATA-SOURCES.md documents share-URL keys and is not a merge field", () => {
+  const snapshot = readFileSync(join(reviewsRoot, "DATA-SOURCES.md"), "utf8");
+  assert.match(snapshot, /## Share URL \(site, not merge\)/);
+  assert.match(snapshot, /The merge does not emit them/);
+  assert.doesNotMatch(snapshot, /exporter/);
+  assert.match(snapshot, /`identity`/);
+  assert.match(snapshot, /`preview`/);
+  assert.match(snapshot, /`theme`/);
+  assert.match(snapshot, /`density`/);
+  assert.doesNotMatch(snapshot, /Appearance panel/);
 });
 
-test("canonical form omits glass, light, and default density", () => {
-  assert.equal(serializeReviewAppearance(DEFAULT_REVIEW_APPEARANCE), "");
-  assert.deepEqual(parseReviewAppearance(""), DEFAULT_REVIEW_APPEARANCE);
-  assert.deepEqual(parseReviewAppearance("identity=glass&preview=light&density=default"), DEFAULT_REVIEW_APPEARANCE);
-  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=glass&preview=dark")), "preview=dark");
-});
-
-test("preview=dark and legacy theme=dark both parse as dark", () => {
-  assert.equal(parseReviewAppearance("preview=dark").mode, "dark");
-  assert.equal(parseReviewAppearance("theme=dark").mode, "dark");
-});
-
-test("unknown identity and hostile query values fall back without throwing", () => {
-  assert.equal(parseReviewAppearance("identity=n-custom").identity, "glass");
-  assert.equal(parseReviewAppearance("identity=<script>").identity, "glass");
-  assert.equal(parseReviewAppearance("density=comfortable").density, "default");
-  assert.equal(parseReviewAppearance("preview=DARK").mode, "light");
-  assert.doesNotThrow(() => parseReviewAppearance(`identity=${"x".repeat(4000)}&preview=${"\0"}`));
-  assert.deepEqual(parseReviewAppearance("identity=tide&bogus=1&density=compact"), {
-    identity: "tide",
-    mode: "light",
-    density: "compact",
-  });
-});
-
-test("share URL merge keeps appearance query and hash together", () => {
-  assert.equal(
-    mergeReviewShareUrl({
-      pathname: "/issues/108",
-      search: "identity=volt&preview=dark",
-      hash: "",
-    }),
-    "/issues/108?identity=volt&preview=dark",
-  );
-  assert.equal(
-    mergeReviewShareUrl({ pathname: "/issues/108", search: "", hash: "" }),
-    "/issues/108",
-  );
-});
-
-test("appearance codec still ignores unknown keys including item", () => {
-  assert.deepEqual(parseReviewAppearance("identity=volt&item=agent-review"), {
-    identity: "volt",
-    mode: "light",
-    density: "default",
-  });
-  assert.equal(serializeReviewAppearance(parseReviewAppearance("identity=volt&item=agent-review")), "identity=volt");
-});
-
-test("appearance share write keeps the selection hash", () => {
-  const src = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
-  assert.match(src, /mergeReviewShareUrl/);
-  assert.match(src, /window\.location\.hash/);
+test("issues views drop the inline preview form and keep the shared frame", () => {
+  const frame = readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8");
+  const list = readFileSync(join(reviewsRoot, "ui", "review-list-view.tsx"), "utf8");
+  const issue = readFileSync(join(reviewsRoot, "ui", "review-pr-view.tsx"), "utf8");
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  const fixture = readFileSync(join(reviewsRoot, "adapters", "fixture.ts"), "utf8");
+  assert.doesNotMatch(fixture, /Appearance panel/);
+  assert.doesNotMatch(fixture, /preview look/);
+  for (const source of [frame, list, issue]) {
+    assert.doesNotMatch(source, /ReviewAppearancePanel/);
+    assert.doesNotMatch(source, /Preview look/);
+    assert.doesNotMatch(source, /copy\.appearance/);
+    assert.doesNotMatch(source, /\(panel\)/);
+    assert.doesNotMatch(source, /\{panel\}/);
+    assert.doesNotMatch(source, /history\.replaceState/);
+    assert.doesNotMatch(source, /writeShareUrl/);
+    assert.doesNotMatch(source, /mergeReviewShareUrl/);
+    assert.match(source, /ReviewAppearanceFrame/);
+  }
+  const scope = readFileSync(join(reviewsRoot, "ui", "use-review-appearance-scope.ts"), "utf8");
+  const codec = readFileSync(join(reviewsRoot, "model", "review-appearance.ts"), "utf8");
+  assert.match(frame, /ThemeScope/);
+  assert.match(frame, /width="full"/);
+  assert.match(frame, /zk-header-max-width/);
+  assert.match(frame, /useReviewAppearanceScope/);
+  assert.match(scope, /window\.location\.search/);
+  assert.match(scope, /listScopeAppearance/);
+  assert.match(scope, /compactPreviewSpacing/);
+  assert.match(scope, /scope\.identity/);
+  assert.match(scope, /scope\.mode/);
+  assert.match(codec, /hasReviewAppearanceQuery\(search\)/);
+  assert.match(codec, /identity: undefined, mode: undefined/);
+  assert.match(codec, /identity: undefined, mode: "dark"/);
+  assert.doesNotMatch(feature, /identity testing ground/);
+  assert.doesNotMatch(feature, /render-function children/);
+  assert.match(feature, /share-URL pin/);
 });
 
 test("issue pages use generateStaticParams; review pages redirect", () => {
   const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
   const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
   const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
-  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesRunAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
   for (const source of [issuePage, issueRun, unlinked, unlinkedRun]) {
     assert.match(source, /generateStaticParams/);
     assert.match(source, /dynamicParams = false/);
@@ -1263,83 +1641,298 @@ test("not-found segments use per-tree copy through one shared body", () => {
   const body = readFileSync(join(reviewsRoot, "ui/review-not-found-view.tsx"), "utf8");
   assert.match(body, /href="\/issues"/);
   const issue = readFileSync(join(issuesAppRoot, "not-found.tsx"), "utf8");
+  assert.match(issue, /ReviewMissingFeature/);
   assert.match(issue, /metadata\.missing/);
   assert.match(issue, /issue\.missing/);
   const run = readFileSync(join(issuesRunAppRoot, "[n]/runs/not-found.tsx"), "utf8");
+  assert.match(run, /ReviewMissingFeature/);
   assert.match(run, /run\.missing/);
+  assert.doesNotMatch(run, /features\/reviews\/ui\/review-not-found-view/);
   const unlinked = readFileSync(join(issuesAppRoot, "pr/not-found.tsx"), "utf8");
+  assert.match(unlinked, /ReviewMissingFeature/);
   assert.match(unlinked, /unlinked\.missing/);
-  const unlinkedRun = readFileSync(join(issuesAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesRunAppRoot, "pr/[n]/runs/not-found.tsx"), "utf8");
+  assert.match(unlinkedRun, /ReviewMissingFeature/);
   assert.match(unlinkedRun, /run\.missing/);
   const reviews = readFileSync(join(reviewsAppRoot, "not-found.tsx"), "utf8");
+  assert.match(reviews, /ReviewMissingFeature/);
   assert.match(reviews, /metadata\.reviewsMissing/);
   assert.doesNotMatch(reviews, /metadata\.missing\.title/);
 });
 
-test("live-backed issue runs mount AgentConsole; index-only runs still link out", () => {
-  const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+test("load error view uses the route header and an All issues action, never reload", () => {
+  const view = readFileSync(join(reviewsRoot, "ui/review-load-error-view.tsx"), "utf8");
+  assert.match(view, /title=\{title\}/);
+  assert.match(view, /description=\{description\}/);
+  assert.match(view, /copy\.issue\.back/);
+  assert.match(view, /recoveryHref = "\/issues"/);
+  assert.match(view, /href=\{recoveryHref\}/);
+  assert.match(view, /actions=/);
+  assert.doesNotMatch(view, /window\.location\.reload/);
+  assert.doesNotMatch(view, /copy\.list\.title/);
   const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
-  const run = readFileSync(join(reviewsRoot, "ui/review-run-view.tsx"), "utf8");
-  const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
-  const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
-  assert.match(consoleView, /AgentConsole/);
-  assert.match(consoleView, /Heading/);
-  assert.match(consoleView, /level=\{1\}/);
-  assert.match(consoleView, /copy\.run\.title/);
-  assert.match(feature, /toAgentConsole/);
-  assert.match(feature, /ReviewConsoleView/);
-  assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);
-  assert.match(run, /copy\.run\.openLive/);
-  assert.match(run, /copy\.run\.noLive/);
-  assert.match(run, /target="_blank"/);
-  assert.doesNotMatch(run, /ReviewConsole/);
-  assert.doesNotMatch(run, /AgentConsole/);
-  assert.doesNotMatch(run, /reviewMainFlow/);
-  assert.doesNotMatch(run, /ReviewAgentList/);
-  assert.doesNotMatch(run, /<iframe/);
-  assert.doesNotMatch(layout, /SiteLayout/);
-  assert.match(siteLayout, /SiteLayout/);
+  assert.match(exportedAsync(feature, "ReviewListFeature"), /reviewsCopy\.list\.title/);
+  assert.match(exportedAsync(feature, "ReviewIssueFeature"), /reviewsCopy\.metadata\.issue\.title/);
+  assert.match(exportedAsync(feature, "ReviewUnlinkedFeature"), /reviewsCopy\.metadata\.unlinked\.title/);
+  assert.match(exportedAsync(feature, "ReviewIssueRunFeature"), /reviewsCopy\.metadata\.run\.title/);
+  assert.match(exportedAsync(feature, "ReviewUnlinkedRunFeature"), /reviewsCopy\.metadata\.run\.title/);
+  assert.match(exportedAsync(feature, "redirectReviewsPr"), /reviewsCopy\.metadata\.reviewsMissing\.title/);
+  const missing = exportedAsync(feature, "ReviewMissingFeature");
+  assert.match(missing, /reviewLoadErrorView\(\{\s*title,\s*description: body/);
 });
+
+test("list view shows a static load error and does not ship a sample notice", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  assert.doesNotMatch(list, /ReviewLoadErrorView/);
+  assert.doesNotMatch(list, /window\.location\.reload/);
+  assert.doesNotMatch(list, /ReviewSampleNotice/);
+  assert.doesNotMatch(list, /showSampleNotice/);
+  for (const file of ["review-pr-view.tsx", "review-timeline-row.tsx", "review-issue-detail.tsx"]) {
+    const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
+    assert.doesNotMatch(source, /ReviewSampleNotice/);
+    assert.doesNotMatch(source, /showSampleNotice/);
+  }
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  assert.match(feature, /hasLoadError/);
+  assert.match(feature, /ReviewLoadErrorView/);
+  assert.match(feature, /reviewLoadErrorView/);
+  const listFeature = exportedAsync(feature, "ReviewListFeature");
+  assert.match(listFeature, /reviewLoadErrorView\(/);
+  assert.doesNotMatch(listFeature, /loadError=\{/);
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewIssueFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewUnlinkedFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewIssueRunFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "ReviewUnlinkedRunFeature"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "redirectReviewsPr"));
+  pinsLoadErrorBeforeNotFound(exportedAsync(feature, "redirectReviewsPrRun"));
+  const missing = exportedAsync(feature, "ReviewMissingFeature");
+  const loadErrorAt = missing.search(/reviewLoadErrorView\(/);
+  const notFoundViewAt = missing.search(/ReviewNotFoundView/);
+  assert.notEqual(loadErrorAt, -1);
+  assert.notEqual(notFoundViewAt, -1);
+  assert.ok(loadErrorAt < notFoundViewAt);
+  assert.doesNotMatch(feature, /window\.location\.reload/);
+  assert.doesNotMatch(feature, /isPublicStandIn/);
+  assert.equal(existsSync(join(reviewsRoot, "ui/review-sample-notice.tsx")), false);
+});
+
+test("found /issues pages pass issuesIndexRobots", () => {
+  const list = readFileSync(join(issuesAppRoot, "page.tsx"), "utf8");
+  const issuePage = readFileSync(join(issuesAppRoot, "[n]/page.tsx"), "utf8");
+  const issueRun = readFileSync(join(issuesRunAppRoot, "[n]/runs/[id]/page.tsx"), "utf8");
+  const unlinked = readFileSync(join(issuesAppRoot, "pr/[n]/page.tsx"), "utf8");
+  const unlinkedRun = readFileSync(join(issuesRunAppRoot, "pr/[n]/runs/[id]/page.tsx"), "utf8");
+  for (const source of [list, issuePage, issueRun, unlinked, unlinkedRun]) {
+    assert.match(source, /issuesIndexRobots/);
+  }
+});
+
 
 test("list and timeline views read from issue records, not a PR console", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  assert.match(list, /issuePath/);
+  assert.match(detail, /githubIssueHref/);
   assert.match(list, /copy\.list\.unlinkedTitle/);
   assert.doesNotMatch(list, /copy\.list\.openIssue/);
   assert.match(list, /copy\.type\[last\.type\]/);
   assert.match(list, /aria-label=\{copy\.list\.title\}/);
-  assert.match(list, /aria-labelledby=\{unlinkedHeadingId\}/);
+  assert.doesNotMatch(list, /<nav /);
+  assert.doesNotMatch(list, /<div[\s>/]/);
+  assert.match(list, /<Stack gap="sm" className="surface-pad-md">/);
+  assert.doesNotMatch(list, /<ul[^>]*aria-label=\{copy\.list\.unlinkedTitle\}/);
+  assert.match(list, /SidebarNavGroup/);
   assert.match(list, /runCountLabel/);
-  assert.match(timeline, /copy\.type/);
-  assert.match(timeline, /entry\.runId/);
+  assert.match(timeline, /TimelineRow/);
+  assert.match(timeline, /entry\.liveUrl/);
   assert.match(timeline, /aria-labelledby/);
   assert.match(timeline, /copy\.unlinked\.timelineEmpty/);
   assert.doesNotMatch(list, /ReviewConsole/);
+  assert.doesNotMatch(detail, /ReviewConsole/);
   assert.doesNotMatch(timeline, /ReviewConsole/);
-  assert.doesNotMatch(list, /AgentConsole/);
-  assert.doesNotMatch(timeline, /AgentConsole/);
+});
+
+test("list is a master-detail workspace; GitHub links stay in the detail", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
+  const css = readFileSync(join(reviewsRoot, "ui/review-list.css"), "utf8");
+  assert.match(list, /data-issues-workspace=""/);
+  assert.match(list, /data-issues-aside=""/);
+  assert.match(list, /data-issues-detail=""/);
+  assert.match(list, /data-issues-row=""/);
+  assert.doesNotMatch(list, /<details /);
+  assert.doesNotMatch(list, /<summary /);
+  assert.match(detail, /<Card>/);
+  assert.match(detail, /CardHeader/);
+  assert.match(detail, /<DetailPanel variant="grid"/);
+  assert.doesNotMatch(detail, /function GithubRefLink/);
+  assert.doesNotMatch(detail, /^["']use client["']/m);
+  assert.match(detail, /level=\{3\}/);
+  assert.match(detail, /entriesNewestFirst\(entries\)/);
+  assert.match(list, /headlineOutcome/);
+  assert.doesNotMatch(list, /min-h-target w-fit/);
+  assert.doesNotMatch(list, /Accordion/);
+  assert.doesNotMatch(list, /AppShell/);
+  assert.doesNotMatch(list, /issueRunPath/);
+  assert.doesNotMatch(list, /unlinkedRunPath/);
+  assert.doesNotMatch(list, /unlinkedPrPath/);
+  assert.doesNotMatch(list, /timelineHref/);
+  assert.doesNotMatch(list, /timelineLabel/);
+  assert.match(detail, /aria-labelledby=\{headingId\}/);
+  assert.match(detail, /githubIssueHref/);
+  assert.match(detail, /githubPullHref/);
+  assert.match(detail, /copy\.issue\.timelineEmpty/);
+  assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
+  assert.doesNotMatch(list, /\/runs\/`/);
+  assert.doesNotMatch(list, /\/runs\/\$\{/);
+  assert.doesNotMatch(css, /\[data-issues-workspace\]/);
+  assert.match(css, /min-width: 48rem/);
+  assert.match(css, /100svh - var\(--zk-site-header-height\)/);
+  assert.equal([...css.matchAll(/flex-direction: column/g)].length, 1);
+  assert.match(list, /SidebarNavItem/);
+  assert.match(list, /OutcomeStatus/);
+  assert.match(list, /w-app-shell-sidebar/);
+  assert.match(list, /p-app-shell-padding/);
+  assert.match(list, /DrawerTrigger/);
+  assert.match(list, /max-md:hidden/);
+  assert.match(list, /copy\.list\.openList/);
+  assert.match(list, /copy\.list\.missing/);
+  assert.match(list, /copy\.list\.missingNext/);
+  assert.doesNotMatch(list, /copy\.issue\.missing/);
+  assert.match(list, /aria-labelledby=\{detailHeadingId\}/);
+  assert.match(list, /id=\{detailHeadingId\}/);
+  assert.match(list, /level=\{2\}/);
+  assert.match(list, /<Text as="p" className="sr-only" aria-live="polite">/);
+  assert.doesNotMatch(list, /<article[^>]*aria-live/);
+  assert.doesNotMatch(list, /\/\* eslint-disable jsx-a11y/);
+  assert.match(list, /eslint-disable-line jsx-a11y\/no-noninteractive-tabindex/);
+  assert.doesNotMatch(list, /<DrawerBody[^>]*aria-label=/);
+  assert.match(list, /issueFullTitle/);
+  assert.doesNotMatch(list, /#\$\{issue\.number\} \$\{issue\.title\}/);
+  assert.doesNotMatch(detail, /#\$\{issue\.number\} \$\{issue\.title\}/);
+  assert.match(list, /shouldScrollSelectedIssue/);
+  assert.match(list, /DrawerTitle className="sr-only">\{copy\.list\.openList\}/);
+  assert.doesNotMatch(list, /data-slot="app-shell-menu"/);
+  assert.doesNotMatch(list, /\?\? items\[0\]/);
+});
+
+test("detail timelines keep port order and do not import entriesNewestFirst", () => {
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.doesNotMatch(timeline, /entriesNewestFirst/);
+  assert.match(timeline, /<Timeline entries=\{issue\.entries\}/);
+  assert.match(timeline, /<Timeline[\s\S]*entries=\{pullRequest\.entries\}/);
 });
 
 test("unlinked and timeline links take their accessible name from visible title text", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
-  assert.match(list, /<Link href=\{unlinkedPrPath\(entry\.number\)\}>\s*#\{entry\.number\}/);
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  assert.match(list, /#\{entry\.number\}/);
   assert.doesNotMatch(list, /copy\.list\.openUnlinked/);
-  assert.match(timeline, /<Link href=\{href\}>\s*\{copy\.type\[entry\.type\]\}/);
+  assert.doesNotMatch(list, /<Link[^>]*aria-label/);
+  assert.doesNotMatch(list, /<Button[^>]*aria-label/);
+  assert.doesNotMatch(list, /<summary[^>]*aria-label/);
+  assert.match(timeline, /issueFullTitle\(issue\)/);
+  assert.doesNotMatch(timeline, /#\$\{issue\.number\} \$\{issue\.title\}/);
+  assert.match(timeline, /href=\{entry\.liveUrl\}/);
+  assert.match(row, /copy\.type\[entry\.type\]/);
   assert.doesNotMatch(timeline, /copy\.issue\.openRun/);
+  assert.doesNotMatch(row, /ariaLabel=\{`\$\{copy\.issue\.viewLog\}/);
   assert.doesNotMatch(JSON.stringify(reviewsCopy), /openUnlinked|openRun/);
 });
 
 test("list and timeline rows use row padding, not section padding", () => {
   const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
   const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
   const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
-  assert.match(list, /flex-wrap items-center border-b border-border py-row/);
-  assert.match(timeline, /flex-wrap items-center border-b border-border py-row/);
+  assert.match(list, /SidebarNavItem/);
+  assert.match(list, /md:w-app-shell-sidebar/);
+  assert.match(row, /py-row/);
+  assert.match(row, /max-md:flex-col max-md:items-start/);
+  assert.match(row, /hit-target/);
+  assert.doesNotMatch(row, /min-h-target/);
+  assert.doesNotMatch(timeline, /max-md:flex-col/);
   assert.doesNotMatch(list, /py-section-sm/);
-  assert.doesNotMatch(timeline, /py-section-sm/);
-  assert.match(frame, /<Stack gap="md">\{children\(panel\)\}<\/Stack>/);
+  assert.doesNotMatch(row, /py-section-sm/);
+  assert.match(frame, /<Stack gap="lg">\{children\}<\/Stack>/);
+  assert.doesNotMatch(frame, /children\(panel\)/);
+});
+
+test("timeline step cells are one log link with a View log button", () => {
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
+  const timeline = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.match(row, /CompactLogLink href=\{logHref\} copy=\{copy\} className=\{logCellClass\}/);
+  assert.match(row, /function inSiteLogHref/);
+  assert.match(row, /second === "\/" \|\| second === "\\\\"/);
+  assert.match(row, /log=\{false\}/);
+  assert.doesNotMatch(row, /className="text-dense"/);
+  assert.match(row, /focus-ring-control/);
+  assert.match(row, /hover:bg-muted/);
+  assert.match(row, /active:bg-secondary/);
+  assert.match(row, /active:text-secondary-foreground/);
+  assert.doesNotMatch(row, /cursor-pointer/);
+  assert.doesNotMatch(row, /rounded-md/);
+  assert.match(row, /variant="secondary"/);
+  assert.match(row, /size="sm"/);
+  assert.match(row, /copy\.issue\.viewLog/);
+  assert.match(row, /ChevronRight/);
+  assert.match(row, /<Button asChild variant="secondary"/);
+  assert.match(row, /<Stack direction="horizontal" gap="tight">/);
+  assert.doesNotMatch(row, /<Button(?![^>]*asChild)/);
+  assert.doesNotMatch(row, /function TimelineRowLink/);
+  assert.match(detail, /<TimelineRow entry=\{entry\} href=\{entry\.liveUrl\}/);
+  assert.match(timeline, /<TimelineRow entry=\{entry\} href=\{entry\.liveUrl\}/);
+  assert.match(detail, /CompactLogLink href=\{href\} copy=\{copy\}/);
+  assert.match(detail, /githubIssueHref/);
+  assert.match(detail, /githubPullHref/);
+  const metaThenRows = /DetailMeta[\s\S]*TimelineRow/;
+  assert.match(detail, metaThenRows);
+  assert.doesNotMatch(row, /githubIssueHref|githubPullHref/);
+});
+
+test("list stays in the shared wide frame and uses kit console nav rows", () => {
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  const frame = readFileSync(join(reviewsRoot, "ui/appearance-panel.tsx"), "utf8");
+  assert.doesNotMatch(list, /ReviewSampleNotice/);
+  assert.match(list, /<ReviewAppearanceFrame layout=\{empty \? "page" : "workspace"\}>[\s\S]*PageHeader[\s\S]*EmptyState[\s\S]*<\/ReviewAppearanceFrame>/);
+  assert.match(list, /copy\.list\.unlinkedTitle/);
+  assert.match(list, /IssuesWorkspace/);
+  assert.match(frame, /width="full"/);
+  assert.match(frame, /zk-header-max-width/);
+  assert.doesNotMatch(frame, /width="wide"/);
+  assert.doesNotMatch(list, /MarketingSiteHeader|MobileHeader|pathname/);
+  assert.doesNotMatch(frame, /pathname/);
+  assert.equal([...list.matchAll(/<details /g)].length, 0);
+  assert.match(list, /IssueListRow[\s\S]*OutcomeStatus/);
+  assert.match(frame, /"data-issues-layout": "workspace"/);
+  assert.match(list, /layout=\{empty \? "page" : "workspace"\}/);
+  assert.match(list, /sidebar=\{list\(true\)\}/);
+  assert.match(list, /drawerSidebar=\{list\(false\)\}/);
+  assert.match(list, /\[`#\$\{entry\.number\}`, meta, label\]/);
+  assert.match(list, /md:focus-ring/);
+  assert.match(list, /p-app-shell-padding focus-ring md:pane-shrink/);
+  assert.doesNotMatch(list, /border-b muted-wash/);
+  assert.match(list, /resolveIssueOpenId/);
+  assert.match(list, /addEventListener\("hashchange"/);
+  assert.doesNotMatch(list, /<Link[^>]*aria-label/);
+  assert.doesNotMatch(list, /<Button[^>]*aria-label/);
+});
+
+test("timeline rows show score, superseded, and endedAt-aware UpdatedAgo", () => {
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  const list = readFileSync(join(reviewsRoot, "ui/review-list-view.tsx"), "utf8");
+  assert.match(row, /score=\{entry\.score \?\? null\}/);
+  assert.match(row, /entry\.superseded !== true/);
+  assert.match(row, /copy\.issue\.replaced/);
+  assert.match(row, /copy\.issue\.failedReplaced/);
+  assert.match(row, /entryUpdatedAt\(entry\)/);
+  assert.doesNotMatch(row, /new Date\(entry\.startedAt\)/);
+  const detail = readFileSync(join(reviewsRoot, "ui/review-issue-detail.tsx"), "utf8");
+  assert.match(detail, /summedDurationMs/);
+  assert.match(detail, /formatDuration/);
+  assert.doesNotMatch(list, /from "next\/link"/);
 });
 
 test("verdict and status tones live in one shared module", () => {
@@ -1352,12 +1945,15 @@ test("verdict and status tones live in one shared module", () => {
   assert.match(status, /from "\.\/review-badges"/);
   assert.match(status, /STATUS_BADGE/);
   assert.doesNotMatch(status, /StatusLabel/);
-  for (const file of ["review-list-view.tsx", "review-pr-view.tsx", "review-run-view.tsx"]) {
+  for (const file of ["review-list-view.tsx", "review-timeline-row.tsx"]) {
     const source = readFileSync(join(reviewsRoot, "ui", file), "utf8");
     assert.match(source, /from "\.\/issue-status"/);
     assert.doesNotMatch(source, /const VERDICT_BADGE/);
     assert.doesNotMatch(source, /const STATUS_TONE/);
   }
+  const prView = readFileSync(join(reviewsRoot, "ui/review-pr-view.tsx"), "utf8");
+  assert.doesNotMatch(prView, /const VERDICT_BADGE/);
+  assert.doesNotMatch(prView, /const STATUS_TONE/);
 });
 
 function liveItem(overrides = {}) {
@@ -1436,7 +2032,7 @@ function writeLiveSnapshot(reviews, extra = {}) {
 }
 
 const GITHUB_REVIEW_URL = "https://github.com/example/repo/pull/133#pullrequestreview-1";
-const HOSTED_LIVE_URL = "https://example.test/live/abc";
+const HOSTED_LIVE_URL = hostedLiveHref();
 
 function liveMappedEntry(overrides = {}) {
   const index = liveRunsToIndex([liveSample(overrides)]);
@@ -1445,28 +2041,32 @@ function liveMappedEntry(overrides = {}) {
   return { index, entry: index.pullRequests[0].entries[0] };
 }
 
-test("a GitHub review_url is not a hosted live console URL", () => {
+test("a GitHub review_url is not a live console URL", () => {
   const { entry } = liveMappedEntry({
     run: { ...liveSample().run, review_url: GITHUB_REVIEW_URL },
   });
-  assert.equal(entry.liveUrl, null);
+  assert.equal(entry.liveUrl, toLiveConsoleHref("run-71"));
+  assert.notEqual(entry.liveUrl, GITHUB_REVIEW_URL);
 });
 
-test("hosted live_url is kept; http, token, userinfo, and home paths are dropped", () => {
-  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, HOSTED_LIVE_URL);
-  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl, null);
+test("timeline liveUrl is the in-site console even when hosted live_url is missing or unsafe", () => {
+  assert.equal(liveMappedEntry({ run: { ...liveSample().run, live_url: HOSTED_LIVE_URL } }).entry.liveUrl, toLiveConsoleHref("run-71"));
+  assert.equal(
+    liveMappedEntry({ run: { ...liveSample().run, live_url: "http://example.test/live/abc" } }).entry.liveUrl,
+    toLiveConsoleHref("run-71"),
+  );
   assert.equal(
     liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/live/abc?token=secret" } }).entry
       .liveUrl,
-    null,
+    toLiveConsoleHref("run-71"),
   );
   assert.equal(
     liveMappedEntry({ run: { ...liveSample().run, live_url: "https://user:pass@example.test/live/abc" } }).entry.liveUrl,
-    null,
+    toLiveConsoleHref("run-71"),
   );
   assert.equal(
     liveMappedEntry({ run: { ...liveSample().run, live_url: "https://example.test/home/alice/live" } }).entry.liveUrl,
-    null,
+    toLiveConsoleHref("run-71"),
   );
 });
 
@@ -1509,9 +2109,10 @@ test("a live row with issue 108 lists that issue and redirects the PR to it", as
   );
   const run = await port.getRun(108, "run-71");
   assert.ok(run && "items" in run);
+  assert.equal(run.run.run_id, "run-71");
   assert.equal(run.run.live_url, HOSTED_LIVE_URL);
-  assert.equal(listed[0]?.entries[0]?.liveUrl, HOSTED_LIVE_URL);
   assert.deepEqual(await port.listUnlinkedPullRequests(), []);
+  assert.equal(await port.hasLoadError(), false);
 });
 
 test("a live row with issue null or omitted stays an unlinked PR", async () => {
@@ -1674,6 +2275,26 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
   assert.match(clean.items[0].entries[0].output, /Bearer \[redacted\]/);
   assert.doesNotMatch(clean.items[0].entries[0].output, /firstPassSecret/);
   assert.doesNotMatch(clean.items[0].entries[0].output, /\/home\/carol/);
+});
+
+test("activity and engine labels go through the public scrubber", () => {
+  const [clean] = toPublicReviews([
+    liveSample({
+      items: [
+        liveItem({
+          engine_label: "kit from /home/erin/kit",
+          last_activity: "Reading Bearer activitySecret1",
+        }),
+        liveItem({ id: "plain-1", engine_label: "kit · docs-9", last_activity: "Writing the note" }),
+      ],
+    }),
+  ]);
+  assert.match(clean.items[0].engine_label, /\[path\]/);
+  assert.doesNotMatch(clean.items[0].engine_label, /\/home\/erin/);
+  assert.match(clean.items[0].last_activity, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].last_activity, /activitySecret1/);
+  assert.equal(clean.items[1].engine_label, "kit · docs-9");
+  assert.equal(clean.items[1].last_activity, "Writing the note");
 });
 
 test("a payload that still has a home path or token is rejected", () => {
@@ -1951,6 +2572,143 @@ test("item titles go through the public scrubber", () => {
   assert.doesNotMatch(clean.items[0].name, /abcDEF123/);
 });
 
+
+
+test("share URL merge keeps appearance query and hash together", () => {
+  assert.equal(
+    mergeReviewShareUrl({
+      pathname: "/issues/108",
+      search: "identity=volt&preview=dark",
+      hash: "",
+    }),
+    "/issues/108?identity=volt&preview=dark",
+  );
+  assert.equal(
+    mergeReviewShareUrl({ pathname: "/issues/108", search: "", hash: "" }),
+    "/issues/108",
+  );
+});
+
+test("appearance share write stays a model helper; the console frame does not write", () => {
+  const src = readFileSync(join(reviewsRoot, "ui", "review-console-appearance.tsx"), "utf8");
+  const href = readFileSync(join(reviewsRoot, "model", "live-console-href.ts"), "utf8");
+  assert.match(href, /writeConsoleShareSearch/);
+  assert.doesNotMatch(src, /mergeReviewShareUrl/);
+  assert.doesNotMatch(src, /writeConsoleShareSearch/);
+  assert.doesNotMatch(src, /history\.replaceState/);
+  assert.doesNotMatch(
+    readFileSync(join(reviewsRoot, "ui", "appearance-panel.tsx"), "utf8"),
+    /mergeReviewShareUrl/,
+  );
+});
+
+test("issue and unlinked run pages mount the in-site live console", () => {
+  const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+  const liveConsole = readFileSync(join(reviewsRoot, "ui/review-live-console.tsx"), "utf8");
+  const compose = readFileSync(join(reviewsRoot, "compose.tsx"), "utf8");
+  const feature = readFileSync(join(reviewsRoot, "index.tsx"), "utf8");
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  const layout = readFileSync(join(here, "../app/(run-console)/layout.tsx"), "utf8");
+  const siteLayout = readFileSync(join(here, "../app/(site)/layout.tsx"), "utf8");
+  const searchPage = readFileSync(join(issuesRunAppRoot, "run/page.tsx"), "utf8");
+  assert.match(consoleView, /AgentConsole/);
+  assert.match(liveConsole, /subscribe/);
+  assert.match(liveConsole, /ReviewConsoleView/);
+  assert.match(compose, /subscribeLiveRun/);
+  assert.match(feature, /ReviewLiveConsole/);
+  assert.match(feature, /runId=\{id\}/);
+  assert.doesNotMatch(feature, /runRedirectTarget/);
+  assert.doesNotMatch(feature, /from "@zedtech\/zedkit-ui"/);
+  assert.doesNotMatch(feature, /ReviewRunView/);
+  assert.doesNotMatch(feature, /UnlinkedRunView/);
+  assert.equal(existsSync(join(reviewsRoot, "ui/review-run-view.tsx")), false);
+  assert.match(searchPage, /ReviewLiveConsoleSearchFeature/);
+  assert.match(row, /target="_blank"/);
+  assert.match(row, /rel="noopener noreferrer"/);
+  assert.doesNotMatch(row, /ReviewConsole/);
+  assert.doesNotMatch(row, /AgentConsole/);
+  assert.doesNotMatch(layout, /SiteLayout/);
+  assert.match(layout, /<main id="main-content"/);
+  assert.match(siteLayout, /SiteLayout/);
+});
+
+test("live console host calms finding surfaces without restyling the kit specimen", () => {
+  const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
+  const appearance = readFileSync(join(reviewsRoot, "ui/review-console-appearance.tsx"), "utf8");
+  const decision = readFileSync(join(here, "../../../packages/ui/src/layout/agent-console-decision.tsx"), "utf8");
+  const demo = readFileSync(join(here, "../components/demos/agent-console-demo.tsx"), "utf8");
+  const cssPath = join(reviewsRoot, "ui/review-console-surfaces.css");
+  const css = existsSync(cssPath) ? readFileSync(cssPath, "utf8") : "";
+  const hostCalm = `${consoleView}\n${appearance}\n${css}`;
+
+  assert.match(consoleView, /<AgentConsole/);
+  assert.match(consoleView, /decision=\{decision\}/);
+  assert.match(consoleView, /ReviewConsoleAppearanceFrame/);
+  assert.match(consoleView, /headingLevel=\{1\}/);
+  assert.doesNotMatch(consoleView, /<Heading level=\{1\}/);
+  assert.match(consoleView, /copy\.run\.title/);
+  assert.match(consoleView, /pane-shrink/);
+  assert.match(consoleView, /min-h-floor/);
+  assert.match(consoleView, /runId/);
+  assert.match(appearance, /data-review-console/);
+  assert.match(appearance, /useReviewAppearanceScope/);
+  assert.match(appearance, /consoleScopeAppearance/);
+  assert.doesNotMatch(appearance, /min-h-floor/);
+  assert.doesNotMatch(appearance, /LookField|IdentitySelect|DensitySelect|consoleAppearanceCopy/);
+  assert.doesNotMatch(consoleView, /variant="glass"/);
+  assert.doesNotMatch(consoleView, /hover-lift/);
+  assert.doesNotMatch(consoleView, /IdentityLookForm/);
+  assert.doesNotMatch(consoleView, /\bCard\b/);
+  assert.doesNotMatch(consoleView, /data-surface="glass"/);
+  assert.match(decision, /data-slot="agent-console-decision"/);
+  assert.match(hostCalm, /data-slot=agent-console-decision|data-slot="agent-console-decision"/);
+  assert.match(hostCalm, /shadow-none|box-shadow:\s*none/);
+  assert.match(hostCalm, /bg-none|background-image:\s*none/);
+  assert.match(hostCalm, /data-review-console/);
+  assert.match(hostCalm, /overflow-wrap:\s*anywhere/);
+  assert.doesNotMatch(hostCalm, /!important/);
+  assert.doesNotMatch(hostCalm, /\[data-identity=["']glass["']\][\s\S]*box-shadow/);
+  if (css) {
+    assert.match(consoleView, /review-console-surfaces\.css/);
+    assert.match(css, /\[data-slot=["']agent-console["']\]/);
+    assert.doesNotMatch(css, /data-surface=["']glass["']/);
+  }
+  assert.doesNotMatch(demo, /review-console-surfaces/);
+  assert.doesNotMatch(demo, /agent-console-decision/);
+  const row = readFileSync(join(reviewsRoot, "ui/review-timeline-row.tsx"), "utf8");
+  assert.doesNotMatch(row, /AgentConsole/);
+});
+
+test("index run URLs keep in-site console hrefs instead of hosted redirects", async () => {
+  const port = createSnapshotReviewPort(
+    writeSnapshot(
+      [issue()],
+      [
+        pr(),
+        {
+          number: 54,
+          issueNumber: null,
+          runIds: ["run-54-review"],
+          entries: [
+            entry({
+              id: "54-review",
+              runId: "run-54-review",
+              type: "review",
+              verdict: "comment",
+              liveUrl: null,
+            }),
+          ],
+        },
+      ],
+    ),
+  );
+  const issueRun = await port.getRun(108, "run-108-impl");
+  const unlinkedRun = await port.getUnlinkedRun(54, "run-54-review");
+  assert.equal(issueRun && "liveUrl" in issueRun ? issueRun.liveUrl : null, toLiveConsoleHref("run-108-impl"));
+  assert.equal(unlinkedRun?.liveUrl, toLiveConsoleHref("run-54-review"));
+  assert.equal(existsSync(join(here, "../app/(run-console)/issues/run/page.tsx")), true);
+});
+
 test("toAgentConsole keeps confidence on /10 and converts durations to milliseconds", () => {
   const mapped = toAgentConsole(
     liveSample({
@@ -2026,7 +2784,7 @@ test("toAgentConsole maps first-pass findings from verdict_json and second_pass.
   );
   assert.equal(mapped.decision?.secondPass?.blocksMerge, true);
   assert.equal(mapped.decision?.secondPass?.model, "docs-reviewer");
-  assert.equal(mapped.decision?.postedReviewHref, "javascript:alert(1)");
+  assert.equal(mapped.decision?.postedReviewHref, null);
 });
 
 test("toAgentConsole still folds first pass when findings are empty", () => {
@@ -2040,10 +2798,13 @@ test("toAgentConsole marks running items from live status and ignores live_url a
   const mapped = toAgentConsole(
     liveSample({
       run: { ...liveSample().run, live_url: "https://example.test/live/abc", review_url: null },
-      decision: { ...liveSample().decision, review_url: null },
+      decision: {
+        ...liveSample().decision,
+        review_url: "https://github.com/zedtech-fr/zedkit/pull/1",
+      },
       items: [
         liveItem({ status: "starting" }),
-        liveItem({ id: "lens-1", status: "running" }),
+        liveItem({ id: "lens-1", status: "Running" }),
         liveItem({ id: "done-1", status: "done" }),
       ],
     }),
@@ -2052,8 +2813,38 @@ test("toAgentConsole marks running items from live status and ignores live_url a
     mapped.items.map((item) => item.running),
     [true, true, false],
   );
-  assert.equal(mapped.run.postedReviewHref, null);
-  assert.equal(mapped.decision?.postedReviewHref, null);
+  assert.equal(mapped.run.postedReviewHref, "https://github.com/zedtech-fr/zedkit/pull/1");
+  assert.equal(mapped.decision?.postedReviewHref, "https://github.com/zedtech-fr/zedkit/pull/1");
+});
+
+test("toAgentConsole maps engine labels, stream labels, and the run running flag", () => {
+  const mapped = toAgentConsole(
+    liveSample({
+      run: { ...liveSample().run, status: "Running" },
+      items: [
+        liveItem({ engine_label: "kit · docs-9", last_activity: "Writing the note" }),
+        liveItem({ id: "quiet-1", status: "done", engine_label: "kit", last_activity: null }),
+      ],
+    }),
+  );
+  assert.equal(mapped.run.running, true);
+  assert.equal(mapped.items[0].engineLabel, "kit · docs-9");
+  assert.equal(mapped.items[0].streamLabel, "Writing the note");
+  assert.equal(mapped.items[1].engineLabel, "kit");
+  assert.equal(mapped.items[1].streamLabel, null);
+  const settled = toAgentConsole(liveSample({ run: { ...liveSample().run, status: "done" } }));
+  assert.equal(settled.run.running, false);
+});
+
+test("toAgentConsole drops blank stream labels", () => {
+  const omitted = toAgentConsole(liveSample({ items: [liveItem()] }));
+  assert.equal(omitted.items[0].streamLabel, null);
+  const nulled = toAgentConsole(liveSample({ items: [liveItem({ last_activity: null })] }));
+  assert.equal(nulled.items[0].streamLabel, null);
+  const emptied = toAgentConsole(liveSample({ items: [liveItem({ last_activity: "" })] }));
+  assert.equal(emptied.items[0].streamLabel, null);
+  const blanked = toAgentConsole(liveSample({ items: [liveItem({ last_activity: "   " })] }));
+  assert.equal(blanked.items[0].streamLabel, null);
 });
 
 test("optional reviews on an index snapshot feed getRun for that run id", async () => {
@@ -2078,7 +2869,10 @@ test("optional reviews on an index snapshot feed getRun for that run id", async 
   assert.equal(liveRun.run.run_id, recordedId);
   const indexRun = await port.getRun(108, "run-108-impl");
   assert.equal(indexRun && "runId" in indexRun ? indexRun.runId : null, "run-108-impl");
-  assert.equal(indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null, "https://example.test/live/run-108-impl");
+  assert.equal(
+    indexRun && "liveUrl" in indexRun ? indexRun.liveUrl : null,
+    toLiveConsoleHref("run-108-impl"),
+  );
   assert.equal(await port.getRun(99, recordedId), null);
   assert.equal(await port.getRun(133, recordedId), null);
 });

@@ -21,4 +21,33 @@ export const A11Y_AXE_EXCLUDES = A11Y_AXE_EXCEPTIONS.map((entry) => entry.select
  */
 
 /** @type {ClipException[]} */
-export const CLIP_EXCEPTIONS = [];
+export const CLIP_EXCEPTIONS = [
+  {
+    selector: "[data-hero-run-stage]",
+    file: "apps/docs/app/(home)/_home/home-hero-illustration.tsx",
+    reason: "Hero stage masks decorative blobs that sit past the rounded high-value panel.",
+    owner: "docs",
+    removeBy: "2027-02-13",
+  },
+  {
+    selector: "[data-home-same-idea-window]",
+    file: "apps/docs/app/(home)/_home/sections/home-same-idea-section.tsx",
+    reason: "120px product windows mask decorative blobs, not the chip labels.",
+    owner: "docs",
+    removeBy: "2027-02-13",
+  },
+  {
+    selector: '[data-home-six-sentences-card="featured"]',
+    file: "apps/docs/app/(home)/_home/sections/home-six-sentences-section.tsx",
+    reason: "Featured quote cards mask the circle/stripe wash.",
+    owner: "docs",
+    removeBy: "2027-02-13",
+  },
+  {
+    selector: "#manifesto[data-slot=section]",
+    file: "apps/docs/app/(home)/_home/sections/home-manifesto-section.tsx",
+    reason: "Manifesto band masks the circle/stripe wash.",
+    owner: "docs",
+    removeBy: "2027-02-13",
+  },
+];

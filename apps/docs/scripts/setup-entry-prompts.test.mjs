@@ -26,11 +26,14 @@ function exportedString(source, name) {
 
 test("setup entry catalog lists four generated prompts and no Nest-only paste", () => {
   const generated = read("lib/ai-setup-onboarding.generated.ts");
-  const catalog = read("lib/setup-entry-prompts.ts");
+  const catalog = read("features/docs/setup-entry-prompts.ts");
   const surfaces = [
     ["catalog", catalog],
-    ["wrapper", read("components/setup-entry-prompt.tsx")],
-    ["home band", read("ui/home/home-paste-section.tsx")],
+    ["wrapper", read("features/docs/mdx/ui/setup-entry-prompt.tsx")],
+    ["home lead", read("app/(home)/_home/home-hero-lead.tsx")],
+    ["home illustration", read("app/(home)/_home/home-hero-illustration.tsx")],
+    ["home band", read("app/(home)/_home/sections/home-paste-section.tsx")],
+    ["home closing", read("app/(home)/_home/sections/home-closing-section.tsx")],
     ["getting started", read("prose/guides/getting-started.mdx")],
     ["home smoke", read("tests/home-ai-setup.spec.ts")],
     ["getting started smoke", read("tests/getting-started.spec.ts")],
@@ -55,13 +58,36 @@ test("setup entry catalog lists four generated prompts and no Nest-only paste", 
   const ids = [...catalog.matchAll(/id: "(ai|ui|combined|suggest)"/g)].map((match) => match[1]);
   assert.deepEqual(ids, ["ai", "ui", "combined", "suggest"]);
 
-  const homeBand = read("ui/home/home-paste-section.tsx");
-  assert.match(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|<SetupEntryPrompt id="combined"/);
-  assert.match(homeBand, /<SetupEntryPrompt id="combined"/);
-  assert.doesNotMatch(homeBand, /<SetupEntryPrompt id="(ai|ui|suggest)"/);
-  assert.doesNotMatch(homeBand, /\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+  const homeLead = read("app/(home)/_home/home-hero-lead.tsx");
+  const homeBand = read("app/(home)/_home/sections/home-paste-section.tsx");
+  const homeClosing = read("app/(home)/_home/sections/home-closing-section.tsx");
+  const homePrompt = exportedString(generated, "MAP_AI_UI_SETUP_MINI_PROMPT");
+  assert.equal(homePrompt.includes("\n"), false);
+  assert.match(homeLead, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeLead, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeLead, /SetupEntryPrompt/);
+  assert.equal((homeLead.match(/data-home-hero-prompt/g) ?? []).length, 1);
+  assert.doesNotMatch(homeBand, /SetupEntryPrompt|SecretField|data-setup-entry/);
+  assert.match(homeBand, /HomeCopyCommandField/);
+  assert.match(homeBand, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeBand, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeClosing, /SetupEntryPrompt|data-setup-entry/);
+  assert.match(homeClosing, /HomeCopyCommandField/);
+  assert.doesNotMatch(homeClosing, /SecretField/);
+  assert.match(homeClosing, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.doesNotMatch(homeClosing, /\bMAP_SETUP_MINI_PROMPT\b|\bAI_SETUP_MINI_PROMPT\b|\bUI_SETUP_MINI_PROMPT\b|\bSUGGEST_MINI_PROMPT\b/);
 
-  const wrapper = read("components/setup-entry-prompt.tsx");
+  for (const [label, source] of [
+    ["home lead", homeLead],
+    ["home paste", homeBand],
+    ["home closing", homeClosing],
+    ["home smoke", read("tests/home.spec.ts")],
+    ["home paste smoke", read("tests/home-ai-setup.spec.ts")],
+  ]) {
+    assert.equal(source.includes(homePrompt), false, `${label} must not literal-copy MAP_AI_UI_SETUP_MINI_PROMPT`);
+  }
+
+  const wrapper = read("features/docs/mdx/ui/setup-entry-prompt.tsx");
   assert.match(wrapper, /<Label htmlFor=\{fieldId\}>\{entry\.label\}<\/Label>/);
   assert.doesNotMatch(wrapper, /labelled|aria-label/);
 });

@@ -9,7 +9,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const allowSuffixes = ["components/identity-editor-toolbar.tsx", "components/demo-style-scope.tsx"];
+const allowSuffixes = ["features/identity/editor/ui/identity-editor-toolbar.tsx", "components/demo-style-scope.tsx"];
 
 function isAllowed(file) {
   const rel = file.slice(root.length + 1);

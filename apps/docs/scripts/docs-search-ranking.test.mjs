@@ -8,7 +8,7 @@ import {
   rankAndGroupSearchItems,
   rankTierForRecord,
   buildCanonicalQueryIndex,
-} from "../lib/docs-search-ranking.mjs";
+} from "../features/docs/docs-search-ranking.mjs";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
 const canonicalSrc = readFileSync(join(app, "content", "docs-search-canonical.ts"), "utf8");

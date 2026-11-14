@@ -1,6 +1,6 @@
 [
   {
-    "name": "Appearance panel open",
-    "click": "[role=group][aria-label=\"Preview look\"] [data-slot=stack] [data-slot=field]:first-of-type [data-slot=select-trigger]"
+    "name": "First issue open",
+    "click": "main [data-issues-row]"
   }
 ]

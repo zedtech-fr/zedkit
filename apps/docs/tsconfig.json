@@ -14,22 +14,24 @@
     "incremental": true,
     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
     "plugins": [{ "name": "next" }],
-    "paths": { "#*": ["./app/*"], "@/*": ["./*"] }
+    "paths": { "#scripts/*": ["./scripts/*"], "#*": ["./app/*"], "@/*": ["./*"] }
   },
   "include": [
     "app",
     "features",
     "components",
     "lib",
-    "ui",
     "content/gallery.ts",
     "content/catalog-index.ts",
-    "content/home-scenarios.ts",
     "source.config.ts",
     "mdx-components.tsx",
     "next.config.mjs",
     "postcss.config.mjs",
     "prose/guides/snippets/**/*.tsx"
   ],
-  "exclude": ["prose/guides/snippets/registry-page.tsx"]
+  "exclude": [
+    "prose/guides/snippets/registry-page.tsx",
+    // Colocated unit tests run under node --test, not tsc.
+    "**/*.test.mjs"
+  ]
 }

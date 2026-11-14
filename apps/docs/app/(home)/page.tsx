@@ -1,0 +1,45 @@
+import {
+  buildOrganizationJsonLd,
+  buildSoftwareSourceCodeJsonLd,
+  buildWebPageJsonLd,
+} from "@zedtech/zedkit-seo";
+import { JsonLd } from "@zedtech/zedkit-seo/react";
+
+import { uiGalleryStats } from "@/content/gallery";
+import { PUBLIC_SITE_URL, homePage, pageUrl } from "@/lib/site";
+import "./_home/home.css";
+import { HomeView } from "./_home/home-view";
+
+const siteUrl = PUBLIC_SITE_URL.replace(/\/$/, "");
+
+export default function Home() {
+  const jsonLd = buildWebPageJsonLd({
+    title: homePage.title,
+    description: homePage.description,
+    url: pageUrl("/"),
+  });
+  const organizationJsonLd = buildOrganizationJsonLd({
+    name: "ZED TECH",
+    url: siteUrl,
+    logoUrl: pageUrl("/opengraph-image"),
+    sameAs: ["https://github.com/zedtech-fr/zedkit"],
+  });
+  const softwareJsonLd = buildSoftwareSourceCodeJsonLd({
+    name: "zedkit",
+    url: siteUrl,
+    codeRepository: "https://github.com/zedtech-fr/zedkit",
+    programmingLanguage: "TypeScript",
+    license: "https://github.com/zedtech-fr/zedkit/blob/main/LICENSE",
+  });
+  return (
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [jsonLd, organizationJsonLd, softwareJsonLd],
+        }}
+      />
+      <HomeView uiGalleryStats={uiGalleryStats} />
+    </>
+  );
+}

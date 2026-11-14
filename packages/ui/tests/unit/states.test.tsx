@@ -67,7 +67,7 @@ describe("ErrorState", () => {
 describe("Spinner", () => {
   it("names the wait from kit messages", () => {
     render(<Spinner />);
-    expect(screen.getByRole("status", { name: "Loading" })).toBeTruthy();
+    expect(screen.getByRole("status", { name: "Loading content" })).toBeTruthy();
   });
 
   it("lets a label prop win and reads French from the provider", () => {
@@ -78,7 +78,7 @@ describe("Spinner", () => {
         <Spinner />
       </ZedkitUiProvider>,
     );
-    expect(screen.getByRole("status", { name: "Chargement" })).toBeTruthy();
+    expect(screen.getByRole("status", { name: "Chargement du contenu" })).toBeTruthy();
   });
 
   it("has no axe violations", async () => {

@@ -386,6 +386,9 @@ importers:
       '@zedtech/zedkit-flags':
         specifier: workspace:*
         version: link:../../packages/flags
+      '@zedtech/zedkit-live':
+        specifier: workspace:*
+        version: link:../../packages/live
       '@zedtech/zedkit-seo':
         specifier: workspace:*
         version: link:../../packages/seo
@@ -450,6 +453,9 @@ importers:
       '@zedtech/zedkit-quality':
         specifier: workspace:*
         version: link:../../packages/quality
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.5(jiti@2.7.0)
       postcss:
         specifier: 'catalog:'
         version: 8.5.32
@@ -838,9 +844,15 @@ importers:
         specifier: 'catalog:'
         version: 2.1.0
     devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
       '@zedtech/zedkit-quality':
         specifier: workspace:*
         version: link:../quality
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

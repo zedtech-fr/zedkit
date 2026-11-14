@@ -18,6 +18,7 @@
     "llms-txt",
     "slug",
     "nextjs",
+    "react",
     "typescript"
   ],
   "homepage": "https://zedkit.app",
@@ -42,6 +43,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -53,11 +58,21 @@
     "typecheck": "tsc --noEmit -p tsconfig.tests.json",
     "lint": "eslint src tests"
   },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "schema-dts": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@zedtech/zedkit-quality": "workspace:*",
+    "react": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

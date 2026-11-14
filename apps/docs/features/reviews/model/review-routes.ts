@@ -1,5 +1,7 @@
 import type { ReviewPort } from "../ports/review-port";
 
+export { LIVE_CONSOLE_PATH, toLiveConsoleHref } from "./live-console-href.ts";
+
 export function issuePath(n: number): string {
   return `/issues/${n}`;
 }
@@ -46,20 +48,6 @@ function runParams<T extends { number: number }>(
   return rows.flatMap((row) =>
     uniqueRunIds(runIdsOf(row)).map((id) => ({ n: String(row.number), id })),
   );
-}
-
-function pushRunTree(
-  paths: string[],
-  rows: readonly { number: number; entries: readonly { runId: string }[] }[],
-  itemPath: (n: number) => string,
-  runPath: (n: number, id: string) => string,
-): void {
-  for (const row of rows) {
-    paths.push(itemPath(row.number));
-    for (const id of uniqueRunIds(row.entries.map((entry) => entry.runId))) {
-      paths.push(runPath(row.number, id));
-    }
-  }
 }
 
 export async function listIssueParamsFrom(port: ReviewPort) {
@@ -122,9 +110,16 @@ export async function listIssueSitemapPathsFrom(port: ReviewPort) {
   const issues = await port.listIssues();
   const unlinked = await port.listUnlinkedPullRequests();
   const paths = ["/issues"];
-  pushRunTree(paths, issues, issuePath, issueRunPath);
-  pushRunTree(paths, unlinked, unlinkedPrPath, unlinkedRunPath);
+  for (const row of issues) paths.push(issuePath(row.number));
+  for (const row of unlinked) paths.push(unlinkedPrPath(row.number));
   return paths;
+}
+
+export async function issueIndexRobotsFrom(
+  port: ReviewPort,
+): Promise<{ index: false } | undefined> {
+  if (await port.hasLoadError()) return { index: false };
+  return undefined;
 }
 
 export async function listReviewSitemapPathsFrom(port: ReviewPort) {

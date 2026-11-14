@@ -111,6 +111,7 @@ export type AgentConsoleItem = {
     kind: string;
     status: string;
     model: string;
+    engineLabel?: string | null;
     durationMs: number | null;
     toolCount: number;
     startedAt: number | null;
@@ -131,6 +132,7 @@ export type AgentConsoleProps = {
     defaultSelectedId?: string;
     onSelectedIdChange?: (id: string) => void;
     className?: string;
+    headingLevel?: 1 | 2;
 };
 
 // @public (undocumented)
@@ -143,6 +145,7 @@ export type AgentConsoleRun = {
     verdict: string | null;
     confidence: number | null;
     postedReviewHref: string | null;
+    running?: boolean;
 };
 
 // @public (undocumented)
@@ -270,7 +273,7 @@ export interface BadgeProps extends React_2.ComponentProps<"div">, VariantProps<
 
 // @public (undocumented)
 export const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "meta" | "outline" | "secondary" | "success" | "warning" | "soft-success" | "soft-warning" | "soft-danger" | "soft-info" | "soft-neutral" | null | undefined;
+    variant?: "meta" | "default" | "destructive" | "outline" | "secondary" | "success" | "warning" | "soft-success" | "soft-warning" | "soft-danger" | "soft-info" | "soft-neutral" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -441,6 +444,12 @@ paginatedRowModel: (table: Table_2<any, any>) => () => RowModel<any, any>;
 }, TData>;
 
 // @public
+export function createStoredChoice<const Values extends readonly string[]>(storageKey: string, values: Values): {
+    isValue: (value: string) => value is Values[number];
+    useChoice: () => readonly [Values[number], (value: Values[number]) => void];
+};
+
+// @public
 export const CUSTOM_IDENTITY_ID = "custom";
 
 // @public (undocumented)
@@ -579,6 +588,19 @@ export interface DetailItem {
     value: React_2.ReactNode;
 }
 
+// @public
+export function DetailPageSkeleton(input: DetailPageSkeletonProps): JSX.Element;
+
+// @public (undocumented)
+export interface DetailPageSkeletonProps {
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    label?: string;
+    // (undocumented)
+    rows?: number;
+}
+
 // @public (undocumented)
 export function DetailPanel(input: DetailPanelProps): React_2.JSX.Element;
 
@@ -656,6 +678,17 @@ export function DialogTrigger(input: React_2.ComponentProps<typeof DialogPrimiti
 
 // @public
 export function discardCustomIdentity(storageKey?: string): void;
+
+// @public
+export function DocsPageSkeleton(input: DocsPageSkeletonProps): JSX.Element;
+
+// @public (undocumented)
+export interface DocsPageSkeletonProps {
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    label?: string;
+}
 
 // Warning: (ae-forgotten-export) The symbol "DrawerRootProps" needs to be exported by the entry point index.d.ts
 //
@@ -861,7 +894,7 @@ export type HeadingProps = React_2.ComponentProps<"h1"> & VariantProps<typeof he
 
 // @public (undocumented)
 export const headingVariants: (props?: ({
-    typeRole?: "small" | "caption" | "display" | "body" | "label" | "nav" | "section" | "title" | "heading" | "band" | "cardTitle" | "lead" | "prose" | null | undefined;
+    typeRole?: "body" | "caption" | "label" | "nav" | "section" | "small" | "title" | "display" | "heading" | "band" | "cardTitle" | "lead" | "prose" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -1217,6 +1250,12 @@ export const identityTokenSchema: z.ZodObject<{
     shadowMd: z.ZodString;
 }, z.core.$strip>;
 
+// @public
+export function InPageAnchorScroll(props?: InPageAnchorScrollProps): null;
+
+// @public
+export type InPageAnchorScrollProps = Record<string, never>;
+
 // @public (undocumented)
 export function Input(input: InputProps): React_2.JSX.Element;
 
@@ -1257,6 +1296,19 @@ export function Label(input: LabelProps): React_2.JSX.Element;
 //
 // @public (undocumented)
 export type LabelProps = React_2.ComponentProps<typeof LabelPrimitive.Root> & VariantProps<typeof labelVariants>;
+
+// @public
+export function ListPageSkeleton(input: ListPageSkeletonProps): JSX.Element;
+
+// @public (undocumented)
+export interface ListPageSkeletonProps {
+    // (undocumented)
+    cards?: number;
+    // (undocumented)
+    className?: string;
+    // (undocumented)
+    label?: string;
+}
 
 // @public (undocumented)
 export function LivePulse(input: LivePulseProps): JSX.Element;
@@ -1425,6 +1477,18 @@ export interface PageHeaderSkeletonProps {
 }
 
 // @public (undocumented)
+export function PageTransition(input: PageTransitionProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type PageTransitionPreset = "settle" | "reveal";
+
+// @public (undocumented)
+export interface PageTransitionProps extends React_2.ComponentProps<"div"> {
+    preset?: PageTransitionPreset;
+    routeKey?: string;
+}
+
+// @public (undocumented)
 export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
     spacing: string;
     borderWidth: string;
@@ -1456,6 +1520,19 @@ export function parseIdentityTokens(input: unknown): z.ZodSafeParseResult<{
     shadowSm: string;
     shadowMd: string;
 }>;
+
+// @public
+export function PersistentShell(input: PersistentShellProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export interface PersistentShellProps extends React_2.ComponentProps<"div"> {
+    // (undocumented)
+    dock?: React_2.ReactNode;
+    // (undocumented)
+    header?: React_2.ReactNode;
+    // (undocumented)
+    sidebar?: React_2.ReactNode;
+}
 
 // @public (undocumented)
 export function Popover(input: PopoverProps): React_2.JSX.Element;
@@ -1516,6 +1593,13 @@ export function readAssistantStreamEvent(frame: SseFrame, stages: readonly strin
     type: "status";
     stage: string;
 } | null;
+
+// @public
+export function repairContrast(tokens: IdentityTokens): {
+    tokens: IdentityTokens;
+    adjusted: number;
+    remaining: number;
+};
 
 // @public
 export function RouteModal(input: RouteModalProps): React_2.JSX.Element;
@@ -1584,6 +1668,9 @@ export function ScrollScenes(input: ScrollScenesProps): React_2.JSX.Element;
 export interface ScrollScenesProps extends Omit<React_2.ComponentProps<"div">, "children"> {
     scenes: readonly ScrollScene[];
 }
+
+// @public
+export function scrollToFragment(target: HTMLElement): void;
 
 // @public
 export function SecretField(input: SecretFieldProps): React_2.JSX.Element;
@@ -1765,6 +1852,7 @@ export type StatusLabelTone = "loading" | "updating" | "syncing" | "saved" | "re
 // @public (undocumented)
 export interface StickToBottomOptions {
     behavior?: "auto" | "smooth";
+    enabled?: boolean;
     offset?: number;
 }
 
@@ -1939,7 +2027,7 @@ export type TextProps = React_2.ComponentProps<"p"> & VariantProps<typeof textVa
 // @public (undocumented)
 export const textVariants: (props?: ({
     variant?: "body" | "muted" | null | undefined;
-    typeRole?: "small" | "caption" | "body" | "label" | "lead" | "prose" | null | undefined;
+    typeRole?: "body" | "caption" | "label" | "small" | "lead" | "prose" | null | undefined;
 } & ClassProp) | undefined) => string;
 
 // @public
@@ -2063,6 +2151,9 @@ export const useFormField: () => {
 
 // @public
 export function useIdentity(fallback?: string): string;
+
+// @public
+export function useInPageAnchorScroll(): void;
 
 // @public
 export function useMotionPreference(): MotionPreference;
@@ -2212,17 +2303,23 @@ export type ZedkitUiMessages = {
         decided: string;
         summary: string;
         mustChange: string;
+        mustChangeEmpty: string;
         notes: string;
         dismissed: string;
         kept: string;
         downgraded: string;
         approved: string;
+        transcript: string;
+        noTranscriptTitle: string;
+        noTranscriptDescription: string;
         confidence: string;
         postedReview: string;
         pr: string;
         started: string;
         duration: string;
         toolCalls: string;
+        tools: string;
+        toolsOne: string;
         tokens: string;
         tokensInOut: string;
         lastActivity: string;
@@ -2251,7 +2348,7 @@ export function ZedkitUiProvider(input: {
 
 // Warnings were encountered during analysis:
 //
-// src/identity/identity-contrast.ts:10:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
+// src/identity/identity-contrast.ts:11:3 - (ae-forgotten-export) The symbol "ContrastToken" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

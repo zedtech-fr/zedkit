@@ -66,7 +66,6 @@ import { DrawerBottomSheetDemo } from "./drawer-bottom-sheet-demo";
 import { DrawerDemo } from "./drawer-demo";
 import { DrawerSideMenuDemo } from "./drawer-side-menu-demo";
 import { FieldDemo } from "./field-demo";
-import { HomeAdminDashboardDemo } from "./home-admin-dashboard-demo";
 import { PopoverDemo } from "./popover-demo";
 import { ProgressBarDemo } from "./progress-bar-demo";
 import { RouteModalDemo } from "./route-modal-demo";
@@ -127,6 +126,8 @@ import { EmptyStateDemo } from "./empty-state-demo";
 import { ErrorStateDemo } from "./error-state-demo";
 import { ErrorStateRetryDemo } from "./error-state-retry-demo";
 import { OfflineNoteDemo, OfflineNoteWiredDemo, OfflineNoteWordingDemo } from "./offline-note-demo";
+import { PageTransitionDemo } from "./page-transition-demo";
+import { RouteSkeletonsDemo } from "./route-skeletons-demo";
 import { SpinnerDemo } from "./spinner-demo";
 import { SpinnerNamedDemo } from "./spinner-named-demo";
 import { SurfaceDemo } from "./surface-demo";
@@ -208,6 +209,8 @@ export const demoRegistry = {
   OfflineNoteDemo: { Demo: OfflineNoteDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWiredDemo: { Demo: OfflineNoteWiredDemo, file: "offline-note-demo.tsx" },
   OfflineNoteWordingDemo: { Demo: OfflineNoteWordingDemo, file: "offline-note-demo.tsx" },
+  PageTransitionDemo: { Demo: PageTransitionDemo, file: "page-transition-demo.tsx" },
+  RouteSkeletonsDemo: { Demo: RouteSkeletonsDemo, file: "route-skeletons-demo.tsx" },
   ThemeDemo: { Demo: ThemeDemo, file: "theme-demo.tsx" },
   ThemeTokensDemo: { Demo: ThemeTokensDemo, file: "theme-demo.tsx" },
   ThemeToggleDemo: { Demo: ThemeToggleDemo, file: "theme-demo.tsx" },
@@ -233,7 +236,6 @@ export const demoRegistry = {
   DrawerSideMenuDemo: { Demo: DrawerSideMenuDemo, file: "drawer-side-menu-demo.tsx", center: true },
   DrawerDemo: { Demo: DrawerDemo, file: "drawer-demo.tsx", center: true },
   FieldDemo: { Demo: FieldDemo, file: "field-demo.tsx" },
-  HomeAdminDashboardDemo: { Demo: HomeAdminDashboardDemo, file: "home-admin-dashboard-demo.tsx" },
   InputDemo: { Demo: InputDemo, file: "input-demo.tsx" },
   LabelDemo: { Demo: LabelDemo, file: "label-demo.tsx" },
   LabelNativeDemo: { Demo: LabelNativeDemo, file: "label-native-demo.tsx" },

@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const app = join(dirname(fileURLToPath(import.meta.url)), "..");
-const { aiSetupCopy } = await import("../components/i18n/ai-setup-copy.ts");
+const { aiSetupCopy } = await import("../features/docs/i18n/ai-setup-copy.ts");
 
-const TITLE = join(app, "components/ai-setup-page-title.tsx");
-const PROMPT = join(app, "components/ai-setup-prompt.tsx");
+const TITLE = join(app, "features/docs/mdx/ui/ai-setup-page-title.tsx");
+const PROMPT = join(app, "features/docs/mdx/ui/ai-setup-prompt.tsx");
 
 test("AI setup copy pins today's English", () => {
   assert.equal(aiSetupCopy.title.prefix, "Set up zedkit AI in");
@@ -67,4 +67,47 @@ test("prompt component interpolates catalog keys and keeps generated URLs", () =
   assert.doesNotMatch(src, /Paste this as the only message in a new chat/);
   assert.doesNotMatch(src, /Full walkthrough:/);
   assert.doesNotMatch(src, /Agent setup prompt/);
+});
+
+function snippetRow(src) {
+  const pre = src.indexOf("<pre");
+  assert.ok(pre > 0, "prompt still uses a <pre> snippet");
+  const rowStart = src.lastIndexOf("<Stack", pre);
+  const rowEnd = src.indexOf("</Stack>", pre);
+  assert.ok(rowStart >= 0 && rowEnd > rowStart, "snippet lives in a Stack");
+  return src.slice(rowStart, rowEnd);
+}
+
+test("prompt snippet and Copy share one horizontal stack at every width", () => {
+  const src = readFileSync(PROMPT, "utf8");
+  const row = snippetRow(src);
+
+  assert.match(row, /direction="horizontal"/);
+  assert.match(row, /\bitems-start\b/);
+  assert.match(row, /\bcontent-shrink\b/);
+  assert.doesNotMatch(row, /flex-wrap/);
+  assert.doesNotMatch(row, /sm:flex-row/);
+  assert.match(src, /className="shrink-0 /);
+  assert.match(src, /adoptionCopy\.copied/);
+  assert.match(src, /adoptionCopy\.copyFailed/);
+  assert.match(src, /<pre[\s\S]*\{AI_SETUP_MINI_PROMPT\}/);
+  assert.match(src, /CopyPromptButton text=\{AI_SETUP_MINI_PROMPT\}/);
+  assert.doesNotMatch(src, /SecretField/);
+  assert.doesNotMatch(src, /HomeCopyCommandField/);
+  assert.doesNotMatch(src, /MdxPre/);
+});
+
+test("MDX fences keep Fumadocs CodeBlock copy inside the figure chrome", () => {
+  const src = readFileSync(join(app, "components/mdx-pre.tsx"), "utf8");
+  assert.match(src, /from "fumadocs-ui\/components\/codeblock"/);
+  assert.match(src, /<CodeBlock allowCopy/);
+  assert.match(src, /<Pre>/);
+});
+
+test("setup entry paste still uses kit SecretField", () => {
+  const src = readFileSync(join(app, "features/docs/mdx/ui/setup-entry-prompt.tsx"), "utf8");
+  assert.match(src, /<SecretField/);
+  assert.match(src, /\bmultiline\b/);
+  assert.doesNotMatch(src, /sm:flex-row/);
+  assert.doesNotMatch(src, /HomeCopyCommandField/);
 });

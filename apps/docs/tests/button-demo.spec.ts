@@ -16,14 +16,14 @@ test("create app shows a toast", async ({ page }) => {
 test("button demo shows sizes and disabled states (#1065)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.goto(PAGE, { waitUntil: "networkidle" });
-  const preview = page.locator("[data-component-preview]").first();
-  await preview.scrollIntoViewIfNeeded();
-  await expect(preview.getByRole("button", { name: "Small" })).toBeVisible();
-  await expect(preview.getByRole("button", { name: "Default", exact: true })).toBeVisible();
-  await expect(preview.getByRole("button", { name: "Large" })).toBeVisible();
-  await expect(preview.getByRole("button", { name: "Add item" })).toBeVisible();
-  await expect(preview.getByRole("button", { name: "Disabled" })).toBeDisabled();
-  await expect(preview.getByRole("button", { name: "Saving…" })).toBeDisabled();
+  const usage = page.locator("#usage-and-states");
+  await usage.scrollIntoViewIfNeeded();
+  await expect(usage.getByRole("button", { name: "Small" })).toBeVisible();
+  await expect(usage.getByRole("button", { name: "Default", exact: true })).toBeVisible();
+  await expect(usage.getByRole("button", { name: "Large" })).toBeVisible();
+  await expect(usage.getByRole("button", { name: "Saving…" })).toBeDisabled();
+  await expect(usage.getByRole("button", { name: "Add item" })).toBeVisible();
+  await expect(usage.getByRole("link", { name: "Docs link" })).toBeVisible();
 });
 
 test("button page renders catalog accessibility guidance (#1082)", async ({ page }) => {
@@ -56,14 +56,14 @@ test.describe("button demo a11y + themes (#152)", () => {
         await pinDemoLook(preview, identity, mode);
         const create = preview.getByRole("button", { name: "Create app" });
         await expect(create).toBeVisible();
+        await expect(preview.getByRole("button", { name: "Details" })).toBeVisible();
         await expect(preview.getByRole("button", { name: "Cancel" })).toBeVisible();
         await expect(preview.getByRole("button", { name: "Delete" })).toBeVisible();
-        await expect(preview.getByRole("link", { name: "Docs link" })).toBeVisible();
 
         await focusWithKeyboard(create);
         await assertFocusVisibleRing(create);
         await page.keyboard.press("Tab");
-        await assertFocusVisibleRing(preview.getByRole("button", { name: "Cancel" }));
+        await assertFocusVisibleRing(preview.getByRole("button", { name: "Details" }));
 
         await assertA11yGate(page, "[data-component-preview]");
         await preview.screenshot({ path: `test-results/button-demo-${identity}-${mode}.png` });

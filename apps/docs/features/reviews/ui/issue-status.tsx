@@ -1,16 +1,60 @@
-import { Badge } from "@zedtech/zedkit-ui";
+import { Badge, StatusDot } from "@zedtech/zedkit-ui";
 
 import type { ReviewsCopy } from "../i18n/reviews-copy";
+import type { HeadlineOutcome } from "../model/latest-status";
 import type { LatestStatus } from "../ports/review-port";
-import { latestStatusBadge, STATUS_BADGE, VERDICT_BADGE } from "./review-badges";
+import { latestStatusBadge, outcomeDotTone, STATUS_BADGE, VERDICT_BADGE } from "./review-badges";
 
-export function LatestStatusMark({ status, copy }: { status: LatestStatus; copy: ReviewsCopy }) {
+export function LatestStatusMark({
+  status,
+  copy,
+  score = null,
+}: {
+  status: LatestStatus;
+  copy: ReviewsCopy;
+  score?: number | null;
+}) {
   const mark = latestStatusBadge(status);
   if (mark.kind === "verdict" && mark.verdict !== undefined) {
-    return <Badge variant={VERDICT_BADGE[mark.verdict]}>{copy.verdict[mark.verdict]}</Badge>;
+    const label =
+      typeof score === "number"
+        ? `${copy.verdict[mark.verdict]} · ${score}/10`
+        : copy.verdict[mark.verdict];
+    return <Badge variant={VERDICT_BADGE[mark.verdict]}>{label}</Badge>;
   }
   if (mark.status !== undefined) {
     return <Badge variant={STATUS_BADGE[mark.status]}>{copy.status[mark.status]}</Badge>;
   }
   return null;
+}
+
+export function OutcomeMark({
+  outcome,
+  copy,
+}: {
+  outcome: HeadlineOutcome;
+  copy: ReviewsCopy;
+}) {
+  if (outcome.kind === "verdict" && outcome.verdict !== undefined) {
+    return <LatestStatusMark status={outcome.verdict} copy={copy} score={outcome.score} />;
+  }
+  if (outcome.status !== undefined) {
+    return <LatestStatusMark status={outcome.status} copy={copy} />;
+  }
+  return null;
+}
+
+export function outcomeLabel(outcome: HeadlineOutcome | null, copy: ReviewsCopy): string | null {
+  if (outcome === null) return null;
+  if (outcome.kind === "verdict" && outcome.verdict !== undefined) {
+    return copy.verdict[outcome.verdict];
+  }
+  if (outcome.status !== undefined) {
+    return copy.status[outcome.status];
+  }
+  return null;
+}
+
+export function OutcomeStatus({ outcome }: { outcome: HeadlineOutcome | null }) {
+  return <StatusDot tone={outcomeDotTone(outcome)} pulse={outcome?.status === "running"} />;
 }

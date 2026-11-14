@@ -7,6 +7,7 @@ import { checkRawLayoutFile, rawLayoutErrors } from "./raw-layout.mjs";
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), "..");
 const COMPONENTS = join(APP, "components");
+const FEATURES = join(APP, "features");
 const LINE_BASED = /<(div|span)[\s>/]/;
 const SPLIT_DIV = `<div
   className="x">`;
@@ -40,22 +41,25 @@ test("legal kit layout is not a hit, including Text as=span", () => {
 });
 
 test("allowlisted basenames skip even a split <div", () => {
-  assert.deepEqual(checkRawLayoutFile("components/identity-dock-chrome.tsx", SPLIT_DIV), []);
+  assert.deepEqual(checkRawLayoutFile("features/identity/dock/ui/identity-dock-chrome.tsx", SPLIT_DIV), []);
   assert.deepEqual(
     checkRawLayoutFile("components/identity-dock-composer-footer.tsx", SPLIT_DIV),
     [],
   );
-  assert.deepEqual(checkRawLayoutFile("components/component-preview.tsx", SPLIT_DIV), []);
+  assert.deepEqual(checkRawLayoutFile("features/docs/ui/component-preview.tsx", SPLIT_DIV), []);
+  assert.deepEqual(checkRawLayoutFile("components/site-chrome/site-chrome.tsx", SPLIT_DIV), []);
   assert.deepEqual(checkRawLayoutFile("components/frame.tsx", SPLIT_DIV), [
     "components/frame.tsx: raw <div> is banned; use kit Stack/Text/Section/Heading.",
   ]);
 });
 
-test("raw-layout check passes on the docs components tree", () => {
+test("raw-layout check passes on the docs components and features trees", () => {
   const errors = [];
-  for (const file of tsxFiles(COMPONENTS)) {
-    const rel = file.slice(APP.length + 1);
-    errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
+  for (const root of [COMPONENTS, FEATURES]) {
+    for (const file of tsxFiles(root)) {
+      const rel = file.slice(APP.length + 1);
+      errors.push(...checkRawLayoutFile(rel, readFileSync(file, "utf8")));
+    }
   }
   assert.deepEqual(errors, []);
 });

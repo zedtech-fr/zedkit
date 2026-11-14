@@ -1,5 +1,6 @@
 /*
- * Component catalog pages: section rhythm (VISUAL-CONTRACT).
+ * Component catalog pages: section rhythm (VISUAL-CONTRACT) plus the
+ * registry-page look (violet primary Preview stage, dark usage wells).
  */
 
 #nd-docs-layout [data-slot="section"] figure.shiki {
@@ -9,4 +10,93 @@
 /* The tab list scrolls (it clips on both axes), so its tabs draw the focus ring inside their own edge. */
 #install-or-copy [data-slot="tabs-list"] [role="tab"]:focus-visible {
   outline-offset: calc(var(--ring-width, 2px) * -1);
+}
+
+[data-component-page] {
+  --zk-type-doc-h1-size: clamp(2rem, 1.7rem + 1.2vw, 2.5rem);
+  --zk-type-doc-h1-weight: 500;
+  --zk-type-doc-h1-leading: 1.12;
+  --zk-type-doc-h1-tracking: -0.03em;
+  --zk-type-h2-size: 1.375rem;
+  --zk-type-h2-weight: 500;
+  --zk-heading-tracking: -0.025em;
+  /* Stage colors/fills come from docs-shell-tokens.css (shared recipe). */
+  --zk-preview-stage-inset-block: 1.5rem;
+  --zk-preview-stage-inset-inline: 1rem;
+  --zk-code-well: 240 10% 3.9%;
+  /* Header/filename uses .text-fd-muted-foreground → --muted-foreground, not --color-fd-*. */
+  --zk-code-well-muted: 240 5% 65%;
+}
+
+/* Beat Heading display/title utilities, which read --zk-type-h1-* / --zk-type-h2-*. */
+#nd-page [data-component-page] h1[data-slot="heading"] {
+  font-size: var(--zk-type-doc-h1-size);
+  font-weight: var(--zk-type-doc-h1-weight);
+  line-height: var(--zk-type-doc-h1-leading);
+  letter-spacing: var(--zk-type-doc-h1-tracking);
+}
+
+#nd-page [data-component-page] h2[data-slot="heading"] {
+  font-size: var(--zk-type-h2-size);
+  font-weight: var(--zk-type-h2-weight);
+  letter-spacing: var(--zk-heading-tracking, -0.025em);
+}
+
+@media (min-width: 48rem) {
+  [data-component-page] {
+    --zk-preview-stage-inset-block: 3rem;
+    --zk-preview-stage-inset-inline: 2rem;
+  }
+}
+
+[data-component-page] [data-component-preview="primary"] [data-preview-stage] {
+  /* clip, not hidden: pinned sticky heroes must not sit under a scroll container. */
+  overflow: clip;
+  padding-block: var(--zk-preview-stage-inset-block);
+  padding-inline: var(--zk-preview-stage-inset-inline);
+  background-color: hsl(var(--zk-preview-stage-via));
+  background-image: var(--zk-preview-stage-halos), var(--zk-preview-stage-fill);
+  background-repeat: no-repeat;
+}
+
+[data-component-page] [data-component-preview="primary"] [data-preview-surface] {
+  border-radius: var(--radius-lg);
+}
+
+/* #nd-page #example beats docs-typography.css `#example [data-preview-surface]{width:100%}` (2,1,0) at ≥48rem. */
+#nd-page #example [data-component-preview="primary"] [data-preview-surface][data-preview-center] {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-component-page] [data-component-preview="primary"] [data-preview-stage] {
+    background-image: var(--zk-preview-stage-fill);
+  }
+}
+
+[data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki:not([data-adoption-frame]) {
+  --color-fd-card: hsl(var(--zk-code-well));
+  --color-fd-foreground: hsl(0 0% 98%);
+  --muted-foreground: var(--zk-code-well-muted);
+  --color-fd-muted-foreground: hsl(var(--zk-code-well-muted));
+  --color-muted-foreground: hsl(var(--zk-code-well-muted));
+  --accent-foreground: 0 0% 98%;
+  --color-fd-accent-foreground: hsl(var(--accent-foreground));
+  --ring: var(--zk-code-well-muted);
+  --color-fd-ring: hsl(var(--zk-code-well-muted));
+  --color-fd-border: hsl(240 4% 16%);
+  background-color: hsl(var(--zk-code-well));
+  color: hsl(0 0% 98%);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+[data-component-page] :is(#usage-and-states, [data-preview-code-panel]) figure.shiki:not([data-adoption-frame]) > div:first-child {
+  background: hsl(var(--zk-code-well));
+  border-bottom-color: hsl(0 0% 100% / 0.08);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }

@@ -2,15 +2,19 @@ import Link from "next/link";
 import { Container, Heading, Stack, Text } from "@zedtech/zedkit-ui";
 
 import { identityKitDemosCopy } from "@/app/i18n/identity-kit-demos-copy";
-import { ComponentPreview } from "@/components/component-preview";
+import { ComponentPreview } from "@/features/docs/ui/component-preview";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 
 export const dynamic = "force-static";
 
-export const metadata = docsPageMetadata("/features/identity-kit-demos", {
-  title: identityKitDemosCopy.metadata.title,
-  description: identityKitDemosCopy.metadata.description,
-});
+export const metadata = docsPageMetadata(
+  "/features/identity-kit-demos",
+  {
+    title: identityKitDemosCopy.metadata.title,
+    description: identityKitDemosCopy.metadata.description,
+  },
+  { index: false },
+);
 
 export default function IdentityKitDemosPage() {
   return (

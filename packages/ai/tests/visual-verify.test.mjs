@@ -24,6 +24,7 @@ import {
   parseStatesFile,
   parseVisualVerifyArgs,
   peerHint,
+  resolveManifestPath,
   resolveMockupForWidth,
   resolveStaticFile,
   routeStem,
@@ -73,6 +74,24 @@ html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
 h1{font-size:24px}
 .scroll{width:80px;overflow:auto;white-space:nowrap}
 </style></head><body><h1>Scroller</h1><p class="scroll" tabindex="0">this text is much too long to fit</p></body></html>`;
+
+const SR_ONLY_CLIP = `<!doctype html><html lang="en"><head><title>SR only</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+</style></head><body><h1>Hidden copy</h1><p>Visible. <span class="sr-only">(opens in a new tab)</span></p></body></html>`;
+
+const LONG_INPUT = `<!doctype html><html lang="en"><head><title>Input</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+input{box-sizing:border-box;width:80px;min-width:24px;min-height:24px;overflow:clip}
+</style></head><body><h1>Input</h1><label>Font <input value="Inter Variable, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji"></label></body></html>`;
+
+const TRUNCATE_OK = `<!doctype html><html lang="en"><head><title>Truncate</title><style>
+html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
+h1{font-size:24px}
+.truncate{width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style></head><body><h1>Truncate</h1><p class="truncate">this text is much too long to fit</p></body></html>`;
 
 const WORD_ROLL_CLIP = `<!doctype html><html lang="en"><head><title>Roll</title><style>
 html,body{margin:0;background:#fff;color:#111;font:16px sans-serif}
@@ -220,6 +239,9 @@ function fixtureDir() {
   writeFileSync(join(dir, "low-contrast.html"), LOW_CONTRAST);
   writeFileSync(join(dir, "clipped.html"), CLIPPED);
   writeFileSync(join(dir, "scroller.html"), SCROLLER);
+  writeFileSync(join(dir, "sr-only.html"), SR_ONLY_CLIP);
+  writeFileSync(join(dir, "long-input.html"), LONG_INPUT);
+  writeFileSync(join(dir, "truncate.html"), TRUNCATE_OK);
   writeFileSync(join(dir, "word-roll.html"), WORD_ROLL_CLIP);
   writeFileSync(join(dir, "radix-scroll.html"), RADIX_SCROLL);
   writeFileSync(join(dir, "bare.html"), BARE);
@@ -232,7 +254,7 @@ function fixtureDir() {
   writeFileSync(join(dir, "hidden-select.html"), HIDDEN_NATIVE_SELECT);
   writeFileSync(join(dir, "pointer-none.html"), POINTER_NONE_TARGET);
   writeFileSync(join(dir, "disabled.html"), DISABLED_TARGET);
-  writeFileSync(join(dir, "sr-only.html"), SR_ONLY_SKIP);
+  writeFileSync(join(dir, "skip.html"), SR_ONLY_SKIP);
   writeFileSync(join(dir, "states.html"), STATES);
   writeFileSync(join(dir, "boom.html"), BOOM);
   return dir;
@@ -257,9 +279,9 @@ describe("visual-verify helpers", () => {
       "/docs/ui/trigger-actions-with-buttons",
     ]);
     expect(routesFromFiles(["apps/docs/app/docs/[[...slug]]/page.tsx"])).toEqual([]);
-    expect(routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"])).toEqual([
-      "/issues",
-    ]);
+    expect(
+      routesFromFiles(["apps/docs/features/reviews/ui/review-console-view.tsx"]).sort(),
+    ).toEqual(["/issues"]);
     expect(routesFromFiles(["apps/docs/app/(run-console)/issues/[n]/runs/[id]/page.tsx"])).toEqual([
       "/issues",
     ]);
@@ -269,6 +291,133 @@ describe("visual-verify helpers", () => {
     expect(routesFromFiles(["apps/docs/scripts/issues-evidence-artifacts.test.mjs"])).toEqual([
       "/issues",
     ]);
+  });
+
+  it("maps docs identity feature modules to the editor route", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/features/identity/ui/identity-look.ts",
+        "apps/docs/features/identity/ui/identity-editor-panel.tsx",
+        "apps/docs/features/identity/ui/identity-look.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/features/identity-editor"]);
+    expect(
+      routesFromFiles(["apps\\docs\\features\\identity\\ui\\identity-editor-draft.ts"]),
+    ).toEqual(["/features/identity-editor"]);
+    expect(routesFromFiles(["apps/docs/features/identity/ui/identity-look.test.mjs"])).toEqual([]);
+  });
+
+  it("maps docs home route-group files to / when there is no page.tsx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/app/(home)/_home/home-identity-looks.tsx",
+        "apps/docs/app/(home)/_home/home-identity-looks.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/"]);
+    expect(
+      routesFromFiles(["apps\\docs\\app\\(home)\\_home\\home-identity-looks.tsx"]),
+    ).toEqual(["/"]);
+    expect(routesFromFiles(["apps/docs/app/(home)/_home/home-identity-looks.test.mjs"])).toEqual([]);
+  });
+
+  it("maps docs catalog private-folder files to /catalog when there is no page.tsx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/app/(site)/catalog/_catalog/catalog-results.tsx",
+        "apps/docs/app/(site)/catalog/_catalog/catalog-shell.css",
+        "apps/docs/app/(site)/catalog/_catalog/catalog-filter.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/catalog"]);
+    expect(
+      routesFromFiles(["apps\\docs\\app\\(site)\\catalog\\_catalog\\catalog-results.tsx"]),
+    ).toEqual(["/catalog"]);
+    expect(
+      routesFromFiles(["apps/docs/app/(site)/catalog/_catalog/catalog-filter.test.mjs"]),
+    ).toEqual([]);
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("apps/docs/app/(site)/catalog/**");
+  });
+
+  it("maps docs site-chrome files to / when there is no page.tsx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/components/site-chrome/route-scroll-reset.tsx",
+        "apps/docs/components/site-chrome/site-layout.tsx",
+        "apps/docs/components/site-chrome/route-scroll-reset.test.tsx",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/"]);
+    expect(
+      routesFromFiles(["apps\\docs\\components\\site-chrome\\route-scroll-reset.tsx"]),
+    ).toEqual(["/"]);
+    expect(
+      routesFromFiles(["apps/docs/components/site-chrome/route-scroll-reset.test.tsx"]),
+    ).toEqual([]);
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("apps/docs/components/site-chrome/**");
+  });
+
+  it("maps catalog demo files and kit source-family files from the docs manifest", () => {
+    const catalog = {
+      rich: {
+        "Compose a live agent console from a run": {
+          source: "layout/agent-console.tsx",
+          demo: "AgentConsoleDemo",
+        },
+        "Show your brand logo": {
+          source: "brand/brand-logo.tsx",
+          demo: "BrandLogoDemo",
+        },
+        "Compose a public marketing page": {
+          source: "marketing/glass-surface.tsx",
+          demo: "GlassSurfaceDemo",
+          examples: { "Header and footer": "MarketingChromeDemo" },
+        },
+        "Horizontal scroll gallery row": {
+          source: "layout/scroll-gallery.tsx",
+          demo: "ScrollGalleryIdentityDemo",
+        },
+      },
+    };
+    expect(
+      routesFromFiles(
+        [
+          "packages/ui/src/layout/agent-console-model.ts",
+          "apps/docs/components/demos/brand-logo-demo.tsx",
+          "apps/docs/components/demos/marketing-demo.tsx",
+          "apps/docs/components/demos/scroll-gallery-demo.tsx",
+          "deploy/Caddyfile",
+        ],
+        catalog,
+      ).sort(),
+    ).toEqual([
+      "/docs/ui/compose-a-live-agent-console-from-a-run",
+      "/docs/ui/compose-a-public-marketing-page",
+      "/docs/ui/horizontal-scroll-gallery-row",
+      "/docs/ui/show-your-brand-logo",
+    ]);
+    expect(
+      routesFromFiles(["packages/ui/tests/unit/agent-console.test.tsx"], catalog),
+    ).toEqual([]);
+    expect(routesFromFiles(["packages/ui/src/layout/agent-console-model.ts"])).toEqual([]);
+  });
+
+  it("loads apps/docs/docs-manifest.json when --manifest is omitted", () => {
+    const host = mkdtempSync(join(tmpdir(), "zk-manifest-"));
+    mkdirSync(join(host, "apps/docs"), { recursive: true });
+    writeFileSync(join(host, "apps/docs/docs-manifest.json"), "{}");
+    expect(resolveManifestPath(host, undefined)).toBe(join(host, "apps/docs/docs-manifest.json"));
+    expect(resolveManifestPath(host, "custom.json")).toBe(join(host, "custom.json"));
+    expect(resolveManifestPath(mkdtempSync(join(tmpdir(), "zk-empty-")), undefined)).toBe("");
   });
 
   it("documents the clipped skip list without overstating docs-render equivalence", () => {
@@ -282,7 +431,10 @@ describe("visual-verify helpers", () => {
   });
 
   it("does not claim hit skips the clipped-only allow-clip attributes", () => {
-    const atlas = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../../../.agents/atlas.md"), "utf8");
+    const atlas = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../../../.agents/atlas/visual-verify.md"),
+      "utf8",
+    );
     const row = atlas.split("\n").find((line) => line.includes("zedkit-ai visual-verify"));
     expect(row).toBeDefined();
     expect(row).not.toMatch(/Clipped and hit measures skip/);
@@ -298,6 +450,30 @@ describe("visual-verify helpers", () => {
         "README.md",
       ]).sort(),
     ).toEqual(["/docs", "/docs/foundations"]);
+  });
+
+  it("maps docs guide feature modules to /docs/<slug> when there is no mdx", () => {
+    expect(
+      routesFromFiles([
+        "apps/docs/features/docs/guides/foundations/ui/foundations-color.tsx",
+        "apps/docs/features/docs/guides/foundations/i18n/foundations-copy.ts",
+        "apps/docs/features/docs/guides/foundations/ui/foundations-hero.test.mjs",
+        ".agents/atlas.md",
+      ]),
+    ).toEqual(["/docs/foundations"]);
+    expect(
+      routesFromFiles([
+        "apps\\docs\\features\\docs\\guides\\maturity-and-compatibility\\ui\\maturity-compatibility-view.tsx",
+      ]),
+    ).toEqual(["/docs/maturity-and-compatibility"]);
+    expect(
+      routesFromFiles(["apps/docs/features/docs/guides/foundations/ui/foundations-hero.test.mjs"]),
+    ).toEqual([]);
+    const skill = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), "../kit/skills/visual-verify/SKILL.md"),
+      "utf8",
+    );
+    expect(skill).toContain("apps/docs/features/docs/guides/<slug>/**");
   });
 
   it("maps AI setup sources to /docs/ai/setup", () => {
@@ -496,6 +672,7 @@ describe("visual-verify helpers", () => {
     expect(text).toContain("page/console/HTTP");
     expect(text).toContain("JSON array of {name, click?}");
     expect(text).toContain("wins over Visual reference");
+    expect(text).toContain("apps/docs/docs-manifest.json");
     const parsed = parseVisualVerifyArgs(["--help"]);
     expect(parsed.ok && parsed.value.help).toBe(true);
   });
@@ -743,6 +920,15 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(result.value.cells.every((c) => c.clipped === false)).toBe(true);
   });
 
+  it("does not treat sr-only, native inputs, or truncate as clipped text", async () => {
+    for (const route of ["/sr-only", "/long-input", "/truncate"]) {
+      const { result } = await runRoutes([route], { widths: [375], modes: ["light"] });
+      expect(result.ok, result.ok ? "" : `${route} ${result.error.message}`).toBe(true);
+      expect(result.value.ok, route).toBe(true);
+      expect(result.value.cells.every((c) => c.clipped === false), route).toBe(true);
+    }
+  });
+
   it("does not treat the kit word-roll animation mask as clipped text", async () => {
     const { result } = await runRoutes(["/word-roll"], { widths: [375], modes: ["light"] });
     expect(result.ok, result.ok ? "" : result.error.message).toBe(true);
@@ -832,6 +1018,10 @@ describe("visual-verify fixture", { timeout: 120_000 }, () => {
     expect(srOnly.result.ok, srOnly.result.ok ? "" : srOnly.result.error.message).toBe(true);
     expect(srOnly.result.value.ok).toBe(true);
     expect(srOnly.result.value.cells.every((c) => c.hitTargets?.fail === false && c.clipped === false)).toBe(true);
+    const skipLink = await runRoutes(["/skip"], { widths: [375], modes: ["light"] });
+    expect(skipLink.result.ok, skipLink.result.ok ? "" : skipLink.result.error.message).toBe(true);
+    expect(skipLink.result.value.ok).toBe(true);
+    expect(skipLink.result.value.cells.every((c) => c.hitTargets?.fail === false && c.clipped === false)).toBe(true);
   });
 
   it("captures --states clicks as extra cells and skips no transient states", async () => {

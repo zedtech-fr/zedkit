@@ -22,12 +22,12 @@
           "muted-foreground": "hsl(240 5% 32%)",
           "accent": "hsl(240 4.8% 59.9%)",
           "accent-foreground": "hsl(240 5.9% 10%)",
-          "destructive": "hsl(0 72.2% 47%)",
+          "destructive": "hsl(0 72.2% 42%)",
           "destructive-foreground": "hsl(0 0% 98%)",
-          "success": "hsl(142.1 76.2% 27%)",
+          "success": "hsl(142.1 76.2% 25%)",
           "success-foreground": "hsl(0 0% 98%)",
-          "warning": "hsl(32 95% 44%)",
-          "warning-foreground": "hsl(240 10% 3.9%)",
+          "warning": "hsl(32 95% 29%)",
+          "warning-foreground": "hsl(0 0% 98%)",
           "info": "hsl(215 55% 38%)",
           "info-foreground": "hsl(0 0% 98%)",
           "overlay": "hsl(0 0% 0%)",
@@ -59,12 +59,12 @@
           "muted-foreground": "hsl(240 5% 64.9%)",
           "accent": "hsl(240 3.7% 37.9%)",
           "accent-foreground": "hsl(0 0% 98%)",
-          "destructive": "hsl(0 72.2% 66%)",
+          "destructive": "hsl(0 72.2% 72%)",
           "destructive-foreground": "hsl(240 10% 3.9%)",
           "success": "hsl(142.1 70.6% 45.3%)",
           "success-foreground": "hsl(240 10% 3.9%)",
-          "warning": "hsl(32 95% 32%)",
-          "warning-foreground": "hsl(0 0% 98%)",
+          "warning": "hsl(32 95% 49%)",
+          "warning-foreground": "hsl(240 10% 3.9%)",
           "info": "hsl(215 25% 70%)",
           "info-foreground": "hsl(240 10% 3.9%)",
           "overlay": "hsl(0 0% 0%)",
@@ -395,11 +395,30 @@
         "@utility grid-pair": {
           "grid-template-columns": "repeat(2, minmax(0, 1fr))"
         },
+        "@utility grid-quint": {
+          "grid-template-columns": "repeat(5, minmax(0, 1fr))"
+        },
         "@utility grid-trio": {
           "grid-template-columns": "repeat(3, minmax(0, 1fr))"
         },
         "@utility h-skeleton-line": {
           "height": "calc(var(--spacing) * 4)"
+        },
+        "@utility hit-target": {
+          "position": "relative",
+          "&::before": {
+            "content": "\"\"",
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "translate": "-50% -50%",
+            "width": "max(100%, 24px)",
+            "height": "max(100%, 24px)",
+            "@media (pointer: coarse), (max-width: 40rem)": {
+              "width": "var(--spacing-tap)",
+              "height": "var(--spacing-tap)"
+            }
+          }
         },
         "@utility link-offset": {
           "text-underline-offset": "var(--zk-link-offset)"
@@ -836,6 +855,8 @@
           },
           "a[class*=\"px-badge-inline\"]": {
             "position": "relative",
+            "min-width": "24px",
+            "min-height": "24px",
             "&::after": {
               "content": "\"\"",
               "position": "absolute",
@@ -994,7 +1015,8 @@
           "width": "var(--spacing-drawer-handle-width)",
           "height": "var(--spacing-drawer-handle-height)",
           "background-color": "hsl(var(--muted-foreground) / 0.5)",
-          "opacity": "1"
+          "opacity": "1",
+          "touch-action": "none"
         },
         "html [data-vaul-drawer-direction=\"left\"] [data-vaul-handle], html [data-vaul-drawer-direction=\"right\"] [data-vaul-handle]": {
           "display": "none"
@@ -1500,6 +1522,7 @@
             "opacity": "1",
             "translate": "none",
             "scale": "none",
+            "visibility": "visible",
             "animation": "none",
             "transition": "none"
           },
@@ -1509,7 +1532,7 @@
           ".hover-lift, .hover-press": {
             "transition": "none"
           },
-          ".hover-lift:hover, .hover-press:active": {
+          ".hover-lift:hover, .hover-lift:focus-visible, .hover-lift:focus-within, .hover-press:active": {
             "translate": "none"
           },
           ".motion-reveal, .motion-settle, .motion-emphasis": {
@@ -1743,12 +1766,12 @@
           "--zk-subtle-foreground": "240 4% 40%",
           "--accent": "240 4.8% 59.9%",
           "--accent-foreground": "240 5.9% 10%",
-          "--destructive": "0 72.2% 47%",
+          "--destructive": "0 72.2% 42%",
           "--destructive-foreground": "0 0% 98%",
-          "--success": "142.1 76.2% 27%",
+          "--success": "142.1 76.2% 25%",
           "--success-foreground": "0 0% 98%",
-          "--warning": "32 95% 44%",
-          "--warning-foreground": "240 10% 3.9%",
+          "--warning": "32 95% 29%",
+          "--warning-foreground": "0 0% 98%",
           "--info": "215 55% 38%",
           "--info-foreground": "0 0% 98%",
           "--overlay": "0 0% 0%",
@@ -1846,12 +1869,12 @@
           "--zk-subtle-foreground": "240 4% 72%",
           "--accent": "240 3.7% 37.9%",
           "--accent-foreground": "0 0% 98%",
-          "--destructive": "0 72.2% 66%",
+          "--destructive": "0 72.2% 72%",
           "--destructive-foreground": "240 10% 3.9%",
           "--success": "142.1 70.6% 45.3%",
           "--success-foreground": "240 10% 3.9%",
-          "--warning": "32 95% 32%",
-          "--warning-foreground": "0 0% 98%",
+          "--warning": "32 95% 49%",
+          "--warning-foreground": "240 10% 3.9%",
           "--info": "215 25% 70%",
           "--info-foreground": "240 10% 3.9%",
           "--overlay": "0 0% 0%",
@@ -1917,13 +1940,14 @@
           "opacity": "1",
           "translate": "none",
           "scale": "none",
+          "visibility": "visible",
           "animation": "none",
           "transition": "none"
         },
         ":root[data-motion=\"reduce\"] .hover-lift, :root[data-motion=\"reduce\"] .hover-press": {
           "transition": "none"
         },
-        ":root[data-motion=\"reduce\"] .hover-lift:hover, :root[data-motion=\"reduce\"] .hover-press:active": {
+        ":root[data-motion=\"reduce\"] .hover-lift:hover, :root[data-motion=\"reduce\"] .hover-lift:focus-visible, :root[data-motion=\"reduce\"] .hover-lift:focus-within, :root[data-motion=\"reduce\"] .hover-press:active": {
           "translate": "none"
         },
         "@media (max-width: 40rem)": {
@@ -2328,6 +2352,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "registry/ui/motion-preference.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "registry/ui/drawer-parts.tsx",
           "type": "registry:ui"
         },
@@ -2422,12 +2450,12 @@
       ],
       "cssVars": {
         "light": {
-          "success": "142.1 76.2% 27%",
-          "warning": "32 95% 44%"
+          "success": "142.1 76.2% 25%",
+          "warning": "32 95% 29%"
         },
         "dark": {
           "success": "142.1 70.6% 45.3%",
-          "warning": "32 95% 32%"
+          "warning": "32 95% 49%"
         },
         "theme": {
           "spacing-status-dot": "calc(var(--spacing) * 2)"

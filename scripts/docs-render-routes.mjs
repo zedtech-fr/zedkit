@@ -70,13 +70,49 @@ export function isPublicReviewPath(file) {
 }
 
 export function routesFromFiles(files, manifest) {
+  const kebabDemoKey = (name) =>
+    name
+      .replace(/([a-z\d])([A-Z])/gu, "$1-$2")
+      .replace(/([A-Z]+)([A-Z][a-z])/gu, "$1-$2")
+      .toLowerCase();
+  const sourceFamilyMatch = (file, source) => {
+    const n = file.replaceAll("\\", "/");
+    const src = source.replaceAll("\\", "/");
+    if (n === src || n.endsWith(`/${src}`)) return true;
+    const slash = src.lastIndexOf("/");
+    const dir = slash >= 0 ? src.slice(0, slash + 1) : "";
+    const base = slash >= 0 ? src.slice(slash + 1) : src;
+    const dot = base.lastIndexOf(".");
+    const stem = dot >= 0 ? base.slice(0, dot) : base;
+    const needle = `/${dir}${stem}`;
+    const from = n.lastIndexOf(needle);
+    const tail =
+      from >= 0 ? n.slice(from + needle.length) : n.startsWith(`${dir}${stem}`) ? n.slice(`${dir}${stem}`.length) : null;
+    if (tail == null) return false;
+    return tail.startsWith("-") || tail.startsWith(".");
+  };
+  const demoFileMatchesKey = (fileBase, key) => {
+    const kebab = kebabDemoKey(key);
+    if (fileBase === kebab) return true;
+    const stem = fileBase.replace(/-demo$/u, "");
+    return kebab === stem || kebab.startsWith(`${stem}-`);
+  };
   const routes = new Set();
   const sources = [];
+  const demos = [];
   if (manifest && typeof manifest === "object") {
     const rich = manifest.rich && typeof manifest.rich === "object" ? manifest.rich : manifest;
     for (const [need, entry] of Object.entries(rich)) {
-      if (entry && typeof entry === "object" && typeof entry.source === "string") {
-        sources.push({ source: entry.source.replaceAll("\\", "/"), route: `/docs/ui/${slugNeed(need)}` });
+      if (!entry || typeof entry !== "object") continue;
+      const route = `/docs/ui/${slugNeed(need)}`;
+      if (typeof entry.source === "string") {
+        sources.push({ source: entry.source.replaceAll("\\", "/"), route });
+      }
+      if (typeof entry.demo === "string") demos.push({ key: entry.demo, route });
+      if (entry.examples && typeof entry.examples === "object") {
+        for (const value of Object.values(entry.examples)) {
+          if (typeof value === "string") demos.push({ key: value, route });
+        }
       }
     }
   }
@@ -94,12 +130,40 @@ export function routesFromFiles(files, manifest) {
     if (guide && !guide[1].includes("snippets/")) {
       routes.add(guide[1] === "index" ? "/docs" : `/docs/${guide[1]}`);
     }
+    const guideFeature = /(?:^|\/)apps\/docs\/features\/docs\/guides\/([^/]+)\//u.exec(n);
+    if (guideFeature && !/\.(?:test|spec)\./u.test(n)) {
+      routes.add(`/docs/${guideFeature[1]}`);
+    }
     if (n.endsWith("packages/ai/kit/cursor-onboarding.md") || n.endsWith("apps/docs/public/ai/setup.md")) {
       routes.add("/docs/ai/setup");
     }
     if (isPublicReviewPath(n)) routes.add("/issues");
+    const skipTest = /\.(?:test|spec)\./u.test(n);
     for (const row of sources) {
-      if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
+      if (n === row.source || n.endsWith(`/${row.source}`)) {
+        routes.add(row.route);
+        continue;
+      }
+      if (!skipTest && sourceFamilyMatch(n, row.source)) routes.add(row.route);
+    }
+    const demoFile = /(?:^|\/)apps\/docs\/components\/demos\/([^/]+)\.tsx$/u.exec(n);
+    if (demoFile && !skipTest) {
+      const fileBase = demoFile[1];
+      for (const row of demos) {
+        if (demoFileMatchesKey(fileBase, row.key)) routes.add(row.route);
+      }
+    }
+    if (/(?:^|\/)apps\/docs\/features\/identity\//u.test(n) && !skipTest) {
+      routes.add("/features/identity-editor");
+    }
+    if (/(?:^|\/)apps\/docs\/app\/\(home\)\//u.test(n) && !skipTest) {
+      routes.add("/");
+    }
+    if (/(?:^|\/)apps\/docs\/app\/\(site\)\/catalog\//u.test(n) && !skipTest) {
+      routes.add("/catalog");
+    }
+    if (/(?:^|\/)apps\/docs\/components\/site-chrome\//u.test(n) && !skipTest) {
+      routes.add("/");
     }
   }
   return [...routes];

@@ -156,10 +156,13 @@ A preset can be used on any trigger; the trigger only decides _when_.
 **appear.** Once, when the element enters the viewport. Runtime uses
 `IntersectionObserver`. First callback intersecting → `in` without
 hiding first (already on screen, no flash). Not intersecting →
-`pending` (opacity/translate only), then `in` on intersect, then
+`pending` (opacity/translate; stagger children also `visibility: hidden`
+so they stay out of the tab order), then `in` on intersect, then
 unobserve. No JS → no state attribute → content visible at rest.
 Stagger: children of `[data-animate-stagger]` delay by
-`n * --zk-stagger-step` plus `data-animate-delay`.
+`n * --zk-stagger-step` plus `data-animate-delay`. Pending child offset
+follows the host preset (`fade-up` rises, `fade-down` descends,
+`fade-in`/`pop-in` stay in place).
 
 **scroll.** Progress-linked (0 enter → 1 exit), not a one-shot. Prefer
 CSS `animation-timeline: view()` inside

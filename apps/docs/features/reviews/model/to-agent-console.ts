@@ -1,3 +1,5 @@
+import { tryCatch } from "@zedtech/zedkit-core";
+
 import type {
   LiveDecision,
   LiveEntry,
@@ -6,6 +8,11 @@ import type {
   LiveVerdict,
   PublicLiveRun,
 } from "../ports/review-port";
+
+export function isLiveRunActive(status: string): boolean {
+  const normalized = status.trim().toLowerCase();
+  return normalized === "running" || normalized === "starting";
+}
 
 type FindingDisposition = "kept" | "downgraded" | "dismissed";
 
@@ -26,6 +33,7 @@ type MappedItem = {
   kind: string;
   status: string;
   model: string;
+  engineLabel: string | null;
   durationMs: number | null;
   toolCount: number;
   startedAt: number | null;
@@ -33,6 +41,7 @@ type MappedItem = {
   tokensIn: number;
   tokensOut: number;
   running: boolean;
+  streamLabel: string | null;
   entries: readonly MappedEntry[];
 };
 
@@ -45,6 +54,7 @@ type MappedRun = {
   verdict: string | null;
   confidence: number | null;
   postedReviewHref: string | null;
+  running: boolean;
 };
 
 type MappedNote = { text: string; tag?: "downgraded" | "approved" | null };
@@ -97,7 +107,9 @@ function dispositionOf(value: unknown): FindingDisposition | null {
 
 function findingsFromVerdict(verdict: LiveVerdict | null): MappedFinding[] {
   if (verdict === null) return [];
-  const rows = [...(verdict.blocking ?? []), ...(verdict.notes ?? [])];
+  const blocking = Array.isArray(verdict.blocking) ? verdict.blocking : [];
+  const notes = Array.isArray(verdict.notes) ? verdict.notes : [];
+  const rows = [...blocking, ...notes];
   const findings: MappedFinding[] = [];
   rows.forEach((row, index) => {
     const disposition = dispositionOf(row);
@@ -173,19 +185,22 @@ function mapEntry(entry: LiveEntry, itemId: string, index: number): MappedEntry 
 
 function mapItem(item: LiveItemDetail): MappedItem {
   const status = item.status;
+  const activity = typeof item.last_activity === "string" ? item.last_activity : "";
   return {
     id: item.id,
     name: item.name,
     kind: item.kind,
     status,
     model: item.model,
+    engineLabel: typeof item.engine_label === "string" ? item.engine_label : null,
     durationMs: secondsToMs(item.duration_s),
     toolCount: item.tool_count,
     startedAt: item.started_ms ?? null,
     lastActivityAt: item.last_activity_ms ?? null,
     tokensIn: item.tokens_in,
     tokensOut: item.tokens_out,
-    running: status === "running" || status === "starting",
+    running: isLiveRunActive(status),
+    streamLabel: activity.trim() === "" ? null : activity,
     entries: item.entries.flatMap((entry, index) => {
       const mapped = mapEntry(entry, item.id, index);
       return mapped === null ? [] : [mapped];
@@ -194,8 +209,13 @@ function mapItem(item: LiveItemDetail): MappedItem {
 }
 
 function postedReviewHref(decision: LiveDecision | null, run: LiveRunInfo): string | null {
-  const href = decision?.review_url ?? run.review_url ?? null;
-  return href ?? null;
+  const href = (decision?.review_url ?? run.review_url ?? "").trim();
+  if (href === "") return null;
+  const parsed = tryCatch(() => new URL(href));
+  if (!parsed.ok) return null;
+  const protocol = parsed.value.protocol;
+  if (protocol !== "http:" && protocol !== "https:") return null;
+  return href;
 }
 
 function mapRun(live: PublicLiveRun): MappedRun {
@@ -208,6 +228,7 @@ function mapRun(live: PublicLiveRun): MappedRun {
     verdict: live.decision?.verdict ?? live.run.verdict ?? null,
     confidence: live.decision?.confidence_score ?? live.run.confidence_score ?? null,
     postedReviewHref: postedReviewHref(live.decision, live.run),
+    running: isLiveRunActive(live.run.status),
   };
 }
 

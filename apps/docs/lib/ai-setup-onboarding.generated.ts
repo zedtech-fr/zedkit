@@ -3,6 +3,7 @@ export const AI_SETUP_MINI_PROMPT = "Set up zedkit AI on this repo following htt
 export const UI_SETUP_MINI_PROMPT = "Set up zedkit UI on this repo following https://zedkit.app/ui/setup.md";
 export const NEST_SETUP_MINI_PROMPT = "Set up zedkit Nest on this repo following https://zedkit.app/nest/setup.md";
 export const MAP_SETUP_MINI_PROMPT = "Set up zedkit AI, UI and Nest on this repo following https://zedkit.app/map.md";
+export const MAP_AI_UI_SETUP_MINI_PROMPT = "Set up zedkit AI and UI on this repo following https://zedkit.app/map.md";
 export const SUGGEST_MINI_PROMPT = "Suggest which zedkit setup this repo needs following https://zedkit.app/suggest.md";
 export const AI_SETUP_LLMS_URL = "https://zedkit.app/ai/setup.md";
 export const AI_SETUP_DOCS_PATH = "/docs/ai/setup";

@@ -1,12 +1,23 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { catalogPageKeys, expandFencePreviews, expandGuideSnippets } from "./generate.mjs";
 import { checkGeneratedPage, readFrontmatterDescription, readFrontmatterTitle } from "./page-checks.mjs";
-import { componentPageHeaderMeta, componentPageSections } from "../lib/component-page-sections.mjs";
-import { declarationOrigin } from "../lib/declared-props.mjs";
-import { partitionPropsEntries } from "../lib/props-priority.mjs";
-import { groupCatalogResults } from "../lib/catalog-result-groups.mjs";
-import { uiSidebarPages } from "../lib/ui-sidebar-nav.mjs";
+import {
+  COMPONENT_PAGE_SECTION_IDS,
+  componentPageHeaderMeta,
+  componentPageSections,
+} from "../features/docs/component-page-sections.mjs";
+import { declarationOrigin } from "../features/docs/declared-props.mjs";
+import { partitionPropsEntries } from "../features/docs/props-priority.mjs";
+import { uiSidebarGroupFor, uiSidebarPages } from "../features/docs/ui-sidebar-nav.mjs";
+import { docsLayoutTree } from "../app/docs/[[...slug]]/_docs/docs-layout-tree.mjs";
+import { kitUiSourceUrl, SITE_GITHUB_URL } from "../lib/site-links.mjs";
+import { docsOmitNeed } from "./docs-omitted-needs.mjs";
+
+const here = dirname(fileURLToPath(import.meta.url));
 
 const page = `---
 title: "Trigger actions with buttons"
@@ -29,23 +40,6 @@ status: beta
 <Button>Save</Button>
 \`\`\`
 `;
-
-test("groupCatalogResults uses the same area labels as catalog filters", () => {
-  const groups = groupCatalogResults([
-    { area: "ui", package: "ui", href: "/docs/ui/a", title: "Button", need: "n", status: "stable" },
-    { area: "backend", package: "core", href: "/docs/core/a", title: "tryCatch", need: "n", status: "stable" },
-    { area: "backend", package: "quality", href: "/docs/quality/a", title: "lint", need: "n", status: "stable" },
-    { area: "agents", package: "ai", href: "/docs/ai/a", title: "setup-ai", need: "n", status: "stable" },
-  ]);
-  assert.deepEqual(
-    groups.map((group) => [group.id, group.label, group.entries.length]),
-    [
-      ["ui", "UI", 1],
-      ["backend", "Core & server", 2],
-      ["agents", "Agents", 1],
-    ],
-  );
-});
 
 test("partitionPropsEntries surfaces variant and size before inherited attrs", () => {
   const entries = [
@@ -107,14 +101,32 @@ test("declarationOrigin follows where a property is declared", () => {
 });
 
 test("componentPageSections lists a section only when it has content", () => {
-  const always = ["example", "guidance", "usage-and-states", "install-or-copy"];
+  assert.deepEqual(COMPONENT_PAGE_SECTION_IDS, [
+    "example",
+    "usage-and-states",
+    "install-or-copy",
+    "guidance",
+    "props",
+    "accessibility",
+    "related",
+    "troubleshooting",
+  ]);
+  const always = ["example", "usage-and-states", "install-or-copy", "guidance"];
   const sections = componentPageSections({ hasProps: false, a11y: "", related: [], troubleshooting: "" });
   assert.deepEqual(sections, always);
+  assert.ok(sections.indexOf("example") < sections.indexOf("usage-and-states"));
   assert.ok(sections.indexOf("usage-and-states") < sections.indexOf("install-or-copy"));
-  assert.deepEqual(
-    componentPageSections({ hasProps: true, a11y: "Name it.", related: [{ title: "x" }], troubleshooting: "Wire the CSS." }),
-    [...always, "props", "accessibility", "related", "troubleshooting"],
-  );
+  assert.ok(sections.indexOf("install-or-copy") < sections.indexOf("guidance"));
+  const withProps = componentPageSections({
+    hasProps: true,
+    a11y: "Name it.",
+    related: [{ title: "x" }],
+    troubleshooting: "Wire the CSS.",
+  });
+  assert.deepEqual(withProps, [...always, "props", "accessibility", "related", "troubleshooting"]);
+  assert.ok(withProps.indexOf("usage-and-states") < withProps.indexOf("install-or-copy"));
+  assert.ok(withProps.indexOf("install-or-copy") < withProps.indexOf("guidance"));
+  assert.ok(withProps.indexOf("guidance") < withProps.indexOf("props"));
   assert.deepEqual(componentPageSections({ hasProps: false, a11y: "Name it." }), [...always, "accessibility"]);
 });
 
@@ -147,8 +159,8 @@ test("catalogPageKeys maps a need to folder/slug and suffixes collisions", () =>
 
 test("expandFencePreviews inserts a live preview and optional import", () => {
   const source = '---\ntitle: "Demo"\n---\n\n```tsx preview="ButtonDemo"\n<Button />\n```\n';
-  const out = expandFencePreviews(source, "../../components/component-preview");
-  assert.match(out, /import \{ ComponentPreview \} from "\.\.\/\.\.\/components\/component-preview"/);
+  const out = expandFencePreviews(source, "../../features/docs/ui/component-preview");
+  assert.match(out, /import \{ ComponentPreview \} from "\.\.\/\.\.\/features\/docs\/ui\/component-preview"/);
   assert.match(out, /<ComponentPreview demo="ButtonDemo"/);
   assert.match(out, /```tsx\n<Button \/>/);
   assert.equal(out.includes('preview="ButtonDemo"'), false);
@@ -199,6 +211,14 @@ test("checkGeneratedPage fails when a component page lacks the guidance block", 
   );
   assert.equal(
     errors.some((entry) => entry.includes("lacks ComponentPage guidance prop")),
+    true,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks sourceFile")),
+    true,
+  );
+  assert.equal(
+    errors.some((entry) => entry.includes("lacks navGroup")),
     true,
   );
   assert.equal(
@@ -257,6 +277,7 @@ function slugsOf(pages) {
 
 test("uiSidebarPages groups Badge, Toaster, and DetailPanel with home-example order", () => {
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs: [
       { need: "Show a status or count badge", slug: "show-a-status-or-count-badge" },
       { need: "Trigger actions with buttons", slug: "trigger-actions-with-buttons" },
@@ -297,6 +318,7 @@ test("uiSidebarPages groups Badge, Toaster, and DetailPanel with home-example or
 
 test("uiSidebarPages drops omitted identity needs and sends unknown source to More", () => {
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs: [
       { need: "Design your identity", slug: "design-your-identity" },
       { need: "Switch the visual identity with one attribute", slug: "switch-the-visual-identity-with-one-attribute" },
@@ -322,6 +344,7 @@ test("uiSidebarPages skips an empty group and lists every published slug once", 
     { need: "Lay out an admin page (sidebar + topbar + header)", slug: "lay-out-an-admin-page-sidebar-topbar-header" },
   ];
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs,
     sourceByNeed: {
       "Collect text input with a label": "forms/input.tsx",
@@ -347,6 +370,7 @@ test("uiSidebarPages throws on a duplicate slug", () => {
   assert.throws(
     () =>
       uiSidebarPages({
+        omitNeed: docsOmitNeed,
         needs: [
           { need: "Trigger actions with buttons", slug: "shared" },
           { need: "Collect text input with a label", slug: "shared" },
@@ -362,8 +386,73 @@ test("uiSidebarPages throws on a duplicate slug", () => {
 
 test("uiSidebarPages does not throw for a new source folder", () => {
   const pages = uiSidebarPages({
+    omitNeed: docsOmitNeed,
     needs: [{ need: "Motion helper", slug: "motion-helper" }],
     sourceByNeed: { "Motion helper": "motion.css" },
   });
   assert.deepEqual(pages, ["---More---", "motion-helper"]);
+});
+
+test("uiSidebarGroupFor maps Button to Actions", () => {
+  assert.equal(uiSidebarGroupFor("Trigger actions with buttons", "button/button.tsx"), "Actions");
+  assert.equal(uiSidebarGroupFor("Show a status or count badge", "feedback/badge.tsx"), "Actions");
+  assert.equal(uiSidebarGroupFor("Unknown need", "mystery/x.tsx"), "More");
+});
+
+test("generate.mjs passes docsOmitNeed into uiSidebarPages", () => {
+  const src = readFileSync(join(here, "generate.mjs"), "utf8");
+  assert.match(src, /from "\.\.\/features\/docs\/ui-sidebar-nav\.mjs"/);
+  assert.match(src, /uiSidebarPages\(\{[^}]*omitNeed:\s*docsOmitNeed/);
+});
+
+test("ui-sidebar-nav.mjs does not import scripts", () => {
+  const src = readFileSync(join(here, "../features/docs/ui-sidebar-nav.mjs"), "utf8");
+  assert.doesNotMatch(src, /from ["'][^"']*scripts\//);
+  assert.doesNotMatch(src, /docs-omitted-needs/);
+});
+
+test("docsLayoutTree on a UI slug is the job-grouped folder, not package folders", () => {
+  const root = {
+    name: "Docs",
+    children: [
+      { type: "page", name: "Getting started", url: "/docs/getting-started" },
+      {
+        type: "folder",
+        $id: "ui",
+        name: "@zedtech/zedkit-ui",
+        children: [
+          { type: "separator", name: "Actions" },
+          { type: "page", name: "Button", url: "/docs/ui/trigger-actions-with-buttons" },
+          { type: "separator", name: "Forms" },
+        ],
+      },
+      {
+        type: "folder",
+        $id: "ai",
+        name: "@zedtech/zedkit-ai",
+        children: [{ type: "page", name: "Setup", url: "/docs/ai/setup" }],
+      },
+    ],
+  };
+  const ui = docsLayoutTree(root, ["ui", "trigger-actions-with-buttons"]);
+  assert.deepEqual(
+    ui.children.map((node) => node.name),
+    ["Actions", "Button", "Forms"],
+  );
+  assert.equal(
+    ui.children.some((node) => node.name === "Getting started" || node.$id === "ai"),
+    false,
+  );
+  const guides = docsLayoutTree(root, ["getting-started"]);
+  assert.equal(guides, root);
+  assert.equal(docsLayoutTree(root, []), root);
+});
+
+test("kitUiSourceUrl points at the kit file on GitHub", () => {
+  assert.equal(
+    kitUiSourceUrl("button/button.tsx"),
+    `${SITE_GITHUB_URL}/blob/main/packages/ui/src/button/button.tsx`,
+  );
+  assert.equal(kitUiSourceUrl(""), null);
+  assert.equal(kitUiSourceUrl("../secret"), null);
 });

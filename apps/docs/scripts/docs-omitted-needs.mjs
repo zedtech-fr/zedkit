@@ -17,7 +17,7 @@ export function docsOmitNeed(title) {
 
 export function hrefForOmittedNeed(title) {
   if (title === "Design your identity") return IDENTITY_EDITOR_HREF;
-  if (title === "Switch the visual identity with one attribute") return "/#demo";
+  if (title === "Switch the visual identity with one attribute") return "/#identities";
   return null;
 }
 

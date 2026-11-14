@@ -1,27 +1,22 @@
 import type { Metadata } from "next";
 
-import { notFoundPageCopy } from "@/app/i18n/not-found-page-copy";
-import { featuredPackageChangelogUrl, featuredPackageReleasesUrl, featuredPackageVersion } from "@/content/gallery";
+import { notFoundCopy } from "@/app/_not-found/i18n/not-found-copy";
 import { docsPageMetadata } from "@/lib/docs-metadata";
-import { NotFoundView } from "@/ui/not-found/not-found-view";
-import { SiteLayout } from "@/ui/site-layout";
+import { NotFoundView } from "@/app/_not-found/not-found-view";
+import { SiteLayout } from "@/components/site-chrome/site-layout";
 
 export const metadata: Metadata = docsPageMetadata(
   "/404",
   {
-    title: notFoundPageCopy.title,
-    description: notFoundPageCopy.description,
+    title: notFoundCopy.metadata.title,
+    description: notFoundCopy.metadata.description,
   },
   { index: false },
 );
 
 export default function NotFound() {
   return (
-    <SiteLayout
-      version={featuredPackageVersion}
-      changelogHref={featuredPackageChangelogUrl}
-      releasesHref={featuredPackageReleasesUrl}
-    >
+    <SiteLayout>
       <NotFoundView />
     </SiteLayout>
   );

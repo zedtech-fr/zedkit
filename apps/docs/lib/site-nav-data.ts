@@ -7,17 +7,54 @@ export type SiteNavLink = {
   active?: "url" | "nested-url";
 };
 
-/** Guide entries shared by the desktop Guides menu and the phone nav drawer. */
-export const SITE_GUIDE_LINKS: SiteNavLink[] = [
-  { text: "Getting started", href: "/docs/getting-started", active: "url" },
-  { text: "Start without writing code", href: "/docs/start-without-writing-code", active: "url" },
-  { text: "Build an admin dashboard", href: "/docs/build-an-admin-dashboard", active: "url" },
-  { text: "Set up your coding agents", href: "/docs/set-up-your-coding-agents", active: "url" },
-  { text: "Add SEO to a Next.js app", href: "/docs/add-seo-to-nextjs", active: "url" },
-  { text: "zedkit and shadcn/ui", href: "/docs/zedkit-and-shadcn", active: "url" },
-  { text: "Maturity and compatibility", href: "/docs/maturity-and-compatibility", active: "url" },
-  { text: "Note list example", href: "/examples/note-list", active: "url" },
-];
+export function isHomePath(pathname: string): boolean {
+  return pathname === "/" || pathname === "";
+}
+
+export function isFoundationsPath(pathname: string): boolean {
+  return pathname === "/docs/foundations" || pathname === "/docs/foundations/";
+}
+
+export function isCatalogPath(pathname: string): boolean {
+  return pathname === "/catalog";
+}
+
+export function isDocsPath(pathname: string): boolean {
+  return pathname === "/docs" || pathname.startsWith("/docs/");
+}
+
+/** Full-viewport live console routes. The public run history list stays on marketing chrome. */
+export function isLiveConsolePath(pathname: string): boolean {
+  const path = pathname.split("?")[0] ?? pathname;
+  if (path === "/issues/run" || path.startsWith("/issues/run/")) return true;
+  return /^\/issues\/(?:pr\/)?[^/]+\/runs\//.test(path);
+}
+
+export type SiteDesktopHeaderKind = "home" | "catalog" | "docs" | "none";
+
+/** Which desktop `#nd-nav` mark the persistent host should keep mounted. */
+export function siteDesktopHeaderKind(pathname: string): SiteDesktopHeaderKind {
+  if (isLiveConsolePath(pathname) || isFoundationsPath(pathname)) return "none";
+  if (isHomePath(pathname)) return "home";
+  if (isDocsPath(pathname)) return "docs";
+  return "catalog";
+}
+
+/**
+ * Phone (and policy) chrome: which actions a path may mount.
+ * GitHub is always mounted: desktop bar, and the phone site menu (not a second header row).
+ * Theme, version, and a site-nav disclosure are never on.
+ * The phone page tree is a kit Drawer in the docs shell (DocsSidebar always mounts desktop `#nd-sidebar`; the drawer clone has no id; DocsContainer omits inline gridTemplate so docs-shell-tokens.css can restack header + trigger + main).
+ * Foundations keeps search and has no page tree (sidebar off in the docs layout).
+ */
+export function siteHeaderChrome(pathname: string) {
+  const home = isHomePath(pathname);
+  return {
+    links: sitePrimaryNavLinks(),
+    search: !home,
+    getStarted: home,
+  };
+}
 
 export function sitePrimaryNavLinks(): SiteNavLink[] {
   return [
@@ -25,6 +62,7 @@ export function sitePrimaryNavLinks(): SiteNavLink[] {
     { text: "UI", href: "/docs/foundations", active: "url" },
     { text: "Docs", href: "/docs", active: "url" },
     { text: "Catalog", href: "/catalog", active: "url" },
+    { text: "Issues", href: "/issues", active: "nested-url" },
   ];
 }
 
@@ -38,21 +76,10 @@ export function isSiteNavLinkActive(pathname: string, link: SiteNavLink): boolea
 
 /** Fumadocs header link model (desktop chrome). */
 export function siteHeaderLinks(): LinkItemType[] {
-  return [
-    ...sitePrimaryNavLinks().map((item) => ({
-      text: item.text,
-      url: item.href,
-      ...(item.active ? { active: item.active } : {}),
-      ...(item.external ? { external: true } : {}),
-    })),
-    {
-      type: "menu",
-      text: "Guides",
-      items: SITE_GUIDE_LINKS.map((item) => ({
-        text: item.text,
-        url: item.href,
-        active: item.active ?? "url",
-      })),
-    },
-  ];
+  return sitePrimaryNavLinks().map((item) => ({
+    text: item.text,
+    url: item.href,
+    ...(item.active ? { active: item.active } : {}),
+    ...(item.external ? { external: true } : {}),
+  }));
 }

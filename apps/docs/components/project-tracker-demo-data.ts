@@ -2,7 +2,7 @@ import type { BadgeProps } from "@zedtech/zedkit-ui";
 
 import { projectTrackerDemoCopy } from "@/components/i18n/project-tracker-demo-copy";
 
-/** Seed rows shared by the app shell demo and the home hero, so both tell the same story. */
+/** Seed rows for the app shell demo. */
 export type TaskStatus = (typeof projectTrackerDemoCopy.status)[keyof typeof projectTrackerDemoCopy.status];
 
 export interface TaskRow {

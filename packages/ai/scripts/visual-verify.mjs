@@ -165,13 +165,49 @@ export function isPublicReviewPath(file) {
 }
 
 export function routesFromFiles(files, manifest) {
+  const kebabDemoKey = (name) =>
+    name
+      .replace(/([a-z\d])([A-Z])/gu, "$1-$2")
+      .replace(/([A-Z]+)([A-Z][a-z])/gu, "$1-$2")
+      .toLowerCase();
+  const sourceFamilyMatch = (file, source) => {
+    const n = file.replaceAll("\\", "/");
+    const src = source.replaceAll("\\", "/");
+    if (n === src || n.endsWith(`/${src}`)) return true;
+    const slash = src.lastIndexOf("/");
+    const dir = slash >= 0 ? src.slice(0, slash + 1) : "";
+    const base = slash >= 0 ? src.slice(slash + 1) : src;
+    const dot = base.lastIndexOf(".");
+    const stem = dot >= 0 ? base.slice(0, dot) : base;
+    const needle = `/${dir}${stem}`;
+    const from = n.lastIndexOf(needle);
+    const tail =
+      from >= 0 ? n.slice(from + needle.length) : n.startsWith(`${dir}${stem}`) ? n.slice(`${dir}${stem}`.length) : null;
+    if (tail == null) return false;
+    return tail.startsWith("-") || tail.startsWith(".");
+  };
+  const demoFileMatchesKey = (fileBase, key) => {
+    const kebab = kebabDemoKey(key);
+    if (fileBase === kebab) return true;
+    const stem = fileBase.replace(/-demo$/u, "");
+    return kebab === stem || kebab.startsWith(`${stem}-`);
+  };
   const routes = new Set();
   const sources = [];
+  const demos = [];
   if (manifest && typeof manifest === "object") {
     const rich = manifest.rich && typeof manifest.rich === "object" ? manifest.rich : manifest;
     for (const [need, entry] of Object.entries(rich)) {
-      if (entry && typeof entry === "object" && typeof entry.source === "string") {
-        sources.push({ source: entry.source.replaceAll("\\", "/"), route: `/docs/ui/${slugNeed(need)}` });
+      if (!entry || typeof entry !== "object") continue;
+      const route = `/docs/ui/${slugNeed(need)}`;
+      if (typeof entry.source === "string") {
+        sources.push({ source: entry.source.replaceAll("\\", "/"), route });
+      }
+      if (typeof entry.demo === "string") demos.push({ key: entry.demo, route });
+      if (entry.examples && typeof entry.examples === "object") {
+        for (const value of Object.values(entry.examples)) {
+          if (typeof value === "string") demos.push({ key: value, route });
+        }
       }
     }
   }
@@ -189,12 +225,40 @@ export function routesFromFiles(files, manifest) {
     if (guide && !guide[1].includes("snippets/")) {
       routes.add(guide[1] === "index" ? "/docs" : `/docs/${guide[1]}`);
     }
+    const guideFeature = /(?:^|\/)apps\/docs\/features\/docs\/guides\/([^/]+)\//u.exec(n);
+    if (guideFeature && !/\.(?:test|spec)\./u.test(n)) {
+      routes.add(`/docs/${guideFeature[1]}`);
+    }
     if (n.endsWith("packages/ai/kit/cursor-onboarding.md") || n.endsWith("apps/docs/public/ai/setup.md")) {
       routes.add("/docs/ai/setup");
     }
     if (isPublicReviewPath(n)) routes.add("/issues");
+    const skipTest = /\.(?:test|spec)\./u.test(n);
     for (const row of sources) {
-      if (n === row.source || n.endsWith(`/${row.source}`)) routes.add(row.route);
+      if (n === row.source || n.endsWith(`/${row.source}`)) {
+        routes.add(row.route);
+        continue;
+      }
+      if (!skipTest && sourceFamilyMatch(n, row.source)) routes.add(row.route);
+    }
+    const demoFile = /(?:^|\/)apps\/docs\/components\/demos\/([^/]+)\.tsx$/u.exec(n);
+    if (demoFile && !skipTest) {
+      const fileBase = demoFile[1];
+      for (const row of demos) {
+        if (demoFileMatchesKey(fileBase, row.key)) routes.add(row.route);
+      }
+    }
+    if (/(?:^|\/)apps\/docs\/features\/identity\//u.test(n) && !skipTest) {
+      routes.add("/features/identity-editor");
+    }
+    if (/(?:^|\/)apps\/docs\/app\/\(home\)\//u.test(n) && !skipTest) {
+      routes.add("/");
+    }
+    if (/(?:^|\/)apps\/docs\/app\/\(site\)\/catalog\//u.test(n) && !skipTest) {
+      routes.add("/catalog");
+    }
+    if (/(?:^|\/)apps\/docs\/components\/site-chrome\//u.test(n) && !skipTest) {
+      routes.add("/");
     }
   }
   return [...routes];
@@ -460,6 +524,14 @@ export function currentBranch(cwd) {
   return sanitizeBranch(name.ok ? name.value : "HEAD");
 }
 
+export const HOST_DOCS_MANIFEST = "apps/docs/docs-manifest.json";
+
+export function resolveManifestPath(cwd, manifestOption) {
+  if (manifestOption) return resolve(cwd, manifestOption);
+  const host = join(cwd, HOST_DOCS_MANIFEST);
+  return existsSync(host) ? host : "";
+}
+
 function loadManifestFile(path) {
   if (!path) return undefined;
   const raw = tryCatch(() => JSON.parse(readFileSync(path, "utf8")));
@@ -500,20 +572,22 @@ function resolvePeer(spec) {
   return err(peerMissingError(spec));
 }
 
-function importPeer(spec) {
+async function importPeer(spec, load) {
   const resolved = resolvePeer(spec);
-  if (!resolved.ok) return Promise.resolve(err(resolved.error));
+  if (!resolved.ok) return err(resolved.error);
+  const loaded = await tryCatchAsync(load);
+  if (loaded.ok) return loaded;
   return tryCatchAsync(() => import(pathToFileURL(resolved.value).href));
 }
 
 export async function loadPlaywright() {
-  const loaded = await importPeer("@playwright/test");
+  const loaded = await importPeer("@playwright/test", () => import("@playwright/test"));
   if (!loaded.ok) return err(loaded.error);
   return ok(unwrapPeerModule(loaded.value, "chromium"));
 }
 
 export async function loadAxe() {
-  const loaded = await importPeer("@axe-core/playwright");
+  const loaded = await importPeer("@axe-core/playwright", () => import("@axe-core/playwright"));
   if (!loaded.ok) return err(loaded.error);
   return ok(unwrapPeerModule(loaded.value));
 }
@@ -597,15 +671,27 @@ async function readPageFacts(page) {
       };
     });
     const skipTags = new Set(["HTML", "BODY", "PRE", "CODE", "INPUT", "TEXTAREA", "SELECT"]);
+    const SR_ONLY = /(?:^|\s)sr-only(?:\s|$)/u;
+    const CLIP_RECT_ZERO = /^rect\((?:0|0px),(?:0|0px),(?:0|0px),(?:0|0px)\)$/u;
+    const CLIP_PATH_HIDE = /^(?:inset\((?:50%|100%)(?:(?:50%|100%)){0,3}\)|circle\(0(?:px)?\))$/u;
     const visuallyHidden = (el, cs) => {
       if ((el.clientWidth ?? 0) <= 1 && (el.clientHeight ?? 0) <= 1) return true;
       const box = el.getBoundingClientRect();
       if (box.width <= 1 && box.height <= 1) return true;
-      if (el.classList?.contains("sr-only")) return true;
+      const cls = el.getAttribute("class") ?? "";
+      if (SR_ONLY.test(cls) || el.classList?.contains("sr-only")) return true;
       const clip = (cs.clip ?? "").replace(/\s+/gu, "").toLowerCase();
-      if (/^rect\((?:0|0px),(?:0|0px),(?:0|0px),(?:0|0px)\)$/u.test(clip)) return true;
+      if (CLIP_RECT_ZERO.test(clip)) return true;
       const clipPath = (cs.clipPath ?? "").replace(/\s+/gu, "").toLowerCase();
-      return /^(?:inset\((?:50%|100%)(?:(?:50%|100%)){0,3}\)|circle\(0(?:px)?\))$/u.test(clipPath);
+      return CLIP_PATH_HIDE.test(clipPath);
+    };
+    const intendedTruncate = (el, cs) => {
+      if (el.hasAttribute("data-allow-clip")) return true;
+      const cls = el.getAttribute("class") ?? "";
+      if (/(?:^|\s)truncate(?:\s|$)/u.test(cls)) return true;
+      if (/(?:^|\s)line-clamp-/u.test(cls)) return true;
+      const clamp = Number.parseFloat(cs.webkitLineClamp);
+      return Number.isFinite(clamp) && clamp > 0;
     };
     const clippedNodes = [];
     for (const el of document.body.querySelectorAll("*")) {
@@ -613,6 +699,7 @@ async function readPageFacts(page) {
       if (skipTags.has(el.tagName) || visuallyHidden(el, cs)) continue;
       if (el.hasAttribute("data-allow-clip") || el.hasAttribute("data-word-roll-clip")) continue;
       if (el.hasAttribute("data-radix-scroll-area-viewport")) continue;
+      if (intendedTruncate(el, cs)) continue;
       const ox = cs.overflowX;
       const oy = cs.overflowY;
       if (ox === "auto" || ox === "scroll" || oy === "auto" || oy === "scroll") continue;
@@ -923,7 +1010,7 @@ export async function runVisualVerify(options, deps = {}) {
   const outDir = resolve(cwd, options.out ?? join("evidence", branch));
 
   const files = options.changed ? changedFiles(cwd, options.base ?? defaultGitBase(cwd)) : [];
-  const manifest = loadManifestFile(options.manifest ? resolve(cwd, options.manifest) : "");
+  const manifest = loadManifestFile(resolveManifestPath(cwd, options.manifest));
   const fromDiff = routesFromFiles(files, manifest);
   const routes = unionRoutes(fromDiff, options.routes ?? []);
   if (routes.length === 0) return err(new Error("no routes: pass --routes or --changed"));

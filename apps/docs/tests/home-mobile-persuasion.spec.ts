@@ -11,7 +11,7 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
   test("hero and band copy use shared P0 type roles", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("#components").scrollIntoViewIfNeeded();
+    await page.locator("#same-idea").scrollIntoViewIfNeeded();
 
     const readings = await page.evaluate(() => {
       const read = (el: Element | null | undefined) => {
@@ -24,11 +24,6 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
       const sameIdeaCopy = document.querySelector("#same-idea .text-home-persuasion");
 
-      const components = document.querySelector("#components");
-      const componentsCopy = components?.querySelector(
-        "[data-home-component-families] .text-home-persuasion",
-      );
-
       const useCases = document.querySelector("#use-cases");
       const useCaseWhy = useCases?.querySelector(".text-home-persuasion");
 
@@ -36,7 +31,6 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
         heroLead: read(document.querySelector("[data-home-hero-sub]")),
         heroProof: read(document.querySelector("[data-home-hero-lead] .home-metadata-copy")),
         sameIdeaCopy: read(sameIdeaCopy),
-        componentsCopy: read(componentsCopy),
         useCaseWhy: read(useCaseWhy),
       };
     });
@@ -52,7 +46,6 @@ test.describe("home mobile marketing body type (L2 + P0)", () => {
 
     for (const [label, value] of Object.entries({
       sameIdeaCopy: readings.sameIdeaCopy,
-      componentsCopy: readings.componentsCopy,
       useCaseWhy: readings.useCaseWhy,
     })) {
       expect(value, label).not.toBeNull();

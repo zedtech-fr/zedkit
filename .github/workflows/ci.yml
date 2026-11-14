@@ -298,8 +298,9 @@ jobs:
           retention-days: 14
       # test:registry imports built dists (ui via the docs identity tests
       # and deploy token parity, seo via docs generate/check helpers,
-      # server via deploy hostname-guard parity) but runs on every
-      # affected scope — including ones that skip both Build steps above.
+      # server via deploy hostname-guard parity, live via reviews
+      # github.ts / runs-api.ts) but runs on every affected scope —
+      # including ones that skip both Build steps above.
       # Build exactly that set here, unconditionally; turbo ^build pulls
       # their deps, and the turbo cache makes it a no-op when already built.
       - name: Build (registry deps)
@@ -312,6 +313,7 @@ jobs:
             --filter=@zedtech/zedkit-seo \
             --filter=@zedtech/zedkit-ui \
             --filter=@zedtech/zedkit-server \
+            --filter=@zedtech/zedkit-live \
             "${extra[@]}"
       # deploy/* needs Docker + rsync; Self-hosted runners drop privileges and
       # do not mount docker.sock — keep those tests on github-hosted only.
@@ -321,6 +323,10 @@ jobs:
       - name: test:registry (exclude deploy/*)
         if: runner.environment == 'self-hosted'
         run: pnpm test:registry:nodeploy
+      # Shrink-only unused-file/dep scan. A lot that starts using an ignored
+      # file must drop that ignore in the same PR (`knip.jsonc`).
+      - name: knip
+        run: pnpm knip
       # Versioning dry-run only: proves the Changesets metadata is sane.
       # Skipped on the Version PR itself: it consumed the changesets, so
       # `status` always reports "changed packages, no changesets" there.
@@ -751,9 +757,15 @@ jobs:
               echo "DOCS_LOOKS=$DOCS_LOOKS"
             fi
           fi
-          pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
-          echo $! > /tmp/docs.pid
-          trap 'kill "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
+          (
+            while :; do
+              pnpm dlx serve@14.2.6 apps/docs/out -l 3100 >/tmp/docs-start.log 2>&1 &
+              echo $! > /tmp/docs.pid
+              wait "$(cat /tmp/docs.pid)" || true
+            done
+          ) &
+          echo $! > /tmp/docs.loop.pid
+          trap 'kill "$(cat /tmp/docs.loop.pid)" "$(cat /tmp/docs.pid)" 2>/dev/null || true' EXIT
           code=""
           for _ in $(seq 1 24); do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
@@ -766,7 +778,17 @@ jobs:
             exit 1
           fi
           curl -sf -o /dev/null http://127.0.0.1:3100/sitemap.xml
-          pnpm --filter @zedtech/zedkit-docs run e2e:routes
+          if ! pnpm --filter @zedtech/zedkit-docs run e2e:routes; then
+            echo "docs-render: e2e:routes failed" >&2
+            cat /tmp/docs-start.log >&2 || true
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:3100/ || true)
+            if [ -z "$code" ] || [ "$code" = "000" ]; then
+              echo "docs-render: port 3100 refused" >&2
+            else
+              echo "docs-render: port 3100 answered HTTP $code" >&2
+            fi
+            exit 1
+          fi
         env:
           EVENT: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}

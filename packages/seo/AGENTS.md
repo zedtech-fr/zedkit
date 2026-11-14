@@ -9,12 +9,20 @@ Rules:
 
 - New code goes in `src/`, tests in `tests/unit/` (plain vitest,
   no DOM needed except the standard `Response` in llms tests).
+  The main entry has no React dependency; `./react`, whose react peer
+  is optional. Import a type from `react` in `src/react.tsx` so knip
+  sees the peer (automatic JSX runtime is not enough; `JSX.Element`
+  keeps `JsonLd({ data }).props` typed for function-call tests). Call
+  `JsonLd` as a function in tests — do not add jsdom. After
+  `JSON.stringify`, replace `<` with `\u003c` so a CMS string cannot
+  break out of the script tag.
 - Every public export gets a `## <need>` entry in CATALOG.md
   (format in `docs/catalog/README.md`), then run
   `pnpm catalog:build` from the root.
 - JSON-LD stays typed via `schema-dts` (the one dependency,
   types-only). If schema.org adds a type you need, extend the
   builders — never hand-write `@context` blobs at call sites.
+  `JsonLd` only serializes the object the caller passes.
 - Metadata/robots/sitemap shapes mirror the Next.js Metadata API
   structurally on purpose, so the package needs no `next`
   dependency. Keep them in sync with that API by shape, not by

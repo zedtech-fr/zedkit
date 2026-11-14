@@ -1,283 +1,259 @@
 import { expect, test } from "@playwright/test";
-import { DEFAULT_IDENTITY } from "../lib/default-identity";
-import { openHeroPage } from "./hero-helpers";
 
-test("home explains the product and four entry areas", async ({ page }) => {
+import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
+import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
+import { homeManifestoCopy } from "../app/(home)/_home/i18n/home-manifesto-copy";
+import { homeSameIdeaCopy } from "../app/(home)/_home/i18n/home-same-idea-copy";
+import { siteChromeCopy } from "../components/site-chrome/i18n/site-chrome-copy";
+import { uiGalleryStats } from "../content/gallery";
+
+const homeHeroHeading = homeHeroCopy.hero.title;
+
+test("home explains the product without preview-only extra bands (#210)", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (event) => errors.push(String(event)));
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("[data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
+  await expect(page.locator("[data-home-hero-category]")).toHaveText("Open source · MIT · by Zed Tech");
   await expect(
     page.getByRole("heading", {
-      name: "Code that's checked. Screens that match.",
+      name: homeHeroHeading,
       level: 1,
     }),
   ).toBeVisible();
-  await expect(page.getByRole("heading", { name: "More in the kit" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Start with buttons" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Start with the Nest bootstrap" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Open SEO docs" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
-  await expect(page.locator("#entry-points [data-home-secondary-links] svg[aria-hidden='true']")).toHaveCount(4);
+  for (const id of ["same-idea", "six-sentences", "paste", "identities", "limits", "manifesto", "closing"]) {
+    await expect(page.locator(`#${id}`)).toBeAttached();
+  }
+  await expect(page.getByRole("heading", { name: "Find a component" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "More in the kit" })).toHaveCount(0);
+  await expect(page.locator("#components, #entry-points, #your-identity, [data-home-yours]")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
 test("home visitor copy carries no repo internals or literal backticks (#1090)", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
   const text = (await page.locator("main").innerText()).toLowerCase();
-  for (const leak of ["`", "catalog.json", "packages/ui/tests", "generated index", "generated doc page", "manifest-driven"]) {
+  for (const leak of [
+    "`",
+    "catalog.json",
+    "packages/ui/tests",
+    "generated index",
+    "generated doc page",
+    "manifest-driven",
+    "manifesto",
+  ]) {
     expect(text, `home copy must not contain ${JSON.stringify(leak)}`).not.toContain(leak);
   }
+  await expect(page.getByText(homeManifestoCopy.quote)).toBeVisible();
+  await expect(page.getByText(homeManifestoCopy.goldenRule)).toBeVisible();
+  await expect(page.getByText(homeManifestoCopy.attribution)).toBeVisible();
+  await expect(page.getByRole("link", { name: /manifesto/i })).toHaveCount(0);
 });
 
-test("home hero offers Setup first with get started and catalog (#111)", async ({ page }) => {
+test("home hero matches the mockup first screen: question title, prompt, glass card (#118, #247, #258, #411)", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
 
-  const heroActions = page.locator("[data-home-hero-actions] a");
-  await expect(heroActions).toHaveCount(3);
-  await expect(heroActions.nth(0)).toHaveText("Setup");
-  await expect(heroActions.nth(0)).toHaveAttribute("href", "#ai-setup");
-  await expect(heroActions.nth(1)).toHaveText("Get started");
-  await expect(heroActions.nth(1)).toHaveAttribute("href", "#get-started");
-  await expect(heroActions.nth(2)).toHaveText("Browse catalog");
-  await expect(heroActions.nth(2)).toHaveAttribute("href", "/catalog");
-  for (const index of [0, 1, 2]) {
-    await expect(heroActions.nth(index)).not.toHaveAttribute("target");
-    await expect(heroActions.nth(index)).not.toHaveAttribute("rel");
-  }
-
-  await expect(page.locator("[data-home-hero-sub]")).toHaveText(
-    "Paste one prompt in the agent you already use. It reads the repo and writes the setup.",
+  // #118 supersedes the Setup / Get started / Browse catalog hero row (#111).
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Setup" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Get started" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: siteChromeCopy.getStarted })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link", { name: "Browse catalog" })).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead] a[data-site-action]")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveAttribute(
+    "data-site-action",
+    "",
   );
-  await expect(page.getByRole("textbox", { name: "One-prompt AI setup" })).toBeVisible();
+
   await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tab")).toHaveCount(0);
+
+  await expect(page.locator("[data-home-hero-actions]")).toHaveCount(0);
+  await expect(page.locator("[data-hero-shapes]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-lead]").getByRole("link")).toHaveCount(0);
+  await expect(page.getByText("See a real issue, end to end")).toHaveCount(0);
+
+  await expect(page.locator("[data-home-hero-sub]")).toHaveText(homeHeroCopy.hero.sub);
+  await expect(
+    page.locator("[data-home-hero-prompt]").getByText(MAP_AI_UI_SETUP_MINI_PROMPT),
+  ).toBeVisible();
+  await expect(
+    page.locator("[data-home-closing]").getByText(MAP_AI_UI_SETUP_MINI_PROMPT),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Copy prompt", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Copy closing prompt", exact: true })).toHaveCount(1);
+  await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
+  await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
+  await expect(page.getByText("Add an empty state to the tasks list")).toBeVisible();
+  await expect(page.getByText("An illustration of one run, not a recording.")).toBeVisible();
+  await expect(
+    page.locator("[data-home-hero-preview]").getByRole("link", {
+      name: homeHeroCopy.heroIllustration.viewPublicRun,
+    }),
+  ).toHaveAttribute("href", "/issues?open=first");
+  await expect(page.locator("[data-hero-run-stage]")).toBeVisible();
+  await expect(page.locator("#demo")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-  // Category cue (label role) sits above the display H1 inside the lead stack (#1441).
-  await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText("zedkit · open source, MIT");
+  await expect(page.locator("[data-home-hero-lead] [data-home-hero-category]")).toHaveText(
+    "Open source · MIT · by Zed Tech",
+  );
   await expect(
     page.locator("[data-home-hero-lead]").getByRole("heading", {
-      name: "Code that's checked. Screens that match.",
+      name: homeHeroHeading,
       level: 1,
     }),
   ).toBeVisible();
+  await expect(page.locator("[data-home-hero-band]").getByRole("combobox")).toHaveCount(0);
   await expect(page.getByText(/theme everything with one of six identities/)).toHaveCount(0);
   await expect(page.getByText(/linked maturity badges/)).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead]").getByText(/Latest in v/)).toHaveCount(0);
   await expect(page.locator("[data-home-hero-lead] [data-install-command]")).toHaveCount(0);
+
+  const pause = page.getByRole("button", { name: "Pause illustration motion" });
+  await expect(pause).toBeVisible();
+  await expect(pause).toHaveAttribute("aria-pressed", "false");
+  await pause.click();
+  await expect(page.getByRole("button", { name: "Play illustration motion" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute("role", "group");
+  await expect(page.locator("[data-hero-run-stage]")).toHaveAttribute(
+    "aria-label",
+    homeHeroCopy.heroIllustration.stageLabel,
+  );
+  const badgeInSpan = await page.evaluate(
+    () =>
+      [...document.querySelectorAll("[data-hero-run-stage] span")].some((node) =>
+        node.querySelector('[data-slot="badge"]'),
+      ),
+  );
+  expect(badgeInSpan).toBe(false);
 });
 
-test("home hero shows proof line without a separate proofs band (#1057)", async ({ page }) => {
+test("home hero has no facts line; same-idea holds MIT and React 19 proof (#118)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
+  // #118 drops the hero facts line; #1057's proofs band stays gone; MIT / React 19 live in same-idea.
   await expect(
-    page.getByText("What you see installs from npm or copies as source · MIT · React 19 · Tailwind 4"),
-  ).toBeVisible();
+    page.locator("[data-home-hero-lead]").getByText(/React 19/),
+  ).toHaveCount(0);
+  const landsProof = homeSameIdeaCopy.lands.proof(
+    homeSameIdeaCopy.kitCounts.skills,
+    homeSameIdeaCopy.kitCounts.agents,
+    uiGalleryStats.components,
+    homeSameIdeaCopy.kitCounts.looks,
+  );
+  await expect(page.locator("[data-home-same-idea-lands]").getByText(landsProof)).toBeVisible();
+  const stackLine = page.getByText("React 19 and Tailwind CSS 4, from npm or as source");
+  await stackLine.scrollIntoViewIfNeeded();
+  await expect(stackLine).toBeVisible();
+  await expect(page.getByText("What you see is MIT, React 19, Tailwind 4.")).toHaveCount(0);
   await expect(page.getByText(/^Latest in v/)).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
 });
 
-test("home hero proof follows site mode and can override dark (#1072)", async ({ page }) => {
+test("home hero has no identity form; looks stay in the dock (#118, #110)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.addInitScript(() => {
-    localStorage.setItem("theme", "dark");
-  });
   await page.goto("/", { waitUntil: "networkidle" });
-  const proof = page.locator("[data-home-hero-proof]");
-  const scope = proof.locator("[data-identity-scope]");
-  const shellIdentity = await page.locator("html").getAttribute("data-identity");
-  await expect(scope).toHaveAttribute("data-identity", DEFAULT_IDENTITY);
-  // The scope repaints after the shell class flips (colour transition, slower under load), so poll the same bar.
-  const brightest = () =>
-    scope.evaluate((el) => Math.max(...getComputedStyle(el).backgroundColor.match(/\d+/g)!.slice(0, 3).map(Number)));
-  await expect.poll(brightest).toBeLessThan(70);
-
-  await proof.getByRole("combobox", { name: "Identity for this demo" }).click();
-  await page.getByRole("option", { name: "Tide" }).click();
-  await expect(scope).toHaveAttribute("data-identity", "tide");
-  await proof.getByRole("combobox", { name: "Color mode for this demo" }).click();
-  await page.getByRole("option", { name: "Light" }).click();
-  await expect.poll(brightest).toBeGreaterThan(200);
-
-  await proof.getByRole("combobox", { name: "Color mode for this demo" }).click();
-  await page.getByRole("option", { name: "Dark" }).click();
-  await expect.poll(brightest).toBeLessThan(70);
-  expect(await page.locator("html").getAttribute("data-identity")).toBe(shellIdentity);
-  expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(true);
+  // #118 supersedes the Display-row identity picker (#1072) in the hero.
+  await expect(page.locator("[data-home-hero-band]").getByRole("combobox")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
 });
 
-test("home hero embeds the interactive admin demo above the fold on desktop (#1111 L1b)", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  await openHeroPage(page, "Apps");
-  const demo = page.locator("#demo").getByLabel("Interactive admin dashboard demo in the hero");
-  await expect(demo.getByRole("button", { name: "Add app" })).toBeVisible();
-  const box = await demo.getByRole("button", { name: "Add app" }).boundingBox();
-  expect(box).toBeTruthy();
-  expect(box!.y + box!.height).toBeLessThanOrEqual(720);
-});
-
-test("home hero specimen follows the headline within the mobile demo budget (#1111 L1b)", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  const metrics = await page.evaluate(() => {
-    const root = document.querySelector("#home-page");
-    const demoEl = document.querySelector("#demo");
-    if (!root || !demoEl) return null;
-    const rootTop = root.getBoundingClientRect().top + window.scrollY;
-    const demoTop = demoEl.getBoundingClientRect().top + window.scrollY;
-    return demoTop - rootTop;
-  });
-  expect(metrics).not.toBeNull();
-  expect(metrics!).toBeLessThanOrEqual(760);
-});
-
-test("home 'More in the kit' links are tappable on a phone and sit beside their description on desktop", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const links = page.locator("#entry-points [data-home-secondary-links] a");
-  await expect(links).toHaveCount(4);
-  for (const box of await Promise.all((await links.all()).map((link) => link.boundingBox()))) {
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-  }
-  await page.setViewportSize({ width: 1280, height: 900 });
-  const row = page.locator("#entry-points [data-home-secondary-links] > div").first();
-  const [text, link] = await Promise.all([row.locator("> div").boundingBox(), row.locator("a").boundingBox()]);
-  expect(link!.x).toBeGreaterThan(text!.x + text!.width);
-  expect(Math.abs(link!.y - text!.y)).toBeLessThan(40);
-  const borders = await page.locator("#entry-points [data-home-secondary-links] > [data-index-lead]").evaluateAll((nodes) =>
-    nodes.map((node) => ({
-      border: getComputedStyle(node).borderBottomWidth,
-      pad: getComputedStyle(node).paddingBottom,
-    })),
-  );
-  expect(borders).toHaveLength(4);
-  expect(borders.at(-1)?.border).toBe("0px");
-  const line = await page.locator("#entry-points [data-home-secondary-links] > [data-index-lead]").first().evaluate((node) => {
-    const probe = document.createElement("div");
-    probe.className = "border-border/60";
-    probe.style.borderBottomStyle = "solid";
-    probe.style.borderBottomWidth = "1px";
-    document.body.append(probe);
-    const expected = getComputedStyle(probe).borderBottomColor;
-    probe.remove();
-    return { color: getComputedStyle(node).borderBottomColor, expected, numeric: node.className.includes("border-border/") };
-  });
-  expect(line.color).toBe(line.expected);
-  expect(line.numeric).toBe(false);
-  expect(borders.slice(0, -1).every((entry) => entry.border !== "0px")).toBe(true);
-  expect(borders.every((entry) => entry.pad !== "0px")).toBe(true);
-});
-
-test("home area cards keep a decorative icon at tablet width and up", async ({ page }) => {
-  await page.setViewportSize({ width: 768, height: 900 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const section = page.locator("#entry-points");
-  await expect(section.getByText("Build a UI", { exact: true })).toBeVisible();
-  await expect(section.locator("[data-home-secondary-links] svg[aria-hidden='true']")).toHaveCount(4);
-  const overflow = await page.evaluate(
-    () => (document.querySelector("#home-page")?.scrollWidth ?? 0) <= document.documentElement.clientWidth + 1,
-  );
-  expect(overflow).toBe(true);
-});
-
-test("entry point CTAs open catalog or guide pages (not folder 404s)", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const entry = page.getByRole("link", { name: "Start with buttons" });
-  await entry.click();
-  await page.waitForURL("**/docs/ui/**", { timeout: 10000 });
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-});
-
-test("home gallery shows no maturity badges", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("#components a[data-badge-link]")).toHaveCount(0);
-  const overflow = await page.evaluate(
-    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
-  );
-  expect(overflow).toBe(true);
-});
-
-test("home component families list quiet example links on desktop", async ({ page }) => {
+test("home hero glass card is on the first screen at 1440 (#118)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  const section = page.locator("#components");
-  await section.scrollIntoViewIfNeeded();
-  await expect(section.getByRole("heading", { name: "Find a component" })).toBeVisible();
-  const families = section.locator("[data-home-component-families] [data-family-title]");
-  expect(await families.count()).toBeGreaterThanOrEqual(4);
-  await expect(section.locator("[data-home-gallery-card]")).toHaveCount(0);
-  await expect(section.locator("a").filter({ hasText: "Button" }).first()).toBeVisible();
+  const title = page.getByText("Add an empty state to the tasks list");
+  await expect(title).toBeVisible();
+  const box = await title.boundingBox();
+  expect(box).toBeTruthy();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(900);
+  await expect(page.getByText("Harbor Studio")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Add app" })).toHaveCount(0);
 });
 
-test("home component families layout stays sane on a phone", async ({ page }) => {
+test("home hero at 390 is headline-first; the glass card follows (#118)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
-  const section = page.locator("#components");
-  await section.scrollIntoViewIfNeeded();
-  await expect(section.locator("[data-home-component-families] [data-family-title]").first()).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+  await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
+  const order = await page.evaluate(() => {
+    const lead = document.querySelector("[data-home-hero-lead]");
+    const stage = document.querySelector("[data-hero-run-stage]");
+    if (!lead || !stage) return null;
+    return lead.compareDocumentPosition(stage) & Node.DOCUMENT_POSITION_FOLLOWING;
+  });
+  expect(order).toBeTruthy();
+});
+
+test("home hero h1 fits in at most 3 lines at 390, 393, and 412 after fonts (#411)", async ({ page }) => {
+  const heading = page.getByRole("heading", { name: homeHeroHeading, level: 1 });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.evaluate(() => document.fonts.ready);
+  await expect(heading).toBeVisible();
+  const family = await heading.evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(family).toContain("Inter Variable");
+  for (const width of [390, 393, 412] as const) {
+    await page.setViewportSize({ width, height: 844 });
+    const metrics = await heading.evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      // Drop zero-width / collapsed rects from the line box list.
+      const lines = [...range.getClientRects()].filter((box) => box.width > 1).length;
+      return {
+        lines,
+        overflow: el.scrollWidth > el.clientWidth + 1,
+      };
+    });
+    expect(metrics.lines, `h1 lines at ${width}`).toBeLessThanOrEqual(3);
+    expect(metrics.overflow, `h1 overflow at ${width}`).toBe(false);
+  }
+});
+
+test("home extra bands stay gone at 390 and 1440; the dock remains (#210)", async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1440, height: 900 },
+  ] as const) {
+    await page.setViewportSize(viewport);
+    await page.goto("/", { waitUntil: "networkidle" });
+    await expect(page.getByRole("heading", { name: "Find a component" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "More in the kit" })).toHaveCount(0);
+    await expect(page.locator("#components, #entry-points, #your-identity, [data-home-yours]")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "And yours?" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Catalog", exact: true }).first()).toBeVisible();
+  }
+});
+
+test("home catalog link in the site header opens the catalog", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByRole("link", { name: "Catalog", exact: true }).first().click();
+  await page.waitForURL("**/catalog**", { timeout: 10000 });
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("home shows no maturity badges", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await expect(page.locator("a[data-badge-link]")).toHaveCount(0);
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
   );
   expect(overflow).toBe(true);
-  await section.screenshot({ path: "test-results/home-gallery-390.png" });
 });
 
-test.describe("home component families light/dark (#753)", () => {
-  for (const mode of ["light", "dark"] as const) {
-    test(`mist ${mode}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.addInitScript((theme) => {
-        localStorage.setItem("zk-docs-site-identity", "mist");
-        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
-        localStorage.setItem("theme", theme);
-      }, mode);
-      await page.goto("/", { waitUntil: "networkidle" });
-      const section = page.locator("#components");
-      await section.scrollIntoViewIfNeeded();
-      await expect(section.getByRole("link", { name: /Browse all UI in the catalog/ })).toBeVisible();
-      await section.screenshot({ path: `test-results/home-maturity-gallery-${mode}.png` });
-    });
-  }
-});
-
-test("home entry-point links keep a decorative icon at tablet width and up", async ({ page }) => {
-  await page.setViewportSize({ width: 768, height: 900 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const entry = page.locator("#entry-points");
-  await expect(entry.getByRole("link", { name: "Start with buttons" }).locator("svg[aria-hidden='true']")).toHaveCount(1);
-  const overflow = await page.evaluate(
-    () => (document.querySelector("#home-page")?.scrollWidth ?? 0) <= document.documentElement.clientWidth + 1,
-  );
-  expect(overflow).toBe(true);
-});
-
-test.describe("home entry-point links light/dark (#753)", () => {
-  for (const mode of ["light", "dark"] as const) {
-    test(`mist ${mode}`, async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 900 });
-      await page.addInitScript((theme) => {
-        localStorage.setItem("zk-docs-site-identity", "mist");
-        localStorage.setItem("zk-docs-site-identity-opt-in", "1");
-        localStorage.setItem("theme", theme);
-      }, mode);
-      await page.goto("/", { waitUntil: "networkidle" });
-      const entry = page.locator("#entry-points");
-      await entry.scrollIntoViewIfNeeded();
-      await expect(entry.getByRole("link", { name: "Start with buttons" })).toBeVisible();
-      await entry.screenshot({ path: `test-results/home-scenario-titles-${mode}.png` });
-    });
-  }
-});
-
-test("home docs CTAs keep a decorative icon on phone (paste band)", async ({ page }) => {
+test("home paste band has no install control on phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(page.locator("#paste [data-home-full-steps] svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.locator("#paste [data-home-full-steps]")).toHaveCount(0);
+  await expect(page.locator("#paste [data-home-paste-lands]")).toBeVisible();
   await expect(page.locator("#ai-setup [data-docs-ctas]")).toHaveCount(0);
   await expect(page.locator("#proofs")).toHaveCount(0);
   const overflow = await page.evaluate(
@@ -286,18 +262,7 @@ test("home docs CTAs keep a decorative icon on phone (paste band)", async ({ pag
   expect(overflow).toBe(true);
 });
 
-test("home docs CTAs keep a decorative icon on tablet (catalog bands)", async ({ page }) => {
-  await page.setViewportSize({ width: 768, height: 900 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const entry = page.locator("#entry-points");
-  await expect(entry.getByRole("link", { name: "Start with buttons" }).locator("svg[aria-hidden='true']")).toHaveCount(1);
-  const overflow = await page.evaluate(
-    () => (document.querySelector("#home-page")?.scrollWidth ?? 0) <= document.documentElement.clientWidth + 1,
-  );
-  expect(overflow).toBe(true);
-});
-
-test.describe("home docs CTAs light/dark (#748)", () => {
+test.describe("home paste band light/dark (#748)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -307,11 +272,7 @@ test.describe("home docs CTAs light/dark (#748)", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const entry = page.locator("#entry-points");
-      await entry.scrollIntoViewIfNeeded();
-      await expect(entry.getByRole("link", { name: "Start with buttons" })).toBeVisible();
-      await entry.screenshot({ path: `test-results/home-cta-entry-${mode}.png` });
-      const paste = page.locator("#paste").getByRole("link", { name: "Full install steps" });
+      const paste = page.locator("#paste [data-home-paste-lands]");
       await paste.scrollIntoViewIfNeeded();
       await expect(paste).toBeVisible();
       await paste.screenshot({ path: `test-results/home-cta-scenarios-${mode}.png` });
@@ -319,7 +280,7 @@ test.describe("home docs CTAs light/dark (#748)", () => {
   }
 });
 
-test.describe("home section docs CTAs light/dark (#769)", () => {
+test.describe("home paste band light/dark (#769)", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -329,7 +290,7 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const paste = page.locator("#paste").getByRole("link", { name: "Full install steps" });
+      const paste = page.locator("#paste [data-home-paste-lands]");
       await paste.scrollIntoViewIfNeeded();
       await expect(paste).toBeVisible();
       await paste.screenshot({ path: `test-results/home-section-cta-install-${mode}.png` });
@@ -338,7 +299,7 @@ test.describe("home section docs CTAs light/dark (#769)", () => {
   }
 });
 
-test.describe("home hero and proofs docs CTAs light/dark", () => {
+test.describe("home header primary CTA light/dark", () => {
   for (const mode of ["light", "dark"] as const) {
     test(`mist ${mode}`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -348,27 +309,12 @@ test.describe("home hero and proofs docs CTAs light/dark", () => {
         localStorage.setItem("theme", theme);
       }, mode);
       await page.goto("/", { waitUntil: "networkidle" });
-      const hero = page.getByRole("link", { name: "Get started" }).first();
-      await hero.scrollIntoViewIfNeeded();
-      await expect(hero).toBeVisible();
-      await hero.screenshot({ path: `test-results/home-hero-docs-cta-${mode}.png` });
-      const catalog = page.getByRole("link", { name: "Browse catalog" }).first();
-      await catalog.scrollIntoViewIfNeeded();
-      await expect(catalog).toBeVisible();
-      await catalog.screenshot({ path: `test-results/home-proofs-theme-cta-${mode}.png` });
+      const getStarted = page.getByRole("link", { name: siteChromeCopy.getStarted }).first();
+      await getStarted.scrollIntoViewIfNeeded();
+      await expect(getStarted).toBeVisible();
+      await getStarted.screenshot({ path: `test-results/home-header-docs-cta-${mode}.png` });
     });
   }
-});
-
-test("home entry-point links have unique accessible names", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/", { waitUntil: "networkidle" });
-  const entry = page.locator("#entry-points");
-  await expect(entry.getByRole("link", { name: "Start with buttons" })).toBeVisible();
-  await expect(entry.getByRole("link", { name: "Open agent setup docs" })).toBeVisible();
-  const scenarioLink = entry.getByRole("link", { name: "Start with buttons" });
-  await scenarioLink.click();
-  await page.waitForURL("**/docs/ui/**", { timeout: 10000 });
 });
 
 test("home has no nested interactive elements", async ({ page }) => {
@@ -389,26 +335,26 @@ test("home has no nested interactive elements", async ({ page }) => {
   expect(nested).toEqual([]);
 });
 
-test("home get-started hash lands on the combined paste, not an install panel", async ({ page }) => {
+test("home get-started hash lands on the paste band, not an install panel", async ({ page }) => {
   await page.goto(`#get-started`, { waitUntil: "networkidle" });
-  await expect(page.locator("#get-started [data-setup-entry='combined']")).toBeVisible();
+  await expect(page.locator("#get-started")).toBeVisible();
+  await expect(page.locator("#get-started [data-setup-entry]")).toHaveCount(0);
+  await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
   await expect(page.locator("#install-or-copy")).toHaveCount(0);
   await expect(page.locator("#get-started [data-home-ai-setup]")).toHaveCount(0);
   await expect(page.locator("#get-started [data-home-way]")).toHaveCount(0);
-  await expect(page.locator("#get-started").getByRole("link", { name: "Full install steps" })).toHaveAttribute(
-    "href",
-    "/docs/getting-started#install-or-copy",
-  );
+  await expect(page.locator("#paste [data-home-full-steps]")).toHaveCount(0);
+  await expect(page.locator("#get-started [data-home-paste-lands]")).toBeVisible();
 });
 
-test("home has no registry brick grid; catalog link lives in families", async ({ page }) => {
+test("home has no registry brick grid; catalog link lives in the header", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`#paste`, { waitUntil: "networkidle" });
   await expect(page.locator("#install-or-copy")).toHaveCount(0);
   await expect(page.locator("[data-registry-bricks]")).toHaveCount(0);
-  const catalog = page.getByRole("link", { name: /Browse all UI in the catalog/ });
+  const catalog = page.getByRole("link", { name: "Catalog", exact: true }).first();
   await catalog.scrollIntoViewIfNeeded();
-  await expect(catalog).toHaveAttribute("href", "/catalog?area=ui");
+  await expect(catalog).toHaveAttribute("href", "/catalog");
   const overflow = await page.evaluate(
     () => (document.querySelector("#home-page")?.scrollWidth ?? 0) <= document.documentElement.clientWidth + 1,
   );
@@ -421,12 +367,12 @@ test("home search opens from the header", async ({ page }) => {
   await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10000 });
 });
 
-test("home keyboard: tab reaches an entry-point CTA", async ({ page }) => {
+test("home keyboard: tab reaches Catalog", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   let found = false;
   for (let i = 0; i < 50; i++) {
     const active = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
-    if (active.includes("Start with buttons")) {
+    if (active === "Catalog" || active.includes("Catalog")) {
       found = true;
       break;
     }
@@ -448,26 +394,6 @@ test.describe("persona evidence screenshots", () => {
     const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
   });
-});
-
-test("home component families link only to live docs pages, and Overlays keeps its promise", async ({ page, request }) => {
-  await page.goto("/", { waitUntil: "networkidle" });
-  const section = page.locator("#components");
-  const overlays = section.locator("[data-home-component-families] > div > div").filter({ hasText: "Overlays" });
-  const names = await overlays.locator("a").allTextContents();
-  for (const expected of ["Dialog", "Drawer", "Popover", "Dropdown menu", "Tooltip"]) {
-    expect(names).toContain(expected);
-  }
-  await expect(overlays.locator("[data-family-title]")).toHaveText("Overlays");
-  await expect(overlays.locator("[data-family-title] a")).toHaveCount(0);
-  const hrefs = await section.locator("[data-home-component-families] > div a").evaluateAll((links) => [
-    ...new Set(links.map((link) => (link as HTMLAnchorElement).getAttribute("href") ?? "")),
-  ]);
-  for (const href of hrefs) {
-    expect(href.startsWith("/docs/"), href).toBe(true);
-    const response = await request.get(href);
-    expect(response.status(), href).toBe(200);
-  }
 });
 
 test("the identity dock swatch keeps a quiet border", async ({ page }) => {

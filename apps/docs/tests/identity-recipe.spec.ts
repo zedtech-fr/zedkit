@@ -6,8 +6,8 @@ import {
   SCALAR_KEYS,
   parseIdentityEditorSearch,
   serializeIdentityEditorSearch,
-} from "../lib/identity-editor-search";
-import { parseRecipe, serializeRecipe } from "../lib/identity-recipe";
+} from "../features/identity/ui/identity-editor-search";
+import { parseRecipe, serializeRecipe } from "../features/identity/ui/identity-recipe";
 
 /** The export is a recipe (see the export copy). These tests pin what that recipe preserves. */
 
@@ -61,6 +61,29 @@ test("dark colours that were set by hand come back kept, generated ones do not",
   expect(manualResult.darkKept).toEqual(["accent"]);
 });
 
+test("a dark-* param that matches the generated pair is not kept", () => {
+  const generated = withIdentityDarkPair(clone(identityPresets.mist));
+  const restored = parseIdentityEditorSearch(
+    `?identity=mist&dark-accent=${encodeURIComponent(generated.dark.accent)}`,
+  );
+  expect(restored.darkKept).toEqual([]);
+  expect(restored.tokens.dark.accent).toBe(generated.dark.accent);
+});
+
+test("dark that differs from the generated pair is not kept without a dark-* param", () => {
+  const generated = withIdentityDarkPair(clone(identityPresets.press));
+  const differs = LIGHT_KEYS.filter((key) => identityPresets.press.dark[key] !== generated.dark[key]);
+  expect(differs.length).toBeGreaterThan(0);
+
+  const presetLink = parseIdentityEditorSearch("?identity=press");
+  expect(presetLink.darkKept).toEqual([]);
+  expect(presetLink.tokens.dark).toEqual(identityPresets.press.dark);
+
+  const lightOnly = parseIdentityEditorSearch(`?identity=press&primary=${encodeURIComponent("10 50% 30%")}`);
+  expect(lightOnly.darkKept).toEqual([]);
+  expect(lightOnly.tokens.dark).toEqual(identityPresets.press.dark);
+});
+
 test("the recipe keeps independent light and dark palettes (no flattening to one palette)", () => {
   const result = parseRecipe(serializeRecipe(identityPresets.press));
   if (!result.ok) throw new Error("import failed");
@@ -100,6 +123,7 @@ test.describe("the editor link carries the whole recipe", () => {
     const restored = parseIdentityEditorSearch(serializeIdentityEditorSearch("press", edited, true));
     expect(restored.tokens).toEqual(edited);
     expect(restored.darkPreview).toBe(true);
+    expect(restored.darkKept).toEqual(["primary"]);
   });
 
   test("an older link without font keys still opens the preset's own fonts", () => {

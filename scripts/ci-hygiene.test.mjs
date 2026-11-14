@@ -29,6 +29,23 @@ describe("ci hygiene job", () => {
       assert.ok(hygiene.includes(script), `hygiene job lost ${script}`);
     }
   });
+
+  it("skips binary files and PNGs in the private-refs content scan", () => {
+    const src = readFileSync(join(root, "scripts/check-no-private-refs.sh"), "utf8");
+    assert.match(src, /git grep -IinE/);
+    assert.match(src, /':!\*\.png'/);
+    assert.match(src, /git ls-files -z --others --exclude-standard/);
+    assert.match(src, /xargs -0 grep -IHinE/);
+  });
+
+  it("allowlists the public live-service slug so callers write it in full", () => {
+    const src = readFileSync(join(root, "scripts/denylist-patterns.sh"), "utf8");
+    const tone = readFileSync(join(root, "scripts/check-tone.sh"), "utf8");
+    assert.match(src, /\$\{frag\}-bot/);
+    assert.match(src, /do not split them to dodge the scan/);
+    assert.match(tone, /_filter_public_live_slug/);
+    assert.match(tone, /public-slug/);
+  });
 });
 
 describe("ci-required aggregate", () => {
@@ -124,6 +141,29 @@ describe("docs-render job", () => {
       /^ {4}if: needs\.changes\.outputs\.docs == 'true' && needs\.changes\.outputs\.workflow_only != 'true'\s*$/m,
     );
   });
+
+  it("dumps serve log and curls port 3100 after e2e:routes fails", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    const afterRoutes = job.split("run e2e:routes")[1] ?? "";
+    assert.notEqual(afterRoutes, "", "docs-render lost e2e:routes");
+    assert.match(afterRoutes, /docs-start\.log/);
+    assert.match(afterRoutes, /127\.0\.0\.1:3100/);
+    assert.match(afterRoutes, /port 3100 refused/);
+    assert.match(afterRoutes, /port 3100 answered HTTP/);
+  });
+
+  it("restarts serve on exit until the EXIT trap kills the loop and the child", () => {
+    assert.notEqual(job, "", "docs-render job block not found");
+    const loop = job.match(/while\s+:;[\s\S]*?done/);
+    assert.equal(loop !== null, true, "docs-render must wrap serve in while :; ... done");
+    assert.match(loop[0], /serve@14\.2\.6/);
+    assert.match(job, /wait "\$\(cat \/tmp\/docs\.pid\)" \|\| true/);
+    assert.match(job, /\/tmp\/docs\.loop\.pid/);
+    assert.match(
+      job,
+      /trap 'kill "\$\(cat \/tmp\/docs\.loop\.pid\)" "\$\(cat \/tmp\/docs\.pid\)"/,
+    );
+  });
 });
 
 describe("nightly Chromium sitemap", () => {
@@ -138,6 +178,22 @@ describe("nightly Chromium sitemap", () => {
     assert.match(job, /DOCS_E2E_PROJECT: chromium/);
     assert.doesNotMatch(job, /DOCS_ROUTES/);
     assert.doesNotMatch(job, /DOCS_LOOKS/);
+    assert.match(job, /serve@14\.2\.6/);
+    const afterRoutes = job.split("run e2e:routes")[1] ?? "";
+    assert.notEqual(afterRoutes, "", "docs-render-chromium lost e2e:routes");
+    assert.match(afterRoutes, /docs-start\.log/);
+    assert.match(afterRoutes, /127\.0\.0\.1:3100/);
+    assert.match(afterRoutes, /port 3100 refused/);
+    assert.match(afterRoutes, /port 3100 answered HTTP/);
+    const loop = job.match(/while\s+:;[\s\S]*?done/);
+    assert.equal(loop !== null, true, "docs-render-chromium must wrap serve in while :; ... done");
+    assert.match(loop[0], /serve@14\.2\.6/);
+    assert.match(job, /wait "\$\(cat \/tmp\/docs\.pid\)" \|\| true/);
+    assert.match(job, /\/tmp\/docs\.loop\.pid/);
+    assert.match(
+      job,
+      /trap 'kill "\$\(cat \/tmp\/docs\.loop\.pid\)" "\$\(cat \/tmp\/docs\.pid\)"/,
+    );
     const smoke = nightly.split(/^ {2}docs-smoke-cross-browser:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
     assert.match(smoke, /firefox/);
     assert.match(smoke, /webkit/);
@@ -182,6 +238,60 @@ describe("test:registry globs", () => {
     const registryStep =
       checks.split(/- name: test:registry \(exclude deploy\/\*\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
     assert.doesNotMatch(registryStep, /node --test/, "inline node --test file list");
+  });
+
+  it("checks job runs pnpm knip", () => {
+    const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.match(checks, /^\s+- name: knip\n\s+run: pnpm knip$/m);
+  });
+
+  it("knip script is exact-pinned (no floating major)", () => {
+    assert.match(pkg.scripts.knip, /^pnpm dlx knip@\d+\.\d+\.\d+$/);
+  });
+
+  it("registry-deps build includes every dist test:registry imports", () => {
+    const checks = workflow.split(/^ {2}checks:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    const registryDeps =
+      checks.split(/- name: Build \(registry deps\)/m)[1]?.split(/^ {6}- /m)[0] ?? "";
+    assert.notEqual(registryDeps, "", "Build (registry deps) step not found");
+    for (const pkg of [
+      "@zedtech/zedkit-seo",
+      "@zedtech/zedkit-ui",
+      "@zedtech/zedkit-server",
+      "@zedtech/zedkit-live",
+    ]) {
+      assert.ok(registryDeps.includes(`--filter=${pkg}`), `registry-deps omitted ${pkg}`);
+    }
+  });
+});
+
+function knipJsonc() {
+  const text = readFileSync(join(root, "knip.jsonc"), "utf8").replace(/^\s*\/\/.*$/gm, "");
+  return JSON.parse(text);
+}
+
+function knipIgnoreGlobs(config) {
+  /** @type {Array<{ cwd: string, pattern: string }>} */
+  const globs = (config.ignore ?? []).map((pattern) => ({ cwd: root, pattern }));
+  for (const [workspace, body] of Object.entries(config.workspaces ?? {})) {
+    const cwd = workspace === "." ? root : join(root, workspace);
+    for (const pattern of body.ignore ?? []) globs.push({ cwd, pattern });
+  }
+  return globs;
+}
+
+describe("knip ignore paths", () => {
+  it("every ignore path still matches a tracked file", () => {
+    const tracked = new Set(
+      execSync("git ls-files", { cwd: root, encoding: "utf8" }).trim().split("\n").filter(Boolean),
+    );
+    const missing = [];
+    for (const { cwd, pattern } of knipIgnoreGlobs(knipJsonc())) {
+      const prefix = cwd === root ? "" : `${cwd.slice(root.length + 1).split("\\").join("/")}/`;
+      const hits = globSync(pattern, { cwd }).map((file) => `${prefix}${file.split("\\").join("/")}`);
+      if (!hits.some((file) => tracked.has(file))) missing.push(pattern);
+    }
+    assert.deepEqual(missing, [], `knip ignore matches nothing tracked: ${missing.join(", ")}`);
   });
 });
 

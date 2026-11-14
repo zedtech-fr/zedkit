@@ -1,12 +1,14 @@
 import { Suspense } from "react";
 import { buildWebPageJsonLd } from "@zedtech/zedkit-seo";
+import { JsonLd } from "@zedtech/zedkit-seo/react";
 
-import { catalogCopy } from "@/app/i18n/catalog-copy";
-import { JsonLd } from "@/components/json-ld";
+import "./_catalog/catalog-shell.css";
+import { ListPageSkeleton } from "@zedtech/zedkit-ui";
+import { catalogCopy } from "./_catalog/i18n/catalog-copy";
 import { catalogIndex } from "@/content/catalog-index";
 import { docsPageMetadata } from "@/lib/docs-metadata";
 import { pageUrl } from "@/lib/site";
-import { CatalogViewFromUrl } from "@/ui/catalog/catalog-view";
+import { CatalogViewFromUrl } from "./_catalog/catalog-view";
 
 export const dynamic = "force-static";
 
@@ -24,13 +26,7 @@ export default function CatalogPage() {
   return (
     <div data-catalog-shell>
       <JsonLd data={jsonLd} />
-      <Suspense
-        fallback={
-          <div data-catalog-shell className="py-section-lg">
-            {catalogCopy.loading}
-          </div>
-        }
-      >
+      <Suspense fallback={<ListPageSkeleton label={catalogCopy.loading} />}>
         <CatalogViewFromUrl entries={catalogIndex} />
       </Suspense>
     </div>

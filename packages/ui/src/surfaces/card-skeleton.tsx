@@ -10,20 +10,29 @@ export interface CardSkeletonProps extends React.ComponentProps<"div"> {
   label?: string;
   /** Same sizing recipe as Card. */
   size?: "sm" | "lg" | undefined;
+  /** False when nested under a composed route skeleton (one wrapper status). */
+  announce?: boolean;
 }
 
 /**
  * Faithful loading shape of Card: header block plus three text lines
  * in the same bordered box, so content lands without shifting.
  */
-export function CardSkeleton({ label, className, size, ...props }: CardSkeletonProps) {
+export function CardSkeleton({
+  label,
+  className,
+  size,
+  announce = true,
+  ...props
+}: CardSkeletonProps) {
   const messages = useUiMessages();
   return (
     <div
       data-slot="card-skeleton"
       data-size={size}
-      role="status"
-      aria-label={label ?? messages.loading}
+      {...(announce
+        ? { role: "status" as const, "aria-label": label ?? messages.loading }
+        : { "aria-hidden": true as const })}
       className={cn(
         surfaceVariants({ variant: "solid", elevation: 2, radius: "xl" }),
         "rounded-(--zk-card-radius)",

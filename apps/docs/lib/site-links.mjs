@@ -1,12 +1,17 @@
 /** Shared site URLs for nav, footer, and CI link checks (import from TS and scripts). */
 
 export const SITE_GITHUB_URL = "https://github.com/zedtech-fr/zedkit";
+
+/** Kit file on GitHub for a docs-manifest `source` path under `packages/ui/src`. */
+export function kitUiSourceUrl(source) {
+  if (typeof source !== "string" || source.length === 0 || source.includes("..")) return null;
+  return `${SITE_GITHUB_URL}/blob/main/packages/ui/src/${source}`;
+}
 export const SITE_NPM_ORG_URL = "https://www.npmjs.com/org/zedtech";
 export const SITE_LICENSE_URL = "https://github.com/zedtech-fr/zedkit/blob/main/LICENSE";
 export const SITE_BUG_REPORT_URL =
   "https://github.com/zedtech-fr/zedkit/issues/new?template=bug_report.md";
-export const SITE_CHANGELOG_URL =
-  "https://github.com/zedtech-fr/zedkit/blob/main/packages/ui/CHANGELOG.md";
+export const SITE_COMPANY_URL = "https://zedtech.fr";
 
 /** Demo-only identity editor (not a catalog docs page). */
 export const IDENTITY_EDITOR_HREF = "/features/identity-editor";
@@ -31,18 +36,14 @@ export const SITE_HEADER_INTERNAL_PATHS = [
 
 /**
  * Footer hrefs and catalog keys. Labels live in `siteChromeCopy.footer.links`.
- * @param {string} changelogHref
- * @returns {Array<{ copyKey: "documentation" | "catalog" | "startWithoutWritingCode" | "mitLicense" | "sourceRepository" | "npmOrganisation" | "reportABug" | "uiChangelog"; href: string; external: boolean }>}
+ * @returns {Array<{ copyKey: "docs" | "catalog" | "github" | "npm" | "company"; href: string; external: boolean }>}
  */
-export function siteFooterLinkSpecs(changelogHref) {
+export function siteFooterLinkSpecs() {
   return [
-    { copyKey: "documentation", href: "/docs", external: false },
+    { copyKey: "docs", href: "/docs", external: false },
     { copyKey: "catalog", href: "/catalog", external: false },
-    { copyKey: "startWithoutWritingCode", href: "/docs/start-without-writing-code", external: false },
-    { copyKey: "mitLicense", href: SITE_LICENSE_URL, external: true },
-    { copyKey: "sourceRepository", href: SITE_GITHUB_URL, external: true },
-    { copyKey: "npmOrganisation", href: SITE_NPM_ORG_URL, external: true },
-    { copyKey: "reportABug", href: SITE_BUG_REPORT_URL, external: true },
-    { copyKey: "uiChangelog", href: changelogHref, external: true },
+    { copyKey: "github", href: SITE_GITHUB_URL, external: true },
+    { copyKey: "npm", href: SITE_NPM_ORG_URL, external: true },
+    { copyKey: "company", href: SITE_COMPANY_URL, external: true },
   ];
 }

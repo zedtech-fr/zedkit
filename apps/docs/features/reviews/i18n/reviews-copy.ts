@@ -2,8 +2,7 @@ export const reviewsCopy = {
   metadata: {
     list: {
       title: "Issues",
-      description:
-        "Public issues with exportable runs on zedkit. Switch identity, light or dark, and density on the page.",
+      description: "Public work log of how each issue was planned, built, and reviewed.",
     },
     issue: {
       title: "Issue",
@@ -38,19 +37,33 @@ export const reviewsCopy = {
   },
   list: {
     title: "Issues",
-    description: "Public issues with at least one exportable run. The preview look stays on this section.",
-    empty: "Public issues will show up here when the first exportable run exists.",
+    description: "Public work log of how each issue was planned, built, and reviewed.",
+    empty: "No public runs yet",
+    recoveryLabel: "Back to home",
+    openList: "Issue list",
+    missing: "This issue or pull request is not on the public list.",
+    missingNext: "Choose another from the list.",
     linkedPr: "Pull request",
     linkedPrs: "Pull requests",
+    githubIssue: "Issue",
+    githubPull: "PR",
     unlinkedTitle: "Unlinked pull requests",
     unlinkedDescription:
       "These runs are not joined to a GitHub issue yet. They stay reachable here and from old review URLs.",
     run: "run",
     runs: "runs",
+    took: "Took",
+    duration: "Duration",
+    finished: "Finished",
+    started: "Started",
+    opensInNewTab: "opens in a new tab",
   },
   issue: {
     back: "All issues",
     timeline: "Timeline",
+    replaced: "Replaced by newer run",
+    failedReplaced: "Failed — replaced by a newer run",
+    viewLog: "View log",
     // Defensive: zero-entry issues are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this issue.",
     missing: "This issue is not on the public list.",
@@ -58,9 +71,15 @@ export const reviewsCopy = {
   unlinked: {
     back: "All issues",
     title: "Unlinked pull request",
-    missing: "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
+    missing:
+      "This URL is for unlinked pull requests. Linked PRs are listed on their issue page.",
     // Defensive: zero-entry PRs are dropped before render (toPublicIndex, createComposedReviewPort).
     timelineEmpty: "No exportable runs on this pull request.",
+  },
+  loadError: {
+    title: "Could not load public runs",
+    description:
+      "GitHub or the runs API did not answer. Try again later, or choose another issue.",
   },
   run: {
     backToIssue: "Back to the issue",
@@ -71,22 +90,11 @@ export const reviewsCopy = {
     noLive: "No hosted live console URL is available for this run.",
     missing: "This run is not on the public list.",
   },
-  appearance: {
-    legend: "Preview look",
-    hint: "This changes the issues preview, not the site.",
-    identity: "Identity",
-    mode: "Dark preview",
-    density: "Density",
-    densityDefault: "Default",
-    densityCompact: "Compact",
-    reset: "Reset",
-    advanced: "Advanced token editor",
-  },
   type: {
     plan: "Plan",
-    implement: "Implement",
+    implement: "Implementation",
     review: "Review",
-    improve: "Improve from review",
+    improve: "Follow-up after review",
     "dry-run": "Dry run",
   },
   status: {
@@ -95,8 +103,8 @@ export const reviewsCopy = {
     failed: "Failed",
   },
   verdict: {
-    approve: "Approve",
-    "request-changes": "Request changes",
+    approve: "Approved",
+    "request-changes": "Changes requested",
     comment: "Comment",
   },
   state: {

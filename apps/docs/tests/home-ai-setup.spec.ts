@@ -1,16 +1,16 @@
 import { expect, test } from "@playwright/test";
 
-import { MAP_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
-import { homePasteCopy } from "../ui/home/i18n/home-paste-copy";
-import { homeSameIdeaCopy } from "../ui/home/i18n/home-same-idea-copy";
-import { homeSixSentencesCopy } from "../ui/home/i18n/home-six-sentences-copy";
+import { MAP_AI_UI_SETUP_MINI_PROMPT } from "../lib/ai-setup-onboarding.generated";
+import { homeHeroCopy } from "../app/(home)/_home/i18n/home-hero-copy";
+import { homeSameIdeaCopy } from "../app/(home)/_home/i18n/home-same-idea-copy";
+import { homeSixSentencesCopy } from "../app/(home)/_home/i18n/home-six-sentences-copy";
 
 test.describe("home paste band", () => {
   test.use({
     permissions: ["clipboard-read", "clipboard-write"],
   });
 
-  test("sits after the same-idea band, copies the combined prompt, links Getting started", async ({
+  test("sits after the same-idea band, hashes land; hero copies the map prompt", async ({
     page,
     context,
   }) => {
@@ -22,10 +22,15 @@ test.describe("home paste band", () => {
     await expect(paste).toBeVisible();
     await expect(paste.getByRole("heading", { level: 2, name: "Paste one line. Go to lunch." })).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: homeSameIdeaCopy.section.title })).toBeVisible();
-    await expect(page.locator("[data-home-same-idea-column]")).toHaveCount(2);
-    await expect(page.locator("[data-home-same-idea-column='together']")).toHaveCount(0);
+    await expect(page.locator("[data-home-same-idea-column]")).toHaveCount(3);
+    await expect(page.locator("[data-home-same-idea-column='together']")).toHaveCount(1);
+    await expect(
+      page.getByRole("heading", { level: 3, name: homeSameIdeaCopy.lands.heading }),
+    ).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: homeSixSentencesCopy.section.title })).toBeVisible();
+    await expect(page.getByText(homeSixSentencesCopy.section.description)).toBeVisible();
     await expect(page.locator("[data-home-six-sentences] li")).toHaveCount(6);
+    await expect(page.getByRole("heading", { name: "What the kit is" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "What you get" })).toHaveCount(0);
 
     const hero = await page.locator("[data-home-hero-band]").boundingBox();
@@ -41,24 +46,27 @@ test.describe("home paste band", () => {
 
     await expect(page.locator("#ai-setup")).toBeVisible();
     await expect(page.locator("#get-started")).toBeVisible();
-    await expect(paste.locator("[data-setup-entry='combined']")).toBeVisible();
-    await expect(paste.locator("[data-setup-entry='ai']")).toHaveCount(0);
-    await expect(paste.locator("[data-setup-entry='ui']")).toHaveCount(0);
-    await expect(paste.locator("[data-setup-entry='suggest']")).toHaveCount(0);
-    await expect(paste.getByRole("button", { name: /Copy/ })).toHaveCount(1);
+    await expect(paste.locator("[data-setup-entry]")).toHaveCount(0);
+    await expect(page.locator("[data-home-hero-prompt]")).toHaveCount(1);
+    await expect(page.locator("[data-home-hero-lead] [data-setup-entry]")).toHaveCount(0);
+    await expect(page.locator("[data-home-hero-prompt]").getByRole("button", { name: /Copy/ })).toHaveCount(1);
 
-    await paste.getByRole("button", { name: "Copy combined setup prompt" }).click();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_SETUP_MINI_PROMPT);
+    await page.locator("[data-home-hero-prompt]").getByRole("button", { name: "Copy prompt", exact: true }).click();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(MAP_AI_UI_SETUP_MINI_PROMPT);
 
-    await expect(paste.getByRole("link", { name: "Full install steps" })).toHaveAttribute(
-      "href",
-      homePasteCopy.fullStepsHref,
-    );
+    await expect(paste.locator("[data-home-full-steps]")).toHaveCount(0);
+    await expect(paste.locator("[data-home-paste-lands]")).toBeVisible();
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Code that's checked. Screens that match.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(homeHeroCopy.hero.title);
+    await expect(page.locator("[data-home-hero-lead]").getByRole("tablist")).toHaveCount(0);
+    await expect(page.locator("#home-hero-prompt-caption")).toHaveCount(0);
+    await expect(page.locator("[data-home-hero-sub]")).toHaveText(homeHeroCopy.hero.sub);
 
     await page.setViewportSize({ width: 320, height: 844 });
-    await expect(paste.locator("[data-setup-entry='combined']")).toBeVisible();
+    await expect(page.locator("#paste")).toBeVisible();
+    await expect(page.locator("#ai-setup")).toBeVisible();
+    await expect(page.locator("#get-started")).toBeVisible();
+    await expect(paste.locator("[data-setup-entry]")).toHaveCount(0);
   });
 });
 

@@ -1,6 +1,6 @@
 import { parsePublicReviewSnapshot } from "../model/parse-snapshot.ts";
 import { createComposedReviewPort } from "../model/port-from-index.ts";
-import { liveRunsToIndex, toPublicIndex, toPublicReviews } from "../model/public-review.ts";
+import { HOSTED_LIVE_HREF_PREFIX, liveRunsToIndex, toPublicIndex, toPublicReviews } from "../model/public-review.ts";
 import type {
   LiveDecision,
   LiveItemDetail,
@@ -30,7 +30,7 @@ const FIXTURE_INDEX = {
           durationMs: 420000,
           models: ["cursor-grok-4.6-high"],
           verdict: null,
-          liveUrl: "https://example.test/live/run-108-impl",
+          liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
         },
         {
           id: "108-implement",
@@ -41,7 +41,7 @@ const FIXTURE_INDEX = {
           durationMs: 2400000,
           models: ["cursor-grok-4.6-high"],
           verdict: null,
-          liveUrl: "https://example.test/live/run-108-impl",
+          liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-108-impl`,
         },
         {
           id: "108-review",
@@ -52,7 +52,7 @@ const FIXTURE_INDEX = {
           durationMs: 900000,
           models: ["cursor-grok-4.6-high"],
           verdict: "approve" as const,
-          liveUrl: "https://example.test/live/run-108-review",
+          liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-108-review`,
         },
         {
           id: "108-improve",
@@ -63,7 +63,7 @@ const FIXTURE_INDEX = {
           durationMs: 780000,
           models: ["cursor-grok-4.6-high"],
           verdict: null,
-          liveUrl: "https://example.test/live/run-108-improve",
+          liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-108-improve`,
         },
       ],
     },
@@ -103,7 +103,7 @@ const FIXTURE_INDEX = {
           durationMs: null,
           models: ["cursor-grok-4.6-high"],
           verdict: null,
-          liveUrl: "https://example.test/live/run-110-impl",
+          liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-110-impl`,
         },
       ],
     },
@@ -149,7 +149,7 @@ const FIXTURE_INDEX = {
           durationMs: 480000,
           models: ["cursor-grok-4.6-high"],
           verdict: "comment" as const,
-          liveUrl: "https://example.test/live/run-54-review",
+          liveUrl: `${HOSTED_LIVE_HREF_PREFIX}run-54-review`,
         },
       ],
     },
@@ -252,7 +252,7 @@ const FIXTURES: readonly PublicLiveRun[] = [
       summary: "The public review section is ready to merge.",
       notes: [
         {
-          text: "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history. Share the preview look from the Appearance panel; token drafts stay on the advanced editor.",
+          text: "The section root is the list, never a blank landing. Verdict, confidence, and the short summary stay readable in a dense page of notes, links, and run history.",
         },
       ],
     }),

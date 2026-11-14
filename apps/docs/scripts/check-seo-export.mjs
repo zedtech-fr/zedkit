@@ -7,7 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 // eslint-disable-next-line no-restricted-imports -- repo-root registry.json
 import { loadRegistryBrickNames } from "../../../scripts/registry/catalog.mjs";
-import { SITE_CHANGELOG_URL, siteFooterLinkSpecs } from "../lib/site-links.mjs";
+import { siteFooterLinkSpecs } from "../lib/site-links.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, "..");
@@ -180,8 +180,8 @@ export function checkNotFound(html) {
 
 export function checkSiteShell(html, label, footerSpecs) {
   const errors = [];
-  if (!html.includes("Maintained by ZED TECH")) {
-    errors.push(`${label}: missing maintainer footer text`);
+  if (!html.includes("by Zed Tech · MIT")) {
+    errors.push(`${label}: missing footer credit text`);
   }
   for (const { copyKey, href } of footerSpecs) {
     if (!html.includes(href)) {
@@ -260,7 +260,7 @@ function main() {
   const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://zedkit.app").replace(/\/$/, "");
   const errors = [];
   let sitemapUrlCount = 0;
-  const footerSpecs = siteFooterLinkSpecs(SITE_CHANGELOG_URL);
+  const footerSpecs = siteFooterLinkSpecs();
 
   const robotsPath = requireFile(outDir, "robots.txt", errors);
   if (robotsPath) errors.push(...checkRobots(readFileSync(robotsPath, "utf8"), base));

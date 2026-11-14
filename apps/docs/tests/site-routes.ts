@@ -1,4 +1,5 @@
-import { registryJsonSmokePaths } from "../lib/registry-smoke-urls";
+import { registryBrickNames } from "../content/registry-site";
+import { registryJsonSmokePathsFromNames } from "../scripts/registry-smoke-urls.mjs";
 
 /** Routes exercised by site-semantics e2e (#300). Flip flags when landing/tutorial PRs land. */
 export interface SiteAuditRoute {
@@ -8,7 +9,7 @@ export interface SiteAuditRoute {
   strictSemantics: boolean;
   /** Nested-interactive + link names without axe (home until layout axe is stable). */
   linkAndInteractiveAudit?: boolean;
-  /** Nested live preview to skip in page-level axe (same idea as `[data-home-dashboard-card]`). */
+  /** Nested live preview to skip in page-level axe (kit specimen). */
   axeExclude?: string;
   /** Extra axe rules off for this route (nested landmarks in a live preview). */
   extraAxeOff?: string[];
@@ -69,4 +70,4 @@ export const SITE_AUDIT_ROUTES: SiteAuditRoute[] = [
 ];
 
 /** Registry URLs advertised on doc pages; must stay 200 on the served export. */
-export const REGISTRY_SMOKE_URLS = registryJsonSmokePaths();
+export const REGISTRY_SMOKE_URLS = registryJsonSmokePathsFromNames(registryBrickNames);
