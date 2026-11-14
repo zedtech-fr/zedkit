@@ -147,21 +147,44 @@ test("catalog results grid uses a shrinkable one-column track below xl and three
   const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
   const body = functionSource(results, "CatalogResultsBody");
   assert.match(body, /data-catalog-results=/);
-  assert.match(body, /className="grid overflow-hidden"/);
-  assert.doesNotMatch(body, /grid-trio/);
+  assert.match(body, /className="grid"/);
+  assert.doesNotMatch(body, /overflow-hidden/);
+  assert.doesNotMatch(body, /overflow-clip/);
   assert.doesNotMatch(body, /data-allow-clip/);
+  assert.doesNotMatch(body, /grid-trio/);
   const start = css.indexOf("[data-catalog-shell] [data-catalog-results]");
   assert.notEqual(start, -1, "missing results rule");
   const open = css.indexOf("{", start);
   const close = css.indexOf("}", open);
   const baseRule = css.slice(start, close + 1);
   assert.match(baseRule, /grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+  assert.doesNotMatch(baseRule, /overflow:\s*(?:hidden|clip)/);
   assert.doesNotMatch(baseRule, /repeat\(3/);
   const media = css.match(
     /@media \(width >= 80rem\)\s*\{[\s\S]*?\[data-catalog-shell\] \[data-catalog-results\]\s*\{[\s\S]*?\}/,
   );
   assert.equal(media !== null, true, "missing 80rem results track");
   assert.match(media[0], /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+});
+
+test("catalog results hairlines are a gap, not a clipped negative margin", () => {
+  const css = read("app/(site)/catalog/_catalog/catalog-shell.css");
+  const start = css.indexOf("[data-catalog-shell] [data-catalog-results]");
+  assert.notEqual(start, -1, "missing results rule");
+  const open = css.indexOf("{", start);
+  const close = css.indexOf("}", open);
+  const baseRule = css.slice(start, close + 1);
+  assert.match(baseRule, /gap:\s*1px/);
+  assert.match(baseRule, /background-color:\s*hsl\(var\(--border\)\)/);
+  assert.doesNotMatch(baseRule, /overflow:\s*(?:hidden|clip)/);
+  const cellStart = css.indexOf("[data-catalog-shell] [data-catalog-cell]");
+  assert.notEqual(cellStart, -1, "missing cell rule");
+  const cellOpen = css.indexOf("{", cellStart);
+  const cellClose = css.indexOf("}", cellOpen);
+  const cellRule = css.slice(cellStart, cellClose + 1);
+  assert.match(cellRule, /background-color:\s*hsl\(var\(--card\)\)/);
+  assert.doesNotMatch(cellRule, /margin-(?:right|bottom):\s*-1px/);
+  assert.doesNotMatch(cellRule, /border-(?:right|bottom)/);
 });
 
 test("catalog title row wraps and shrinks so the badge stays in the card", () => {
