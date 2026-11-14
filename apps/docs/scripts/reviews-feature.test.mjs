@@ -1665,7 +1665,8 @@ test("load error view uses the route header and an All issues action, never relo
   assert.match(view, /title=\{title\}/);
   assert.match(view, /description=\{description\}/);
   assert.match(view, /copy\.issue\.back/);
-  assert.match(view, /href="\/issues"/);
+  assert.match(view, /recoveryHref = "\/issues"/);
+  assert.match(view, /href=\{recoveryHref\}/);
   assert.match(view, /actions=/);
   assert.doesNotMatch(view, /window\.location\.reload/);
   assert.doesNotMatch(view, /copy\.list\.title/);
