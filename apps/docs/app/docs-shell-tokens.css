@@ -139,6 +139,18 @@ html[data-docs-shell].dark[data-identity] {
 }
 
 /*
+ * Copy-command well on the inverted zinc band: #paste remaps --background
+ * to zinc, so an unpinned well matches the Copy fill and the control
+ * disappears. Pin the same light-pill pair the kit badges already use.
+ * Value ink is set here because kit Text inherits the band colour.
+ */
+#home-page #paste [data-home-copy-command] {
+  --background: var(--zk-site-action-foreground);
+  --foreground: var(--zk-site-action);
+  color: hsl(var(--zk-site-action));
+}
+
+/*
  * Looks caption sits on the page, not zinc. .home-metadata-copy still
  * paints leftover light --zk-subtle-foreground; muted-foreground is the
  * kit 4.5:1 text pair (light = docs-shell remap, dark = identity).
@@ -315,9 +327,9 @@ html[data-docs-shell].dark[data-identity] {
 }
 
 /*
- * Hero and closing share one attached command field. One border around
- * the row; the site-action Copy sits on the right. The value wraps so
- * the page does not grow sideways on 390.
+ * Hero, paste, and closing share one attached command field. One border
+ * around the row; the site-action Copy sits on the right. The value wraps
+ * so the page does not grow sideways on 390.
  */
 #home-page [data-home-copy-command] {
   display: flex;

@@ -449,6 +449,15 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(paste, /id="get-started"/);
   assert.equal((paste.match(/tabIndex=\{-1\}/g) ?? []).length, 2);
   assert.doesNotMatch(paste, /fullStepsHref|landsHeading|nestLands|data-home-full-steps/);
+  assert.match(paste, /HomeCopyCommandField/);
+  assert.match(paste, /\bMAP_AI_UI_SETUP_MINI_PROMPT\b/);
+  assert.match(paste, /data-home-paste-prompt/);
+  assert.match(
+    paste,
+    /id="get-started"[\s\S]*?data-home-paste-prompt[\s\S]*?HOME_PASTE_TIMELINE_GRID/,
+  );
+  assert.match(paste, /aria-label=\{homePasteCopy\.promptAriaLabel\}/);
+  assert.match(paste, /copyLabel=\{homePasteCopy\.promptCopyLabel\}/);
   assert.doesNotMatch(paste, /Button|HomeLink|DocsActionLabel/);
   assert.match(paste, /spacing="lg"/);
   assert.match(paste, /gap="blocks"/);
@@ -553,6 +562,10 @@ test("home below-hero order is same-idea, six-sentences, paste, identities, limi
   assert.match(pasteCopy, /data-identity="glass"/);
   assert.match(pasteCopy, /\.agents\/design\.md/);
   assert.match(pasteCopy, /which components to use/);
+  assert.match(pasteCopy, /promptAriaLabel: "Paste setup prompt"/);
+  assert.match(pasteCopy, /promptCopyLabel: "Copy paste prompt"/);
+  assert.doesNotMatch(pasteCopy, /promptAriaLabel: "Setup prompt"/);
+  assert.doesNotMatch(pasteCopy, /promptCopyLabel: "Copy prompt"/);
   assert.doesNotMatch(pasteCopy, /combined prompt|copy field|SecretField/);
   assert.doesNotMatch(pasteCopy, /30 skills|13 agents|68 components|6 looks/);
   assert.doesNotMatch(pasteCopy, /\/docs\/getting-started#install-or-copy/);

@@ -129,6 +129,11 @@ function loadShell() {
     "paste kit badge remap",
   );
   const caption = ruleBody(css, /^#home-page \[data-identity-caption\]$/, "looks caption");
+  const copyIsland = ruleBody(
+    css,
+    /^#home-page #paste \[data-home-copy-command\]$/,
+    "paste copy-command island",
+  );
   const lookup = {
     "zk-site-action": tokenValue(site, "zk-site-action", "site-action"),
     "zk-site-action-foreground": tokenValue(site, "zk-site-action-foreground", "site-action-foreground"),
@@ -138,6 +143,8 @@ function loadShell() {
     lookup,
     band: parseTriplet(lookup["zk-site-action"]),
     fill: parseTriplet(lookup["zk-site-action-foreground"]),
+    copyWell: resolveTriplet(tokenValue(copyIsland, "background", "copy island --background"), lookup, "copy island"),
+    copyInk: resolveTriplet(tokenValue(copyIsland, "foreground", "copy island --foreground"), lookup, "copy island"),
     lightPageBackground: parseTriplet(tokenValue(lightPage, "background", "light page")),
     lightPageForeground: parseTriplet(tokenValue(lightPage, "foreground", "light page foreground")),
     lightMutedForeground: parseTriplet(tokenValue(lightPage, "muted-foreground", "light muted-foreground")),
@@ -172,6 +179,23 @@ test("paste band does not pin Glass light --accent", () => {
   const paste = ruleBody(css, /^#home-page #paste\[data-slot="section"\]$/, "#paste section");
   assert.doesNotMatch(paste, /262 85% 70%/);
   assert.doesNotMatch(css, /262 85% 70%/);
+});
+
+test("paste copy-command island keeps 4.5:1 value ink, well, and Copy on zinc in every identity and mode", () => {
+  const shell = loadShell();
+  assert.deepEqual(shell.copyWell, shell.fill);
+  assert.deepEqual(shell.copyInk, shell.band);
+  for (const id of IDENTITIES) {
+    for (const mode of MODES) {
+      identityPalette(id, mode);
+      const inkOnWell = contrast(shell.copyInk, shell.copyWell);
+      const wellOnBand = contrast(shell.copyWell, shell.band);
+      const copyInkOnFill = contrast(shell.fill, shell.band);
+      assert.ok(inkOnWell >= AA, `${id} ${mode} value ink on well ${inkOnWell.toFixed(2)}`);
+      assert.ok(wellOnBand >= AA, `${id} ${mode} well on zinc ${wellOnBand.toFixed(2)}`);
+      assert.ok(copyInkOnFill >= AA, `${id} ${mode} Copy ink on Copy fill ${copyInkOnFill.toFixed(2)}`);
+    }
+  }
 });
 
 test("paste kit badges keep 4.5:1 fill and ink on zinc in every identity and mode", () => {
