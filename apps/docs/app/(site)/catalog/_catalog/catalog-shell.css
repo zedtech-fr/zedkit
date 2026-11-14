@@ -65,9 +65,10 @@
 }
 
 [data-catalog-shell] [data-catalog-results] {
-  overflow: hidden;
   border-color: hsl(var(--border));
+  background-color: hsl(var(--border));
   grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
 }
 
 @media (width >= 80rem) {
@@ -77,10 +78,7 @@
 }
 
 [data-catalog-shell] [data-catalog-cell] {
-  margin-right: -1px;
-  margin-bottom: -1px;
-  border-right: 1px solid hsl(var(--border));
-  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
 }
 
 /* Two-letter titles (`cn`) are ~19px wide as a flex item. Floor is the 24px evidence hit target. */

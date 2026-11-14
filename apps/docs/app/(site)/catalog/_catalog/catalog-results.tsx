@@ -39,7 +39,7 @@ export function CatalogResultsBody({ filtered }: { filtered: CatalogIndexEntry[]
             elevation={0}
             radius="xl"
             padding="none"
-            className="grid overflow-hidden"
+            className="grid"
             data-catalog-results=""
           >
             {filtered.map((entry) => (
