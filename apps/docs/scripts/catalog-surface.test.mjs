@@ -184,6 +184,7 @@ test("catalog results hairlines are a gap, not a clipped negative margin", () =>
   const cellRule = css.slice(cellStart, cellClose + 1);
   assert.match(cellRule, /background-color:\s*hsl\(var\(--card\)\)/);
   assert.doesNotMatch(cellRule, /margin-(?:right|bottom):\s*-1px/);
+  assert.doesNotMatch(cellRule, /border-(?:right|bottom)/);
 });
 
 test("catalog title row wraps and shrinks so the badge stays in the card", () => {
