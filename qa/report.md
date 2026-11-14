@@ -80,6 +80,24 @@ rendered evidence below was collected by the caller)
   deliberately (named loading text kept; no Skeleton churn).
 - Note: the pre-existing `registry.json` worktree modification was
   normalized by the docs export build (tree clean for that file).
+- W5 reviews honesty: `ReviewLoadErrorView` takes `recoveryHref/Label`
+  (list route passes home, killing the self-link); `DetailMeta` now
+  renders on deep PR routes via shared export from
+  `review-issue-detail.tsx` (mirror deleted, unused imports cleaned);
+  empty state links home; log-cell keeps kit `hit-target`.
+  DONE, typecheck+lint green. Empty-state branch is typecheck-only
+  (sandbox has no network; list short-circuits to the error view).
+- W6 chrome a11y: skip link pins 44px on `:focus-visible` only
+  (parked box untouched); dead GitHub MutationObserver branch removed
+  (name was already SSR via `OffPathLink` — the branch never matched).
+  DONE, probe-verified (parked 122×44 offscreen; focused 122×44;
+  SSR == hydrated names), existing `skip-link.spec.ts` still passes.
+- W7 home head+copy: single `@graph` JSON-LD (count=1 verified);
+  demo pages `{index:false}` (noindex verified); H1 reframed as the
+  thin-wrapper principle; back link now "Back to identities". DONE.
+- Blocked (owner): full FR parity (EN-only by architecture);
+  canonical omission on 404s (kit API); a11y gate-coverage extensions
+  (no new E2E per constraints); inert-sweep narrowing (no coverage).
 
 ## Outstanding findings (not yet fixed)
 
