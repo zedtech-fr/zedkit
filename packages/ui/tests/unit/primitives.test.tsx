@@ -81,7 +81,7 @@ describe("primitives", () => {
 
   it.each([
     ["soft-success", "badge-soft-success", "text-success"],
-    ["soft-warning", "badge-soft-warning", "text-warning-foreground"],
+    ["soft-warning", "badge-soft-warning", "text-warning"],
     ["soft-danger", "badge-soft-destructive", "text-destructive"],
     ["soft-info", "badge-soft-info", "text-info"],
     ["soft-neutral", "muted-wash", "text-muted-foreground"],
@@ -97,7 +97,7 @@ describe("primitives", () => {
     expect(badge.className).toContain("focus-ring");
     expect(badge.className.split(/\s+/)).not.toContain("shadow");
     expect(badge.className).not.toMatch(/bg-[a-z-]+\/\d+/);
-    expect(badge.className.split(/\s+/)).not.toContain("text-warning");
+    expect(badge.className.split(/\s+/)).not.toContain("text-warning-foreground");
   });
 
   it("merges soft-info onto asChild link", () => {
