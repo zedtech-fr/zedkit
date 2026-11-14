@@ -79,6 +79,15 @@ describe("ci-required aggregate", () => {
   });
 });
 
+describe("workflow-lint", () => {
+  it("skips deleted workflow files before actionlint", () => {
+    const job = workflow.split(/^ {2}workflow-lint:/m)[1]?.split(/^ {2}\S/m)[0] ?? "";
+    assert.notEqual(job, "", "workflow-lint job block not found");
+    assert.match(job, /skipping deleted/);
+    assert.match(job, /existing\+=\("\$f"\)/);
+  });
+});
+
 describe("CI does not run browser E2E", () => {
   it("has no docs-render, docs-smoke, or ui-smoke jobs", () => {
     assert.doesNotMatch(workflow, /^ {2}docs-render:/m);

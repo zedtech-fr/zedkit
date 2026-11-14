@@ -99,6 +99,16 @@ jobs:
           else
             mapfile -t files < <(git ls-tree -r --name-only HEAD -- '.github/workflows/')
           fi
+          # git diff still lists deleted workflows; actionlint/yamllint cannot open them.
+          existing=()
+          for f in "${files[@]}"; do
+            if [ -f "$f" ]; then
+              existing+=("$f")
+            else
+              echo "workflow-lint: skipping deleted $f"
+            fi
+          done
+          files=("${existing[@]}")
           if [ ${#files[@]} -eq 0 ]; then
             echo "No workflow files in diff; skipping actionlint/yamllint."
             exit 0
