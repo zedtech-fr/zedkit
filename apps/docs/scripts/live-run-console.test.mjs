@@ -501,7 +501,7 @@ test("live console UI uses kit states and does not duplicate AgentConsole", () =
   assert.match(adapter, /pollingSource/);
 });
 
-test("live run routes omit look controls and inherit the site theme", () => {
+test("live run routes omit look controls and default to a dark preview", () => {
   const appearance = readFileSync(join(reviewsRoot, "ui/review-console-appearance.tsx"), "utf8");
   const view = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
   const states = readFileSync(join(reviewsRoot, "ui/review-live-console-states.tsx"), "utf8");
@@ -511,10 +511,10 @@ test("live run routes omit look controls and inherit the site theme", () => {
   assert.match(root, /IdentityScript/);
   assert.match(root, /<Provider>\{children\}<\/Provider>/);
   assert.match(appearance, /useReviewAppearanceScope/);
+  assert.match(appearance, /consoleScopeAppearance/);
   assert.match(listFrame, /useReviewAppearanceScope/);
-  assert.match(scope, /hasReviewAppearanceQuery/);
-  assert.match(scope, /identity: pin \? appearance\.identity : undefined/);
-  assert.match(scope, /mode: pin \? appearance\.mode : undefined/);
+  assert.match(scope, /window\.location\.search/);
+  assert.match(scope, /listScopeAppearance/);
   assert.doesNotMatch(appearance, /mode=\{appearance\.mode\}/);
   assert.doesNotMatch(appearance, /mode="light"/);
   assert.doesNotMatch(appearance, /DEFAULT_REVIEW_APPEARANCE/);

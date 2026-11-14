@@ -1,6 +1,7 @@
 import { tryCatch } from "@zedtech/zedkit-core";
 
 import { formatDuration } from "../feedback/format-duration.js";
+import type { StatusDotTone } from "../feedback/status-dot.js";
 import type { ZedkitUiMessages } from "../messages.js";
 
 export type AgentConsoleFindingDisposition = "kept" | "downgraded" | "dismissed";
@@ -31,10 +32,12 @@ export type AgentConsoleEntry =
 export type AgentConsoleItem = {
   id: string;
   name: string;
-  /** main | lens | second_pass | workflow | helper | observer | gate | other */
+  /** main | lens | second_pass | workflow | helper | subagent | observer | gate | other */
   kind: string;
   status: string;
   model: string;
+  /** Engine badge in the item header; falls back to model. */
+  engineLabel?: string | null;
   durationMs: number | null;
   toolCount: number;
   startedAt: number | null;
@@ -56,6 +59,8 @@ export type AgentConsoleRun = {
   /** Already a /10 score; do not multiply. */
   confidence: number | null;
   postedReviewHref: string | null;
+  /** True while the run is still live; shows a pulse in the sidebar header. */
+  running?: boolean;
 };
 
 export type AgentConsoleProps = {
@@ -66,6 +71,8 @@ export type AgentConsoleProps = {
   defaultSelectedId?: string;
   onSelectedIdChange?: (id: string) => void;
   className?: string;
+  /** Heading level for the selected item name. Standalone pages pass 1; embeds keep 2. */
+  headingLevel?: 1 | 2;
 };
 
 export type AgentConsoleGroup = {
@@ -81,22 +88,28 @@ const KIND_ORDER = ["main", "lens", "second_pass", "workflow", "helper", "observ
 const SHA_SHORT = 7;
 const HTTP_PROTOCOL = /^https?:$/i;
 
-const GROUP_LABEL: Record<(typeof KIND_ORDER)[number] | "gate", keyof AgentConsoleCopy> = {
+/** Live kinds that share a sidebar bucket: helpers run as `subagent`, gates sit with the lenses. */
+const KIND_ALIAS: Record<string, (typeof KIND_ORDER)[number]> = {
+  subagent: "helper",
+  gate: "lens",
+};
+
+const GROUP_LABEL: Record<(typeof KIND_ORDER)[number], keyof AgentConsoleCopy> = {
   main: "groupMain",
   lens: "groupLens",
   second_pass: "groupSecondPass",
   workflow: "groupWorkflow",
   helper: "groupHelper",
   observer: "groupObserver",
-  gate: "groupGate",
 };
 
 export function groupConsoleItems(items: readonly AgentConsoleItem[]): AgentConsoleGroup[] {
   const buckets = new Map<string, AgentConsoleItem[]>();
   for (const item of items) {
-    const list = buckets.get(item.kind);
+    const bucket = KIND_ALIAS[item.kind] ?? item.kind;
+    const list = buckets.get(bucket);
     if (list) list.push(item);
-    else buckets.set(item.kind, [item]);
+    else buckets.set(bucket, [item]);
   }
   const groups: AgentConsoleGroup[] = [];
   for (const kind of KIND_ORDER) {
@@ -104,11 +117,6 @@ export function groupConsoleItems(items: readonly AgentConsoleItem[]): AgentCons
     if (!list) continue;
     groups.push({ kind, items: list });
     buckets.delete(kind);
-  }
-  const gate = buckets.get("gate");
-  if (gate) {
-    groups.push({ kind: "gate", items: gate });
-    buckets.delete("gate");
   }
   for (const [kind, list] of buckets) {
     groups.push({ kind, items: list });
@@ -125,7 +133,8 @@ export function defaultConsoleSelectedId(
 }
 
 export function groupLabel(kind: string, copy: AgentConsoleCopy): string {
-  const key = GROUP_LABEL[kind as keyof typeof GROUP_LABEL];
+  const bucket = KIND_ALIAS[kind] ?? kind;
+  const key = GROUP_LABEL[bucket as keyof typeof GROUP_LABEL];
   return key ? copy[key] : kind;
 }
 
@@ -165,4 +174,60 @@ export function dispositionLabel(
   if (disposition === "kept") return copy.kept;
   if (disposition === "downgraded") return copy.downgraded;
   return copy.dismissed;
+}
+
+/** Live statuses arrive lowercase (`done`); badges read capitalized (`Done`). */
+export function statusLabel(status: string): string {
+  const trimmed = status.trim();
+  if (trimmed === "") return "";
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
+/** Dot tone for a console status: live pulses, done succeeds, failures warn. */
+export function statusTone(status: string, running: boolean): StatusDotTone {
+  if (running) return "active";
+  switch (status.trim().toLowerCase()) {
+    case "running":
+    case "starting":
+      return "active";
+    case "done":
+    case "completed":
+    case "ran":
+      return "success";
+    case "error":
+    case "failed":
+      return "danger";
+    case "aborted":
+    case "superseded":
+    case "interrupted":
+      return "warning";
+    default:
+      return "idle";
+  }
+}
+
+/** Live verdicts read uppercase with words split (`REQUEST CHANGES`). */
+export function verdictLabel(verdict: string | null): string | null {
+  if (verdict === null) return null;
+  const trimmed = verdict.trim();
+  if (trimmed === "") return null;
+  return trimmed.toUpperCase().replaceAll("_", " ");
+}
+
+/** Compact token counts (`868k`, `20.2k`, `1M`); bad values clamp to `0`. */
+export function compactTokenCount(value: number, locale: string): string {
+  if (!Number.isFinite(value) || value < 0) return "0";
+  if (value >= 1_000_000) {
+    const scaled = value / 1_000_000;
+    return `${new Intl.NumberFormat(locale, { maximumFractionDigits: value >= 10_000_000 ? 0 : 1 }).format(scaled)}M`;
+  }
+  if (value >= 1000) {
+    const digits = value >= 100_000 ? 0 : 1;
+    const scaled = value / 1000;
+    if (Number(scaled.toFixed(digits)) >= 1000) {
+      return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value / 1_000_000)}M`;
+    }
+    return `${new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(scaled)}k`;
+  }
+  return new Intl.NumberFormat(locale, { useGrouping: false }).format(value);
 }

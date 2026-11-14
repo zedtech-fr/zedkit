@@ -1599,16 +1599,19 @@ test("issues views drop the inline preview form and keep the shared frame", () =
     assert.match(source, /ReviewAppearanceFrame/);
   }
   const scope = readFileSync(join(reviewsRoot, "ui", "use-review-appearance-scope.ts"), "utf8");
+  const codec = readFileSync(join(reviewsRoot, "model", "review-appearance.ts"), "utf8");
   assert.match(frame, /ThemeScope/);
   assert.match(frame, /width="full"/);
   assert.match(frame, /zk-header-max-width/);
   assert.match(frame, /useReviewAppearanceScope/);
-  assert.match(scope, /parseReviewAppearance\(/);
   assert.match(scope, /window\.location\.search/);
-  assert.match(scope, /hasReviewAppearanceQuery/);
-  assert.match(scope, /identity: pin \? appearance\.identity : undefined/);
-  assert.match(scope, /mode: pin \? appearance\.mode : undefined/);
-  assert.match(scope, /identityPresets\[appearance\.identity\] \?\? identityPresets\.glass/);
+  assert.match(scope, /listScopeAppearance/);
+  assert.match(scope, /compactPreviewSpacing/);
+  assert.match(scope, /scope\.identity/);
+  assert.match(scope, /scope\.mode/);
+  assert.match(codec, /hasReviewAppearanceQuery\(search\)/);
+  assert.match(codec, /identity: undefined, mode: undefined/);
+  assert.match(codec, /identity: undefined, mode: "dark"/);
   assert.doesNotMatch(feature, /identity testing ground/);
   assert.doesNotMatch(feature, /render-function children/);
   assert.match(feature, /share-URL pin/);
@@ -2273,6 +2276,26 @@ test("live secret-like keys, bearer tokens, and home paths do not survive the pu
   assert.doesNotMatch(clean.items[0].entries[0].output, /\/home\/carol/);
 });
 
+test("activity and engine labels go through the public scrubber", () => {
+  const [clean] = toPublicReviews([
+    liveSample({
+      items: [
+        liveItem({
+          engine_label: "kit from /home/erin/kit",
+          last_activity: "Reading Bearer activitySecret1",
+        }),
+        liveItem({ id: "plain-1", engine_label: "kit · docs-9", last_activity: "Writing the note" }),
+      ],
+    }),
+  ]);
+  assert.match(clean.items[0].engine_label, /\[path\]/);
+  assert.doesNotMatch(clean.items[0].engine_label, /\/home\/erin/);
+  assert.match(clean.items[0].last_activity, /Bearer \[redacted\]/);
+  assert.doesNotMatch(clean.items[0].last_activity, /activitySecret1/);
+  assert.equal(clean.items[1].engine_label, "kit · docs-9");
+  assert.equal(clean.items[1].last_activity, "Writing the note");
+});
+
 test("a payload that still has a home path or token is rejected", () => {
   assert.throws(() => assertPubliclySafe({ notes: "from /home/alice/kit" }));
   assert.throws(() => assertPubliclySafe({ notes: "Bearer abcDEF123._~+/=" }));
@@ -2611,7 +2634,7 @@ test("issue and unlinked run pages mount the in-site live console", () => {
 test("live console host calms finding surfaces without restyling the kit specimen", () => {
   const consoleView = readFileSync(join(reviewsRoot, "ui/review-console-view.tsx"), "utf8");
   const appearance = readFileSync(join(reviewsRoot, "ui/review-console-appearance.tsx"), "utf8");
-  const panes = readFileSync(join(here, "../../../packages/ui/src/layout/agent-console-panes.tsx"), "utf8");
+  const decision = readFileSync(join(here, "../../../packages/ui/src/layout/agent-console-decision.tsx"), "utf8");
   const demo = readFileSync(join(here, "../components/demos/agent-console-demo.tsx"), "utf8");
   const cssPath = join(reviewsRoot, "ui/review-console-surfaces.css");
   const css = existsSync(cssPath) ? readFileSync(cssPath, "utf8") : "";
@@ -2620,17 +2643,15 @@ test("live console host calms finding surfaces without restyling the kit specime
   assert.match(consoleView, /<AgentConsole/);
   assert.match(consoleView, /decision=\{decision\}/);
   assert.match(consoleView, /ReviewConsoleAppearanceFrame/);
-  assert.match(consoleView, /<Heading level=\{1\}/);
+  assert.match(consoleView, /headingLevel=\{1\}/);
+  assert.doesNotMatch(consoleView, /<Heading level=\{1\}/);
   assert.match(consoleView, /copy\.run\.title/);
   assert.match(consoleView, /pane-shrink/);
   assert.match(consoleView, /min-h-floor/);
   assert.match(consoleView, /runId/);
-  const scope = readFileSync(join(reviewsRoot, "ui/use-review-appearance-scope.ts"), "utf8");
   assert.match(appearance, /data-review-console/);
   assert.match(appearance, /useReviewAppearanceScope/);
-  assert.match(scope, /hasReviewAppearanceQuery/);
-  assert.match(scope, /identity: pin \? appearance\.identity : undefined/);
-  assert.match(scope, /mode: pin \? appearance\.mode : undefined/);
+  assert.match(appearance, /consoleScopeAppearance/);
   assert.doesNotMatch(appearance, /min-h-floor/);
   assert.doesNotMatch(appearance, /LookField|IdentitySelect|DensitySelect|consoleAppearanceCopy/);
   assert.doesNotMatch(consoleView, /variant="glass"/);
@@ -2638,7 +2659,7 @@ test("live console host calms finding surfaces without restyling the kit specime
   assert.doesNotMatch(consoleView, /IdentityLookForm/);
   assert.doesNotMatch(consoleView, /\bCard\b/);
   assert.doesNotMatch(consoleView, /data-surface="glass"/);
-  assert.match(panes, /data-slot="agent-console-decision"/);
+  assert.match(decision, /data-slot="agent-console-decision"/);
   assert.match(hostCalm, /data-slot=agent-console-decision|data-slot="agent-console-decision"/);
   assert.match(hostCalm, /shadow-none|box-shadow:\s*none/);
   assert.match(hostCalm, /bg-none|background-image:\s*none/);
@@ -2793,6 +2814,36 @@ test("toAgentConsole marks running items from live status and ignores live_url a
   );
   assert.equal(mapped.run.postedReviewHref, "https://github.com/zedtech-fr/zedkit/pull/1");
   assert.equal(mapped.decision?.postedReviewHref, "https://github.com/zedtech-fr/zedkit/pull/1");
+});
+
+test("toAgentConsole maps engine labels, stream labels, and the run running flag", () => {
+  const mapped = toAgentConsole(
+    liveSample({
+      run: { ...liveSample().run, status: "Running" },
+      items: [
+        liveItem({ engine_label: "kit · docs-9", last_activity: "Writing the note" }),
+        liveItem({ id: "quiet-1", status: "done", engine_label: "kit", last_activity: null }),
+      ],
+    }),
+  );
+  assert.equal(mapped.run.running, true);
+  assert.equal(mapped.items[0].engineLabel, "kit · docs-9");
+  assert.equal(mapped.items[0].streamLabel, "Writing the note");
+  assert.equal(mapped.items[1].engineLabel, "kit");
+  assert.equal(mapped.items[1].streamLabel, null);
+  const settled = toAgentConsole(liveSample({ run: { ...liveSample().run, status: "done" } }));
+  assert.equal(settled.run.running, false);
+});
+
+test("toAgentConsole drops blank stream labels", () => {
+  const omitted = toAgentConsole(liveSample({ items: [liveItem()] }));
+  assert.equal(omitted.items[0].streamLabel, null);
+  const nulled = toAgentConsole(liveSample({ items: [liveItem({ last_activity: null })] }));
+  assert.equal(nulled.items[0].streamLabel, null);
+  const emptied = toAgentConsole(liveSample({ items: [liveItem({ last_activity: "" })] }));
+  assert.equal(emptied.items[0].streamLabel, null);
+  const blanked = toAgentConsole(liveSample({ items: [liveItem({ last_activity: "   " })] }));
+  assert.equal(blanked.items[0].streamLabel, null);
 });
 
 test("optional reviews on an index snapshot feed getRun for that run id", async () => {

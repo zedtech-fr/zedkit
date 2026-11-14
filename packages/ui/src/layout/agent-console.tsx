@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 import { Button } from "../button/button.js";
 import { Text } from "../typography/typography.js";
@@ -21,6 +21,29 @@ export type {
   AgentConsoleRun,
 } from "./agent-console-model.js";
 
+function ConsoleTopbarName({ name }: { name: string }) {
+  return (
+    <div className="flex items-center surface-pad-md">
+      <Text typeRole="small">{name}</Text>
+    </div>
+  );
+}
+
+function useResetSettledScroll(
+  scroller: RefObject<HTMLElement | null>,
+  selectedId: string | undefined,
+  selectedRunning: boolean,
+) {
+  const prevSelectedId = useRef(selectedId);
+  useLayoutEffect(() => {
+    const idChanged = prevSelectedId.current !== selectedId;
+    prevSelectedId.current = selectedId;
+    if (!idChanged || selectedRunning) return;
+    const el = scroller.current;
+    if (el) el.scrollTop = 0;
+  }, [scroller, selectedId, selectedRunning]);
+}
+
 export function AgentConsole({
   run,
   items,
@@ -29,16 +52,18 @@ export function AgentConsole({
   defaultSelectedId,
   onSelectedIdChange,
   className,
+  headingLevel,
 }: AgentConsoleProps) {
   const messages = useUiMessages();
   const copy = messages.agentConsole;
   const locale = messages.locale;
   const mainRef = useRef<HTMLElement | null>(null);
-  const { isStuck, jumpToLatest } = useStickToBottom(mainRef);
   const fallbackId = defaultConsoleSelectedId(items, defaultSelectedId);
   const [uncontrolledId, setUncontrolledId] = useState(fallbackId);
   const requestedId = selectedIdProp ?? uncontrolledId ?? fallbackId;
   const selected = items.find((item) => item.id === requestedId) ?? items.find((item) => item.id === fallbackId);
+  const { isStuck, jumpToLatest } = useStickToBottom(mainRef, { enabled: selected?.running ?? false });
+  useResetSettledScroll(mainRef, selected?.id, selected?.running ?? false);
 
   const select = (id: string) => {
     onSelectedIdChange?.(id);
@@ -61,20 +86,16 @@ export function AgentConsole({
             onSelect={select}
           />
         }
-        sidebarTrigger={
-          <Button type="button" variant="outline" size="sm">
-            {copy.sidebarTrigger}
-          </Button>
-        }
-        topbar={
-          selected ? (
-            <div className="flex items-center surface-pad-md">
-              <Text typeRole="small">{selected.name}</Text>
-            </div>
-          ) : undefined
-        }
+        sidebarTrigger={<Button type="button" variant="outline" size="sm">{copy.sidebarTrigger}</Button>}
+        topbar={selected ? <ConsoleTopbarName name={selected.name} /> : undefined}
       >
-        <ConsoleMain selected={selected} decision={decision} copy={copy} locale={locale} />
+        <ConsoleMain
+          selected={selected}
+          decision={decision}
+          copy={copy}
+          locale={locale}
+          {...(headingLevel === undefined ? {} : { headingLevel })}
+        />
       </AppShell>
       <JumpOverlay stuck={isStuck} onJump={jumpToLatest} />
     </div>

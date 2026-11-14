@@ -8,13 +8,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AgentConsole,
   ZedkitUiProvider,
+  zedkitUiMessagesEn,
   zedkitUiMessagesFr,
   type AgentConsoleDecision,
   type AgentConsoleItem,
   type AgentConsoleProps,
   type AgentConsoleRun,
 } from "#index.js";
-import { formatStarted } from "#layout/agent-console-model.js";
+import {
+  compactTokenCount,
+  formatStarted,
+  groupLabel,
+  statusLabel,
+  statusTone,
+  verdictLabel,
+} from "#layout/agent-console-model.js";
 
 import { stubDrawerJsdom } from "./drawer-fixture.js";
 
@@ -180,10 +188,45 @@ describe("AgentConsole", () => {
       "Review lenses",
       "Second pass",
       "Observers",
-      "Gates",
       "mystery",
     ]);
     expect(within(asideOf(container)).getByRole("button", { name: "Mystery agent" })).not.toBeNull();
+  });
+
+  it("folds gates into Review lenses and subagents into Helpers", () => {
+    const { container } = renderConsole({
+      items: [
+        item({ id: "gate-1", name: "Merge gate", kind: "gate" }),
+        item({ id: "sub-1", name: "Sidekick", kind: "subagent" }),
+      ],
+      decision: null,
+    });
+    expect(groupLabels(container)).toEqual(["Review lenses", "Helpers"]);
+    expect(within(asideOf(container)).getByRole("button", { name: "Merge gate" })).not.toBeNull();
+    expect(within(asideOf(container)).getByRole("button", { name: "Sidekick" })).not.toBeNull();
+  });
+
+  it("shows name, status, model, duration, and tool count on each row", () => {
+    const { container } = renderConsole();
+    const row = within(asideOf(container)).getByRole("button", { name: "Coordinator" });
+    const scoped = within(row);
+    expect(scoped.getByText("Coordinator")).not.toBeNull();
+    expect(scoped.getByText("Done")).not.toBeNull();
+    expect(scoped.getByText("docs")).not.toBeNull();
+    expect(scoped.getByText("6m 17s")).not.toBeNull();
+    expect(scoped.getByText("4 tools")).not.toBeNull();
+    expect(within(asideOf(container)).getByRole("button", { name: "Merge gate" }).textContent).toContain(
+      "1 tool",
+    );
+    expect(row.getAttribute("aria-current")).toBe("true");
+  });
+
+  it("shows the live activity instead of the status on a running row", () => {
+    const { container } = renderConsole();
+    const row = within(asideOf(container)).getByRole("button", { name: "Docs agent" });
+    expect(within(row).getByText("Writing the note")).not.toBeNull();
+    expect(within(row).queryByText("Running")).toBeNull();
+    expect(row.getAttribute("aria-current")).toBeNull();
   });
 
   it("shows the workflow group only when that kind is present", () => {
@@ -228,11 +271,12 @@ describe("AgentConsole", () => {
     expect(screen.getByText("Keep duration in milliseconds.")).not.toBeNull();
     expect(screen.getAllByText("Tone down the export warning.").length).toBeGreaterThan(0);
     expect(screen.getByText("Old lint warning")).not.toBeNull();
-    expect(screen.getByText("docs-reviewer")).not.toBeNull();
-    expect(screen.getByText("Does not block merge")).not.toBeNull();
+    expect(screen.getAllByText("docs-reviewer").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Does not block merge").length).toBeGreaterThan(0);
     expect(screen.getByText("Kept")).not.toBeNull();
     expect(screen.getAllByText("Downgraded").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Dismissed").length).toBeGreaterThan(0);
+    expect(screen.getByText("Dismissed (1)")).not.toBeNull();
+    expect(screen.getByText("Dismissed (1)").classList.contains("min-h-target")).toBe(true);
     const firstPass = screen.getByText(/Superseded/).closest("details");
     expect(firstPass).toBeInstanceOf(HTMLDetailsElement);
     expect((firstPass as HTMLDetailsElement).open).toBe(false);
@@ -246,6 +290,158 @@ describe("AgentConsole", () => {
     expect(within(run).getByRole("link", { name: "Posted review" }).getAttribute("href")).toBe(
       "https://example.com/review/42",
     );
+  });
+
+  it("shows a live pulse in the run header while the run is live", () => {
+    const live = renderConsole({ run: { ...RUN, running: true } });
+    const run = live.container.querySelector("[data-slot='agent-console-run']");
+    if (!(run instanceof HTMLElement)) throw new Error("missing run");
+    expect(run.querySelector("[data-slot='live-pulse']")).not.toBeNull();
+    live.unmount();
+    const done = renderConsole({ run: { ...RUN, running: false } });
+    const doneRun = done.container.querySelector("[data-slot='agent-console-run']");
+    if (!(doneRun instanceof HTMLElement)) throw new Error("missing run");
+    expect(doneRun.querySelector("[data-slot='live-pulse']")).toBeNull();
+  });
+
+  it("reads the decision flow from first pass to posted", () => {
+    const { container } = renderConsole();
+    const card = container.querySelector("[data-slot='agent-console-decision']");
+    if (!(card instanceof HTMLElement)) throw new Error("missing decision card");
+    const scoped = within(card);
+    expect(scoped.getByText("First pass")).not.toBeNull();
+    expect(scoped.getAllByText("REQUEST CHANGES").length).toBeGreaterThan(0);
+    expect(scoped.getAllByText("6/10").length).toBeGreaterThan(0);
+    expect(scoped.getAllByText(/Second pass/).length).toBeGreaterThan(0);
+    expect(scoped.getAllByText("docs-reviewer").length).toBeGreaterThan(0);
+    expect(scoped.getAllByText("Does not block merge").length).toBeGreaterThan(0);
+    expect(scoped.getAllByText("Posted").length).toBeGreaterThan(0);
+    expect(scoped.getAllByText("APPROVE").length).toBeGreaterThan(0);
+  });
+
+  it("omits flow segments the decision does not have", () => {
+    const { container } = renderConsole({
+      decision: { ...DECISION, firstPass: null, secondPass: null },
+    });
+    const card = container.querySelector("[data-slot='agent-console-decision']");
+    if (!(card instanceof HTMLElement)) throw new Error("missing decision card");
+    const scoped = within(card);
+    expect(scoped.queryByText("First pass")).toBeNull();
+    expect(scoped.queryByText(/Second pass/)).toBeNull();
+    expect(scoped.getAllByText("Posted").length).toBeGreaterThan(0);
+    expect(scoped.getAllByText("APPROVE").length).toBeGreaterThan(0);
+  });
+
+  it("names the empty must-change state instead of hiding the section", () => {
+    renderConsole({ decision: { ...DECISION, mustChange: [] } });
+    expect(screen.getByText("Nothing to change before merge")).not.toBeNull();
+  });
+
+  it("folds dismissed findings behind a count", () => {
+    renderConsole();
+    const summary = screen.getByText("Dismissed (1)");
+    const details = summary.closest("details");
+    expect(details).toBeInstanceOf(HTMLDetailsElement);
+    expect((details as HTMLDetailsElement).open).toBe(false);
+    expect(screen.getByText("Old lint warning")).not.toBeNull();
+  });
+
+  it("leads the selected item with kind, status, engine, and name", () => {
+    const { container } = renderConsole({ headingLevel: 1 });
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    const scoped = within(main);
+    expect(scoped.getByText("Main flow")).not.toBeNull();
+    expect(scoped.getByText("Done")).not.toBeNull();
+    expect(scoped.getByText("docs")).not.toBeNull();
+    const name = scoped.getByRole("heading", { name: "Coordinator" });
+    expect(name.tagName).toBe("H1");
+  });
+
+  it("keeps the item name at h2 unless a standalone page asks for h1", () => {
+    const { container } = renderConsole();
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    expect(within(main).getByRole("heading", { name: "Coordinator" }).tagName).toBe("H2");
+  });
+
+  it("prefers the engine label over the model in the item header", () => {
+    const { container } = renderConsole({
+      items: [item({ id: "main-1", name: "Coordinator", kind: "main", engineLabel: "kit · docs-9" })],
+      decision: null,
+    });
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    expect(within(main).getByText("kit · docs-9")).not.toBeNull();
+  });
+
+  it("renders the header above the decision card", () => {
+    const { container } = renderConsole({ headingLevel: 1 });
+    const name = screen.getByRole("heading", { name: "Coordinator" });
+    const decision = screen.getByText("Final decision");
+    expect(name.compareDocumentPosition(decision) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(container.querySelector("[data-slot='agent-console-decision']")).not.toBeNull();
+  });
+
+  it("labels the transcript and names an empty one", async () => {
+    const user = userEvent.setup();
+    const { container } = renderConsole();
+    expect(screen.getByRole("heading", { name: "Transcript" })).not.toBeNull();
+    await user.click(within(asideOf(container)).getByRole("button", { name: "Merge gate" }));
+    expect(screen.getByText("No transcript")).not.toBeNull();
+    expect(screen.getByText("This step left no readable transcript.")).not.toBeNull();
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    expect(within(main).getByText("Review lenses")).not.toBeNull();
+    expect(within(main).queryByText("gate")).toBeNull();
+  });
+
+  it("compacts large token counts and hides a zero row", () => {
+    const { container, rerender } = renderConsole({
+      items: [
+        item({
+          id: "main-1",
+          name: "Coordinator",
+          kind: "main",
+          tokensIn: 868_000,
+          tokensOut: 20_200,
+        }),
+      ],
+      decision: null,
+    });
+    expect(screen.getByText("868k in / 20.2k out")).not.toBeNull();
+    rerender(
+      <AgentConsole
+        run={RUN}
+        items={[item({ id: "main-1", name: "Coordinator", kind: "main", tokensIn: 0, tokensOut: 0 })]}
+        decision={null}
+      />,
+    );
+    expect(container.querySelector("[data-slot='detail-panel']")?.textContent).not.toContain("Tokens");
+    rerender(
+      <AgentConsole
+        run={RUN}
+        items={[
+          item({
+            id: "main-1",
+            name: "Coordinator",
+            kind: "main",
+            tokensIn: Number.NaN,
+            tokensOut: 20,
+          }),
+        ]}
+        decision={null}
+      />,
+    );
+    expect(container.querySelector("[data-slot='detail-panel']")?.textContent).not.toContain("Tokens");
+  });
+
+  it("boxes the stat grid in a card", () => {
+    const { container } = renderConsole();
+    const panel = container.querySelector("[data-slot='detail-panel']");
+    if (!(panel instanceof HTMLElement)) throw new Error("missing detail panel");
+    expect(panel.closest("[data-slot='card']")).not.toBeNull();
+    expect(panel.classList.contains("grid-pair")).toBe(true);
   });
 
   it("shows stats and a tool burst on the selected item", () => {
@@ -270,7 +466,7 @@ describe("AgentConsole", () => {
   });
 
   it("hides Jump to latest while latched and shows it after unlatch", async () => {
-    const { container } = renderConsole();
+    const { container } = renderConsole({ defaultSelectedId: "lens-1" });
     const main = container.querySelector("[data-slot='app-shell'] main");
     if (!(main instanceof HTMLElement)) throw new Error("missing main");
     mockMainScroller(main);
@@ -285,6 +481,36 @@ describe("AgentConsole", () => {
       main.dispatchEvent(new Event("scroll"));
     });
     expect(screen.getByRole("button", { name: "Jump to latest" })).not.toBeNull();
+  });
+
+  it("leaves a settled run at the top without a jump control", async () => {
+    const { container } = renderConsole();
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    mockMainScroller(main);
+    await act(async () => {
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => resolve());
+      });
+    });
+    expect(main.scrollTop).toBe(0);
+    main.scrollTop = 100;
+    act(() => {
+      main.dispatchEvent(new Event("scroll"));
+    });
+    expect(main.scrollTop).toBe(100);
+    expect(screen.queryByRole("button", { name: "Jump to latest" })).toBeNull();
+  });
+
+  it("resets a settled item to the top after leaving a running scroller", async () => {
+    const user = userEvent.setup();
+    const { container } = renderConsole({ defaultSelectedId: "lens-1" });
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    const metrics = mockMainScroller(main);
+    metrics.scrollTop = 100;
+    await user.click(within(asideOf(container)).getByRole("button", { name: "Coordinator" }));
+    expect(metrics.scrollTop).toBe(0);
   });
 
   it("opens the same sidebar list from a labelled drawer trigger", async () => {
@@ -372,7 +598,7 @@ describe("AgentConsole", () => {
     const { container } = renderConsole({ run: { ...RUN, verdict: "request changes" } });
     const run = container.querySelector("[data-slot='agent-console-run']");
     if (!(run instanceof HTMLElement)) throw new Error("missing run");
-    expect(within(run).getByText("request changes").className).not.toContain("badge-soft-success");
+    expect(within(run).getByText("REQUEST CHANGES").className).not.toContain("badge-soft-success");
   });
 
   it("uses a danger status dot for a failed item", () => {
@@ -380,6 +606,22 @@ describe("AgentConsole", () => {
       items: [item({ id: "main-1", name: "Coordinator", kind: "main", status: "failed" })],
     });
     expect(asideOf(container).innerHTML).toContain("bg-destructive");
+  });
+
+  it("hides an empty status badge and a whitespace verdict", () => {
+    const { container } = renderConsole({
+      run: { ...RUN, verdict: "   " },
+      items: [item({ id: "main-1", name: "Coordinator", kind: "main", status: "  " })],
+      decision: { ...DECISION, verdict: "\t" },
+    });
+    const main = container.querySelector("[data-slot='app-shell'] main");
+    if (!(main instanceof HTMLElement)) throw new Error("missing main");
+    expect(within(main).queryByText("Done")).toBeNull();
+    expect(asideOf(container).querySelectorAll("[data-slot='badge']").length).toBeGreaterThan(0);
+    expect(within(asideOf(container)).queryByText("APPROVE")).toBeNull();
+    const card = container.querySelector("[data-slot='agent-console-decision']");
+    if (!(card instanceof HTMLElement)) throw new Error("missing decision card");
+    expect(within(card).queryByText("APPROVE")).toBeNull();
   });
 
   it("uses French chrome and keeps fixture item names", () => {
@@ -392,6 +634,7 @@ describe("AgentConsole", () => {
     expect(screen.getByText("Décision finale")).not.toBeNull();
     expect(screen.getAllByText("Coordinator").length).toBeGreaterThan(0);
     expect(screen.queryByText("Final decision")).toBeNull();
+    expect(screen.getByText("1 outil")).not.toBeNull();
   });
 });
 
@@ -441,6 +684,92 @@ describe("formatStarted", () => {
       FakeDateTimeFormat as unknown as typeof Intl.DateTimeFormat,
     );
     expect(formatStarted(STARTED_AT, "en")).toBe("Jan 15, 2026, 10:00 AM");
+  });
+});
+
+describe("groupLabel", () => {
+  const copy = zedkitUiMessagesEn.agentConsole;
+
+  it("aliases gate and subagent kinds to their bucket labels", () => {
+    expect(groupLabel("gate", copy)).toBe("Review lenses");
+    expect(groupLabel("subagent", copy)).toBe("Helpers");
+    expect(groupLabel("lens", copy)).toBe("Review lenses");
+    expect(groupLabel("helper", copy)).toBe("Helpers");
+  });
+
+  it("keeps unknown kinds as the raw label", () => {
+    expect(groupLabel("mystery", copy)).toBe("mystery");
+  });
+});
+
+describe("statusLabel", () => {
+  it("capitalizes a lowercase live status", () => {
+    expect(statusLabel("done")).toBe("Done");
+    expect(statusLabel("running")).toBe("Running");
+  });
+
+  it("leaves empty and already-capitalized statuses alone", () => {
+    expect(statusLabel("")).toBe("");
+    expect(statusLabel("   ")).toBe("");
+    expect(statusLabel("Done")).toBe("Done");
+    expect(statusLabel("INTERRUPTED")).toBe("INTERRUPTED");
+  });
+});
+
+describe("verdictLabel", () => {
+  it("uppercases verdicts and splits snake case", () => {
+    expect(verdictLabel("approve")).toBe("APPROVE");
+    expect(verdictLabel("request_changes")).toBe("REQUEST CHANGES");
+    expect(verdictLabel("request changes")).toBe("REQUEST CHANGES");
+  });
+
+  it("keeps a missing verdict missing", () => {
+    expect(verdictLabel(null)).toBeNull();
+    expect(verdictLabel("")).toBeNull();
+    expect(verdictLabel("  ")).toBeNull();
+  });
+});
+
+describe("statusTone", () => {
+  it("pulses while the item runs no matter the status text", () => {
+    expect(statusTone("stuck", true)).toBe("active");
+  });
+
+  it("maps finished, failed, and interrupted statuses", () => {
+    expect(statusTone("done", false)).toBe("success");
+    expect(statusTone("Completed", false)).toBe("success");
+    expect(statusTone("failed", false)).toBe("danger");
+    expect(statusTone("error", false)).toBe("danger");
+    expect(statusTone("aborted", false)).toBe("warning");
+    expect(statusTone("INTERRUPTED", false)).toBe("warning");
+  });
+
+  it("stays idle on unknown statuses", () => {
+    expect(statusTone("pending", false)).toBe("idle");
+    expect(statusTone("", false)).toBe("idle");
+  });
+});
+
+describe("compactTokenCount", () => {
+  it("keeps small counts exact", () => {
+    expect(compactTokenCount(0, "en")).toBe("0");
+    expect(compactTokenCount(12, "en")).toBe("12");
+    expect(compactTokenCount(999, "en")).toBe("999");
+  });
+
+  it("compacts thousands and millions like the live console", () => {
+    expect(compactTokenCount(1000, "en")).toBe("1k");
+    expect(compactTokenCount(20_200, "en")).toBe("20.2k");
+    expect(compactTokenCount(868_000, "en")).toBe("868k");
+    expect(compactTokenCount(999_999, "en")).toBe("1M");
+    expect(compactTokenCount(1_000_000, "en")).toBe("1M");
+    expect(compactTokenCount(20_200_000, "en")).toBe("20M");
+  });
+
+  it("clamps bad values to zero", () => {
+    expect(compactTokenCount(Number.NaN, "en")).toBe("0");
+    expect(compactTokenCount(Number.POSITIVE_INFINITY, "en")).toBe("0");
+    expect(compactTokenCount(-5, "en")).toBe("0");
   });
 });
 

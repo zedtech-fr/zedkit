@@ -395,6 +395,9 @@
         "@utility grid-pair": {
           "grid-template-columns": "repeat(2, minmax(0, 1fr))"
         },
+        "@utility grid-quint": {
+          "grid-template-columns": "repeat(5, minmax(0, 1fr))"
+        },
         "@utility grid-trio": {
           "grid-template-columns": "repeat(3, minmax(0, 1fr))"
         },

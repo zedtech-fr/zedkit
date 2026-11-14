@@ -42,6 +42,26 @@ export function hasReviewAppearanceQuery(search: string): boolean {
   return params.has("identity") || params.has("preview") || params.has("theme") || params.has("density");
 }
 
+export type ReviewScopeAppearance = {
+  identity: ReviewAppearance["identity"] | undefined;
+  mode: ReviewPreviewMode | undefined;
+  density: ReviewDensity;
+};
+
+/** List pages inherit the site look unless the share URL pins. */
+export function listScopeAppearance(search: string): ReviewScopeAppearance {
+  const appearance = parseReviewAppearance(search);
+  if (!hasReviewAppearanceQuery(search)) return { identity: undefined, mode: undefined, density: "default" };
+  return { identity: appearance.identity, mode: appearance.mode, density: appearance.density };
+}
+
+/** The live console defaults to a dark preview; share-URL pins still win. */
+export function consoleScopeAppearance(search: string): ReviewScopeAppearance {
+  const appearance = parseReviewAppearance(search);
+  if (!hasReviewAppearanceQuery(search)) return { identity: undefined, mode: "dark", density: "default" };
+  return { identity: appearance.identity, mode: appearance.mode, density: appearance.density };
+}
+
 /** Canonical share-URL writer: omit glass, light, and default density. The frame reads URLs; it does not write them. Currently no UI caller; codec for a future writer. */
 export function serializeReviewAppearance(appearance: ReviewAppearance): string {
   const params = new URLSearchParams();
