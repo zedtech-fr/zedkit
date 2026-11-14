@@ -209,12 +209,16 @@ describe("layout job classes", () => {
   });
 
   it("keeps a 24px hit area on small controls, and the tap size on touch", () => {
-    const block = css.slice(css.indexOf("@utility hit-target"));
-    const hit = block.slice(0, block.indexOf("@utility", 1));
-    expect(hit).toContain("width: max(100%, 24px);");
-    expect(hit).toContain("height: max(100%, 24px);");
-    expect(hit).toContain("width: var(--spacing-tap);");
-    expect(hit).toContain("height: var(--spacing-tap);");
+    const utilityStart = css.indexOf("@utility hit-target");
+    const utility = css.slice(utilityStart, css.indexOf("@layer components", utilityStart));
+    expect(utility).toContain("width: max(100%, 24px);");
+    expect(utility).toContain("height: max(100%, 24px);");
+    expect(utility).toContain("width: var(--spacing-tap);");
+    expect(utility).toContain("height: var(--spacing-tap);");
+    // Sibling `@media` + `&::before` inside `@utility` compiles to pointer::before.
+    expect(utility).not.toMatch(/@utility hit-target \{[\s\S]*@media \(pointer: coarse\)[\s\S]*&::before/);
+    expect(utility).toMatch(/&::before \{[\s\S]*@media \(pointer: coarse\)/);
+    expect(css.slice(css.indexOf("@layer components"))).not.toContain(".hit-target::before");
   });
 
   it("keeps the chosen select value on one line", () => {

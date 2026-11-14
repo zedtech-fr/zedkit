@@ -401,6 +401,22 @@
         "@utility h-skeleton-line": {
           "height": "calc(var(--spacing) * 4)"
         },
+        "@utility hit-target": {
+          "position": "relative",
+          "&::before": {
+            "content": "\"\"",
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "translate": "-50% -50%",
+            "width": "max(100%, 24px)",
+            "height": "max(100%, 24px)",
+            "@media (pointer: coarse), (max-width: 40rem)": {
+              "width": "var(--spacing-tap)",
+              "height": "var(--spacing-tap)"
+            }
+          }
+        },
         "@utility link-offset": {
           "text-underline-offset": "var(--zk-link-offset)"
         },
@@ -996,7 +1012,8 @@
           "width": "var(--spacing-drawer-handle-width)",
           "height": "var(--spacing-drawer-handle-height)",
           "background-color": "hsl(var(--muted-foreground) / 0.5)",
-          "opacity": "1"
+          "opacity": "1",
+          "touch-action": "none"
         },
         "html [data-vaul-drawer-direction=\"left\"] [data-vaul-handle], html [data-vaul-drawer-direction=\"right\"] [data-vaul-handle]": {
           "display": "none"
@@ -2329,6 +2346,10 @@
         },
         {
           "path": "registry/ui/drawer-non-modal-effects.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/ui/motion-preference.ts",
           "type": "registry:ui"
         },
         {

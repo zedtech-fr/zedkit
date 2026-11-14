@@ -21,6 +21,8 @@ Rules:
   Tests live in `tests/unit/` or, for one module, as `<name>.test.tsx`
   next to it. Packed `src` excludes `*.test.*` / `*.spec.*` /
   `*.stories.*`. Use `#*` in tests; shipped `src` may use one `../..`.
+  Reset document attributes in `afterEach`, never `try/finally`
+  (`TryStatement` is banned in tests too; see `use-motion-preference.test.tsx`).
   `tsconfig.json` excludes colocated tests from emit; `tsconfig.tests.json`
   must set its own `exclude` so it does not inherit that list.
   Keep `theme-scope`, `overlay-modal` and `use-narrow-viewport` at

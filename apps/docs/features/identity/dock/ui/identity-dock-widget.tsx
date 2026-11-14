@@ -74,6 +74,13 @@ function useDockSiteTokens() {
   return [tokens, setTokens] as const;
 }
 
+/**
+ * Métier:           Public TypeScript kit: npm packages plus a docs site, not a hosted app with accounts.
+ * Client personas:  Integrating developers and coding agents who restyle the docs site from the dock, then copy the look. They are comfortable with Classic tokens and only sometimes open Expert.
+ * Customers:        The same visitors reading the docs on a laptop or a phone.
+ * Customer personas: Hurried phone reader (one-handed, bottom sheet) and laptop reader (side panel while the page stays usable). Assumed from `.agents/product.md` and the live dock, not from interviews.
+ * UI decisions:     `direction="right" mobile="sheet"` because the laptop customer keeps a side editor and the phone customer gets a bottom sheet. Classic/Expert tabs sit in the fixed drawer header because a hurried reader switches modes without losing the field they were scanning. Contrast status in the footer counts checker warnings (text 4.5, accent/focus 3:1), not decorative separators, because a default look with a quiet hairline is not a bug. Non-modal so the page stays reachable because the client is comparing the live site while editing.
+ */
 function IdentityDockWidget() {
   const pathname = usePathname();
   const onEditor = pathname === IDENTITY_EDITOR_HREF;
@@ -109,7 +116,7 @@ function IdentityDockWidget() {
           </Text>
         </IdentityDockTrigger>
       </IdentityDock>
-      <Drawer open={expanded} onOpenChange={setExpanded} direction="right" mobile="sheet" modal={false} handleOnly noBodyStyles>
+      <Drawer open={expanded} onOpenChange={setExpanded} direction="right" mobile="sheet" modal={false}>
         <DrawerContent
           ref={panelRef}
           size="lg"
@@ -119,7 +126,7 @@ function IdentityDockWidget() {
           data-state={expanded ? "open" : "closed"}
           className="flex pane-shrink flex-col gap-flush flush [&>:not([data-slot^=drawer-],[data-vaul-handle],button)]:px-flush"
         >
-          <DrawerHandle data-dock-handle="" className="trim-bottom w-handle shrink-0" />
+          <DrawerHandle data-dock-handle="" className="trim-bottom shrink-0" />
           <Stack data-state="open" className="pane-shrink flex-1 gap-flush">
             <IdentityDockAssistantPanel tokens={tokens} onTokens={setTokens} />
           </Stack>

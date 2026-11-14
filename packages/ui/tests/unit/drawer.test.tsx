@@ -1,10 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 import { stubDrawerJsdom } from "./drawer-fixture.js";
 import { assertNoValueArbitraries } from "./no-arbitraries.js";
-import { Button } from "#index.js";
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger } from "#index.js";
 
 beforeAll(() => {
   stubDrawerJsdom();
@@ -772,6 +772,327 @@ describe("drawer", () => {
     expect(screen.getByRole("dialog", { name: "Inline panel" })).not.toBeNull();
   });
 
+  describe("non-modal swipe-to-dismiss", () => {
+    const PANEL_HEIGHT = 400;
+    const DISMISS_DRAG = 120;
+
+    function stubPanelRect(el: HTMLElement, height = PANEL_HEIGHT) {
+      vi.spyOn(el, "getBoundingClientRect").mockReturnValue({
+        x: 0,
+        y: 0,
+        top: 0,
+        left: 0,
+        right: 320,
+        width: 320,
+        bottom: height,
+        height,
+        toJSON: () => ({}),
+      });
+    }
+
+    function swipe(target: Element, fromY: number, toY: number, pointerType = "") {
+      fireEvent.pointerDown(target, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        pointerType,
+        clientX: 80,
+        clientY: fromY,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, pointerType, clientX: 80, clientY: toY });
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, pointerType, clientX: 80, clientY: toY });
+    }
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+      stubDrawerJsdom();
+      document.documentElement.removeAttribute("data-motion");
+    });
+
+    function renderSheet(props?: {
+      direction?: "top" | "right" | "bottom" | "left";
+      dismissible?: boolean;
+      scrolled?: boolean;
+      withField?: boolean;
+      withLink?: boolean;
+      withOption?: boolean;
+      onPointerDown?: (event: { preventDefault(): void }) => void;
+    }) {
+      render(
+        <Drawer defaultOpen modal={false} direction={props?.direction ?? "bottom"} dismissible={props?.dismissible ?? true}>
+          <DrawerContent modal={false} onPointerDown={props?.onPointerDown}>
+            <DrawerHandle data-testid="handle" />
+            <DrawerTitle>Delivery details</DrawerTitle>
+            <DrawerBody data-testid="body">
+              {props?.withField ? <input aria-label="Name" defaultValue="Ada" /> : null}
+              {props?.withLink ? <a href="#details">Editor</a> : null}
+              {props?.withOption ? (
+                <div role="option" aria-selected="false">
+                  Choice
+                </div>
+              ) : null}
+              {props?.withField || props?.withLink || props?.withOption ? null : <p>Body copy</p>}
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>,
+      );
+      const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+      stubPanelRect(dialog);
+      const body = screen.getByTestId("body");
+      if (props?.scrolled) {
+        Object.defineProperty(body, "scrollTop", { configurable: true, get: () => 80 });
+        expect(body.scrollTop).toBe(80);
+      }
+      return { dialog, body, handle: screen.getByTestId("handle") };
+    }
+
+    function renderBottomSheet(props?: { dismissible?: boolean; scrolled?: boolean; withField?: boolean }) {
+      return renderSheet(props);
+    }
+
+    it("gives the non-modal handle a 24px hit area around the 6px bar", () => {
+      const { handle } = renderBottomSheet();
+      expect(handle.className).toContain("hit-target");
+      expect(handle.className).toContain("h-drawer-handle-height");
+    });
+
+    it("closes when the handle is dragged down", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when the handle is tapped without a drag", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 12, 12);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open when the handle drag is under 8px", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 12, 19);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open when the handle is dragged away from the edge", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 40, 10);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("closes when the body is dragged down at rest", () => {
+      const { body } = renderBottomSheet();
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when a touch pointer drags the body", () => {
+      const { body } = renderBottomSheet();
+      swipe(body, 40, 40 + DISMISS_DRAG, "touch");
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("closes when a touch pointer drags the handle", () => {
+      const { handle } = renderBottomSheet();
+      swipe(handle, 10, 10 + DISMISS_DRAG, "touch");
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when the body is dragged while scrolled", () => {
+      const { body } = renderBottomSheet({ scrolled: true });
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not dismiss from a form control", () => {
+      renderBottomSheet({ withField: true });
+      swipe(screen.getByRole("textbox", { name: "Name" }), 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not dismiss from a link", () => {
+      renderSheet({ withLink: true });
+      swipe(screen.getByRole("link", { name: "Editor" }), 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not dismiss from a portaled option", () => {
+      renderSheet({ withOption: true });
+      swipe(screen.getByRole("option", { name: "Choice" }), 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not capture the pointer on body press before the drag slop", () => {
+      const { body } = renderBottomSheet();
+      const capture = vi.mocked(Element.prototype.setPointerCapture);
+      capture.mockClear();
+      fireEvent.pointerDown(body, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: 40,
+      });
+      expect(capture).not.toHaveBeenCalled();
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 48 });
+      expect(capture).toHaveBeenCalled();
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 48 });
+    });
+
+    it("closes when a top sheet handle is dragged up", () => {
+      const { handle } = renderSheet({ direction: "top" });
+      swipe(handle, 200, 200 - DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when a top sheet body is dragged up at rest", () => {
+      const { body } = renderSheet({ direction: "top" });
+      swipe(body, 200, 200 - DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("stays open when the body drag is under the 20% threshold", () => {
+      const { body } = renderBottomSheet();
+      swipe(body, 40, 40 + 40);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open when a body drag is selecting text", () => {
+      const { body } = renderBottomSheet();
+      const selection = {
+        isCollapsed: false,
+        toString: () => "Body copy",
+      };
+      vi.spyOn(document, "getSelection").mockReturnValue(selection as unknown as Selection);
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open when the consumer prevents the body pointerdown", () => {
+      const { body } = renderSheet({
+        onPointerDown: (event) => {
+          event.preventDefault();
+        },
+      });
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("clears the drag and stays open on pointercancel", () => {
+      const { handle, dialog } = renderBottomSheet();
+      fireEvent.pointerDown(handle, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      fireEvent.pointerCancel(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(dialog.style.transform).toBe("");
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not swipe-dismiss a left drawer", () => {
+      const { handle } = renderSheet({ direction: "left" });
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("does not swipe-dismiss a right drawer", () => {
+      const { handle } = renderSheet({ direction: "right" });
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open on handle drag when not dismissible", () => {
+      const { handle } = renderBottomSheet({ dismissible: false });
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("stays open on body drag when not dismissible", () => {
+      const { body } = renderBottomSheet({ dismissible: false });
+      swipe(body, 40, 40 + DISMISS_DRAG);
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("ignores a non-primary pointer on the handle", () => {
+      const { handle } = renderBottomSheet();
+      fireEvent.pointerDown(handle, {
+        pointerId: 1,
+        isPrimary: false,
+        button: 0,
+        clientX: 80,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: false, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: false, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+    });
+
+    it("ignores a mismatched pointerId on move and up", () => {
+      const { handle } = renderBottomSheet();
+      fireEvent.pointerDown(handle, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(window, { pointerId: 2, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      fireEvent.pointerUp(window, { pointerId: 2, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(screen.getByRole("dialog", { name: "Delivery details" })).not.toBeNull();
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 });
+    });
+
+    it("restores a consumer inline transform after a cancelled drag", () => {
+      const { handle, dialog } = renderBottomSheet();
+      dialog.style.transform = "scale(1)";
+      fireEvent.pointerDown(handle, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      fireEvent.pointerCancel(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(dialog.style.transform).toBe("scale(1)");
+    });
+
+    it("keeps dismissing when setPointerCapture throws", () => {
+      Element.prototype.setPointerCapture = () => {
+        throw new Error("InvalidPointerId");
+      };
+      const { handle } = renderBottomSheet();
+      swipe(handle, 10, 10 + DISMISS_DRAG);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes from the handle under reduced motion without sliding the panel", () => {
+      document.documentElement.setAttribute("data-motion", "reduce");
+      const { handle, dialog } = renderBottomSheet();
+      fireEvent.pointerDown(handle, {
+        pointerId: 1,
+        isPrimary: true,
+        button: 0,
+        clientX: 80,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(dialog.style.transform).toBe("");
+      fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 10 + DISMISS_DRAG });
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("still has no overlay when modal is false", () => {
+      const { dialog } = renderBottomSheet();
+      expect(document.querySelector("[data-vaul-overlay]")).toBeNull();
+      expect(dialog.className).toContain("focus-ring");
+    });
+  });
+
   it("has no axe violations when open", async () => {
     const user = userEvent.setup();
     render(<OpenDrawer />);
@@ -785,5 +1106,92 @@ describe("drawer", () => {
       },
     });
     expect(results.violations).toEqual([]);
+  });
+
+  it("has no axe violations when a non-modal drawer with tabs is open", async () => {
+    render(
+      <Drawer defaultOpen modal={false}>
+        <DrawerContent modal={false}>
+          <DrawerTitle>Delivery details</DrawerTitle>
+          <Tabs defaultValue="simple">
+            <TabsList aria-label="Modes">
+              <TabsTrigger value="simple">Classic</TabsTrigger>
+              <TabsTrigger value="expert">Expert</TabsTrigger>
+            </TabsList>
+            <TabsContent value="simple">Classic fields</TabsContent>
+            <TabsContent value="expert">Expert fields</TabsContent>
+          </Tabs>
+        </DrawerContent>
+      </Drawer>,
+    );
+    const results = await axe(document.body, {
+      rules: {
+        region: { enabled: false },
+        "landmark-one-main": { enabled: false },
+        "document-title": { enabled: false },
+        "html-has-lang": { enabled: false },
+      },
+    });
+    expect(results.violations).toEqual([]);
+  });
+
+  it("returns focus to the trigger after a handle swipe-dismiss when focus was in the panel", async () => {
+    render(
+      <Drawer defaultOpen modal={false}>
+        <DrawerTrigger asChild>
+          <Button>Open drawer</Button>
+        </DrawerTrigger>
+        <DrawerContent modal={false}>
+          <DrawerHandle data-testid="handle" />
+          <DrawerTitle>Delivery details</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    const dialog = screen.getByRole("dialog", { name: "Delivery details" });
+    dialog.focus();
+    fireEvent.pointerDown(screen.getByTestId("handle"), {
+      pointerId: 1,
+      isPrimary: true,
+      button: 0,
+      clientX: 80,
+      clientY: 10,
+    });
+    fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 130 });
+    fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 130 });
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open drawer" }));
+  });
+
+  it("does not move focus to the trigger when swipe-dismiss happens while focus is on the page", async () => {
+    render(
+      <>
+        <button type="button">Outside</button>
+        <Drawer defaultOpen modal={false}>
+          <DrawerTrigger asChild>
+            <Button>Open drawer</Button>
+          </DrawerTrigger>
+          <DrawerContent modal={false}>
+            <DrawerHandle data-testid="handle" />
+            <DrawerTitle>Delivery details</DrawerTitle>
+          </DrawerContent>
+        </Drawer>
+      </>,
+    );
+    screen.getByRole("button", { name: "Outside" }).focus();
+    fireEvent.pointerDown(screen.getByTestId("handle"), {
+      pointerId: 1,
+      isPrimary: true,
+      button: 0,
+      clientX: 80,
+      clientY: 10,
+    });
+    fireEvent.pointerMove(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 130 });
+    fireEvent.pointerUp(window, { pointerId: 1, isPrimary: true, clientX: 80, clientY: 130 });
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Outside" }));
   });
 });

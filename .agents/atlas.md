@@ -67,14 +67,14 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Global not-found screen | `.agents/atlas/docs-site.md` | Route-private `_not-found/`; never a `not-found/` folder beside the file. | `*-copy.ts` | 2026-11-12 |
 | Home marketing bands | `.agents/atlas/home.md` | Seven section files in `_home/sections/`; origin is `#manifesto`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
 | Docs home document scroll | `.agents/atlas/home.md` | Home must not mount `SectionScroll`; it styles `html`. | `apps/docs/scripts/home-bundle.test.mjs` | 2026-11-13 |
-| Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`. | `identity-look-form.test.mjs` | 2026-11-13 |
+| Identity editor look form | `.agents/atlas/identity.md` | Shared Classic/Expert form; 2+ tokens need `onPatchMany`; `defaultMode` is owned-tabs only. | `identity-look-form.test.mjs` | 2026-11-13 |
 | Identity editor recipe and share link | `.agents/atlas/identity.md` | Recipe JSON and the share link; `LIGHT_KEYS` matches kit `PAIR_KEYS`. Lives in `features/identity/ui/`, not `lib/`. | `apps/docs/tests/identity-recipe.spec.ts` | 2026-11-13 |
 | Docs site identity dock (live apply) | `.agents/atlas/identity.md` | Defaults are kit Glass plus docs-shell remaps, not raw presets. | `docs-site-default-tokens.test.mjs` | 2026-11-13 |
-| Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/dock/ui/`; persist key `zk-identity-dock-v2`. | `*.test.mjs` | 2026-11-13 |
+| Docs identity dock (assistant) | `.agents/atlas/identity.md` | Kit/React under `features/identity/dock/ui/`; persist key `zk-identity-dock-v2`; footer counts checker warnings (not decorative border). | `*.test.mjs` | 2026-11-13 |
 | Public run history page | `.agents/atlas/reviews.md` | Live GitHub+runs feed at `/issues`; desktop `md+` is a master-detail workspace; in-site console at `/issues/run?id=`; evidence PNGs are gitignored. | `reviews-feature.test.mjs` | 2026-11-13 |
 | UI tokens, scales, container sizing | `.agents/atlas/ui-primitives.md` | Declared scales; new `:root` colour roles must copy into the mist reset. | `packages/ui/CATALOG.md` | 2026-11-11 |
 | Registry copy theme (shadcn path) | `.agents/atlas/registry.md` | cssVars are colour HSL roles only; do not double-wrap `color-*`. | `scripts/registry/theme-tokens.mjs` | 2026-11-11 |
-| Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. | `resolve-ui-source.mjs` | 2026-11-08 |
+| Registry stage + copy install | `.agents/atlas/registry.md` | Canonical source is `packages/ui/src`; copy path is hosted JSON. A new relative import from a staged brick must be staged too. | `resolve-ui-source.mjs` | 2026-11-13 |
 | UI source mixed folders | `.agents/atlas/ui-primitives.md` | Families under `src/`; registry keys unique basename. | `packages/ui/src/index.ts` | 2026-11-11 |
 | Sanitized Markdown host | `.agents/atlas/ui-primitives.md` | Closed `{children, className}`; callers must not disable sanitize. | `Render Markdown without raw HTML` | 2026-11-11 |
 | Transcript rows and burst grouping | `.agents/atlas/ui-primitives.md` | Native `<details>`; do not import `Stack` (pulls `layout.tsx`). | `Render a live assistant transcript from rows` | 2026-11-11 |
@@ -88,6 +88,7 @@ Durable references name `path#symbol/section#excerpt` plus the commit they were 
 | Identity contrast repair | `.agents/atlas/identity.md` | Bounded three-pass AA nudge; public `repairContrast`. | `identity-contrast-repair.test.ts` | 2026-11-13 |
 | SSE frame parser | `.agents/atlas/ui-primitives.md` | Blank line is two WHATWG endings; CRLF tried first. | `consumeSseStream` | 2026-11-11 |
 | AppShell mobile drawer, fixed height, main ref | `.agents/atlas/ui-primitives.md` | Drawer chrome in `app-shell-drawer.tsx` so AppShell stays hook-free. Sidebar mounts twice: no ids in demo sidebars. | `packages/ui/tests/unit/shell.test.tsx` | 2026-11-13 |
+| Non-modal drawer swipe-to-dismiss | `.agents/atlas/ui-primitives.md` | Handle 8px slop; body swipe `pointerType !== "touch"`; nest `hit-target` coarse `@media` inside `&::before` (`@layer` loses to `@utility`); `afterEach` not `try/finally`. | `drawer.test.tsx` | 2026-11-13 |
 | Sidebar run-list rows | `.agents/atlas/ui-primitives.md` | Hand-rolled `asChild` via `cloneElement`, not Slot. | `sidebar-nav.test.tsx` | 2026-11-11 |
 | Stick-to-bottom latch | `.agents/atlas/ui-primitives.md` | Follows a growing log; jsdom may lack `Element.scrollTo`. | `stick-to-bottom.test.tsx` | 2026-11-11 |
 | Live agent console | `.agents/atlas/ui-primitives.md` | Composed primitives around a camelCase presentation model. `formatStarted` pins UTC + strips NBSP; label is `Started (UTC)`. | `agent-console.test.tsx` | 2026-11-13 |

@@ -82,6 +82,7 @@ test("drawer family uses kit registry slug for button", () => {
     "drawer-non-modal.tsx",
     "drawer-panel-classes.ts",
     "drawer-non-modal-effects.ts",
+    "motion-preference.ts",
     "drawer-parts.tsx",
     "drawer-non-modal-context.tsx",
     "drawer-portal.tsx",
